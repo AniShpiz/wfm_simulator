@@ -1,0 +1,34 @@
+name: Take HTML File
+
+on:
+  workflow_dispatch:
+    inputs:
+      html_path:
+        description: 'Path to your HTML file in the repository (for example: index.html)'
+        required: true
+        type: string
+
+jobs:
+  take-html:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate HTML file path
+        run: |
+          if [ ! -f "${{ github.event.inputs.html_path }}" ]; then
+            echo "HTML file not found: ${{ github.event.inputs.html_path }}"
+            exit 1
+          fi
+
+      - name: Show HTML file info
+        run: |
+          echo "Using HTML file: ${{ github.event.inputs.html_path }}"
+          wc -l "${{ github.event.inputs.html_path }}"
+
+      - name: Upload HTML as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-file
+          path: ${{ github.event.inputs.html_path }}
