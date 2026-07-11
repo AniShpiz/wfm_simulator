@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WFM Simulator Runner</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>WFM Simulator Runner</h1>
+      <p>Select your HTML/CSS/JS files and run them in the preview.</p>
+
+      <section class="controls">
+        <label>
+          HTML file
+          <input id="htmlFile" type="file" accept=".html,text/html" />
+        </label>
+        <label>
+          CSS file (optional)
+          <input id="cssFile" type="file" accept=".css,text/css" />
+        </label>
+        <label>
+          JS file (optional)
+          <input id="jsFile" type="file" accept=".js,text/javascript,application/javascript" />
+        </label>
+        <button id="runButton" type="button">Run WFM App</button>
+      </section>
+
+      <p id="status" class="status" role="status"></p>
+      <iframe id="preview" class="preview" title="WFM preview"></iframe>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
