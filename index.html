@@ -1758,21 +1758,33 @@ function xlsToGrid(buf){
       sst.push(s);
     }
   }
-  const grid=[];
-  const set=(r,c,v)=>{ (grid[r]=grid[r]||[])[c]=(typeof v==="number")?String(v):v; };
-  let pos=0,inSheet=false,sheetSeen=false;
-  while(pos+4<=stream.length){
-    const typ=sdv.getUint16(pos,true), len=sdv.getUint16(pos+2,true), d=pos+4;
-    if(typ===0x809){ const dt=sdv.getUint16(d+2,true);
-      if(dt===0x10&&!sheetSeen){ inSheet=true; sheetSeen=true; } else if(dt!==0x5) inSheet=false; }
-    else if(typ===0x0A&&inSheet){ break; }
+  // globals substream pass: shared strings + BOUNDSHEET directory (name + offset of every sheet)
+  const bounds=[];
+  let gpos=0;
+  while(gpos+4<=stream.length){
+    const typ=sdv.getUint16(gpos,true), len=sdv.getUint16(gpos+2,true), d=gpos+4;
+    if(typ===0x85){ // BOUNDSHEET
+      const lb=sdv.getUint32(d,true), hidden=stream[d+4]&3, st=stream[d+5];
+      const cch=stream[d+6], wide=stream[d+7]&1;
+      let nm=""; for(let i=0;i<cch;i++) nm+=wide?String.fromCharCode(sdv.getUint16(d+8+i*2,true)):String.fromCharCode(stream[d+8+i]);
+      if(st===0) bounds.push({name:nm,lb,hidden});
+    }
     else if(typ===0xFC){
-      const segs=[stream.subarray(d,d+len)]; let p2=pos+4+len;
+      const segs=[stream.subarray(d,d+len)]; let p2=gpos+4+len;
       while(p2+4<=stream.length&&sdv.getUint16(p2,true)===0x3C){
         const l2=sdv.getUint16(p2+2,true); segs.push(stream.subarray(p2+4,p2+4+l2)); p2+=4+l2; }
       parseSST(segs);
     }
-    else if(inSheet){
+    else if(typ===0x0A){ gpos+=4+len; break; } // globals EOF — sheets are reached via lbPlyPos
+    gpos+=4+len;
+  }
+  const readSheet=lb=>{
+    const grid=[];
+    const set=(r,c,v)=>{ (grid[r]=grid[r]||[])[c]=(typeof v==="number")?String(v):v; };
+    let pos=lb;
+    while(pos+4<=stream.length){
+      const typ=sdv.getUint16(pos,true), len=sdv.getUint16(pos+2,true), d=pos+4;
+      if(typ===0x0A&&pos>lb) break; // this sheet's EOF
       const row=len>=4?sdv.getUint16(d,true):0, col=len>=4?sdv.getUint16(d+2,true):0;
       if(typ===0xFD) set(row,col,sst[sdv.getUint32(d+6,true)]??"");
       else if(typ===0x203) set(row,col,sdv.getFloat64(d+6,true));
@@ -1783,10 +1795,15 @@ function xlsToGrid(buf){
       else if(typ===0x204||typ===0xD6){ const cch=sdv.getUint16(d+6,true), wide=stream[d+8]&1;
         let s=""; for(let i=0;i<cch;i++) s+=wide?String.fromCharCode(sdv.getUint16(d+9+i*2,true)):String.fromCharCode(stream[d+9+i]);
         set(row,col,s); }
+      pos+=4+len;
     }
-    pos+=4+len;
-  }
-  return grid;
+    return grid;
+  };
+  // hidden helper sheets (templates, admin tabs) are noise for the classifier — visible sheets win
+  const vis=bounds.filter(b=>!b.hidden);
+  const use=vis.length?vis:bounds;
+  if(!use.length) return [{name:"Sheet1",grid:readSheet(gpos)}]; // no BOUNDSHEET directory — single-sheet fallback
+  return use.map(b=>({name:b.name,grid:readSheet(b.lb)}));
 }
 
 /* ---- HTML table (many ACD "xls" exports are really HTML) ---- */
@@ -2297,6 +2314,27 @@ function crossValidateIron(){
       state.validationErrors.push({name,team:meta.team||(e?e.team:"")||"—"});
   }
 }
+/* the file's own dates set the active week: applied after the roster/matrix is built and
+   BEFORE the manpower pages render, so workforce/iron views open on the sidur's week
+   instead of filtering every dated row against an unrelated forecast week */
+function applyDataWeek(){
+  const ds=[...state.rosterCap.keys()].map(k=>k.slice(0,10)).filter(k=>/^\d{4}-/.test(k));
+  for(const r of state.schedRows||[]) if(r.ds) ds.push(r.ds);
+  for(const v of state.vacations||[]) if(v.ds) ds.push(v.ds);
+  if(!ds.length) return;
+  const sun=sundayOf(ds.sort()[0]);
+  const sel=document.getElementById("weekSelect");
+  if(![...sel.options].some(o=>o.value===sun)){
+    const o=document.createElement("option");
+    o.value=sun;
+    o.textContent=t("weekOpt",{w:isoWeek(sun),a:fmtD(sun),b:fmtD(addDays(sun,5))});
+    let before=null;
+    for(const opt of sel.options) if(opt.value>sun){ before=opt; break; }
+    sel.insertBefore(o,before);
+  }
+  sel.value=sun;
+  state.week=sun;
+}
 /* fuzzy multi-sheet workbook: סידור ברזל + סידור עבודה in one file */
 function parseTikshuvWorkbook(sheets){
   const ironRe=/ברזל|iron|בסיס/i, rosterRe=/סידור|roster|actual/i;
@@ -2314,6 +2352,7 @@ function parseTikshuvWorkbook(sheets){
     const hcEl=document.getElementById("setHc"); if(hcEl) hcEl.value=state.roster.length;
   }
   if(typeof syncHcUI==="function") syncHcUI();
+  applyDataWeek();
   updatePortalStatus(); saveData(); renderAll();
   return {type:"workbook",reps:state.roster.length,iron:state.iron?state.iron.emps.size:0,
           val:state.validationErrors.length,blocks:rstats.blocks,named:rstats.named,
@@ -2679,7 +2718,7 @@ document.getElementById("schConInput").addEventListener("change",e=>{
 async function bytesToGrid(buf){
   const u8=new Uint8Array(buf);
   if(u8[0]===0x50&&u8[1]===0x4B) return {grids:await xlsxToGrid(buf)};                   // .xlsx / .xlsm (all sheets)
-  if(u8[0]===0xD0&&u8[1]===0xCF&&u8[2]===0x11&&u8[3]===0xE0) return {grid:xlsToGrid(buf)}; // legacy .xls
+  if(u8[0]===0xD0&&u8[1]===0xCF&&u8[2]===0x11&&u8[3]===0xE0) return {grids:xlsToGrid(buf)}; // legacy .xls (all sheets)
   let text;
   if(u8[0]===0xFF&&u8[1]===0xFE) text=new TextDecoder("utf-16le").decode(buf);
   else if(u8[0]===0xFE&&u8[1]===0xFF) text=new TextDecoder("utf-16be").decode(buf);
@@ -2734,6 +2773,7 @@ function ingestRows(res,hint){
       state.settings.headcount=mx.peak;
       const hcEl=document.getElementById("setHc"); if(hcEl) hcEl.value=mx.peak;
     }
+    applyDataWeek();
     updatePortalStatus(); saveData(); renderAll(); return mx;
   };
   const grid=(res.grid||[]).filter(r=>r&&r.length);
@@ -2758,6 +2798,7 @@ function ingestRows(res,hint){
       const hcEl=document.getElementById("setHc"); if(hcEl) hcEl.value=state.roster.length;
     }
     if(typeof syncHcUI==="function") syncHcUI();
+    applyDataWeek();
     updatePortalStatus(); saveData(); renderAll();
     return stats;
   }
