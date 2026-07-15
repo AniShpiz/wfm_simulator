@@ -193,6 +193,9 @@ tr.r-ok td{background:var(--emerald-bg)}
 .splitbtn .menu.pad{padding:12px}
 .splitbtn .menu.pad button:hover{background:var(--navy)}
 .splitbtn.open .menu{display:block}
+/* iron-dependent features are visibly disabled until a סידור ברזל is loaded */
+.ironGated{opacity:.45;pointer-events:none;filter:grayscale(.6);position:relative}
+.gateNote{font-size:.78rem;color:var(--crimson);font-weight:600;margin:4px 0}
 /* drop-anywhere overlay + toast */
 #dropOverlay{position:fixed;inset:0;background:rgba(13,42,77,.55);z-index:200;display:none;align-items:center;justify-content:center;pointer-events:none}
 #dropOverlay.show{display:flex}
@@ -233,8 +236,8 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
     <button id="tab-home" class="active" data-i18n="tabHome">Home</button>
     <button id="tab-matrix" data-i18n="tabMatrix">Weekly Matrix</button>
     <button id="tab-trends" data-i18n="tabTrends">Date Trends</button>
-    <button id="tab-workforce" data-i18n="tabWorkforce">📊 Workforce &amp; Iron</button>
-    <button id="tab-scheduler" data-i18n="tabScheduler">🤖 Auto-Scheduler</button>
+    <button id="tab-workforce" data-i18n="tabWorkforce">Workforce &amp; Iron</button>
+    <button id="tab-scheduler" data-i18n="tabScheduler">Auto-Scheduler</button>
     <button id="tab-recruit" data-i18n="tabRecruit">Recruitment &amp; Training</button>
     <button id="tab-settings" data-i18n="tabSettings">Advanced Settings</button>
   </nav>
@@ -259,6 +262,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <h3><span data-i18n="fcTitle">Forecast Ingestion — drag &amp; drop CSV / JSON</span></h3>
         <div class="status" id="fcStatus" style="display:none"></div>
         <div class="err-card" id="fcErr" style="display:none"></div>
+        <div class="err-card" id="fcAudit" style="display:none"></div>
         <p><span data-i18n="dropHint">All processing stays in your browser — nothing is uploaded.</span>
            <button class="linklike" id="btnSample" data-i18n="loadSample">Load sample data</button></p>
         <p class="mini" data-i18n="fcFormats">Any Excel (.xlsx / .xls), CSV, TSV or JSON export works — columns are auto-detected in English or Hebrew, in any order. Extra rows and titles are handled automatically.</p>
@@ -408,9 +412,11 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
           <div class="frow"><label><span data-i18n="cohYield">Yield rate (%)</span> <span class="info" data-tipkey="tipYield" tabindex="0">i</span></label><input type="number" id="cohYield" min="10" max="100" value="85" style="width:70px"></div>
           <div class="frow" style="border:none"><button class="btn ghost" id="cohAdd" data-i18n="cohAdd">Add course</button></div>
         </div>
-        <h2 style="margin-top:14px" data-i18n="rosterTitle">Internal Roster Optimization</h2>
-        <p class="mini" data-i18n="rosterHint">Representatives below their contracted weekly hours — broaden their availability before hiring externally.</p>
-        <div class="tablewrap" id="rosterWrap" style="max-height:300px;overflow-y:auto;margin-top:8px"></div>
+        <div class="dropzone" id="dzCourses" style="margin-top:10px">
+          <h3 data-i18n="crsTitle">Course Gantt Upload</h3>
+          <p class="mini" data-i18n="crsHint">Drop a course plan file — columns (any order, Hebrew or English): course name (קורס), start date (תאריך התחלה), duration in days or end date (סיום), trainees (כמות), yield % (הסמכה). Dates accept dd/mm/yyyy, ISO or Excel serials; missing yield defaults to 85%.</p>
+          <input type="file" id="crsInput" accept=".csv,.tsv,.txt,.json,.xlsx,.xlsm,.xls" style="display:none">
+        </div>
       </div>
     </div>
   </section>
@@ -436,18 +442,25 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <div id="wfTreemap" style="direction:ltr"></div>
         <div class="legend" id="wfTreeLegend"></div>
       </div>
-      <div class="card">
+      <div class="card" id="wfImpactCard">
         <h2><span data-i18n="wfImpactTitle">Daily Vacation &amp; SLA Impact Matrix</span> <span class="info" data-tipkey="tipWfImpact" tabindex="0">i</span></h2>
+        <p class="mini" id="wfImpactMetric"></p>
         <div class="tablewrap"><table id="wfImpact"></table></div>
+        <p class="mini" id="wfImpactStars" style="display:none"></p>
       </div>
     </div>
-    <div class="card">
+    <div class="card" id="wfValCard">
       <h2><span data-i18n="wfValTitle">Iron Base Validation Matrix</span> <span class="info" data-tipkey="tipWfVal" tabindex="0">i</span></h2>
       <div class="toolbar">
         <button class="btn ghost" id="wfValCsv" data-i18n="wfValCsv">⬇ Export CSV</button>
         <button class="btn ghost" id="wfValCopy" data-i18n="wfValCopy">📋 Copy for Excel</button>
       </div>
       <div class="tablewrap" id="wfValWrap" style="max-height:260px;overflow-y:auto"></div>
+    </div>
+    <div class="card">
+      <h2><span data-i18n="rosterTitle">Internal Roster Optimization</span></h2>
+      <p class="mini" data-i18n="rosterHint">Representatives below their contracted weekly hours — broaden their availability before hiring externally.</p>
+      <div class="tablewrap" id="rosterWrap" style="max-height:300px;overflow-y:auto;margin-top:8px"></div>
     </div>
   </section>
 
@@ -460,8 +473,9 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <span class="pill" id="schChipIron"></span>
         <span class="pill" id="schChipCon"></span>
         <span class="grow"></span>
-        <button class="btn navy" id="schRun" data-i18n="schRun">🤖 Generate Optimized Schedule</button>
+        <button class="btn navy" id="schRun" data-i18n="schRun">Generate Optimized Schedule</button>
       </div>
+      <p class="gateNote" id="schGate" style="display:none" data-i18n="schNeedIron">The auto-scheduler builds shifts from the סידור ברזל base. Load a Tikshuv workbook with an Iron sheet to enable it.</p>
       <div class="toolbar">
         <label data-i18n="schConL">Weekly constraints file (optional):</label>
         <input type="file" id="schConInput" accept=".csv,.tsv,.txt,.json,.xlsx,.xlsm,.xls" style="font-size:.78rem">
@@ -590,6 +604,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
 </div>
 
 <div id="footerBar">
+  <img id="footerLogo" alt="" style="height:22px;width:22px;border-radius:4px;object-fit:cover">
   <span>© <b>Imri Fichman</b> – <span data-i18n="attrRole">Clalit Mushlam Analyst</span></span>
   <span class="mail">imrific@tikshoov.co.il</span>
   <div id="langBox"><span data-i18n="langLabel">Language</span>
@@ -599,6 +614,9 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
 
 <script>
 "use strict";
+// footer logo mirrors the favicon (one embedded image serves both)
+{ const fl=document.getElementById("footerLogo"), ic=document.querySelector('link[rel="icon"]');
+  if(fl&&ic) fl.src=ic.href; else if(fl) fl.style.display="none"; }
 /* =====================================================================
    WFM Simulator v1.2 — pure client-side. © Imri Fichman, Tikshuv.
 
@@ -759,7 +777,7 @@ en:{
   tipAttain:"How it's calculated: each day's intervals are volume-weighted into a single daily score using your Primary Target Metric ({m}), then compared with the {t}% attainment target from Advanced Settings. Met = daily score ≥ {t}%. TSF 30 / TSF 60 remain fixed audit benchmarks.",
   slaMet:"Met", slaMissed:"Missed",
   /* ===== WFM 2.0 ===== */
-  tabWorkforce:"📊 Workforce & Iron", tabScheduler:"🤖 Auto-Scheduler",
+  tabWorkforce:"Workforce & Iron", tabScheduler:"Auto-Scheduler",
   wfNoIron:"No Iron sheet loaded — drop one multi-sheet Tikshuv workbook (סידור עבודה + סידור ברזל). Falling back to manual contracted hours per rep.",
   wfTeamL:"Team", wfSkillL:"Skill", wfSiteL:"Site", wfAll:"(all)",
   wfKpiUtil:"Roster-to-Iron Utilization",
@@ -776,6 +794,19 @@ en:{
   tipWfImpact:"Background Erlang A simulation per skill × day: the answer-rate before → after removing one productive agent from that slice. Green = low-risk vacation approval; red = critical.",
   wfImpactNone:"Needs a forecast + roster with a skill column (מיומנות) to simulate.",
   wfImpactTip1:"Answer rate",
+  wfImpactNoIron:"This matrix compares the Iron base (סידור ברזל) against the actual roster — load a Tikshuv workbook with an Iron sheet to enable it.",
+  wfImpactMetric:"Computed on your primary target metric: {m}. Change it in Advanced Settings and this matrix follows.",
+  wfImpactTip2:"{m} at Iron base staffing → at actual roster staffing",
+  wfImpactUnval:"{n} roster agents have no validated Iron base and are EXCLUDED from this matrix:",
+  schNeedIron:"The auto-scheduler builds shifts from the סידור ברזל base. Load a Tikshuv workbook with an Iron sheet to enable it.",
+  schNoGaps:"No uncovered demand — the Iron base covers the full forecast. 🎯",
+  crsTitle:"Course Gantt Upload", crsHint:"Drop a course plan file — columns (any order, Hebrew or English): course name (קורס), start date (תאריך התחלה), duration in days or end date (סיום), trainees (כמות), yield % (הסמכה). Dates accept dd/mm/yyyy, ISO or Excel serials; missing yield defaults to 85%.",
+  crsOk:"{n} courses loaded into the training pipeline.", crsErr:"No course rows recognized — need at least a name/date column.",
+  wfDrillTitle:"Drill-down: {seg} by {dim}", wfDrillBy:"Drill by", wfDrillHint:"Click a treemap tile to break it down.", wfDrillBack:"✕ Close drill-down",
+  fcAuditWarn:"Data audit:", auditImp:"{n} intervals with more answered than offered calls (AR>100% — capped)", auditAht:"{n} intervals with AHT outside 1–60 min", auditFar:"{n} dates more than ~13 months from today — check the date column format",
+  mxCalibOn:"Model calibrated to this floor's measured answer rates (κ={k}).",
+  mxCalibOff:"⚠ Uncalibrated model estimates — the file carries no (or too little) measured answered-calls data, so AR/TSF here are pure Erlang and usually read higher than your real floor. Load a forecast export that includes answered-calls columns to calibrate.",
+  mxAuditFlag:"Data audit flagged {n} suspicious values — see the Home page forecast portal.",
   wfValTitle:"Iron Base Validation Matrix",
   tipWfVal:"Active employees in the weekly roster whose Iron sheet start/end times are blank — send the alert to the team leader.",
   wfValNone:"✅ All roster employees have a valid Iron base.",
@@ -1017,7 +1048,7 @@ he:{
   tipAttain:"איך זה מחושב: האינטרוולים של כל יום משוקללים לפי נפח לציון יומי אחד באמצעות המדד המוביל שלכם ({m}), ומושווים ליעד העמידה של {t}% מההגדרות המתקדמות. עומד = ציון יומי ≥ {t}%. ‏TSF 30 / TSF 60 נותרים מדדי ביקורת קבועים.",
   slaMet:"עומד", slaMissed:"חריגה",
   /* ===== WFM 2.0 ===== */
-  tabWorkforce:"📊 כוח אדם וברזל", tabScheduler:"🤖 שיבוץ אוטומטי",
+  tabWorkforce:"כוח אדם וברזל", tabScheduler:"שיבוץ אוטומטי",
   wfNoIron:"לא נטען גיליון ברזל — גררו קובץ תקשוב רב-גיליוני אחד (סידור עבודה + סידור ברזל). בינתיים חישוב לפי שעות חוזיות ידניות לנציג.",
   wfTeamL:"מנהל צוות", wfSkillL:"מיומנות", wfSiteL:"מוקד", wfAll:"(הכול)",
   wfKpiUtil:"ניצול סידור מול ברזל",
@@ -1034,6 +1065,19 @@ he:{
   tipWfImpact:"סימולציית Erlang A ברקע לכל מיומנות × יום: אחוז המענה לפני ← אחרי הסרת נציג פרודוקטיבי אחד מהפלח. ירוק = אישור חופשה בסיכון נמוך; אדום = קריטי.",
   wfImpactNone:"נדרשים תחזית + סידור עם עמודת מיומנות כדי לסמלץ.",
   wfImpactTip1:"אחוז מענה",
+  wfImpactNoIron:"המטריצה משווה את בסיס הברזל מול הסידור בפועל — טענו קובץ תקשוב עם גיליון סידור ברזל כדי להפעיל אותה.",
+  wfImpactMetric:"מחושב לפי יעד המטרה הראשי שלכם: {m}. שינוי בהגדרות מתקדמות יעדכן את המטריצה.",
+  wfImpactTip2:"{m} באיוש בסיס הברזל ← באיוש הסידור בפועל",
+  wfImpactUnval:"{n} נציגים בסידור ללא בסיס ברזל מתוקף ואינם נכללים במטריצה:",
+  schNeedIron:"השיבוץ האוטומטי בונה משמרות מבסיס סידור הברזל. טענו קובץ תקשוב עם גיליון ברזל כדי להפעיל.",
+  schNoGaps:"אין ביקוש לא מכוסה — בסיס הברזל מכסה את כל התחזית. 🎯",
+  crsTitle:"העלאת גאנט קורסים", crsHint:"גררו קובץ תוכנית קורסים — עמודות (בכל סדר, עברית או אנגלית): שם קורס, תאריך התחלה, משך בימים או תאריך סיום, כמות חניכים, אחוז הסמכה. תאריכים בכל פורמט (dd/mm/yyyy, ISO, סריאלי של אקסל); אחוז הסמכה חסר יקבל 85%.",
+  crsOk:"{n} קורסים נטענו לצנרת ההכשרה.", crsErr:"לא זוהו שורות קורס — נדרשת לפחות עמודת שם/תאריך.",
+  wfDrillTitle:"פילוח: {seg} לפי {dim}", wfDrillBy:"פילוח לפי", wfDrillHint:"לחצו על אריח במפת החום לפילוח.", wfDrillBack:"✕ סגירת פילוח",
+  fcAuditWarn:"בקרת נתונים:", auditImp:"{n} אינטרוולים עם יותר שיחות נענות מנכנסות (מענה>100% — נחסם)", auditAht:"{n} אינטרוולים עם אורך שיחה מחוץ לטווח 1–60 דק'", auditFar:"{n} תאריכים רחוקים מהיום ביותר מ־13 חודשים — בדקו את פורמט עמודת התאריך",
+  mxCalibOn:"המודל מכויל לאחוזי המענה שנמדדו במוקד (κ={k}).",
+  mxCalibOff:"⚠ הערכות מודל לא מכוילות — בקובץ אין (או כמעט אין) נתוני שיחות נענות מדודים, ולכן המענה/TSF כאן הם ארלנג תאורטי ולרוב גבוהים מהמציאות במוקד. טענו תחזית עם עמודות שיחות נענות לכיול.",
+  mxAuditFlag:"בקרת הנתונים סימנה {n} ערכים חשודים — ראו את פורטל התחזית בדף הבית.",
   wfValTitle:"מטריצת תיקוף בסיס ברזל",
   tipWfVal:"עובדים פעילים בסידור השבועי ששעות הכניסה/יציאה שלהם בגיליון הברזל ריקות — שלחו התראה למנהל הצוות.",
   wfValNone:"✅ לכל עובדי הסידור יש בסיס ברזל תקין.",
@@ -1998,9 +2042,10 @@ function buildForecastGrid(grid,hd){
   if(map.volume==null) missing.push(t("tipVolume"));
   if(map.aht==null) missing.push(t("tipAht"));
   if(missing.length) throw {code:"missing",miss:missing};
-  // custom metric columns = truly unrecognized headers (duplicate duration/agent
-  // candidates that lost the mapping race are excluded — they'd be noise)
-  const known=hd.cols||new Set(Object.values(map));
+  // custom metric columns = headers that did not WIN a mapping. Race losers keep
+  // their data as extras (e.g. "זמן המתנה ממוצע" loses 'interval' to the real time
+  // column but is a legitimate ASA metric) — the 4-column cap bounds any noise.
+  const known=new Set(Object.values(map));
   const extras=[];
   (raw||[]).forEach((cell,c)=>{ const nm=String(cell??"").trim();
     if(nm&&!known.has(c)&&extras.length<4)
@@ -2403,8 +2448,8 @@ function renderTreemap(W){
   let x=0; const parts=[];
   const tile=(x0,y0,tw,thh,key,val)=>{
     const p=val/total;
-    parts.push(`<rect x="${x0.toFixed(1)}" y="${y0.toFixed(1)}" width="${Math.max(0,tw-2).toFixed(1)}" height="${Math.max(0,thh-2).toFixed(1)}" fill="${WF_COLORS[key]||"#999"}" rx="3"><title>${t("wf_"+key)}: ${val.toFixed(1)}h (${(p*100).toFixed(1)}%)</title></rect>`+
-      (tw>56&&thh>22?`<text x="${(x0+6).toFixed(1)}" y="${(y0+16).toFixed(1)}" font-size="10" fill="${key==="unalloc"?"#44546a":"#fff"}" font-weight="600">${t("wf_"+key)} ${(p*100).toFixed(0)}%</text>`:""));
+    parts.push(`<rect data-seg="${key}" style="cursor:pointer" x="${x0.toFixed(1)}" y="${y0.toFixed(1)}" width="${Math.max(0,tw-2).toFixed(1)}" height="${Math.max(0,thh-2).toFixed(1)}" fill="${WF_COLORS[key]||"#999"}" rx="3"><title>${t("wf_"+key)}: ${val.toFixed(1)}h (${(p*100).toFixed(1)}%)</title></rect>`+
+      (tw>56&&thh>22?`<text x="${(x0+6).toFixed(1)}" y="${(y0+16).toFixed(1)}" font-size="10" fill="${key==="unalloc"?"#44546a":"#fff"}" font-weight="600" pointer-events="none">${t("wf_"+key)} ${(p*100).toFixed(0)}%</text>`:""));
   };
   for(const [key,val] of cols){
     const tw=w*val/total;
@@ -2418,54 +2463,142 @@ function renderTreemap(W){
   host.innerHTML=`<svg viewBox="0 0 ${w} ${h}" width="100%" role="img">${parts.join("")}</svg>`;
   const legendKeys=["prod",...Object.keys(W.absByType),"unalloc"];
   leg.innerHTML=legendKeys.map(k=>`<span><i style="background:${WF_COLORS[k]||"#999"}"></i>${t("wf_"+k)}</span>`).join("");
+  // drill-down: click a tile → hours of that segment broken down by team/skill/site
+  host.querySelectorAll("rect[data-seg]").forEach(r=>r.addEventListener("click",()=>{
+    state.wfDrillSeg=r.getAttribute("data-seg"); renderTreeDrill();
+  }));
+  renderTreeDrill();
+}
+/* treemap drill-down — same filter dimensions as the lists above (team J / skill N / site A) */
+function segHoursBy(seg,dim){
+  const week=state.week?new Set(weekDates(state.week)):new Set();
+  const inWeek=r=>week.has(r.ds)||(!r.ds&&r.di!=null);
+  const acc={};
+  const add=(rec,h)=>{ const k=rec[dim]||"—"; acc[k]=(acc[k]||0)+h; };
+  if(seg==="prod"){ for(const r of state.schedRows) if(inWeek(r)&&wfPass(r)) add(r,r.h); }
+  else if(seg==="unalloc"){
+    // iron minus allocated, per dim value
+    const iron={},alloc={};
+    if(state.iron) for(const [name,e] of state.iron.emps){
+      const m=state.rosterMeta.get(name)||e;
+      const rec={team:m.team||e.team,skill:m.skill||e.skill,site:m.site||e.site};
+      if(wfPass(rec)) iron[rec[dim]||"—"]=(iron[rec[dim]||"—"]||0)+e.contracted;
+    }
+    for(const r of state.schedRows) if(inWeek(r)&&wfPass(r)) alloc[r[dim]||"—"]=(alloc[r[dim]||"—"]||0)+r.h;
+    for(const v of state.vacations) if(inWeek(v)&&wfPass(v)) alloc[v[dim]||"—"]=(alloc[v[dim]||"—"]||0)+v.hours;
+    for(const k in iron){ const d=iron[k]-(alloc[k]||0); if(d>0.05) acc[k]=d; }
+  }
+  else{ for(const v of state.vacations) if(v.type===seg&&inWeek(v)&&wfPass(v)) add(v,v.hours); }
+  return Object.entries(acc).sort((a,b)=>b[1]-a[1]);
+}
+function renderTreeDrill(){
+  let box=document.getElementById("wfDrill");
+  if(!box){
+    box=document.createElement("div"); box.id="wfDrill"; box.style.marginTop="8px";
+    const leg=document.getElementById("wfTreeLegend"); leg.parentNode.insertBefore(box,leg.nextSibling);
+  }
+  const seg=state.wfDrillSeg;
+  if(!seg){ box.innerHTML=`<p class="mini">${t("wfDrillHint")}</p>`; return; }
+  const dim=state.wfDrillDim||"team";
+  const dimName={team:t("wfTeamL"),skill:t("wfSkillL"),site:t("wfSiteL")};
+  const rows=segHoursBy(seg,dim);
+  const tot=rows.reduce((s,r)=>s+r[1],0)||1;
+  box.innerHTML=`<div class="toolbar" style="margin:0 0 4px">
+      <b style="font-size:.82rem">${t("wfDrillTitle",{seg:t("wf_"+seg),dim:dimName[dim]})}</b>
+      <label class="mini">${t("wfDrillBy")}</label>
+      <select id="wfDrillDim" style="font-size:.78rem">${["team","skill","site"].map(d=>`<option value="${d}"${d===dim?" selected":""}>${dimName[d]}</option>`).join("")}</select>
+      <button class="linklike" id="wfDrillClose">${t("wfDrillBack")}</button>
+    </div>`+
+    (rows.length?rows.map(([k,v])=>`<div style="display:flex;align-items:center;gap:6px;font-size:.78rem;margin:2px 0">
+      <span style="min-width:140px">${k}</span>
+      <div style="flex:1;background:var(--sky-soft);border-radius:4px;height:14px;direction:ltr"><div style="width:${(v/tot*100).toFixed(1)}%;background:${WF_COLORS[seg]||"#999"};height:14px;border-radius:4px"></div></div>
+      <span style="min-width:76px;direction:ltr">${v.toFixed(1)}h (${(v/tot*100).toFixed(0)}%)</span></div>`).join("")
+    :`<p class="mini">${t("noData")}</p>`);
+  box.querySelector("#wfDrillDim").addEventListener("change",e=>{ state.wfDrillDim=e.target.value; renderTreeDrill(); });
+  box.querySelector("#wfDrillClose").addEventListener("click",()=>{ state.wfDrillSeg=null; renderTreeDrill(); });
+}
+/* validated iron agents = iron employees whose Iron sheet actually defines base days.
+   Everything iron-derived (impact matrix, scheduler base) draws ONLY from these. */
+function validatedIron(){
+  const out=new Map();
+  if(!state.iron) return out;
+  for(const [name,e] of state.iron.emps) if(Object.keys(e.days).length) out.set(name,e);
+  return out;
 }
 function renderImpactMatrix(){
   const tbl=document.getElementById("wfImpact"); tbl.innerHTML="";
-  const skills=[...new Set([...state.rosterMeta.values()].map(m=>m.skill).filter(Boolean))];
-  if(!skills.length||!state.series){ tbl.innerHTML=`<tr><td class="mini">${t("wfImpactNone")}</td></tr>`; return; }
+  const metricEl=document.getElementById("wfImpactMetric");
+  const starsEl=document.getElementById("wfImpactStars");
+  if(starsEl) starsEl.style.display="none";
+  // hard requirement: this matrix compares the ברזל base against the actual סידור עבודה —
+  // without a loaded Iron sheet there is nothing valid to compare, so it stays gated
+  if(!state.iron||!state.series){ tbl.innerHTML=`<tr><td class="mini">${t("wfImpactNoIron")}</td></tr>`; if(metricEl) metricEl.textContent=""; return; }
+  const iron=validatedIron();
+  const unval=new Set(state.validationErrors.map(v=>v.name));
+  if(metricEl) metricEl.textContent=t("wfImpactMetric",{m:primName()});
+  const metaOf=name=>state.rosterMeta.get(name)||iron.get(name)||{};
+  // iron base hours per skill × weekday — validated agents only, current filters applied
+  const ironBy={}, skills=new Set();
+  for(const [name,e] of iron){
+    const m=metaOf(name);
+    if(!wfPass({team:m.team||e.team,skill:m.skill||e.skill,site:m.site||e.site})) continue;
+    const sk=(m.skill||e.skill||"—");
+    skills.add(sk);
+    for(const di in e.days) ironBy[sk+"|"+di]=(ironBy[sk+"|"+di]||0)+e.days[di].h;
+  }
+  if(!skills.size){ tbl.innerHTML=`<tr><td class="mini">${t("wfImpactNone")}</td></tr>`; return; }
+  // actual scheduled hours per skill × weekday (selected week) — validated iron agents only
+  const week=state.week?new Set(weekDates(state.week)):new Set();
+  const schedBy={};
+  for(const r of state.schedRows){
+    if(!week.has(r.ds)||!iron.has(r.name)||!wfPass(r)) continue;
+    const sk=(r.skill||(metaOf(r.name).skill)||"—");
+    schedBy[sk+"|"+r.di]=(schedBy[sk+"|"+r.di]||0)+r.h;
+  }
   const dayNames=t("days");
   const hr=document.createElement("tr");
   hr.appendChild(th(t("wfSkillL")));
   for(let di=0;di<6;di++) hr.appendChild(th(dayNames[di]));
   const thead=document.createElement("thead"); thead.appendChild(hr); tbl.appendChild(thead);
   const tb=document.createElement("tbody");
-  const week=state.week?new Set(weekDates(state.week)):new Set();
-  // scheduled hours per skill per weekday (selected week)
-  const hoursBy={}, totBy={};
-  for(const r of state.schedRows) if(week.has(r.ds)&&wfPass({team:r.team,skill:r.skill,site:r.site})){
-    hoursBy[r.skill+"|"+r.di]=(hoursBy[r.skill+"|"+r.di]||0)+r.h;
-    totBy[r.di]=(totBy[r.di]||0)+r.h;
-  }
-  for(const sk of skills){
+  const target=state.settings.target/100;
+  for(const sk of [...skills].sort()){
     const tr=document.createElement("tr");
     const nameTh=document.createElement("th"); nameTh.textContent=sk; tr.appendChild(nameTh);
     for(let di=0;di<6;di++){
       const td=document.createElement("td");
-      const skH=hoursBy[sk+"|"+di]||0, dayH=totBy[di]||0;
+      const ironH=ironBy[sk+"|"+di]||0, schedH=schedBy[sk+"|"+di]||0;
       const ser=state.series[di];
-      if(!skH||!dayH||!ser){ td.textContent=t("noData"); tr.appendChild(td); continue; }
-      const share=skH/dayH;
+      if(!ironH||!ser){ td.textContent=t("noData"); tr.appendChild(td); continue; }
       const winH=defaultDayHours(di)||1;
-      const conc=Math.max(1,Math.round(skH/winH));
-      // background Erlang A simulation: skill slice AR with N vs N−1 productive agents
-      let vol=0,ar1=0,ar2=0;
+      const concIron=Math.max(1,Math.round(ironH/winH));
+      const concAct=Math.round(schedH/winH);
+      // total-skill share of the day's iron base scales the demand slice this skill owns
+      let dayIronTot=0; for(const k of skills) dayIronTot+=ironBy[k+"|"+di]||0;
+      const share=dayIronTot>0?ironH/dayIronTot:0;
+      let vol=0,pIron=0,pAct=0;
       for(const tm in ser){ const s=ser[tm];
         const v=(s.vols.reduce((a,b)=>a+b,0)/s.vols.length)*share;
         const aht=s.ahts.reduce((a,b)=>a+b,0)/s.ahts.length;
-        const p1=evalInterval(v,aht,conc,state.settings);
-        const p2=evalInterval(v,aht,Math.max(0,conc-1),state.settings);
-        vol+=v; ar1+=p1.ar*v; ar2+=p2.ar*v;
+        pIron+=primVal(evalInterval(v,aht,concIron,state.settings))*v;
+        pAct+=primVal(evalInterval(v,aht,Math.max(0,concAct),state.settings))*v;
+        vol+=v;
       }
       if(!vol){ td.textContent=t("noData"); tr.appendChild(td); continue; }
-      const a1=ar1/vol, a2=ar2/vol;
-      td.className=a2<0.7?"tier-bad":(a2<0.85?"tier-warn":"tier-good");
+      const a1=pIron/vol, a2=pAct/vol;
+      td.className=a2<target-0.1?"tier-bad":(a2<target?"tier-warn":"tier-good");
       td.innerHTML=`<span class="v">${(a1*100).toFixed(0)}%→${(a2*100).toFixed(0)}%</span>`;
-      td.title=`${t("wfImpactTip1")} ${(a1*100).toFixed(1)}% → ${(a2*100).toFixed(1)}% (−1)`;
+      td.title=`${t("wfImpactTip2",{m:primName()})}: ${(a1*100).toFixed(1)}% (ברזל ${ironH.toFixed(1)}h) → ${(a2*100).toFixed(1)}% (בפועל ${schedH.toFixed(1)}h)`;
       tr.appendChild(td);
     }
     tb.appendChild(tr);
   }
   tbl.appendChild(tb);
+  // roster agents without a validated iron base are excluded — surfaced, never silently dropped
+  if(starsEl&&unval.size){
+    starsEl.style.display="block";
+    starsEl.textContent="* "+t("wfImpactUnval",{n:unval.size})+" "+[...unval].slice(0,15).join(", ")+(unval.size>15?" …":"");
+  }
 }
 function renderValidation(){
   const wrap=document.getElementById("wfValWrap"); wrap.innerHTML="";
@@ -2519,7 +2652,10 @@ function populateWfFilters(){
 }
 function renderWorkforce(){
   if(!document.getElementById("wfKpiUtil")) return;
-  document.getElementById("wfNoIron").style.display=state.iron?"none":"block";
+  const gated=!state.iron;
+  document.getElementById("wfNoIron").style.display=gated?"block":"none";
+  // iron-derived analytics stay visibly disabled until a real ברזל base exists
+  ["wfImpactCard","wfValCard"].forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.toggle("ironGated",gated); });
   populateWfFilters(); // preserves current selection
   document.getElementById("wfWeekLbl").textContent=state.week?t("weekOpt",{w:isoWeek(state.week),a:fmtD(state.week),b:fmtD(addDays(state.week,5))}):"";
   const W=computeWorkforce();
@@ -2529,6 +2665,7 @@ function renderWorkforce(){
   renderTreemap(W);
   renderImpactMatrix();
   renderValidation();
+  renderInternalRoster();
 }
 /* ---------- Epic 4: two-iteration auto-scheduler (pure, worker-safe) ---------- */
 function schedulerCore(P){
@@ -2591,22 +2728,11 @@ function schedulerCore(P){
   return {asg,pool:pool.filter(p=>!p.used),gaps};
 }
 function schedulerEmps(){
-  if(state.iron) return [...state.iron.emps.entries()]
-    .map(([name,e])=>({name,days:e.days}))
-    .filter(e=>Object.keys(e.days).length);
-  // fallback: roster names with full default windows (manual contracted mode)
-  const S=state.settings, names=[...state.rosterMeta.keys()];
-  const src=names.length?names:state.roster.map(r=>r.name);
-  return src.map(name=>{
-    const days={};
-    for(let di=0;di<6;di++){
-      const e=di===5?friLimit():pad(S.dayEnd)+":00";
-      if(defaultDayHours(di)>0) days[di]={s:pad(S.dayStart)+":00",e,h:defaultDayHours(di)};
-    }
-    return {name,days};
-  });
+  // the scheduling base is the ברזל — validated iron agents only, no synthetic fallback
+  return [...validatedIron().entries()].map(([name,e])=>({name,days:e.days}));
 }
 async function runScheduler(){
+  if(!state.iron){ showToast("⚠ "+t("schNeedIron"),false); return; }
   if(!state.week||!state.days.size){ showToast("⚠ "+t("schNeedData"),false); return; }
   const emps=schedulerEmps();
   if(!emps.length){ showToast("⚠ "+t("schNeedData"),false); return; }
@@ -2649,25 +2775,57 @@ function renderSchedulerResults(out){
       tb.appendChild(tr); });
     tbl.appendChild(tb); return tbl;
   };
+  // on-screen schedule mirrors the Tikshuv סידור עבודה column structure exactly,
+  // so the output can round-trip back into the same pipeline as the input file
   const ow=document.getElementById("schOutWrap"); ow.innerHTML="";
-  ow.appendChild(mk(out.asg.map(a=>[a.name,fmtD(a.ds),dayNames[a.di],a.s,a.e,t("schSrc_"+a.src)]),
-    [t("rthName"),t("thDate"),t("fldDay"),t("trFromL"),t("trToL"),t("schSrcL")]));
+  ow.appendChild(mk(out.asg.map(a=>tikshuvRow(a).slice(0,8)),TIKSHUV_HEADS.slice(0,8)));
   document.getElementById("schCsv").style.display=out.asg.length?"inline-block":"none";
   const pw=document.getElementById("schPoolWrap"); pw.innerHTML="";
   pw.appendChild(mk(out.pool.map(p=>[p.name,fmtD(p.ds),dayNames[p.di],p.s+"–"+p.e]),
     [t("rthName"),t("thDate"),t("fldDay"),t("thInterval")]));
+  // ביקוש לא מכוסה — classic sidur matrix: intervals down, days across
   const gw=document.getElementById("schGapWrap"); gw.innerHTML="";
-  gw.appendChild(mk(out.gaps.map(g=>[fmtD(g.ds),g.tm,"+"+g.n]),
-    [t("thDate"),t("thInterval"),t("tipReq")]));
+  if(!out.gaps.length){ gw.innerHTML=`<p class="mini">${t("schNoGaps")}</p>`; return; }
+  const byCell={}, dsSet=new Set(), tmSet=new Set();
+  out.gaps.forEach(g=>{ byCell[g.ds+"|"+g.tm]=g.n; dsSet.add(g.ds); tmSet.add(g.tm); });
+  const dss=[...dsSet].sort(), tms=[...tmSet].sort();
+  const tbl=document.createElement("table");
+  const hr=document.createElement("tr"); hr.appendChild(th(t("thInterval")));
+  dss.forEach(ds=>hr.appendChild(th(dayNames[fromISO(ds).getDay()]+" "+fmtD(ds))));
+  const thead=document.createElement("thead"); thead.appendChild(hr); tbl.appendChild(thead);
+  const tb=document.createElement("tbody");
+  tms.forEach(tm=>{
+    const tr=document.createElement("tr");
+    const tht=document.createElement("th"); tht.textContent=tm; tr.appendChild(tht);
+    dss.forEach(ds=>{
+      const td=document.createElement("td"); const n=byCell[ds+"|"+tm];
+      if(n){ td.textContent="+"+n; td.className=n>=3?"tier-bad":"tier-warn"; }
+      tr.appendChild(td);
+    });
+    tb.appendChild(tr);
+  });
+  tbl.appendChild(tb); gw.appendChild(tbl);
+}
+/* Tikshuv sidur-avoda row shape — the single structure ALL scheduler I/O speaks */
+const TIKSHUV_HEADS=["מוקד","כניסה","יציאה","תאריך","יום","שם הנציג/ה","שעות","סטאטוס","מנהל צוות","מיומנות"];
+const HE_DAY=["א","ב","ג","ד","ה","ו",""];
+function tikshuvRow(a){
+  const m=state.rosterMeta.get(a.name)||(state.iron&&state.iron.emps.get(a.name))||{};
+  const h=(toMinW(a.e)-toMinW(a.s))/60;
+  return [m.site||"",a.s,a.e,fmtD(a.ds),HE_DAY[a.di]||"",a.name,
+    (Math.round(h*100)/100)+"",t("schSrc_"+(a.src||"base")),m.team||"",m.skill||""];
 }
 function renderScheduler(){
   if(!document.getElementById("schChipFc")) return;
-  const emps=state.iron?state.iron.emps.size:[...state.rosterMeta.keys()].length||state.roster.length;
   document.getElementById("schChipFc").textContent=t("schChipFc",{n:state.days.size});
   document.getElementById("schChipIron").textContent=state.iron
-    ? t("schChipIron",{n:state.iron.emps.size})
-    : t("schChipIronFb",{n:emps,h:fullTimeWeeklyHours()});
+    ? t("schChipIron",{n:validatedIron().size})
+    : t("schChipIronFb",{n:0,h:fullTimeWeeklyHours()});
   document.getElementById("schChipCon").textContent=t("schChipCon",{n:state.weeklyConstraints.length});
+  // no ברזל → the scheduler has no base to build from; the button stays gated
+  const run=document.getElementById("schRun"), gate=document.getElementById("schGate");
+  if(run) run.disabled=!state.iron;
+  if(gate) gate.style.display=state.iron?"none":"block";
 }
 function parseConstraintsGrid(grid){
   const hd=findHeader(grid);
@@ -2709,10 +2867,10 @@ document.getElementById("wfValCopy").addEventListener("click",()=>{
 document.getElementById("schRun").addEventListener("click",()=>{ runScheduler(); });
 document.getElementById("schCsv").addEventListener("click",()=>{
   if(!state.optimizedOutput.length) return;
-  const dayNames=t("days");
-  const rows=[["name","date","day","start","end","source"].join(",")]
-    .concat(state.optimizedOutput.map(a=>[csvQuote(a.name),fmtD(a.ds),csvQuote(dayNames[a.di]),a.s,a.e,a.src].join(",")));
-  downloadFile("wfm_optimized_schedule.csv",rows.join("\n"));
+  // export speaks the same Tikshuv sidur-avoda structure the input files use
+  const rows=[TIKSHUV_HEADS.map(csvQuote).join(",")]
+    .concat(state.optimizedOutput.map(a=>tikshuvRow(a).map(csvQuote).join(",")));
+  downloadFile("wfm_optimized_sidur.csv",rows.join("\n"));
 });
 document.getElementById("schConInput").addEventListener("change",e=>{
   const f=e.target.files[0]; if(!f) return;
@@ -2914,7 +3072,33 @@ function showToast(msg,ok){
   el.addEventListener("click",()=>el.classList.remove("show"));
 })();
 
+/* forecast data audit — impossible values are flagged, never silently displayed:
+   answered>offered (AR>100%), AHT outside 1–60 min, dates far from today */
+function auditForecast(){
+  const audit={imp:0,aht:0,far:0,measured:0};
+  const today=new Date(), MS=86400000;
+  for(const [ds,dm] of state.days){
+    if(Math.abs(fromISO(ds)-today)>400*MS) audit.far++;
+    for(const r of dm.values()){
+      if(r.answered>0) audit.measured++;
+      if((r.answered>r.volume)||(r.ans30>r.volume)) audit.imp++;
+      if(r.aht>0&&(r.aht<60||r.aht>3600)) audit.aht++;
+    }
+  }
+  state.fcAudit=audit;
+  const el=document.getElementById("fcAudit");
+  if(el){
+    const msgs=[];
+    if(audit.imp) msgs.push(t("auditImp",{n:audit.imp}));
+    if(audit.aht) msgs.push(t("auditAht",{n:audit.aht}));
+    if(audit.far) msgs.push(t("auditFar",{n:audit.far}));
+    el.style.display=msgs.length?"block":"none";
+    el.textContent=msgs.length?("⚠ "+t("fcAuditWarn")+" "+msgs.join(" · ")):"";
+    if(msgs.length) showToast("⚠ "+t("fcAuditWarn")+" "+msgs.join(" · "),false);
+  }
+}
 function afterForecastLoad(){
+  auditForecast();
   const keys=[...state.days.keys()].sort();
   state.minDate=keys[0]; state.maxDate=keys[keys.length-1];
   state.dataDepthDays=Math.round((fromISO(state.maxDate)-fromISO(state.minDate))/86400000)+1;
@@ -3604,6 +3788,19 @@ function th(x){ const e=document.createElement("th"); e.textContent=x; return e;
 function renderMatrix(){
   const tbl=document.getElementById("matrixTable"); tbl.innerHTML="";
   if(!state.week) return;
+  // credibility note: an uncalibrated Erlang model reads optimistic (90%+ AR) —
+  // say so explicitly instead of letting the numbers pretend to be measurements
+  {
+    let note=document.getElementById("mxCalibNote");
+    if(!note){ note=document.createElement("p"); note.className="mini"; note.id="mxCalibNote";
+      tbl.parentNode.insertBefore(note,tbl); }
+    const audit=state.fcAudit||{};
+    note.innerHTML=(state.calib&&state.calib!==1)
+      ? t("mxCalibOn",{k:state.calib})
+      : `<span style="color:var(--crimson);font-weight:600">${t("mxCalibOff")}</span>`;
+    if(audit.imp||audit.aht||audit.far)
+      note.innerHTML+=` <span style="color:var(--crimson)">${t("mxAuditFlag",{n:(audit.imp||0)+(audit.aht||0)+(audit.far||0)})}</span>`;
+  }
   const dates=weekDates(state.week), dayNames=t("days");
   let totSaved=0,totDrops=0,shortCount=0;
   let maxDef=0;
@@ -4232,8 +4429,12 @@ function renderRecruit(){
     cl.appendChild(tblc);
   }
 
-  /* roster table — honest columns: contracted/Δ only when the file provides them */
-  const rw=document.getElementById("rosterWrap"); rw.innerHTML="";
+}
+/* roster table — honest columns: contracted/Δ only when the file provides them.
+   Lives on the Workforce page: under-hours reps are a staffing lever, not a hiring one. */
+function renderInternalRoster(){
+  const rw=document.getElementById("rosterWrap"); if(!rw) return;
+  rw.innerHTML="";
   if(!state.roster.length){
     rw.innerHTML=`<div class="banner tip" style="text-align:center">${t("rosterNudge")}</div>`;
     return;
@@ -4846,6 +5047,58 @@ document.getElementById("injGo").addEventListener("click",()=>{
   state.injections.push({profile:p,count,windows:windows.map(w=>({...w}))});
   renderAll();
 });
+
+/* Course Gantt ingestion — deliberately forgiving: fuzzy headers (HE/EN), any date
+   format via normDateAny, duration from end-date or days column, sane defaults */
+function parseCoursesGrid(grid){
+  const KEYS={name:/קורס|course|שם/i,start:/התחל|start|תאריך|date/i,end:/סיום|end/i,
+    dur:/משך|ימים|duration|days/i,count:/כמות|חניכ|נציג|trainee|count/i,yield:/הסמכ|yield|אחוז/i};
+  let hd=null;
+  for(let r=0;r<Math.min(15,grid.length);r++){
+    const map={};
+    (grid[r]||[]).forEach((c,i)=>{ for(const k in KEYS) if(map[k]==null&&KEYS[k].test(String(c??""))) map[k]=i; });
+    if(map.start!=null&&(map.name!=null||map.count!=null)){ hd={row:r,map}; break; }
+  }
+  if(!hd) return 0;
+  const m=hd.map; let n=0;
+  for(let r=hd.row+1;r<grid.length;r++){
+    const row=grid[r]; if(!row) continue;
+    const start=normDateAny(row[m.start]); if(!start) continue; // forgiving: bad-date rows just skip
+    const name=(m.name!=null?String(row[m.name]??"").trim():"")||(t("courseDefault")+" "+(state.cohorts.length+1));
+    const count=Math.max(1,toNum(m.count!=null?row[m.count]:10)||10);
+    let duration=m.dur!=null?Math.round(toNum(row[m.dur])||0):0;
+    if(!duration&&m.end!=null){ const end=normDateAny(row[m.end]);
+      if(end&&end>start) duration=Math.round((fromISO(end)-fromISO(start))/86400000); }
+    if(!duration) duration=21;
+    let yld=m.yield!=null?toNum(row[m.yield]):NaN;
+    if(isFinite(yld)&&yld<=1) yld*=100; // 0.85 and 85 both mean 85%
+    if(!isFinite(yld)||yld<=0) yld=85;
+    state.cohorts.push({name,count,start,duration,yield:Math.min(100,Math.round(yld))});
+    n++;
+  }
+  return n;
+}
+function ingestCourseFile(f){
+  const r=new FileReader();
+  r.onload=()=>{ (async()=>{
+    try{
+      const res=await bytesToGrid(r.result);
+      let grids=res.grids?res.grids.map(s=>(s&&s.grid)||s||[]):[res.grid||[]];
+      if(res.json&&Array.isArray(res.json)){
+        const heads=Object.keys(res.json[0]||{});
+        grids=[[heads,...res.json.map(o=>heads.map(h=>o[h]))]];
+      }
+      let n=0;
+      for(const g of grids){ n+=parseCoursesGrid((g||[]).filter(x=>x&&x.length)); if(n) break; }
+      if(!n){ showToast("⚠ "+t("crsErr"),false); return; }
+      state.fcCache.clear(); // course graduates scale forecast agents
+      showToast("✅ "+t("crsOk",{n}),true);
+      renderAll();
+    }catch(err){ showToast("⚠ "+t("dropErrParse"),false); }
+  })(); };
+  r.readAsArrayBuffer(f);
+}
+wireDropzone("dzCourses","crsInput",ingestCourseFile);
 
 /* both portals share the universal auto-detecting pipeline — the hint only
    decides where errors are shown; a roster dropped on the forecast box still works */
