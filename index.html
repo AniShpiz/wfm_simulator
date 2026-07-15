@@ -2042,9 +2042,10 @@ function buildForecastGrid(grid,hd){
   if(map.volume==null) missing.push(t("tipVolume"));
   if(map.aht==null) missing.push(t("tipAht"));
   if(missing.length) throw {code:"missing",miss:missing};
-  // custom metric columns = truly unrecognized headers (duplicate duration/agent
-  // candidates that lost the mapping race are excluded — they'd be noise)
-  const known=hd.cols||new Set(Object.values(map));
+  // custom metric columns = headers that did not WIN a mapping. Race losers keep
+  // their data as extras (e.g. "זמן המתנה ממוצע" loses 'interval' to the real time
+  // column but is a legitimate ASA metric) — the 4-column cap bounds any noise.
+  const known=new Set(Object.values(map));
   const extras=[];
   (raw||[]).forEach((cell,c)=>{ const nm=String(cell??"").trim();
     if(nm&&!known.has(c)&&extras.length<4)
