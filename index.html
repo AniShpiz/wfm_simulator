@@ -2491,16 +2491,29 @@ function renderValidation(){
   });
   tbl.appendChild(tb); wrap.appendChild(tbl);
 }
+/* modular filter-option source: distinct team(J)/skill(N)/site(A) values, drawn from
+   the roster meta AND the iron employees so a list fills even when one source is sparse */
+const WF_FILTER_KEYS=[["wfTeam","team"],["wfSkill","skill"],["wfSite","site"]];
+function wfFilterValues(key){
+  const vals=new Set();
+  for(const m of state.rosterMeta.values()) if(m&&m[key]) vals.add(m[key]);
+  if(state.iron) for(const e of state.iron.emps.values()){
+    const m=state.rosterMeta.get(e.name)||e; if(m&&m[key]) vals.add(m[key]);
+  }
+  return [...vals].sort();
+}
+function populateWfFilters(){
+  WF_FILTER_KEYS.forEach(([id,key])=>{
+    const sel=document.getElementById(id); if(!sel) return;
+    const cur=state.wfFilter[key];
+    sel.innerHTML=`<option value="">${t("wfAll")}</option>`
+      +wfFilterValues(key).map(v=>`<option${v===cur?" selected":""}>${v}</option>`).join("");
+  });
+}
 function renderWorkforce(){
   if(!document.getElementById("wfKpiUtil")) return;
   document.getElementById("wfNoIron").style.display=state.iron?"none":"block";
-  // filter selects (preserve selection)
-  [["wfTeam","team"],["wfSkill","skill"],["wfSite","site"]].forEach(([id,key])=>{
-    const sel=document.getElementById(id);
-    const vals=[...new Set([...state.rosterMeta.values()].map(m=>m[key]).filter(Boolean))].sort();
-    const cur=state.wfFilter[key];
-    sel.innerHTML=`<option value="">${t("wfAll")}</option>`+vals.map(v=>`<option${v===cur?" selected":""}>${v}</option>`).join("");
-  });
+  populateWfFilters(); // preserves current selection
   document.getElementById("wfWeekLbl").textContent=state.week?t("weekOpt",{w:isoWeek(state.week),a:fmtD(state.week),b:fmtD(addDays(state.week,5))}):"";
   const W=computeWorkforce();
   document.getElementById("wfKpiUtil").textContent=W.ironTotal>0?pct(Math.min(1.5,W.sched/W.ironTotal)):t("noData");
