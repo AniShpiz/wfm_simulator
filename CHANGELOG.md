@@ -33,6 +33,11 @@ All notable changes to this project will be documented in this file.
   far-off dates; matrix shows a calibration note when AR/TSF are uncalibrated
   model estimates.
 
+- Test suite: `tests/unit` (43 assertions over dates/times, ingestion, Erlang
+  math, scheduler, real-workbook parsing — run `node --test tests/unit/*.test.js`)
+  plus `tests/browser/smoke.js` E2E; tests extract the shipped functions
+  directly from `index.html`. See `AUDIT_PLAN.md`.
+
 ### Changed
 
 - Internal Roster Optimization moved from Recruitment to the Workforce & Iron page.
