@@ -5205,8 +5205,10 @@ modeSel.value=state.settings.mode;
 primSel.value=state.settings.primaryMetric;
 buildDayWins();
 // item 11: cached datasets re-populate the workspace (sidur-only restores without touching forecast state)
+// no auto-demo: a fresh workspace starts EMPTY so real uploads are unmistakable —
+// sample data loads only via the explicit button on the Home page
 if(loadData()){ if(state.days.size) afterForecastLoad(); else { applyDataWeek(); updatePortalStatus(); renderAll(); } }
-else loadSample();
+else renderAll();
 document.getElementById("polEnable").checked=state.policy.enabled;
 document.getElementById("polFields").disabled=!state.policy.enabled;
 syncOptBtn();
