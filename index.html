@@ -291,6 +291,10 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <span class="info" id="horizonInfo" data-tip="" tabindex="0">i</span>
         <span class="pill" id="editBadge" style="display:none"></span>
         <button class="linklike" id="resetEdits" style="display:none" data-i18n="resetEdits">↺ Reset to Original Forecast</button>
+        <div class="splitbtn" id="skillScopeWrap" style="display:none">
+          <button class="btn ghost" id="skillScopeBtn"></button>
+          <div class="menu pad" id="skillScopeMenu" style="min-width:230px"></div>
+        </div>
         <div class="seg" id="metricSeg">
           <button data-metric="tsf" class="active" id="btnTsf">TSF</button>
           <button data-metric="ar" data-i18n="metricAr">Answer Rate %</button>
@@ -804,6 +808,9 @@ en:{
   crsOk:"{n} courses loaded into the training pipeline.", crsErr:"No course rows recognized — need at least a name/date column.",
   wfDrillTitle:"Drill-down: {seg} by {dim}", wfDrillBy:"Drill by", wfDrillHint:"Click a treemap tile to break it down.", wfDrillBack:"✕ Close drill-down",
   roIronNote:"Iron base: {n} employees",
+  skillScopeAll:"All skills answer", skillScopeN:"{n} answering skills",
+  skillScopeHint:"Which skills count as ANSWERING capacity for this queue's AR/TSF? (HR & workforce pages always include everyone.) On billing days check בכיר; מרפאות usually answer קו 1 too.",
+  skillScopeAllBtn:"Count every skill",
   fcAuditWarn:"Data audit:", auditImp:"{n} intervals with more answered than offered calls (AR>100% — capped)", auditAht:"{n} intervals with AHT outside 1–60 min", auditFar:"{n} dates more than ~13 months from today — check the date column format",
   mxCalibOn:"Model calibrated to this floor's measured answer rates (κ={k}).",
   mxCalibOff:"⚠ Uncalibrated model estimates — the file carries no (or too little) measured answered-calls data, so AR/TSF here are pure Erlang and usually read higher than your real floor. Load a forecast export that includes answered-calls columns to calibrate.",
@@ -1076,6 +1083,9 @@ he:{
   crsOk:"{n} קורסים נטענו לצנרת ההכשרה.", crsErr:"לא זוהו שורות קורס — נדרשת לפחות עמודת שם/תאריך.",
   wfDrillTitle:"פילוח: {seg} לפי {dim}", wfDrillBy:"פילוח לפי", wfDrillHint:"לחצו על אריח במפת החום לפילוח.", wfDrillBack:"✕ סגירת פילוח",
   roIronNote:"בסיס ברזל: {n} עובדים",
+  skillScopeAll:"כל המיומנויות עונות", skillScopeN:"{n} מיומנויות עונות",
+  skillScopeHint:"אילו מיומנויות נספרות כקיבולת מענה (AR/TSF) של התור? (דפי כוח אדם תמיד כוללים את כולם.) בימי חיובים סמנו גם בכיר; מרפאות לרוב עונות גם קו 1.",
+  skillScopeAllBtn:"ספרו את כל המיומנויות",
   fcAuditWarn:"בקרת נתונים:", auditImp:"{n} אינטרוולים עם יותר שיחות נענות מנכנסות (מענה>100% — נחסם)", auditAht:"{n} אינטרוולים עם אורך שיחה מחוץ לטווח 1–60 דק'", auditFar:"{n} תאריכים רחוקים מהיום ביותר מ־13 חודשים — בדקו את פורמט עמודת התאריך",
   mxCalibOn:"המודל מכויל לאחוזי המענה שנמדדו במוקד (κ={k}).",
   mxCalibOff:"⚠ הערכות מודל לא מכוילות — בקובץ אין (או כמעט אין) נתוני שיחות נענות מדודים, ולכן המענה/TSF כאן הם ארלנג תאורטי ולרוב גבוהים מהמציאות במוקד. טענו תחזית עם עמודות שיחות נענות לכיול.",
@@ -1558,7 +1568,10 @@ const state={
   validationErrors:[],   // roster employees with blank/missing Iron base
   weeklyConstraints:[],  // Iteration-2 inputs: {name,ds,s,e,type}
   optimizedOutput:[],    // generated schedule ready for CSV export
-  wfFilter:{team:"",skill:"",site:""}
+  wfFilter:{team:"",skill:"",site:""},
+  capSkills:null,        // answering-queue scope: null = every skill counts
+  rosterCapSkill:{},     // block key -> {skill: distinct reps}
+  skillList:[]           // all skills seen in the roster (modular queue list)
 };
 /* modular shift window (default 08:00–18:00 inclusive) — rebuilt when settings change */
 let TIMES=[];
@@ -2156,6 +2169,7 @@ function buildRosterGrid(grid,hd){
      lines, which inflated the matrix above the real headcount (e.g. 71 vs 66).
      We track the unique-name set per block and store its size. */
   const nameSets=new Map(); // key -> Set(name): distinct reps per interval block
+  const skillSets=new Map(); // key -> skill -> Set(name): the queue each rep answers
   const put=(target,keyBase,tm,rec)=>{
     const key=keyBase+"|"+tm;
     if(rec.name){ named=true;
@@ -2163,6 +2177,10 @@ function buildRosterGrid(grid,hd){
       const isNew=!set.has(rec.name);
       set.add(rec.name);
       target.set(key,set.size); // distinct reps, not row count
+      const sk=rec.skill||"";
+      let sm=skillSets.get(key); if(!sm){ sm=new Map(); skillSets.set(key,sm); }
+      let ss=sm.get(sk); if(!ss){ ss=new Set(); sm.set(sk,ss); }
+      ss.add(rec.name);
       // integrity: never invent contracted hours — null until the file provides them
       if(!emp.has(rec.name)) emp.set(rec.name,{scheduled:0,contracted:rec.contracted??null,blocks:new Set()});
       else if(rec.contracted&&!emp.get(rec.name).contracted) emp.get(rec.name).contracted=rec.contracted;
@@ -2192,6 +2210,7 @@ function buildRosterGrid(grid,hd){
       rec.agents=ag;
     }
     if(map.contracted!=null){ const ct=toNum(row[map.contracted]); if(isFinite(ct)&&ct>0) rec.contracted=ct; }
+    if(map.skill!=null){ const sv=String(row[map.skill]??"").trim(); if(sv) rec.skill=sv; }
     let tms=null;
     if(map.interval!=null){
       const tm=normTimeAny(row[map.interval]);
@@ -2208,6 +2227,11 @@ function buildRosterGrid(grid,hd){
   if((!capDated.size&&!capWeekly.size)||ok<1) throw {code:"nodata",skipped};
   state.rosterCap=capDated; state.rosterCapWeekly=capWeekly;
   state.rosterNamed=named||state.rosterNamed;
+  // per-skill distinct counts per block → matrix coverage can scope to answering queues
+  state.rosterCapSkill={};
+  for(const [key,sm] of skillSets){ const o={}; for(const [sk,ss] of sm) o[sk]=ss.size; state.rosterCapSkill[key]=o; }
+  state.skillList=[...new Set([].concat(...[...skillSets.values()].map(sm=>[...sm.keys()])))].filter(Boolean).sort();
+  applyDefaultCapSkills();
   rebuildRosterCoverage(); // item 1: coverage sets make the roster the sole ground truth
   const wDiv=Math.max(1,weekSet.size); // multi-week files → weekly-average scheduled hours
   if(named) state.roster=[...emp.entries()].map(([name,v])=>({name,contracted:v.contracted,scheduled:Math.round(v.scheduled/wDiv*10)/10}));
@@ -3711,14 +3735,33 @@ function readCustomWindows(){
 }
 
 /* ---------------- Day computation ---------------- */
+/* ---- Answering-skill scope (queues) ----
+   The floor runs several queues (קו 1, בכיר, דיגיטל, מרפאות…). The matrix and its
+   AR/TSF math count ONLY skills selected as answering capacity — by default the
+   קו-1 queue — while HR/workforce pages always include everyone. Fully modular:
+   any skill can be toggled in or out (seniors convert to קו 1 on billing days,
+   מרפאות usually answer קו 1, future queues just appear in the list). */
+function applyDefaultCapSkills(){
+  const sk=state.skillList||[];
+  const kav=sk.find(s=>/קו\s*1|kav\s*1|line\s*1/i.test(s));
+  state.capSkills=kav?[kav]:null; // null = all skills count (no skill data / no קו-1)
+}
+function capCounted(key,total){
+  const sc=state.capSkills;
+  if(!sc||!sc.length) return total;
+  const by=state.rosterCapSkill&&state.rosterCapSkill[key];
+  if(!by) return total; // aggregate/anonymous rosters carry no skill info
+  let n=0; for(const s of sc) n+=by[s]||0;
+  return n+(by[""]||0); // reps without a skill tag always count — unknown ≠ excluded
+}
 function capacityFor(ds,dayIdx,tm,rec){
   const dk=ds+"|"+tm;
-  if(state.rosterCap.has(dk)) return state.rosterCap.get(dk);
+  if(state.rosterCap.has(dk)) return capCounted(dk,state.rosterCap.get(dk));
   // a roster that covers this date/weekday is the FULL ground truth:
   // blocks it doesn't mention mean nobody is scheduled — never fall back to baseline
   if(state.rosterDates.has(ds)) return 0;
   const wk=dayIdx+"|"+tm;
-  if(state.rosterCapWeekly.has(wk)) return state.rosterCapWeekly.get(wk);
+  if(state.rosterCapWeekly.has(wk)) return capCounted(wk,state.rosterCapWeekly.get(wk));
   if(state.rosterDays.has(String(dayIdx))) return 0;
   return rec.agents;
 }
@@ -3801,7 +3844,45 @@ function tier(v){ return v>=.9?"tier-good":v>=.8?"tier-warn":"tier-bad"; }
 function pct(v){ return (v*100).toFixed(1)+"%"; }
 function th(x){ const e=document.createElement("th"); e.textContent=x; return e; }
 
+/* queue-scope selector on the matrix toolbar — checkboxes per skill, modular */
+function renderSkillScope(){
+  const wrap=document.getElementById("skillScopeWrap"); if(!wrap) return;
+  const skills=state.skillList||[];
+  wrap.style.display=skills.length?"inline-block":"none";
+  if(!skills.length) return;
+  const sc=state.capSkills;
+  document.getElementById("skillScopeBtn").textContent="🎧 "+
+    (!sc||!sc.length?t("skillScopeAll"):(sc.length===1?sc[0]:t("skillScopeN",{n:sc.length})));
+  const menu=document.getElementById("skillScopeMenu");
+  menu.innerHTML="";
+  const hint=document.createElement("div"); hint.className="mini"; hint.style.marginBottom="6px";
+  hint.textContent=t("skillScopeHint"); menu.appendChild(hint);
+  skills.forEach(s=>{
+    const lb=document.createElement("label");
+    lb.style.cssText="display:flex;gap:6px;align-items:center;font-size:.8rem;margin:3px 0;cursor:pointer";
+    const cb=document.createElement("input"); cb.type="checkbox";
+    cb.checked=!sc||sc.includes(s);
+    cb.addEventListener("change",()=>{
+      const on=[...menu.querySelectorAll("input:checked")].map(x=>x._skill);
+      state.capSkills=on.length===skills.length?null:on;
+      capScopeChanged();
+    });
+    cb._skill=s;
+    lb.appendChild(cb); lb.appendChild(document.createTextNode(" "+s));
+    menu.appendChild(lb);
+  });
+  const all=document.createElement("button"); all.className="linklike"; all.style.marginTop="6px";
+  all.textContent=t("skillScopeAllBtn");
+  all.addEventListener("click",()=>{ state.capSkills=null; capScopeChanged(); });
+  menu.appendChild(all);
+}
+function capScopeChanged(){
+  memo.clear(); state.fcCache.clear(); saveData();
+  renderMatrix();
+  dirtyPages.add("recruit"); dirtyPages.add("scheduler"); renderDirty();
+}
 function renderMatrix(){
+  renderSkillScope();
   const tbl=document.getElementById("matrixTable"); tbl.innerHTML="";
   if(!state.week) return;
   // credibility note: an uncalibrated Erlang model reads optimistic (90%+ AR) —
@@ -5160,7 +5241,8 @@ function saveData(){
       iron:state.iron?{total:state.iron.total,
         emps:Object.fromEntries([...state.iron.emps].map(([n,v])=>[n,{...v,missing:[...v.missing]}]))}:null,
       meta:Object.fromEntries(state.rosterMeta), vac:state.vacations,
-      schedRows:state.schedRows, valErr:state.validationErrors }));
+      schedRows:state.schedRows, valErr:state.validationErrors,
+      capSkills:state.capSkills, capSkillMap:state.rosterCapSkill, skillList:state.skillList }));
   }catch(e){} // quota exceeded on huge files → data simply stays transient
 }
 function loadData(){
@@ -5182,6 +5264,8 @@ function loadData(){
     state.rosterMeta=new Map(Object.entries(s.meta||{}));
     state.vacations=s.vac||[]; state.schedRows=s.schedRows||[];
     state.validationErrors=s.valErr||[];
+    state.rosterCapSkill=s.capSkillMap||{}; state.skillList=s.skillList||[];
+    state.capSkills=s.capSkills===undefined?null:s.capSkills;
     rebuildRosterCoverage();
     return true;
   }catch(e){ return false; }
