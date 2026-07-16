@@ -803,6 +803,7 @@ en:{
   crsTitle:"Course Gantt Upload", crsHint:"Drop a course plan file — columns (any order, Hebrew or English): course name (קורס), start date (תאריך התחלה), duration in days or end date (סיום), trainees (כמות), yield % (הסמכה). Dates accept dd/mm/yyyy, ISO or Excel serials; missing yield defaults to 85%.",
   crsOk:"{n} courses loaded into the training pipeline.", crsErr:"No course rows recognized — need at least a name/date column.",
   wfDrillTitle:"Drill-down: {seg} by {dim}", wfDrillBy:"Drill by", wfDrillHint:"Click a treemap tile to break it down.", wfDrillBack:"✕ Close drill-down",
+  roIronNote:"Iron base: {n} employees",
   fcAuditWarn:"Data audit:", auditImp:"{n} intervals with more answered than offered calls (AR>100% — capped)", auditAht:"{n} intervals with AHT outside 1–60 min", auditFar:"{n} dates more than ~13 months from today — check the date column format",
   mxCalibOn:"Model calibrated to this floor's measured answer rates (κ={k}).",
   mxCalibOff:"⚠ Uncalibrated model estimates — the file carries no (or too little) measured answered-calls data, so AR/TSF here are pure Erlang and usually read higher than your real floor. Load a forecast export that includes answered-calls columns to calibrate.",
@@ -1074,6 +1075,7 @@ he:{
   crsTitle:"העלאת גאנט קורסים", crsHint:"גררו קובץ תוכנית קורסים — עמודות (בכל סדר, עברית או אנגלית): שם קורס, תאריך התחלה, משך בימים או תאריך סיום, כמות חניכים, אחוז הסמכה. תאריכים בכל פורמט (dd/mm/yyyy, ISO, סריאלי של אקסל); אחוז הסמכה חסר יקבל 85%.",
   crsOk:"{n} קורסים נטענו לצנרת ההכשרה.", crsErr:"לא זוהו שורות קורס — נדרשת לפחות עמודת שם/תאריך.",
   wfDrillTitle:"פילוח: {seg} לפי {dim}", wfDrillBy:"פילוח לפי", wfDrillHint:"לחצו על אריח במפת החום לפילוח.", wfDrillBack:"✕ סגירת פילוח",
+  roIronNote:"בסיס ברזל: {n} עובדים",
   fcAuditWarn:"בקרת נתונים:", auditImp:"{n} אינטרוולים עם יותר שיחות נענות מנכנסות (מענה>100% — נחסם)", auditAht:"{n} אינטרוולים עם אורך שיחה מחוץ לטווח 1–60 דק'", auditFar:"{n} תאריכים רחוקים מהיום ביותר מ־13 חודשים — בדקו את פורמט עמודת התאריך",
   mxCalibOn:"המודל מכויל לאחוזי המענה שנמדדו במוקד (κ={k}).",
   mxCalibOff:"⚠ הערכות מודל לא מכוילות — בקובץ אין (או כמעט אין) נתוני שיחות נענות מדודים, ולכן המענה/TSF כאן הם ארלנג תאורטי ולרוב גבוהים מהמציאות במוקד. טענו תחזית עם עמודות שיחות נענות לכיול.",
@@ -3021,7 +3023,9 @@ function ingestSuccess(stats,hint){
     : stats.type==="workbook"
     ? t("wbOk",{e:stats.reps,i:stats.iron,v:stats.val})
     : (stats.named?t("roOkNamed",{e:stats.reps,n:stats.blocks}):t("roOk",{n:stats.blocks}));
-  p.st.textContent="✅ "+msg+skip; p.st.style.display="block";
+  // the rich per-upload message goes to the TOAST; the portal shows the canonical
+  // persistent status (updatePortalStatus) so a refresh never rewords it
+  updatePortalStatus(); p.st.style.display="block";
   // item 13: skipped-rows audit link under the success banner
   if(stats.skipped&&stats.skippedRows&&stats.skippedRows.length){
     const a=document.createElement("button");
@@ -3441,20 +3445,23 @@ function calibrateModel(){
   state.calib=Math.round((lo+hi)/2*1000)/1000;
 }
 function updatePortalStatus(){
+  // SINGLE source of the portal status text — the same words in-session and after
+  // a refresh, so reloading never *looks* like the data changed
   const fs=document.getElementById("fcStatus");
   if(state.days.size){
     const n=[...state.days.values()].reduce((a,m)=>a+m.size,0);
-    fs.textContent=t("fcLoaded",{n,d:state.days.size})
+    fs.textContent="✅ "+t("fcLoaded",{n,d:state.days.size})
       +(state.cleanClipped?" · "+t("cleanNote",{k:state.cleanClipped}):"");
     fs.style.display="block";
   }
   const rs=document.getElementById("roStatus");
   if(state.rosterCap.size||state.rosterCapWeekly.size){
-    rs.textContent=state._rosterWeekly&&!state.rosterCap.size
+    rs.textContent="✅ "+(state._rosterWeekly&&!state.rosterCap.size
       ? t("roLoadedWeekly",{n:state.rosterCapWeekly.size})
       : (state.rosterNamed
           ? t("roLoadedNamed",{n:state.rosterCap.size||state.rosterCapWeekly.size,e:state.roster.length})
-          : t("roLoadedAnon",{n:state.rosterCap.size||state.rosterCapWeekly.size}));
+          : t("roLoadedAnon",{n:state.rosterCap.size||state.rosterCapWeekly.size})))
+      +(state.iron?" · "+t("roIronNote",{n:state.iron.emps.size}):"");
     rs.style.color="";
     if(state.rosterCap.size&&state.minDate){ // dated roster with zero overlap = silent no-op; warn instead
       let overlap=false;
