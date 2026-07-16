@@ -476,10 +476,10 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <button class="btn navy" id="schRun" data-i18n="schRun">Generate Optimized Schedule</button>
       </div>
       <p class="gateNote" id="schGate" style="display:none" data-i18n="schNeedIron">The auto-scheduler builds shifts from the סידור ברזל base. Load a Tikshuv workbook with an Iron sheet to enable it.</p>
-      <div class="toolbar">
-        <label data-i18n="schConL">Weekly constraints file (optional):</label>
-        <input type="file" id="schConInput" accept=".csv,.tsv,.txt,.json,.xlsx,.xlsm,.xls" style="font-size:.78rem">
-        <span class="mini" data-i18n="schConHint">Employee | Date | Start | End | Type (Unavailable / Partial / Vacation)</span>
+      <div class="dropzone" id="dzSchCon" style="margin-top:8px">
+        <h3 data-i18n="schConL">Weekly constraints file (optional):</h3>
+        <p class="mini" data-i18n="schConHint">Employee | Date | Start | End | Type (Unavailable / Partial / Vacation)</p>
+        <input type="file" id="schConInput" accept=".csv,.tsv,.txt,.json,.xlsx,.xlsm,.xls" style="display:none">
       </div>
       <div class="banner good" id="schBanner"></div>
     </div>
@@ -641,12 +641,12 @@ en:{
   step3t:"Set targets & policies", step3d:"Targets, queue behavior and flex rules.",
   step4t:"Simulate & optimize", step4d:"Matrix, what-if simulations, optimizer.",
   stepOpen:"Open",
-  fcTitle:"Forecast Ingestion — drag & drop CSV / JSON",
+  fcTitle:"Forecast Ingestion — drag & drop Excel / CSV / JSON",
   dropHint:"Nothing leaves your browser.",
   loadSample:"Load sample data",
   fcLoaded:"Loaded {n} interval records across {d} days.",
   roTitle:"Roster & Hard Constraints Ingestion",
-  roHint:"Named shifts, dated intervals, weekly grids or a sidur matrix — becomes the ground-truth capacity.",
+  roHint:"Drop one Tikshuv workbook (סידור עבודה + סידור ברזל) to load roster AND iron together — or named shifts, dated intervals, weekly grids, a sidur matrix.",
   proTip:"💡 Named rosters unlock personal shift recommendations.",
   roLoadedNamed:"Roster loaded: {n} intervals, {e} named representatives. Now the ground-truth capacity.",
   roLoadedAnon:"Roster loaded: {n} intervals (anonymous capacity). Now the ground-truth capacity.",
@@ -912,12 +912,12 @@ he:{
   step3t:"הגדרת יעדים ומדיניות", step3d:"יעדים, התנהגות תור וכללי גמישות.",
   step4t:"סימולציה ואופטימיזציה", step4d:"מטריצה, סימולציות What-If, מייעל.",
   stepOpen:"פתיחה",
-  fcTitle:"קליטת תחזית — גררו ושחררו CSV / JSON",
+  fcTitle:"קליטת תחזית — גררו ושחררו Excel / CSV / JSON",
   dropHint:"שום נתון לא יוצא מהדפדפן.",
   loadSample:"טעינת נתוני דוגמה",
   fcLoaded:"נטענו {n} רשומות אינטרוול על פני {d} ימים.",
   roTitle:"קליטת סידור עבודה ואילוצים קשיחים",
-  roHint:"משמרות בשמות, אינטרוולים מתוארכים, רשת שבועית או מטריצת סידור — הופך לקיבולת האמת.",
+  roHint:"גררו קובץ תקשוב אחד (סידור עבודה + סידור ברזל) לטעינת הסידור והברזל יחד — או משמרות בשמות, אינטרוולים מתוארכים, רשת שבועית ומטריצת סידור.",
   proTip:"💡 סידור עם שמות פותח המלצות שיבוץ אישיות.",
   roLoadedNamed:"סידור נטען: {n} אינטרוולים, {e} נציגים בשמות. מעתה קיבולת האמת.",
   roLoadedAnon:"סידור נטען: {n} אינטרוולים (קיבולת אנונימית). מעתה קיבולת האמת.",
@@ -1626,9 +1626,14 @@ function wireDropzone(zoneId,inputId,handler){
   const z=document.getElementById(zoneId), inp=document.getElementById(inputId);
   ["dragenter","dragover"].forEach(ev=>z.addEventListener(ev,e=>{e.preventDefault();z.classList.add("hover");}));
   ["dragleave","drop"].forEach(ev=>z.addEventListener(ev,e=>{e.preventDefault();z.classList.remove("hover");}));
-  z.addEventListener("drop",e=>{ const f=e.dataTransfer.files[0]; if(f) handler(f); });
+  // EVERY dropped file ingests — a forecast + sidur multi-selected together must not lose one
+  z.addEventListener("drop",e=>{ [...e.dataTransfer.files].forEach(handler); });
   z.addEventListener("click",e=>{ if(!e.target.closest(".linklike")) inp.click(); });
-  inp.addEventListener("change",e=>{ if(e.target.files[0]){ handler(e.target.files[0]); e.target.value=""; } });
+  // keyboard access: the zone acts as a button (Enter/Space opens the picker)
+  z.tabIndex=0; z.setAttribute("role","button");
+  z.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); inp.click(); } });
+  inp.multiple=true;
+  inp.addEventListener("change",e=>{ if(e.target.files.length){ [...e.target.files].forEach(handler); e.target.value=""; } });
 }
 function ingestError(zone,errEl,msg){ zone.classList.add("error"); errEl.textContent=msg; errEl.style.display="block"; }
 function splitCSV(text){ return text.replace(/\r/g,"").split("\n").filter(l=>l.trim()); }
@@ -2872,26 +2877,30 @@ document.getElementById("schCsv").addEventListener("click",()=>{
     .concat(state.optimizedOutput.map(a=>tikshuvRow(a).map(csvQuote).join(",")));
   downloadFile("wfm_optimized_sidur.csv",rows.join("\n"));
 });
-document.getElementById("schConInput").addEventListener("change",e=>{
-  const f=e.target.files[0]; if(!f) return;
+function ingestConstraintsFile(f){
   const r=new FileReader();
   r.onload=()=>{ (async()=>{
     try{
       const res=await bytesToGrid(r.result);
-      let grid=res.grid;
-      if(res.grids) grid=(res.grids[0]&&(res.grids[0].grid||res.grids[0]))||[];
+      // multi-sheet workbooks: try every sheet until one yields constraints
+      let grids=res.grids?res.grids.map(s=>(s&&s.grid)||s||[]):[res.grid||[]];
       if(res.json&&Array.isArray(res.json)){
         const heads=Object.keys(res.json[0]||{});
-        grid=[heads,...res.json.map(o=>heads.map(h=>o[h]))];
+        grids=[[heads,...res.json.map(o=>heads.map(h=>o[h]))]];
       }
-      const stats=parseConstraintsGrid((grid||[]).filter(x=>x&&x.length));
+      let stats=null,lastErr=null;
+      for(const g of grids){
+        try{ stats=parseConstraintsGrid((g||[]).filter(x=>x&&x.length)); break; }
+        catch(err){ lastErr=err; }
+      }
+      if(!stats) throw lastErr||{code:"noheader"};
       showToast("✅ "+t("schConOk",{n:stats.rows}),true);
       renderScheduler();
     }catch(err){ showToast("⚠ "+t("dropErrParse"),false); }
   })(); };
   r.readAsArrayBuffer(f);
-  e.target.value="";
-});
+}
+wireDropzone("dzSchCon","schConInput",ingestConstraintsFile);
 
 async function bytesToGrid(buf){
   const u8=new Uint8Array(buf);
@@ -5111,8 +5120,9 @@ let dragDepth=0;
 document.addEventListener("dragenter",e=>{
   if(!e.dataTransfer||![...(e.dataTransfer.types||[])].includes("Files")) return;
   dragDepth++;
-  if(!e.target.closest||!e.target.closest(".dropzone"))
-    document.getElementById("dropOverlay").classList.add("show");
+  // over a portal the zone's own highlight speaks — the full-screen overlay would cover it
+  document.getElementById("dropOverlay").classList.toggle("show",
+    !e.target.closest||!e.target.closest(".dropzone"));
 });
 document.addEventListener("dragleave",()=>{
   if(--dragDepth<=0){ dragDepth=0; document.getElementById("dropOverlay").classList.remove("show"); }
@@ -5123,8 +5133,8 @@ document.addEventListener("drop",e=>{
   dragDepth=0;
   document.getElementById("dropOverlay").classList.remove("show");
   if(e.target.closest&&e.target.closest(".dropzone")) return; // portal handlers own these
-  const f=e.dataTransfer&&e.dataTransfer.files[0];
-  if(f) ingestFile(f,null);
+  // multi-file drops ingest EVERY file (forecast + sidur together in one gesture)
+  [...(e.dataTransfer&&e.dataTransfer.files||[])].forEach(f=>ingestFile(f,null));
 });
 
 document.getElementById("langSelect").addEventListener("change",e=>setLang(e.target.value));
