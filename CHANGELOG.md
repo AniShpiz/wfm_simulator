@@ -42,6 +42,11 @@ All notable changes to this project will be documented in this file.
 
 - Internal Roster Optimization moved from Recruitment to the Workforce & Iron page.
 - Nav tab labels no longer carry emoji.
+- Drag & drop audit: multi-file drops now ingest EVERY file (forecast + sidur in
+  one gesture); dropzones are keyboard-accessible (Tab + Enter/Space);
+  drop-anywhere overlay yields to portal highlighting; scheduler constraints
+  input is now a dropzone (multi-sheet aware) instead of a bare file picker;
+  home-page copy mentions Excel and the Tikshuv workbook flow.
 
 - Initial documentation baseline:
   - DESGIN.md

@@ -291,6 +291,10 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <span class="info" id="horizonInfo" data-tip="" tabindex="0">i</span>
         <span class="pill" id="editBadge" style="display:none"></span>
         <button class="linklike" id="resetEdits" style="display:none" data-i18n="resetEdits">↺ Reset to Original Forecast</button>
+        <div class="splitbtn" id="skillScopeWrap" style="display:none">
+          <button class="btn ghost" id="skillScopeBtn"></button>
+          <div class="menu pad" id="skillScopeMenu" style="min-width:230px"></div>
+        </div>
         <div class="seg" id="metricSeg">
           <button data-metric="tsf" class="active" id="btnTsf">TSF</button>
           <button data-metric="ar" data-i18n="metricAr">Answer Rate %</button>
@@ -476,10 +480,10 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <button class="btn navy" id="schRun" data-i18n="schRun">Generate Optimized Schedule</button>
       </div>
       <p class="gateNote" id="schGate" style="display:none" data-i18n="schNeedIron">The auto-scheduler builds shifts from the סידור ברזל base. Load a Tikshuv workbook with an Iron sheet to enable it.</p>
-      <div class="toolbar">
-        <label data-i18n="schConL">Weekly constraints file (optional):</label>
-        <input type="file" id="schConInput" accept=".csv,.tsv,.txt,.json,.xlsx,.xlsm,.xls" style="font-size:.78rem">
-        <span class="mini" data-i18n="schConHint">Employee | Date | Start | End | Type (Unavailable / Partial / Vacation)</span>
+      <div class="dropzone" id="dzSchCon" style="margin-top:8px">
+        <h3 data-i18n="schConL">Weekly constraints file (optional):</h3>
+        <p class="mini" data-i18n="schConHint">Employee | Date | Start | End | Type (Unavailable / Partial / Vacation)</p>
+        <input type="file" id="schConInput" accept=".csv,.tsv,.txt,.json,.xlsx,.xlsm,.xls" style="display:none">
       </div>
       <div class="banner good" id="schBanner"></div>
     </div>
@@ -616,7 +620,21 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
 "use strict";
 // footer logo mirrors the favicon (one embedded image serves both)
 { const fl=document.getElementById("footerLogo"), ic=document.querySelector('link[rel="icon"]');
-  if(fl&&ic) fl.src=ic.href; else if(fl) fl.style.display="none"; }
+  if(fl&&ic) fl.src=ic.href; else if(fl) fl.style.display="none";
+  // easter egg: click the logo → it blooms to center stage; click again → gone
+  if(fl&&ic){
+    fl.style.cursor="pointer";
+    fl.addEventListener("click",()=>{
+      let big=document.getElementById("logoEgg");
+      if(big){ big.remove(); return; }
+      big=document.createElement("div"); big.id="logoEgg";
+      big.style.cssText="position:fixed;inset:0;z-index:400;display:flex;align-items:center;justify-content:center;background:rgba(13,42,77,.75);cursor:pointer;backdrop-filter:blur(3px)";
+      big.innerHTML=`<img src="${ic.href}" alt="" style="width:min(60vw,60vh);height:min(60vw,60vh);border-radius:24px;box-shadow:0 24px 80px rgba(0,0,0,.5);transform:scale(.3);opacity:0;transition:transform .45s cubic-bezier(.2,1.6,.4,1),opacity .3s">`;
+      document.body.appendChild(big);
+      requestAnimationFrame(()=>{ const im=big.querySelector("img"); im.style.transform="scale(1)"; im.style.opacity="1"; });
+      big.addEventListener("click",()=>big.remove());
+    });
+  } }
 /* =====================================================================
    WFM Simulator v1.2 — pure client-side. © Imri Fichman, Tikshuv.
 
@@ -641,12 +659,12 @@ en:{
   step3t:"Set targets & policies", step3d:"Targets, queue behavior and flex rules.",
   step4t:"Simulate & optimize", step4d:"Matrix, what-if simulations, optimizer.",
   stepOpen:"Open",
-  fcTitle:"Forecast Ingestion — drag & drop CSV / JSON",
+  fcTitle:"Forecast Ingestion — drag & drop Excel / CSV / JSON",
   dropHint:"Nothing leaves your browser.",
   loadSample:"Load sample data",
   fcLoaded:"Loaded {n} interval records across {d} days.",
   roTitle:"Roster & Hard Constraints Ingestion",
-  roHint:"Named shifts, dated intervals, weekly grids or a sidur matrix — becomes the ground-truth capacity.",
+  roHint:"Drop one Tikshuv workbook (סידור עבודה + סידור ברזל) to load roster AND iron together — or named shifts, dated intervals, weekly grids, a sidur matrix.",
   proTip:"💡 Named rosters unlock personal shift recommendations.",
   roLoadedNamed:"Roster loaded: {n} intervals, {e} named representatives. Now the ground-truth capacity.",
   roLoadedAnon:"Roster loaded: {n} intervals (anonymous capacity). Now the ground-truth capacity.",
@@ -781,21 +799,22 @@ en:{
   wfNoIron:"No Iron sheet loaded — drop one multi-sheet Tikshuv workbook (סידור עבודה + סידור ברזל). Falling back to manual contracted hours per rep.",
   wfTeamL:"Team", wfSkillL:"Skill", wfSiteL:"Site", wfAll:"(all)",
   wfKpiUtil:"Roster-to-Iron Utilization",
-  tipWfUtil:"Σ scheduled hours (roster sheet) ÷ Σ contracted hours (Iron sheet) for the selected week — how much of the contractual base becomes real shifts.",
+  tipWfUtil:"HOW MUCH: Σ scheduled hours ÷ Σ Iron hours — what share of the contracted volume became real shifts. Measures quantity only. NOT the mirror of the Deviation Index: hours can be 100% used yet every shift moved to different times.",
   wfKpiLeak:"Vacation Leakage Rate",
   tipWfLeak:"Σ absence hours inside the contractual Iron window ÷ Σ contracted Iron hours. Partial-day leaves count only the lost slice.",
   wfKpiDev:"Contractual Deviation Index",
-  tipWfDev:"Share of scheduled shifts whose start/end diverge from the Iron parameters — operational volatility.",
+  tipWfDev:"WHEN: % of existing shifts whose start/end differ from their Iron times — measures shape, not volume. Independent of Utilization: 100% utilization with every shift moved = high deviation; 60% utilization at exact contract times = 0 deviation.",
   wfTreeTitle:"Iron Hours Allocation (Treemap)",
   tipWfTree:"Total contractual capacity split into productive scheduled hours, absence types, and unallocated remainder. Filter by team / skill / site above.",
-  wf_prod:"Productive", wf_vacation:"Vacation", wf_miluim:"Reserve duty", wf_medical:"Medical",
+  wf_prod:"Scheduled (actual)", wf_vacation:"Vacation", wf_miluim:"Reserve duty", wf_medical:"Medical",
   wf_training:"Training", wf_exam:"Exams", wf_other:"Other absence", wf_unalloc:"Unallocated",
+  wfNoStatus:"No status (empty)",
   wfImpactTitle:"Daily Vacation & SLA Impact Matrix",
   tipWfImpact:"Background Erlang A simulation per skill × day: the answer-rate before → after removing one productive agent from that slice. Green = low-risk vacation approval; red = critical.",
   wfImpactNone:"Needs a forecast + roster with a skill column (מיומנות) to simulate.",
   wfImpactTip1:"Answer rate",
   wfImpactNoIron:"This matrix compares the Iron base (סידור ברזל) against the actual roster — load a Tikshuv workbook with an Iron sheet to enable it.",
-  wfImpactMetric:"Computed on your primary target metric: {m}. Change it in Advanced Settings and this matrix follows.",
+  wfImpactMetric:"Each cell: how many points of the WHOLE center's {m} this row's absences cost that day. Baseline is constant — everyone at Iron; only the row's slice drops to its actual hours. Filters choose whose damage you inspect; the center-wide baseline never moves.",
   wfImpactTip2:"{m} at Iron base staffing → at actual roster staffing",
   wfImpactUnval:"{n} roster agents have no validated Iron base and are EXCLUDED from this matrix:",
   schNeedIron:"The auto-scheduler builds shifts from the סידור ברזל base. Load a Tikshuv workbook with an Iron sheet to enable it.",
@@ -803,8 +822,15 @@ en:{
   crsTitle:"Course Gantt Upload", crsHint:"Drop a course plan file — columns (any order, Hebrew or English): course name (קורס), start date (תאריך התחלה), duration in days or end date (סיום), trainees (כמות), yield % (הסמכה). Dates accept dd/mm/yyyy, ISO or Excel serials; missing yield defaults to 85%.",
   crsOk:"{n} courses loaded into the training pipeline.", crsErr:"No course rows recognized — need at least a name/date column.",
   wfDrillTitle:"Drill-down: {seg} by {dim}", wfDrillBy:"Drill by", wfDrillHint:"Click a treemap tile to break it down.", wfDrillBack:"✕ Close drill-down",
+  roIronNote:"Iron base: {n} employees",
+  rosterRecov:"extendable across {n} reps ≈ {f} FTE — recover these hours before hiring externally",
+  rosterAllOk:"✅ Everyone is at (or above) their contracted baseline — no internal hours to recover.",
+  rosterCopyBtn:"Copy list",
+  skillScopeAll:"All skills answer", skillScopeN:"{n} answering skills",
+  skillScopeHint:"Which skills count as ANSWERING capacity for this queue's AR/TSF? (HR & workforce pages always include everyone.) On billing days check בכיר; מרפאות usually answer קו 1 too.",
+  skillScopeAllBtn:"Count every skill",
   fcAuditWarn:"Data audit:", auditImp:"{n} intervals with more answered than offered calls (AR>100% — capped)", auditAht:"{n} intervals with AHT outside 1–60 min", auditFar:"{n} dates more than ~13 months from today — check the date column format",
-  mxCalibOn:"Model calibrated to this floor's measured answer rates (κ={k}).",
+  mxCalibOn:"Forecasts are automatically tuned to this floor's real measured answer rates.",
   mxCalibOff:"⚠ Uncalibrated model estimates — the file carries no (or too little) measured answered-calls data, so AR/TSF here are pure Erlang and usually read higher than your real floor. Load a forecast export that includes answered-calls columns to calibrate.",
   mxAuditFlag:"Data audit flagged {n} suspicious values — see the Home page forecast portal.",
   wfValTitle:"Iron Base Validation Matrix",
@@ -912,12 +938,12 @@ he:{
   step3t:"הגדרת יעדים ומדיניות", step3d:"יעדים, התנהגות תור וכללי גמישות.",
   step4t:"סימולציה ואופטימיזציה", step4d:"מטריצה, סימולציות What-If, מייעל.",
   stepOpen:"פתיחה",
-  fcTitle:"קליטת תחזית — גררו ושחררו CSV / JSON",
+  fcTitle:"קליטת תחזית — גררו ושחררו Excel / CSV / JSON",
   dropHint:"שום נתון לא יוצא מהדפדפן.",
   loadSample:"טעינת נתוני דוגמה",
   fcLoaded:"נטענו {n} רשומות אינטרוול על פני {d} ימים.",
   roTitle:"קליטת סידור עבודה ואילוצים קשיחים",
-  roHint:"משמרות בשמות, אינטרוולים מתוארכים, רשת שבועית או מטריצת סידור — הופך לקיבולת האמת.",
+  roHint:"גררו קובץ תקשוב אחד (סידור עבודה + סידור ברזל) לטעינת הסידור והברזל יחד — או משמרות בשמות, אינטרוולים מתוארכים, רשת שבועית ומטריצת סידור.",
   proTip:"💡 סידור עם שמות פותח המלצות שיבוץ אישיות.",
   roLoadedNamed:"סידור נטען: {n} אינטרוולים, {e} נציגים בשמות. מעתה קיבולת האמת.",
   roLoadedAnon:"סידור נטען: {n} אינטרוולים (קיבולת אנונימית). מעתה קיבולת האמת.",
@@ -1052,21 +1078,22 @@ he:{
   wfNoIron:"לא נטען גיליון ברזל — גררו קובץ תקשוב רב-גיליוני אחד (סידור עבודה + סידור ברזל). בינתיים חישוב לפי שעות חוזיות ידניות לנציג.",
   wfTeamL:"מנהל צוות", wfSkillL:"מיומנות", wfSiteL:"מוקד", wfAll:"(הכול)",
   wfKpiUtil:"ניצול סידור מול ברזל",
-  tipWfUtil:"‏Σ שעות משובצות (סידור עבודה) ÷ Σ שעות חוזיות (ברזל) בשבוע הנבחר — כמה מהבסיס החוזי הופך למשמרות בפועל.",
+  tipWfUtil:"כמה: ‏Σ שעות משובצות ÷ ‏Σ שעות ברזל — איזה חלק מנפח השעות החוזי הפך למשמרות בפועל. מודד כמות בלבד. זה לא ההופכי של מדד הסטייה: אפשר לנצל 100% מהשעות כשכל משמרת הוזזה לשעה אחרת.",
   wfKpiLeak:"שיעור זליגת חופשות",
   tipWfLeak:"‏Σ שעות היעדרות בתוך חלון הברזל החוזי ÷ Σ שעות הברזל. חופשה חלקית נספרת רק לפי החלק שאבד.",
   wfKpiDev:"מדד סטייה חוזית",
-  tipWfDev:"חלק המשמרות המשובצות ששעת ההתחלה/סיום שלהן שונה מפרמטרי הברזל — תנודתיות תפעולית.",
+  tipWfDev:"מתי: אחוז המשמרות הקיימות ששעת ההתחלה/סיום שלהן שונה משעות הברזל — מודד צורה, לא כמות. בלתי תלוי בניצול: ניצול 100% עם כל המשמרות מוזזות = סטייה גבוהה; ניצול 60% בשעות החוזה המדויקות = סטייה 0.",
   wfTreeTitle:"הקצאת שעות ברזל (Treemap)",
   tipWfTree:"סך הקיבולת החוזית מפוצל לשעות פרודוקטיביות, סוגי היעדרות ויתרה לא מוקצית. סינון לפי צוות / מיומנות / מוקד למעלה.",
-  wf_prod:"פרודוקטיבי", wf_vacation:"חופשה", wf_miluim:"מילואים", wf_medical:"רפואי",
+  wf_prod:"משובץ בפועל", wf_vacation:"חופשה", wf_miluim:"מילואים", wf_medical:"רפואי",
   wf_training:"הדרכה", wf_exam:"מבחנים", wf_other:"היעדרות אחרת", wf_unalloc:"לא מוקצה",
+  wfNoStatus:"ללא סטטוס (ריק)",
   wfImpactTitle:"מטריצת חופשות יומית והשפעת SLA",
   tipWfImpact:"סימולציית Erlang A ברקע לכל מיומנות × יום: אחוז המענה לפני ← אחרי הסרת נציג פרודוקטיבי אחד מהפלח. ירוק = אישור חופשה בסיכון נמוך; אדום = קריטי.",
   wfImpactNone:"נדרשים תחזית + סידור עם עמודת מיומנות כדי לסמלץ.",
   wfImpactTip1:"אחוז מענה",
   wfImpactNoIron:"המטריצה משווה את בסיס הברזל מול הסידור בפועל — טענו קובץ תקשוב עם גיליון סידור ברזל כדי להפעיל אותה.",
-  wfImpactMetric:"מחושב לפי יעד המטרה הראשי שלכם: {m}. שינוי בהגדרות מתקדמות יעדכן את המטריצה.",
+  wfImpactMetric:"כל תא: כמה נקודות מ־{m} של המוקד כולו עולות ההיעדרויות של השורה הזו באותו יום. קו הבסיס קבוע — כולם לפי הברזל; רק פלח השורה יורד לשעות בפועל. הסינון בוחר את מי בודקים; קו הבסיס של המוקד לא זז.",
   wfImpactTip2:"{m} באיוש בסיס הברזל ← באיוש הסידור בפועל",
   wfImpactUnval:"{n} נציגים בסידור ללא בסיס ברזל מתוקף ואינם נכללים במטריצה:",
   schNeedIron:"השיבוץ האוטומטי בונה משמרות מבסיס סידור הברזל. טענו קובץ תקשוב עם גיליון ברזל כדי להפעיל.",
@@ -1074,8 +1101,15 @@ he:{
   crsTitle:"העלאת גאנט קורסים", crsHint:"גררו קובץ תוכנית קורסים — עמודות (בכל סדר, עברית או אנגלית): שם קורס, תאריך התחלה, משך בימים או תאריך סיום, כמות חניכים, אחוז הסמכה. תאריכים בכל פורמט (dd/mm/yyyy, ISO, סריאלי של אקסל); אחוז הסמכה חסר יקבל 85%.",
   crsOk:"{n} קורסים נטענו לצנרת ההכשרה.", crsErr:"לא זוהו שורות קורס — נדרשת לפחות עמודת שם/תאריך.",
   wfDrillTitle:"פילוח: {seg} לפי {dim}", wfDrillBy:"פילוח לפי", wfDrillHint:"לחצו על אריח במפת החום לפילוח.", wfDrillBack:"✕ סגירת פילוח",
+  roIronNote:"בסיס ברזל: {n} עובדים",
+  rosterRecov:"ניתנות להרחבה אצל {n} נציגים ≈ {f} משרות — לאתר את השעות האלה לפני גיוס חיצוני",
+  rosterAllOk:"✅ כולם בבסיס החוזי שלהם (או מעליו) — אין שעות פנימיות לאיתור.",
+  rosterCopyBtn:"העתקת רשימה",
+  skillScopeAll:"כל המיומנויות עונות", skillScopeN:"{n} מיומנויות עונות",
+  skillScopeHint:"אילו מיומנויות נספרות כקיבולת מענה (AR/TSF) של התור? (דפי כוח אדם תמיד כוללים את כולם.) בימי גבייה סמנו גם בכיר; מרפאות לרוב עונות גם קו 1.",
+  skillScopeAllBtn:"ספרו את כל המיומנויות",
   fcAuditWarn:"בקרת נתונים:", auditImp:"{n} אינטרוולים עם יותר שיחות נענות מנכנסות (מענה>100% — נחסם)", auditAht:"{n} אינטרוולים עם אורך שיחה מחוץ לטווח 1–60 דק'", auditFar:"{n} תאריכים רחוקים מהיום ביותר מ־13 חודשים — בדקו את פורמט עמודת התאריך",
-  mxCalibOn:"המודל מכויל לאחוזי המענה שנמדדו במוקד (κ={k}).",
+  mxCalibOn:"התחזיות מכוונות אוטומטית לאחוזי המענה האמיתיים שנמדדו במוקד שלכם.",
   mxCalibOff:"⚠ הערכות מודל לא מכוילות — בקובץ אין (או כמעט אין) נתוני שיחות נענות מדודים, ולכן המענה/TSF כאן הם ארלנג תאורטי ולרוב גבוהים מהמציאות במוקד. טענו תחזית עם עמודות שיחות נענות לכיול.",
   mxAuditFlag:"בקרת הנתונים סימנה {n} ערכים חשודים — ראו את פורטל התחזית בדף הבית.",
   wfValTitle:"מטריצת תיקוף בסיס ברזל",
@@ -1556,7 +1590,11 @@ const state={
   validationErrors:[],   // roster employees with blank/missing Iron base
   weeklyConstraints:[],  // Iteration-2 inputs: {name,ds,s,e,type}
   optimizedOutput:[],    // generated schedule ready for CSV export
-  wfFilter:{team:"",skill:"",site:""}
+  wfFilter:{team:"",skill:"",site:""},
+  capSkills:null,        // answering-queue scope: null = every skill counts
+  rosterCapSkill:{},     // block key -> {skill: distinct reps}
+  skillList:[],          // all skills seen in the roster (modular queue list)
+  unallocRows:[]         // sidur rows without shift/absence — bucketed by raw status
 };
 /* modular shift window (default 08:00–18:00 inclusive) — rebuilt when settings change */
 let TIMES=[];
@@ -1626,9 +1664,14 @@ function wireDropzone(zoneId,inputId,handler){
   const z=document.getElementById(zoneId), inp=document.getElementById(inputId);
   ["dragenter","dragover"].forEach(ev=>z.addEventListener(ev,e=>{e.preventDefault();z.classList.add("hover");}));
   ["dragleave","drop"].forEach(ev=>z.addEventListener(ev,e=>{e.preventDefault();z.classList.remove("hover");}));
-  z.addEventListener("drop",e=>{ const f=e.dataTransfer.files[0]; if(f) handler(f); });
+  // EVERY dropped file ingests — a forecast + sidur multi-selected together must not lose one
+  z.addEventListener("drop",e=>{ [...e.dataTransfer.files].forEach(handler); });
   z.addEventListener("click",e=>{ if(!e.target.closest(".linklike")) inp.click(); });
-  inp.addEventListener("change",e=>{ if(e.target.files[0]){ handler(e.target.files[0]); e.target.value=""; } });
+  // keyboard access: the zone acts as a button (Enter/Space opens the picker)
+  z.tabIndex=0; z.setAttribute("role","button");
+  z.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); inp.click(); } });
+  inp.multiple=true;
+  inp.addEventListener("change",e=>{ if(e.target.files.length){ [...e.target.files].forEach(handler); e.target.value=""; } });
 }
 function ingestError(zone,errEl,msg){ zone.classList.add("error"); errEl.textContent=msg; errEl.style.display="block"; }
 function splitCSV(text){ return text.replace(/\r/g,"").split("\n").filter(l=>l.trim()); }
@@ -2149,6 +2192,7 @@ function buildRosterGrid(grid,hd){
      lines, which inflated the matrix above the real headcount (e.g. 71 vs 66).
      We track the unique-name set per block and store its size. */
   const nameSets=new Map(); // key -> Set(name): distinct reps per interval block
+  const skillSets=new Map(); // key -> skill -> Set(name): the queue each rep answers
   const put=(target,keyBase,tm,rec)=>{
     const key=keyBase+"|"+tm;
     if(rec.name){ named=true;
@@ -2156,6 +2200,10 @@ function buildRosterGrid(grid,hd){
       const isNew=!set.has(rec.name);
       set.add(rec.name);
       target.set(key,set.size); // distinct reps, not row count
+      const sk=rec.skill||"";
+      let sm=skillSets.get(key); if(!sm){ sm=new Map(); skillSets.set(key,sm); }
+      let ss=sm.get(sk); if(!ss){ ss=new Set(); sm.set(sk,ss); }
+      ss.add(rec.name);
       // integrity: never invent contracted hours — null until the file provides them
       if(!emp.has(rec.name)) emp.set(rec.name,{scheduled:0,contracted:rec.contracted??null,blocks:new Set()});
       else if(rec.contracted&&!emp.get(rec.name).contracted) emp.get(rec.name).contracted=rec.contracted;
@@ -2185,6 +2233,7 @@ function buildRosterGrid(grid,hd){
       rec.agents=ag;
     }
     if(map.contracted!=null){ const ct=toNum(row[map.contracted]); if(isFinite(ct)&&ct>0) rec.contracted=ct; }
+    if(map.skill!=null){ const sv=String(row[map.skill]??"").trim(); if(sv) rec.skill=sv; }
     let tms=null;
     if(map.interval!=null){
       const tm=normTimeAny(row[map.interval]);
@@ -2201,6 +2250,11 @@ function buildRosterGrid(grid,hd){
   if((!capDated.size&&!capWeekly.size)||ok<1) throw {code:"nodata",skipped};
   state.rosterCap=capDated; state.rosterCapWeekly=capWeekly;
   state.rosterNamed=named||state.rosterNamed;
+  // per-skill distinct counts per block → matrix coverage can scope to answering queues
+  state.rosterCapSkill={};
+  for(const [key,sm] of skillSets){ const o={}; for(const [sk,ss] of sm) o[sk]=ss.size; state.rosterCapSkill[key]=o; }
+  state.skillList=[...new Set([].concat(...[...skillSets.values()].map(sm=>[...sm.keys()])))].filter(Boolean).sort();
+  applyDefaultCapSkills();
   rebuildRosterCoverage(); // item 1: coverage sets make the roster the sole ground truth
   const wDiv=Math.max(1,weekSet.size); // multi-week files → weekly-average scheduled hours
   if(named) state.roster=[...emp.entries()].map(([name,v])=>({name,contracted:v.contracted,scheduled:Math.round(v.scheduled/wDiv*10)/10}));
@@ -2321,7 +2375,7 @@ function parseIronGrid(grid){
 }
 function walkRosterExtras(grid,hd){
   const m=hd.map;
-  state.rosterMeta=new Map(); state.vacations=[]; state.schedRows=[];
+  state.rosterMeta=new Map(); state.vacations=[]; state.schedRows=[]; state.unallocRows=[];
   for(let r=hd.row+1;r<grid.length;r++){
     const row=grid[r]; if(!row) continue;
     const name=m.name!=null?String(row[m.name]??"").trim():"";
@@ -2340,10 +2394,23 @@ function walkRosterExtras(grid,hd){
     const en=m.end!=null?normTimeAny(row[m.end]):null;
     const schedH=(s&&en&&en>s)?(toMinW(en)-toMinW(s))/60:0;
     const ironDay=ironE?ironE.days[di]:null;
-    const status=m.status!=null?String(row[m.status]??"").trim():"";
+    // in real Tikshuv sidurim team leaders type the absence INTO the entry-hour
+    // cell (חופש/מחלה/לימודים…) while the status column just says פעיל — so a
+    // non-time entry cell is the authoritative status for unscheduled rows
+    const statusCol=m.status!=null?String(row[m.status]??"").trim():"";
+    const startRaw=m.start!=null?String(row[m.start]??"").trim():"";
+    // no valid start time: a text entry-cell IS the status; an EMPTY entry-cell is
+    // the deliberate empty status (never the meaningless פעיל from the status column)
+    const status=!s?(startRaw&&!normTimeAny(startRaw)?startRaw:""):statusCol;
     let type=null;
     for(const [k,re] of ABS_TYPES) if(re.test(status)){ type=k; break; }
-    if(!type&&schedH===0&&status&&!/פעיל|active/i.test(status)) type="other";
+    // sidur rows with no shift and no recognized absence: the team leader's raw
+    // status (or the EMPTY cell — deliberate, the manager left it visible) buckets
+    // the unallocated hours instead of hiding them in one gray tile
+    if(!type&&schedH===0&&!/פעיל|active/i.test(status)){
+      const base=ironDay?ironDay.h:(state.iron?0:defaultDayHours(di));
+      if(base>0) state.unallocRows.push({name,ds,di,status:status.trim(),hours:base,...meta});
+    }
     if(schedH>0){
       // a leave-shortened shift is leakage, not operational volatility — no double count
       const dev=!type&&!!(ironDay&&(s!==ironDay.s||en!==ironDay.e));
@@ -2415,8 +2482,17 @@ function wfPass(rec){
   const f=state.wfFilter;
   return (!f.team||rec.team===f.team)&&(!f.skill||rec.skill===f.skill)&&(!f.site||rec.site===f.site);
 }
+/* the Workforce page anchors to the SIDUR's own week: if the globally selected
+   week has no roster rows (e.g. the user browsed a forecast week on the matrix),
+   fall back to the week of the uploaded sidur so this page is never empty */
+function wfWeek(){
+  const w=state.week;
+  if(w&&state.schedRows.some(r=>{const set=new Set(weekDates(w));return set.has(r.ds);})) return w;
+  const ds=state.schedRows.map(r=>r.ds).filter(Boolean).sort()[0];
+  return ds?sundayOf(ds):w;
+}
 function computeWorkforce(){
-  const week=state.week?new Set(weekDates(state.week)):new Set();
+  const week=wfWeek()?new Set(weekDates(wfWeek())):new Set();
   const inWeek=r=>week.has(r.ds)||(!r.ds&&r.di!=null); // day-template rows count once
   let ironTotal=0;
   if(state.iron){
@@ -2434,48 +2510,71 @@ function computeWorkforce(){
   const absByType={};
   let absTot=0;
   for(const v of state.vacations) if(inWeek(v)&&wfPass(v)){ absByType[v.type]=(absByType[v.type]||0)+v.hours; absTot+=v.hours; }
-  return {ironTotal,sched,absByType,absTot,dev,tot};
+  // unallocated hours bucketed by the sidur's raw status ("" = empty cell, on purpose)
+  const unBy={}; let unTot=0;
+  for(const u of state.unallocRows||[]) if(inWeek(u)&&wfPass(u)){
+    unBy[u.status]=(unBy[u.status]||0)+u.hours; unTot+=u.hours;
+  }
+  return {ironTotal,sched,absByType,absTot,unBy,unTot,dev,tot};
 }
 const WF_COLORS={prod:"#18b39a",vacation:"#3fa9f5",miluim:"#7a5fd0",medical:"#f06423",training:"#f5b301",exam:"#d63384",other:"#6b7c90",unalloc:"#dbe4ee"};
+/* status tiles get stable palette colors by insertion order (raw sidur statuses) */
+const ST_PALETTE=["#6b7c90","#8a5fd0","#c0762c","#2c7fb8","#b03060","#5f9e6e","#a08a2e","#7d5a50"];
+function statusLabel(st){ return st?st:t("wfNoStatus"); }
+function statusColor(st,order){ return ST_PALETTE[order.indexOf(st)%ST_PALETTE.length]; }
 function renderTreemap(W){
   const host=document.getElementById("wfTreemap"), leg=document.getElementById("wfTreeLegend");
   host.innerHTML=""; leg.innerHTML="";
-  const total=Math.max(W.ironTotal,W.sched+W.absTot,0.001);
+  const total=Math.max(W.ironTotal,W.sched+W.absTot+W.unTot,0.001);
   const prod=Math.min(W.sched,total);
-  const unalloc=Math.max(0,total-prod-W.absTot);
+  const unalloc=Math.max(0,total-prod-W.absTot-W.unTot); // residual: shortened shifts etc.
   const w=520,h=210;
-  const cols=[["prod",prod],["__abs",W.absTot],["unalloc",unalloc]].filter(c=>c[1]>0.01);
+  const stOrder=Object.keys(W.unBy).sort((a,b)=>W.unBy[b]-W.unBy[a]);
+  const cols=[["prod",prod],["__abs",W.absTot],["__un",W.unTot],["unalloc",unalloc]].filter(c=>c[1]>0.01);
   let x=0; const parts=[];
-  const tile=(x0,y0,tw,thh,key,val)=>{
+  const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+  const tile=(x0,y0,tw,thh,key,val,label,color)=>{
     const p=val/total;
-    parts.push(`<rect data-seg="${key}" style="cursor:pointer" x="${x0.toFixed(1)}" y="${y0.toFixed(1)}" width="${Math.max(0,tw-2).toFixed(1)}" height="${Math.max(0,thh-2).toFixed(1)}" fill="${WF_COLORS[key]||"#999"}" rx="3"><title>${t("wf_"+key)}: ${val.toFixed(1)}h (${(p*100).toFixed(1)}%)</title></rect>`+
-      (tw>56&&thh>22?`<text x="${(x0+6).toFixed(1)}" y="${(y0+16).toFixed(1)}" font-size="10" fill="${key==="unalloc"?"#44546a":"#fff"}" font-weight="600" pointer-events="none">${t("wf_"+key)} ${(p*100).toFixed(0)}%</text>`:""));
+    // data-seg is URI-encoded: raw statuses may contain quotes (חו"ל) that break markup
+    parts.push(`<rect data-seg="${encodeURIComponent(key)}" style="cursor:pointer" x="${x0.toFixed(1)}" y="${y0.toFixed(1)}" width="${Math.max(0,tw-2).toFixed(1)}" height="${Math.max(0,thh-2).toFixed(1)}" fill="${color}" rx="3"><title>${esc(label)}: ${val.toFixed(1)}h (${(p*100).toFixed(1)}%)</title></rect>`+
+      (tw>56&&thh>18?`<text x="${(x0+6).toFixed(1)}" y="${(y0+14).toFixed(1)}" font-size="10" fill="${key==="unalloc"?"#44546a":"#fff"}" font-weight="600" pointer-events="none">${esc(label)} ${(p*100).toFixed(0)}%</text>`:""));
   };
   for(const [key,val] of cols){
     const tw=w*val/total;
     if(key==="__abs"){
       const types=Object.entries(W.absByType).sort((a,b)=>b[1]-a[1]);
       let y=0;
-      for(const [tk,tv] of types){ const thh=h*tv/val; tile(x,y,tw,thh,tk,tv); y+=thh; }
-    }else tile(x,0,tw,h,key,val);
+      for(const [tk,tv] of types){ const thh=h*tv/val; tile(x,y,tw,thh,tk,tv,t("wf_"+tk),WF_COLORS[tk]||"#999"); y+=thh; }
+    }else if(key==="__un"){
+      // the sidur's own statuses, size-ordered — empty status is a first-class tile
+      let y=0;
+      for(const st of stOrder){ const tv=W.unBy[st], thh=h*tv/val;
+        tile(x,y,tw,thh,"st:"+st,tv,statusLabel(st),statusColor(st,stOrder)); y+=thh; }
+    }else tile(x,0,tw,h,key,val,t("wf_"+key),WF_COLORS[key]||"#999");
     x+=tw;
   }
   host.innerHTML=`<svg viewBox="0 0 ${w} ${h}" width="100%" role="img">${parts.join("")}</svg>`;
-  const legendKeys=["prod",...Object.keys(W.absByType),"unalloc"];
-  leg.innerHTML=legendKeys.map(k=>`<span><i style="background:${WF_COLORS[k]||"#999"}"></i>${t("wf_"+k)}</span>`).join("");
+  leg.innerHTML=[
+    `<span><i style="background:${WF_COLORS.prod}"></i>${t("wf_prod")}</span>`,
+    ...Object.keys(W.absByType).map(k=>`<span><i style="background:${WF_COLORS[k]||"#999"}"></i>${t("wf_"+k)}</span>`),
+    ...stOrder.map(st=>`<span><i style="background:${statusColor(st,stOrder)}"></i>${statusLabel(st)}</span>`),
+    `<span><i style="background:${WF_COLORS.unalloc}"></i>${t("wf_unalloc")}</span>`,
+  ].join("");
   // drill-down: click a tile → hours of that segment broken down by team/skill/site
   host.querySelectorAll("rect[data-seg]").forEach(r=>r.addEventListener("click",()=>{
-    state.wfDrillSeg=r.getAttribute("data-seg"); renderTreeDrill();
+    state.wfDrillSeg=decodeURIComponent(r.getAttribute("data-seg")); renderTreeDrill();
   }));
   renderTreeDrill();
 }
 /* treemap drill-down — same filter dimensions as the lists above (team J / skill N / site A) */
 function segHoursBy(seg,dim){
-  const week=state.week?new Set(weekDates(state.week)):new Set();
+  const week=wfWeek()?new Set(weekDates(wfWeek())):new Set();
   const inWeek=r=>week.has(r.ds)||(!r.ds&&r.di!=null);
   const acc={};
   const add=(rec,h)=>{ const k=rec[dim]||"—"; acc[k]=(acc[k]||0)+h; };
   if(seg==="prod"){ for(const r of state.schedRows) if(inWeek(r)&&wfPass(r)) add(r,r.h); }
+  else if(seg.startsWith("st:")){ const st=seg.slice(3);
+    for(const u of state.unallocRows||[]) if(u.status===st&&inWeek(u)&&wfPass(u)) add(u,u.hours); }
   else if(seg==="unalloc"){
     // iron minus allocated, per dim value
     const iron={},alloc={};
@@ -2503,8 +2602,9 @@ function renderTreeDrill(){
   const dimName={team:t("wfTeamL"),skill:t("wfSkillL"),site:t("wfSiteL")};
   const rows=segHoursBy(seg,dim);
   const tot=rows.reduce((s,r)=>s+r[1],0)||1;
+  const segLabel=seg.startsWith("st:")?statusLabel(seg.slice(3)):t("wf_"+seg);
   box.innerHTML=`<div class="toolbar" style="margin:0 0 4px">
-      <b style="font-size:.82rem">${t("wfDrillTitle",{seg:t("wf_"+seg),dim:dimName[dim]})}</b>
+      <b style="font-size:.82rem">${t("wfDrillTitle",{seg:segLabel,dim:dimName[dim]})}</b>
       <label class="mini">${t("wfDrillBy")}</label>
       <select id="wfDrillDim" style="font-size:.78rem">${["team","skill","site"].map(d=>`<option value="${d}"${d===dim?" selected":""}>${dimName[d]}</option>`).join("")}</select>
       <button class="linklike" id="wfDrillClose">${t("wfDrillBack")}</button>
@@ -2514,6 +2614,25 @@ function renderTreeDrill(){
       <div style="flex:1;background:var(--sky-soft);border-radius:4px;height:14px;direction:ltr"><div style="width:${(v/tot*100).toFixed(1)}%;background:${WF_COLORS[seg]||"#999"};height:14px;border-radius:4px"></div></div>
       <span style="min-width:76px;direction:ltr">${v.toFixed(1)}h (${(v/tot*100).toFixed(0)}%)</span></div>`).join("")
     :`<p class="mini">${t("noData")}</p>`);
+  // absence & status segments name the employees — a tile is only actionable
+  // when the manager can see WHO is behind it
+  {
+    const week=wfWeek()?new Set(weekDates(wfWeek())):new Set();
+    const inWeek=r=>week.has(r.ds)||(!r.ds&&r.di!=null);
+    let src=null;
+    if(seg.startsWith("st:")){ const st=seg.slice(3);
+      src=(state.unallocRows||[]).filter(u=>u.status===st&&inWeek(u)&&wfPass(u)); }
+    else if(seg!=="prod"&&seg!=="unalloc")
+      src=state.vacations.filter(v=>v.type===seg&&inWeek(v)&&wfPass(v));
+    if(src){
+      const names=[...new Set(src.map(r=>r.name))];
+      const nm=document.createElement("p"); nm.className="mini"; nm.style.marginTop="6px";
+      nm.textContent=names.length
+        ? "👤 "+names.slice(0,40).join(", ")+(names.length>40?" (+"+(names.length-40)+")":"")
+        : t("noData");
+      box.appendChild(nm);
+    }
+  }
   box.querySelector("#wfDrillDim").addEventListener("change",e=>{ state.wfDrillDim=e.target.value; renderTreeDrill(); });
   box.querySelector("#wfDrillClose").addEventListener("click",()=>{ state.wfDrillSeg=null; renderTreeDrill(); });
 }
@@ -2537,7 +2656,10 @@ function renderImpactMatrix(){
   const unval=new Set(state.validationErrors.map(v=>v.name));
   if(metricEl) metricEl.textContent=t("wfImpactMetric",{m:primName()});
   const metaOf=name=>state.rosterMeta.get(name)||iron.get(name)||{};
-  // iron base hours per skill × weekday — validated agents only, current filters applied
+  // WHOLE-CENTER iron base per weekday — never filtered: it is the constant baseline
+  const ironAllBy={};
+  for(const [,e] of iron) for(const di in e.days) ironAllBy[di]=(ironAllBy[di]||0)+e.days[di].h;
+  // slice iron/actual hours per skill × weekday — the current filters define the slice
   const ironBy={}, skills=new Set();
   for(const [name,e] of iron){
     const m=metaOf(name);
@@ -2547,8 +2669,7 @@ function renderImpactMatrix(){
     for(const di in e.days) ironBy[sk+"|"+di]=(ironBy[sk+"|"+di]||0)+e.days[di].h;
   }
   if(!skills.size){ tbl.innerHTML=`<tr><td class="mini">${t("wfImpactNone")}</td></tr>`; return; }
-  // actual scheduled hours per skill × weekday (selected week) — validated iron agents only
-  const week=state.week?new Set(weekDates(state.week)):new Set();
+  const week=wfWeek()?new Set(weekDates(wfWeek())):new Set();
   const schedBy={};
   for(const r of state.schedRows){
     if(!week.has(r.ds)||!iron.has(r.name)||!wfPass(r)) continue;
@@ -2568,27 +2689,31 @@ function renderImpactMatrix(){
     for(let di=0;di<6;di++){
       const td=document.createElement("td");
       const ironH=ironBy[sk+"|"+di]||0, schedH=schedBy[sk+"|"+di]||0;
+      const ironAll=ironAllBy[di]||0;
       const ser=state.series[di];
-      if(!ironH||!ser){ td.textContent=t("noData"); tr.appendChild(td); continue; }
+      if(!ironH||!ironAll||!ser){ td.textContent=t("noData"); tr.appendChild(td); continue; }
       const winH=defaultDayHours(di)||1;
-      const concIron=Math.max(1,Math.round(ironH/winH));
-      const concAct=Math.round(schedH/winH);
-      // total-skill share of the day's iron base scales the demand slice this skill owns
-      let dayIronTot=0; for(const k of skills) dayIronTot+=ironBy[k+"|"+di]||0;
-      const share=dayIronTot>0?ironH/dayIronTot:0;
-      let vol=0,pIron=0,pAct=0;
+      // bodies → effective agents with the SAME conversion the weekly matrix uses
+      const effShare=Math.max(0.05,availShare(state.settings)*(state.calib||1));
+      // CONSTANT baseline: the WHOLE center with everyone at iron. Varied case:
+      // only this row's slice drops to its actual hours — the gap is exactly how
+      // much this slice's absences hurt the whole call-center metric.
+      const staffedAll=Math.max(0,ironAll-ironH+Math.min(schedH,ironH));
+      const concBase=Math.max(1,Math.round(ironAll/winH*effShare));
+      const concVar=Math.max(0,Math.round(staffedAll/winH*effShare));
+      let vol=0,pBase=0,pVar=0;
       for(const tm in ser){ const s=ser[tm];
-        const v=(s.vols.reduce((a,b)=>a+b,0)/s.vols.length)*share;
+        const v=s.vols.reduce((a,b)=>a+b,0)/s.vols.length;
         const aht=s.ahts.reduce((a,b)=>a+b,0)/s.ahts.length;
-        pIron+=primVal(evalInterval(v,aht,concIron,state.settings))*v;
-        pAct+=primVal(evalInterval(v,aht,Math.max(0,concAct),state.settings))*v;
+        pBase+=primVal(evalInterval(v,aht,concBase,state.settings))*v;
+        pVar+=primVal(evalInterval(v,aht,concVar,state.settings))*v;
         vol+=v;
       }
       if(!vol){ td.textContent=t("noData"); tr.appendChild(td); continue; }
-      const a1=pIron/vol, a2=pAct/vol;
-      td.className=a2<target-0.1?"tier-bad":(a2<target?"tier-warn":"tier-good");
-      td.innerHTML=`<span class="v">${(a1*100).toFixed(0)}%→${(a2*100).toFixed(0)}%</span>`;
-      td.title=`${t("wfImpactTip2",{m:primName()})}: ${(a1*100).toFixed(1)}% (ברזל ${ironH.toFixed(1)}h) → ${(a2*100).toFixed(1)}% (בפועל ${schedH.toFixed(1)}h)`;
+      const a1=pBase/vol, a2=pVar/vol, dmg=(a1-a2)*100;
+      td.className=dmg>=5?"tier-bad":(dmg>=1.5?"tier-warn":"tier-good");
+      td.innerHTML=`<span class="v">${dmg<0.05?"0":"−"+dmg.toFixed(1)}%</span>`;
+      td.title=`${t("wfImpactTip2",{m:primName()})}: ${(a1*100).toFixed(1)}% → ${(a2*100).toFixed(1)}% (ברזל ${ironH.toFixed(1)}h ← בפועל ${schedH.toFixed(1)}h)`;
       tr.appendChild(td);
     }
     tb.appendChild(tr);
@@ -2657,7 +2782,8 @@ function renderWorkforce(){
   // iron-derived analytics stay visibly disabled until a real ברזל base exists
   ["wfImpactCard","wfValCard"].forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.toggle("ironGated",gated); });
   populateWfFilters(); // preserves current selection
-  document.getElementById("wfWeekLbl").textContent=state.week?t("weekOpt",{w:isoWeek(state.week),a:fmtD(state.week),b:fmtD(addDays(state.week,5))}):"";
+  const wwk=wfWeek(); // this page follows the uploaded sidur's week, not the browsed forecast week
+  document.getElementById("wfWeekLbl").textContent=wwk?t("weekOpt",{w:isoWeek(wwk),a:fmtD(wwk),b:fmtD(addDays(wwk,5))}):"";
   const W=computeWorkforce();
   document.getElementById("wfKpiUtil").textContent=W.ironTotal>0?pct(Math.min(1.5,W.sched/W.ironTotal)):t("noData");
   document.getElementById("wfKpiLeak").textContent=W.ironTotal>0?pct(Math.min(1,W.absTot/W.ironTotal)):t("noData");
@@ -2872,26 +2998,30 @@ document.getElementById("schCsv").addEventListener("click",()=>{
     .concat(state.optimizedOutput.map(a=>tikshuvRow(a).map(csvQuote).join(",")));
   downloadFile("wfm_optimized_sidur.csv",rows.join("\n"));
 });
-document.getElementById("schConInput").addEventListener("change",e=>{
-  const f=e.target.files[0]; if(!f) return;
+function ingestConstraintsFile(f){
   const r=new FileReader();
   r.onload=()=>{ (async()=>{
     try{
       const res=await bytesToGrid(r.result);
-      let grid=res.grid;
-      if(res.grids) grid=(res.grids[0]&&(res.grids[0].grid||res.grids[0]))||[];
+      // multi-sheet workbooks: try every sheet until one yields constraints
+      let grids=res.grids?res.grids.map(s=>(s&&s.grid)||s||[]):[res.grid||[]];
       if(res.json&&Array.isArray(res.json)){
         const heads=Object.keys(res.json[0]||{});
-        grid=[heads,...res.json.map(o=>heads.map(h=>o[h]))];
+        grids=[[heads,...res.json.map(o=>heads.map(h=>o[h]))]];
       }
-      const stats=parseConstraintsGrid((grid||[]).filter(x=>x&&x.length));
+      let stats=null,lastErr=null;
+      for(const g of grids){
+        try{ stats=parseConstraintsGrid((g||[]).filter(x=>x&&x.length)); break; }
+        catch(err){ lastErr=err; }
+      }
+      if(!stats) throw lastErr||{code:"noheader"};
       showToast("✅ "+t("schConOk",{n:stats.rows}),true);
       renderScheduler();
     }catch(err){ showToast("⚠ "+t("dropErrParse"),false); }
   })(); };
   r.readAsArrayBuffer(f);
-  e.target.value="";
-});
+}
+wireDropzone("dzSchCon","schConInput",ingestConstraintsFile);
 
 async function bytesToGrid(buf){
   const u8=new Uint8Array(buf);
@@ -3012,7 +3142,9 @@ function ingestSuccess(stats,hint){
     : stats.type==="workbook"
     ? t("wbOk",{e:stats.reps,i:stats.iron,v:stats.val})
     : (stats.named?t("roOkNamed",{e:stats.reps,n:stats.blocks}):t("roOk",{n:stats.blocks}));
-  p.st.textContent="✅ "+msg+skip; p.st.style.display="block";
+  // the rich per-upload message goes to the TOAST; the portal shows the canonical
+  // persistent status (updatePortalStatus) so a refresh never rewords it
+  updatePortalStatus(); p.st.style.display="block";
   // item 13: skipped-rows audit link under the success banner
   if(stats.skipped&&stats.skippedRows&&stats.skippedRows.length){
     const a=document.createElement("button");
@@ -3432,20 +3564,23 @@ function calibrateModel(){
   state.calib=Math.round((lo+hi)/2*1000)/1000;
 }
 function updatePortalStatus(){
+  // SINGLE source of the portal status text — the same words in-session and after
+  // a refresh, so reloading never *looks* like the data changed
   const fs=document.getElementById("fcStatus");
   if(state.days.size){
     const n=[...state.days.values()].reduce((a,m)=>a+m.size,0);
-    fs.textContent=t("fcLoaded",{n,d:state.days.size})
+    fs.textContent="✅ "+t("fcLoaded",{n,d:state.days.size})
       +(state.cleanClipped?" · "+t("cleanNote",{k:state.cleanClipped}):"");
     fs.style.display="block";
   }
   const rs=document.getElementById("roStatus");
   if(state.rosterCap.size||state.rosterCapWeekly.size){
-    rs.textContent=state._rosterWeekly&&!state.rosterCap.size
+    rs.textContent="✅ "+(state._rosterWeekly&&!state.rosterCap.size
       ? t("roLoadedWeekly",{n:state.rosterCapWeekly.size})
       : (state.rosterNamed
           ? t("roLoadedNamed",{n:state.rosterCap.size||state.rosterCapWeekly.size,e:state.roster.length})
-          : t("roLoadedAnon",{n:state.rosterCap.size||state.rosterCapWeekly.size}));
+          : t("roLoadedAnon",{n:state.rosterCap.size||state.rosterCapWeekly.size})))
+      +(state.iron?" · "+t("roIronNote",{n:state.iron.emps.size}):"");
     rs.style.color="";
     if(state.rosterCap.size&&state.minDate){ // dated roster with zero overlap = silent no-op; warn instead
       let overlap=false;
@@ -3695,14 +3830,33 @@ function readCustomWindows(){
 }
 
 /* ---------------- Day computation ---------------- */
+/* ---- Answering-skill scope (queues) ----
+   The floor runs several queues (קו 1, בכיר, דיגיטל, מרפאות…). The matrix and its
+   AR/TSF math count ONLY skills selected as answering capacity — by default the
+   קו-1 queue — while HR/workforce pages always include everyone. Fully modular:
+   any skill can be toggled in or out (seniors convert to קו 1 on billing days,
+   מרפאות usually answer קו 1, future queues just appear in the list). */
+function applyDefaultCapSkills(){
+  const sk=state.skillList||[];
+  const kav=sk.find(s=>/קו\s*1|kav\s*1|line\s*1/i.test(s));
+  state.capSkills=kav?[kav]:null; // null = all skills count (no skill data / no קו-1)
+}
+function capCounted(key,total){
+  const sc=state.capSkills;
+  if(!sc||!sc.length) return total;
+  const by=state.rosterCapSkill&&state.rosterCapSkill[key];
+  if(!by) return total; // aggregate/anonymous rosters carry no skill info
+  let n=0; for(const s of sc) n+=by[s]||0;
+  return n+(by[""]||0); // reps without a skill tag always count — unknown ≠ excluded
+}
 function capacityFor(ds,dayIdx,tm,rec){
   const dk=ds+"|"+tm;
-  if(state.rosterCap.has(dk)) return state.rosterCap.get(dk);
+  if(state.rosterCap.has(dk)) return capCounted(dk,state.rosterCap.get(dk));
   // a roster that covers this date/weekday is the FULL ground truth:
   // blocks it doesn't mention mean nobody is scheduled — never fall back to baseline
   if(state.rosterDates.has(ds)) return 0;
   const wk=dayIdx+"|"+tm;
-  if(state.rosterCapWeekly.has(wk)) return state.rosterCapWeekly.get(wk);
+  if(state.rosterCapWeekly.has(wk)) return capCounted(wk,state.rosterCapWeekly.get(wk));
   if(state.rosterDays.has(String(dayIdx))) return 0;
   return rec.agents;
 }
@@ -3785,7 +3939,52 @@ function tier(v){ return v>=.9?"tier-good":v>=.8?"tier-warn":"tier-bad"; }
 function pct(v){ return (v*100).toFixed(1)+"%"; }
 function th(x){ const e=document.createElement("th"); e.textContent=x; return e; }
 
+/* queue-scope selector on the matrix toolbar — checkboxes per skill, modular */
+function renderSkillScope(){
+  const wrap=document.getElementById("skillScopeWrap"); if(!wrap) return;
+  const skills=state.skillList||[];
+  wrap.style.display=skills.length?"inline-block":"none";
+  if(!skills.length) return;
+  const sc=state.capSkills;
+  document.getElementById("skillScopeBtn").textContent="🎧 "+
+    (!sc||!sc.length?t("skillScopeAll"):(sc.length===1?sc[0]:t("skillScopeN",{n:sc.length})));
+  const menu=document.getElementById("skillScopeMenu");
+  // stable menu: rebuilding on every toggle closes the hover popover mid-interaction —
+  // when the skill list is unchanged just sync the checkbox states
+  if(menu._skills===skills.join("|")){
+    menu.querySelectorAll("input").forEach(cb=>{ cb.checked=!sc||sc.includes(cb._skill); });
+    return;
+  }
+  menu._skills=skills.join("|");
+  menu.innerHTML="";
+  const hint=document.createElement("div"); hint.className="mini"; hint.style.marginBottom="6px";
+  hint.textContent=t("skillScopeHint"); menu.appendChild(hint);
+  skills.forEach(s=>{
+    const lb=document.createElement("label");
+    lb.style.cssText="display:flex;gap:6px;align-items:center;font-size:.8rem;margin:3px 0;cursor:pointer";
+    const cb=document.createElement("input"); cb.type="checkbox";
+    cb.checked=!sc||sc.includes(s);
+    cb.addEventListener("change",()=>{
+      const on=[...menu.querySelectorAll("input:checked")].map(x=>x._skill);
+      state.capSkills=on.length===skills.length?null:on;
+      capScopeChanged();
+    });
+    cb._skill=s;
+    lb.appendChild(cb); lb.appendChild(document.createTextNode(" "+s));
+    menu.appendChild(lb);
+  });
+  const all=document.createElement("button"); all.className="linklike"; all.style.marginTop="6px";
+  all.textContent=t("skillScopeAllBtn");
+  all.addEventListener("click",()=>{ state.capSkills=null; capScopeChanged(); });
+  menu.appendChild(all);
+}
+function capScopeChanged(){
+  memo.clear(); state.fcCache.clear(); saveData();
+  renderMatrix();
+  dirtyPages.add("recruit"); dirtyPages.add("scheduler"); renderDirty();
+}
 function renderMatrix(){
+  renderSkillScope();
   const tbl=document.getElementById("matrixTable"); tbl.innerHTML="";
   if(!state.week) return;
   // credibility note: an uncalibrated Erlang model reads optimistic (90%+ AR) —
@@ -3796,8 +3995,9 @@ function renderMatrix(){
       tbl.parentNode.insertBefore(note,tbl); }
     const audit=state.fcAudit||{};
     note.innerHTML=(state.calib&&state.calib!==1)
-      ? t("mxCalibOn",{k:state.calib})
+      ? t("mxCalibOn")
       : `<span style="color:var(--crimson);font-weight:600">${t("mxCalibOff")}</span>`;
+    note.title="κ="+(state.calib||1); // the factor stays available for pros, never in the UI text
     if(audit.imp||audit.aht||audit.far)
       note.innerHTML+=` <span style="color:var(--crimson)">${t("mxAuditFlag",{n:(audit.imp||0)+(audit.aht||0)+(audit.far||0)})}</span>`;
   }
@@ -4440,32 +4640,58 @@ function renderInternalRoster(){
     return;
   }
   const hasContract=state.roster.some(e=>e.contracted>0);
-  const rows=state.roster.map(e=>({...e,def:e.contracted>0?Math.round((e.contracted-e.scheduled)*10)/10:null}));
-  rows.sort((a,b)=>hasContract?(b.def??-99)-(a.def??-99):a.scheduled-b.scheduled);
-  const tblr=document.createElement("table");
-  const rh=document.createElement("thead"); const rhr=document.createElement("tr");
-  const heads=[t("rthName"),t("rthSched")];
-  if(hasContract) heads.push(t("rthContr"),t("rthDef"));
-  heads.forEach(x=>rhr.appendChild(th(x)));
-  rh.appendChild(rhr); tblr.appendChild(rh);
-  const rb=document.createElement("tbody");
-  rows.forEach(e=>{
-    const tr=document.createElement("tr");
-    if(hasContract&&e.def!==null) tr.className=e.def>=8?"r-bad":(e.def>0?"r-warn":"r-ok");
-    const cells=[e.name,e.scheduled+"h / "+fullTimeWeeklyHours()+"h"];
-    if(hasContract) cells.push(e.contracted>0?e.contracted+"h":"—",e.def!==null?((e.def>0?"+":"")+e.def+"h"):"—");
-    cells.forEach((v,i)=>{
-      const td=document.createElement("td"); td.textContent=v;
-      if(i>0) td.style.direction="ltr";
-      tr.appendChild(td);
-    });
-    rb.appendChild(tr);
+  // manager-first view: ONLY reps below their contracted base, largest recovery first,
+  // headline = the total hours (and FTE) recoverable before any external hiring
+  // each rep's true base: roster contract column → else their IRON weekly hours →
+  // else the full-time default (an honest base, not a one-size 42h yardstick)
+  const baseOf=e=>{
+    if(e.contracted>0) return e.contracted;
+    const ir=state.iron&&state.iron.emps.get(e.name);
+    return ir&&ir.contracted>0?Math.round(ir.contracted*10)/10:fullTimeWeeklyHours();
+  };
+  const under=state.roster
+    .map(e=>{ const base=baseOf(e); return {...e,base,def:Math.round((base-e.scheduled)*10)/10}; })
+    .filter(e=>e.def>0.4)
+    .sort((a,b)=>b.def-a.def);
+  if(!under.length){
+    rw.innerHTML=`<div class="banner good" style="display:block">${t("rosterAllOk")}</div>`;
+    return;
+  }
+  const totH=Math.round(under.reduce((s,e)=>s+e.def,0)*10)/10;
+  const fte=Math.round(totH/fullTimeWeeklyHours()*10)/10;
+  const head=document.createElement("div");
+  head.style.cssText="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px";
+  head.innerHTML=`<span style="font-size:1.5rem;font-weight:700;color:var(--navy);direction:ltr">+${totH}h</span>
+    <span class="mini">${t("rosterRecov",{n:under.length,f:fte})}</span>
+    <button class="linklike" id="rosterCopyBtn" style="margin-inline-start:auto">📋 ${t("rosterCopyBtn")}</button>`;
+  rw.appendChild(head);
+  const maxDef=under[0].def;
+  under.slice(0,14).forEach(e=>{
+    const meta=state.rosterMeta.get(e.name)||{};
+    const row=document.createElement("div");
+    row.style.cssText="display:flex;align-items:center;gap:8px;font-size:.8rem;margin:3px 0";
+    const fill=Math.min(100,e.scheduled/e.base*100);
+    row.innerHTML=`<span style="min-width:150px;font-weight:600">${e.name}</span>
+      <span class="mini" style="min-width:88px">${meta.team||""}</span>
+      <div style="flex:1;background:var(--sky-soft);border-radius:5px;height:16px;position:relative;direction:ltr" title="${e.scheduled}h / ${e.base}h">
+        <div style="width:${fill.toFixed(0)}%;background:${e.def>=8?"#c94f2e":"#e3a72f"};height:16px;border-radius:5px"></div>
+      </div>
+      <span style="min-width:56px;direction:ltr;font-weight:700;color:${e.def>=8?"var(--crimson)":"#8a6d1a"}">+${e.def}h</span>`;
+    rw.appendChild(row);
   });
-  tblr.appendChild(rb);
-  rw.appendChild(tblr);
+  if(under.length>14){
+    const more=document.createElement("p"); more.className="mini";
+    more.textContent="+"+(under.length-14)+" …"; rw.appendChild(more);
+  }
   const note=document.createElement("p"); note.className="mini"; note.style.marginTop="6px";
   note.textContent=t(hasContract?"rosterSortDef":"rosterSortSched",{h:fullTimeWeeklyHours()});
   rw.appendChild(note);
+  document.getElementById("rosterCopyBtn").addEventListener("click",e2=>{
+    e2.stopPropagation();
+    const txt=under.map(x=>`${x.name}: ${x.scheduled}h/${x.base}h (+${x.def}h)`).join("\n");
+    navigator.clipboard&&navigator.clipboard.writeText(txt);
+    showToast("📋 "+t("wfValCopied"),true);
+  });
 }
 
 /* perf/memory: only the VISIBLE page is re-rendered; hidden pages are marked
@@ -5111,8 +5337,9 @@ let dragDepth=0;
 document.addEventListener("dragenter",e=>{
   if(!e.dataTransfer||![...(e.dataTransfer.types||[])].includes("Files")) return;
   dragDepth++;
-  if(!e.target.closest||!e.target.closest(".dropzone"))
-    document.getElementById("dropOverlay").classList.add("show");
+  // over a portal the zone's own highlight speaks — the full-screen overlay would cover it
+  document.getElementById("dropOverlay").classList.toggle("show",
+    !e.target.closest||!e.target.closest(".dropzone"));
 });
 document.addEventListener("dragleave",()=>{
   if(--dragDepth<=0){ dragDepth=0; document.getElementById("dropOverlay").classList.remove("show"); }
@@ -5123,8 +5350,8 @@ document.addEventListener("drop",e=>{
   dragDepth=0;
   document.getElementById("dropOverlay").classList.remove("show");
   if(e.target.closest&&e.target.closest(".dropzone")) return; // portal handlers own these
-  const f=e.dataTransfer&&e.dataTransfer.files[0];
-  if(f) ingestFile(f,null);
+  // multi-file drops ingest EVERY file (forecast + sidur together in one gesture)
+  [...(e.dataTransfer&&e.dataTransfer.files||[])].forEach(f=>ingestFile(f,null));
 });
 
 document.getElementById("langSelect").addEventListener("change",e=>setLang(e.target.value));
@@ -5143,7 +5370,9 @@ function saveData(){
       iron:state.iron?{total:state.iron.total,
         emps:Object.fromEntries([...state.iron.emps].map(([n,v])=>[n,{...v,missing:[...v.missing]}]))}:null,
       meta:Object.fromEntries(state.rosterMeta), vac:state.vacations,
-      schedRows:state.schedRows, valErr:state.validationErrors }));
+      schedRows:state.schedRows, valErr:state.validationErrors,
+      capSkills:state.capSkills, capSkillMap:state.rosterCapSkill, skillList:state.skillList,
+      un:state.unallocRows }));
   }catch(e){} // quota exceeded on huge files → data simply stays transient
 }
 function loadData(){
@@ -5165,6 +5394,9 @@ function loadData(){
     state.rosterMeta=new Map(Object.entries(s.meta||{}));
     state.vacations=s.vac||[]; state.schedRows=s.schedRows||[];
     state.validationErrors=s.valErr||[];
+    state.rosterCapSkill=s.capSkillMap||{}; state.skillList=s.skillList||[];
+    state.capSkills=s.capSkills===undefined?null:s.capSkills;
+    state.unallocRows=s.un||[];
     rebuildRosterCoverage();
     return true;
   }catch(e){ return false; }
@@ -5195,8 +5427,10 @@ modeSel.value=state.settings.mode;
 primSel.value=state.settings.primaryMetric;
 buildDayWins();
 // item 11: cached datasets re-populate the workspace (sidur-only restores without touching forecast state)
+// no auto-demo: a fresh workspace starts EMPTY so real uploads are unmistakable —
+// sample data loads only via the explicit button on the Home page
 if(loadData()){ if(state.days.size) afterForecastLoad(); else { applyDataWeek(); updatePortalStatus(); renderAll(); } }
-else loadSample();
+else renderAll();
 document.getElementById("polEnable").checked=state.policy.enabled;
 document.getElementById("polFields").disabled=!state.policy.enabled;
 syncOptBtn();
