@@ -620,7 +620,21 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
 "use strict";
 // footer logo mirrors the favicon (one embedded image serves both)
 { const fl=document.getElementById("footerLogo"), ic=document.querySelector('link[rel="icon"]');
-  if(fl&&ic) fl.src=ic.href; else if(fl) fl.style.display="none"; }
+  if(fl&&ic) fl.src=ic.href; else if(fl) fl.style.display="none";
+  // easter egg: click the logo → it blooms to center stage; click again → gone
+  if(fl&&ic){
+    fl.style.cursor="pointer";
+    fl.addEventListener("click",()=>{
+      let big=document.getElementById("logoEgg");
+      if(big){ big.remove(); return; }
+      big=document.createElement("div"); big.id="logoEgg";
+      big.style.cssText="position:fixed;inset:0;z-index:400;display:flex;align-items:center;justify-content:center;background:rgba(13,42,77,.75);cursor:pointer;backdrop-filter:blur(3px)";
+      big.innerHTML=`<img src="${ic.href}" alt="" style="width:min(60vw,60vh);height:min(60vw,60vh);border-radius:24px;box-shadow:0 24px 80px rgba(0,0,0,.5);transform:scale(.3);opacity:0;transition:transform .45s cubic-bezier(.2,1.6,.4,1),opacity .3s">`;
+      document.body.appendChild(big);
+      requestAnimationFrame(()=>{ const im=big.querySelector("img"); im.style.transform="scale(1)"; im.style.opacity="1"; });
+      big.addEventListener("click",()=>big.remove());
+    });
+  } }
 /* =====================================================================
    WFM Simulator v1.2 — pure client-side. © Imri Fichman, Tikshuv.
 
@@ -785,11 +799,11 @@ en:{
   wfNoIron:"No Iron sheet loaded — drop one multi-sheet Tikshuv workbook (סידור עבודה + סידור ברזל). Falling back to manual contracted hours per rep.",
   wfTeamL:"Team", wfSkillL:"Skill", wfSiteL:"Site", wfAll:"(all)",
   wfKpiUtil:"Roster-to-Iron Utilization",
-  tipWfUtil:"Σ scheduled hours (roster sheet) ÷ Σ contracted hours (Iron sheet) for the selected week — how much of the contractual base becomes real shifts.",
+  tipWfUtil:"HOW MUCH: Σ scheduled hours ÷ Σ Iron hours — what share of the contracted volume became real shifts. Measures quantity only. NOT the mirror of the Deviation Index: hours can be 100% used yet every shift moved to different times.",
   wfKpiLeak:"Vacation Leakage Rate",
   tipWfLeak:"Σ absence hours inside the contractual Iron window ÷ Σ contracted Iron hours. Partial-day leaves count only the lost slice.",
   wfKpiDev:"Contractual Deviation Index",
-  tipWfDev:"Share of scheduled shifts whose start/end diverge from the Iron parameters — operational volatility.",
+  tipWfDev:"WHEN: % of existing shifts whose start/end differ from their Iron times — measures shape, not volume. Independent of Utilization: 100% utilization with every shift moved = high deviation; 60% utilization at exact contract times = 0 deviation.",
   wfTreeTitle:"Iron Hours Allocation (Treemap)",
   tipWfTree:"Total contractual capacity split into productive scheduled hours, absence types, and unallocated remainder. Filter by team / skill / site above.",
   wf_prod:"Scheduled (actual)", wf_vacation:"Vacation", wf_miluim:"Reserve duty", wf_medical:"Medical",
@@ -800,7 +814,7 @@ en:{
   wfImpactNone:"Needs a forecast + roster with a skill column (מיומנות) to simulate.",
   wfImpactTip1:"Answer rate",
   wfImpactNoIron:"This matrix compares the Iron base (סידור ברזל) against the actual roster — load a Tikshuv workbook with an Iron sheet to enable it.",
-  wfImpactMetric:"Computed on your primary target metric: {m}. Change it in Advanced Settings and this matrix follows.",
+  wfImpactMetric:"Each cell: how many points of the WHOLE center's {m} this row's absences cost that day. Baseline is constant — everyone at Iron; only the row's slice drops to its actual hours. Filters choose whose damage you inspect; the center-wide baseline never moves.",
   wfImpactTip2:"{m} at Iron base staffing → at actual roster staffing",
   wfImpactUnval:"{n} roster agents have no validated Iron base and are EXCLUDED from this matrix:",
   schNeedIron:"The auto-scheduler builds shifts from the סידור ברזל base. Load a Tikshuv workbook with an Iron sheet to enable it.",
@@ -809,6 +823,9 @@ en:{
   crsOk:"{n} courses loaded into the training pipeline.", crsErr:"No course rows recognized — need at least a name/date column.",
   wfDrillTitle:"Drill-down: {seg} by {dim}", wfDrillBy:"Drill by", wfDrillHint:"Click a treemap tile to break it down.", wfDrillBack:"✕ Close drill-down",
   roIronNote:"Iron base: {n} employees",
+  rosterRecov:"extendable across {n} reps ≈ {f} FTE — recover these hours before hiring externally",
+  rosterAllOk:"✅ Everyone is at (or above) their contracted baseline — no internal hours to recover.",
+  rosterCopyBtn:"Copy list",
   skillScopeAll:"All skills answer", skillScopeN:"{n} answering skills",
   skillScopeHint:"Which skills count as ANSWERING capacity for this queue's AR/TSF? (HR & workforce pages always include everyone.) On billing days check בכיר; מרפאות usually answer קו 1 too.",
   skillScopeAllBtn:"Count every skill",
@@ -1061,11 +1078,11 @@ he:{
   wfNoIron:"לא נטען גיליון ברזל — גררו קובץ תקשוב רב-גיליוני אחד (סידור עבודה + סידור ברזל). בינתיים חישוב לפי שעות חוזיות ידניות לנציג.",
   wfTeamL:"מנהל צוות", wfSkillL:"מיומנות", wfSiteL:"מוקד", wfAll:"(הכול)",
   wfKpiUtil:"ניצול סידור מול ברזל",
-  tipWfUtil:"‏Σ שעות משובצות (סידור עבודה) ÷ Σ שעות חוזיות (ברזל) בשבוע הנבחר — כמה מהבסיס החוזי הופך למשמרות בפועל.",
+  tipWfUtil:"כמה: ‏Σ שעות משובצות ÷ ‏Σ שעות ברזל — איזה חלק מנפח השעות החוזי הפך למשמרות בפועל. מודד כמות בלבד. זה לא ההופכי של מדד הסטייה: אפשר לנצל 100% מהשעות כשכל משמרת הוזזה לשעה אחרת.",
   wfKpiLeak:"שיעור זליגת חופשות",
   tipWfLeak:"‏Σ שעות היעדרות בתוך חלון הברזל החוזי ÷ Σ שעות הברזל. חופשה חלקית נספרת רק לפי החלק שאבד.",
   wfKpiDev:"מדד סטייה חוזית",
-  tipWfDev:"חלק המשמרות המשובצות ששעת ההתחלה/סיום שלהן שונה מפרמטרי הברזל — תנודתיות תפעולית.",
+  tipWfDev:"מתי: אחוז המשמרות הקיימות ששעת ההתחלה/סיום שלהן שונה משעות הברזל — מודד צורה, לא כמות. בלתי תלוי בניצול: ניצול 100% עם כל המשמרות מוזזות = סטייה גבוהה; ניצול 60% בשעות החוזה המדויקות = סטייה 0.",
   wfTreeTitle:"הקצאת שעות ברזל (Treemap)",
   tipWfTree:"סך הקיבולת החוזית מפוצל לשעות פרודוקטיביות, סוגי היעדרות ויתרה לא מוקצית. סינון לפי צוות / מיומנות / מוקד למעלה.",
   wf_prod:"משובץ בפועל", wf_vacation:"חופשה", wf_miluim:"מילואים", wf_medical:"רפואי",
@@ -1076,7 +1093,7 @@ he:{
   wfImpactNone:"נדרשים תחזית + סידור עם עמודת מיומנות כדי לסמלץ.",
   wfImpactTip1:"אחוז מענה",
   wfImpactNoIron:"המטריצה משווה את בסיס הברזל מול הסידור בפועל — טענו קובץ תקשוב עם גיליון סידור ברזל כדי להפעיל אותה.",
-  wfImpactMetric:"מחושב לפי יעד המטרה הראשי שלכם: {m}. שינוי בהגדרות מתקדמות יעדכן את המטריצה.",
+  wfImpactMetric:"כל תא: כמה נקודות מ־{m} של המוקד כולו עולות ההיעדרויות של השורה הזו באותו יום. קו הבסיס קבוע — כולם לפי הברזל; רק פלח השורה יורד לשעות בפועל. הסינון בוחר את מי בודקים; קו הבסיס של המוקד לא זז.",
   wfImpactTip2:"{m} באיוש בסיס הברזל ← באיוש הסידור בפועל",
   wfImpactUnval:"{n} נציגים בסידור ללא בסיס ברזל מתוקף ואינם נכללים במטריצה:",
   schNeedIron:"השיבוץ האוטומטי בונה משמרות מבסיס סידור הברזל. טענו קובץ תקשוב עם גיליון ברזל כדי להפעיל.",
@@ -1085,6 +1102,9 @@ he:{
   crsOk:"{n} קורסים נטענו לצנרת ההכשרה.", crsErr:"לא זוהו שורות קורס — נדרשת לפחות עמודת שם/תאריך.",
   wfDrillTitle:"פילוח: {seg} לפי {dim}", wfDrillBy:"פילוח לפי", wfDrillHint:"לחצו על אריח במפת החום לפילוח.", wfDrillBack:"✕ סגירת פילוח",
   roIronNote:"בסיס ברזל: {n} עובדים",
+  rosterRecov:"ניתנות להרחבה אצל {n} נציגים ≈ {f} משרות — לאתר את השעות האלה לפני גיוס חיצוני",
+  rosterAllOk:"✅ כולם בבסיס החוזי שלהם (או מעליו) — אין שעות פנימיות לאיתור.",
+  rosterCopyBtn:"העתקת רשימה",
   skillScopeAll:"כל המיומנויות עונות", skillScopeN:"{n} מיומנויות עונות",
   skillScopeHint:"אילו מיומנויות נספרות כקיבולת מענה (AR/TSF) של התור? (דפי כוח אדם תמיד כוללים את כולם.) בימי גבייה סמנו גם בכיר; מרפאות לרוב עונות גם קו 1.",
   skillScopeAllBtn:"ספרו את כל המיומנויות",
@@ -2379,7 +2399,9 @@ function walkRosterExtras(grid,hd){
     // non-time entry cell is the authoritative status for unscheduled rows
     const statusCol=m.status!=null?String(row[m.status]??"").trim():"";
     const startRaw=m.start!=null?String(row[m.start]??"").trim():"";
-    const status=(!s&&startRaw&&!normTimeAny(startRaw))?startRaw:statusCol;
+    // no valid start time: a text entry-cell IS the status; an EMPTY entry-cell is
+    // the deliberate empty status (never the meaningless פעיל from the status column)
+    const status=!s?(startRaw&&!normTimeAny(startRaw)?startRaw:""):statusCol;
     let type=null;
     for(const [k,re] of ABS_TYPES) if(re.test(status)){ type=k; break; }
     // sidur rows with no shift and no recognized absence: the team leader's raw
@@ -2510,10 +2532,12 @@ function renderTreemap(W){
   const stOrder=Object.keys(W.unBy).sort((a,b)=>W.unBy[b]-W.unBy[a]);
   const cols=[["prod",prod],["__abs",W.absTot],["__un",W.unTot],["unalloc",unalloc]].filter(c=>c[1]>0.01);
   let x=0; const parts=[];
+  const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
   const tile=(x0,y0,tw,thh,key,val,label,color)=>{
     const p=val/total;
-    parts.push(`<rect data-seg="${key}" style="cursor:pointer" x="${x0.toFixed(1)}" y="${y0.toFixed(1)}" width="${Math.max(0,tw-2).toFixed(1)}" height="${Math.max(0,thh-2).toFixed(1)}" fill="${color}" rx="3"><title>${label}: ${val.toFixed(1)}h (${(p*100).toFixed(1)}%)</title></rect>`+
-      (tw>56&&thh>18?`<text x="${(x0+6).toFixed(1)}" y="${(y0+14).toFixed(1)}" font-size="10" fill="${key==="unalloc"?"#44546a":"#fff"}" font-weight="600" pointer-events="none">${label} ${(p*100).toFixed(0)}%</text>`:""));
+    // data-seg is URI-encoded: raw statuses may contain quotes (חו"ל) that break markup
+    parts.push(`<rect data-seg="${encodeURIComponent(key)}" style="cursor:pointer" x="${x0.toFixed(1)}" y="${y0.toFixed(1)}" width="${Math.max(0,tw-2).toFixed(1)}" height="${Math.max(0,thh-2).toFixed(1)}" fill="${color}" rx="3"><title>${esc(label)}: ${val.toFixed(1)}h (${(p*100).toFixed(1)}%)</title></rect>`+
+      (tw>56&&thh>18?`<text x="${(x0+6).toFixed(1)}" y="${(y0+14).toFixed(1)}" font-size="10" fill="${key==="unalloc"?"#44546a":"#fff"}" font-weight="600" pointer-events="none">${esc(label)} ${(p*100).toFixed(0)}%</text>`:""));
   };
   for(const [key,val] of cols){
     const tw=w*val/total;
@@ -2538,7 +2562,7 @@ function renderTreemap(W){
   ].join("");
   // drill-down: click a tile → hours of that segment broken down by team/skill/site
   host.querySelectorAll("rect[data-seg]").forEach(r=>r.addEventListener("click",()=>{
-    state.wfDrillSeg=r.getAttribute("data-seg"); renderTreeDrill();
+    state.wfDrillSeg=decodeURIComponent(r.getAttribute("data-seg")); renderTreeDrill();
   }));
   renderTreeDrill();
 }
@@ -2590,17 +2614,24 @@ function renderTreeDrill(){
       <div style="flex:1;background:var(--sky-soft);border-radius:4px;height:14px;direction:ltr"><div style="width:${(v/tot*100).toFixed(1)}%;background:${WF_COLORS[seg]||"#999"};height:14px;border-radius:4px"></div></div>
       <span style="min-width:76px;direction:ltr">${v.toFixed(1)}h (${(v/tot*100).toFixed(0)}%)</span></div>`).join("")
     :`<p class="mini">${t("noData")}</p>`);
-  // status segments name the employees: the manager left these rows visible on purpose
-  if(seg.startsWith("st:")){
-    const st=seg.slice(3);
+  // absence & status segments name the employees — a tile is only actionable
+  // when the manager can see WHO is behind it
+  {
     const week=wfWeek()?new Set(weekDates(wfWeek())):new Set();
-    const names=[...new Set((state.unallocRows||[])
-      .filter(u=>u.status===st&&(week.has(u.ds)||(!u.ds&&u.di!=null))&&wfPass(u)).map(u=>u.name))];
-    const nm=document.createElement("p"); nm.className="mini"; nm.style.marginTop="6px";
-    nm.textContent=names.length
-      ? "👤 "+names.slice(0,40).join(", ")+(names.length>40?" …":"")
-      : t("noData");
-    box.appendChild(nm);
+    const inWeek=r=>week.has(r.ds)||(!r.ds&&r.di!=null);
+    let src=null;
+    if(seg.startsWith("st:")){ const st=seg.slice(3);
+      src=(state.unallocRows||[]).filter(u=>u.status===st&&inWeek(u)&&wfPass(u)); }
+    else if(seg!=="prod"&&seg!=="unalloc")
+      src=state.vacations.filter(v=>v.type===seg&&inWeek(v)&&wfPass(v));
+    if(src){
+      const names=[...new Set(src.map(r=>r.name))];
+      const nm=document.createElement("p"); nm.className="mini"; nm.style.marginTop="6px";
+      nm.textContent=names.length
+        ? "👤 "+names.slice(0,40).join(", ")+(names.length>40?" (+"+(names.length-40)+")":"")
+        : t("noData");
+      box.appendChild(nm);
+    }
   }
   box.querySelector("#wfDrillDim").addEventListener("change",e=>{ state.wfDrillDim=e.target.value; renderTreeDrill(); });
   box.querySelector("#wfDrillClose").addEventListener("click",()=>{ state.wfDrillSeg=null; renderTreeDrill(); });
@@ -2625,7 +2656,10 @@ function renderImpactMatrix(){
   const unval=new Set(state.validationErrors.map(v=>v.name));
   if(metricEl) metricEl.textContent=t("wfImpactMetric",{m:primName()});
   const metaOf=name=>state.rosterMeta.get(name)||iron.get(name)||{};
-  // iron base hours per skill × weekday — validated agents only, current filters applied
+  // WHOLE-CENTER iron base per weekday — never filtered: it is the constant baseline
+  const ironAllBy={};
+  for(const [,e] of iron) for(const di in e.days) ironAllBy[di]=(ironAllBy[di]||0)+e.days[di].h;
+  // slice iron/actual hours per skill × weekday — the current filters define the slice
   const ironBy={}, skills=new Set();
   for(const [name,e] of iron){
     const m=metaOf(name);
@@ -2635,7 +2669,6 @@ function renderImpactMatrix(){
     for(const di in e.days) ironBy[sk+"|"+di]=(ironBy[sk+"|"+di]||0)+e.days[di].h;
   }
   if(!skills.size){ tbl.innerHTML=`<tr><td class="mini">${t("wfImpactNone")}</td></tr>`; return; }
-  // actual scheduled hours per skill × weekday (sidur week) — validated iron agents only
   const week=wfWeek()?new Set(weekDates(wfWeek())):new Set();
   const schedBy={};
   for(const r of state.schedRows){
@@ -2656,31 +2689,31 @@ function renderImpactMatrix(){
     for(let di=0;di<6;di++){
       const td=document.createElement("td");
       const ironH=ironBy[sk+"|"+di]||0, schedH=schedBy[sk+"|"+di]||0;
+      const ironAll=ironAllBy[di]||0;
       const ser=state.series[di];
-      if(!ironH||!ser){ td.textContent=t("noData"); tr.appendChild(td); continue; }
+      if(!ironH||!ironAll||!ser){ td.textContent=t("noData"); tr.appendChild(td); continue; }
       const winH=defaultDayHours(di)||1;
-      // bodies → effective agents with the SAME conversion the matrix uses
-      // (shrinkage/absence × measured-AR calibration) — otherwise this matrix
-      // reads far more optimistic than every other AR estimate in the app
+      // bodies → effective agents with the SAME conversion the weekly matrix uses
       const effShare=Math.max(0.05,availShare(state.settings)*(state.calib||1));
-      const concIron=Math.max(1,Math.round(ironH/winH*effShare));
-      const concAct=Math.round(schedH/winH*effShare);
-      // total-skill share of the day's iron base scales the demand slice this skill owns
-      let dayIronTot=0; for(const k of skills) dayIronTot+=ironBy[k+"|"+di]||0;
-      const share=dayIronTot>0?ironH/dayIronTot:0;
-      let vol=0,pIron=0,pAct=0;
+      // CONSTANT baseline: the WHOLE center with everyone at iron. Varied case:
+      // only this row's slice drops to its actual hours — the gap is exactly how
+      // much this slice's absences hurt the whole call-center metric.
+      const staffedAll=Math.max(0,ironAll-ironH+Math.min(schedH,ironH));
+      const concBase=Math.max(1,Math.round(ironAll/winH*effShare));
+      const concVar=Math.max(0,Math.round(staffedAll/winH*effShare));
+      let vol=0,pBase=0,pVar=0;
       for(const tm in ser){ const s=ser[tm];
-        const v=(s.vols.reduce((a,b)=>a+b,0)/s.vols.length)*share;
+        const v=s.vols.reduce((a,b)=>a+b,0)/s.vols.length;
         const aht=s.ahts.reduce((a,b)=>a+b,0)/s.ahts.length;
-        pIron+=primVal(evalInterval(v,aht,concIron,state.settings))*v;
-        pAct+=primVal(evalInterval(v,aht,Math.max(0,concAct),state.settings))*v;
+        pBase+=primVal(evalInterval(v,aht,concBase,state.settings))*v;
+        pVar+=primVal(evalInterval(v,aht,concVar,state.settings))*v;
         vol+=v;
       }
       if(!vol){ td.textContent=t("noData"); tr.appendChild(td); continue; }
-      const a1=pIron/vol, a2=pAct/vol;
-      td.className=a2<target-0.1?"tier-bad":(a2<target?"tier-warn":"tier-good");
-      td.innerHTML=`<span class="v">${(a1*100).toFixed(0)}%→${(a2*100).toFixed(0)}%</span>`;
-      td.title=`${t("wfImpactTip2",{m:primName()})}: ${(a1*100).toFixed(1)}% (ברזל ${ironH.toFixed(1)}h) → ${(a2*100).toFixed(1)}% (בפועל ${schedH.toFixed(1)}h)`;
+      const a1=pBase/vol, a2=pVar/vol, dmg=(a1-a2)*100;
+      td.className=dmg>=5?"tier-bad":(dmg>=1.5?"tier-warn":"tier-good");
+      td.innerHTML=`<span class="v">${dmg<0.05?"0":"−"+dmg.toFixed(1)}%</span>`;
+      td.title=`${t("wfImpactTip2",{m:primName()})}: ${(a1*100).toFixed(1)}% → ${(a2*100).toFixed(1)}% (ברזל ${ironH.toFixed(1)}h ← בפועל ${schedH.toFixed(1)}h)`;
       tr.appendChild(td);
     }
     tb.appendChild(tr);
@@ -4607,32 +4640,58 @@ function renderInternalRoster(){
     return;
   }
   const hasContract=state.roster.some(e=>e.contracted>0);
-  const rows=state.roster.map(e=>({...e,def:e.contracted>0?Math.round((e.contracted-e.scheduled)*10)/10:null}));
-  rows.sort((a,b)=>hasContract?(b.def??-99)-(a.def??-99):a.scheduled-b.scheduled);
-  const tblr=document.createElement("table");
-  const rh=document.createElement("thead"); const rhr=document.createElement("tr");
-  const heads=[t("rthName"),t("rthSched")];
-  if(hasContract) heads.push(t("rthContr"),t("rthDef"));
-  heads.forEach(x=>rhr.appendChild(th(x)));
-  rh.appendChild(rhr); tblr.appendChild(rh);
-  const rb=document.createElement("tbody");
-  rows.forEach(e=>{
-    const tr=document.createElement("tr");
-    if(hasContract&&e.def!==null) tr.className=e.def>=8?"r-bad":(e.def>0?"r-warn":"r-ok");
-    const cells=[e.name,e.scheduled+"h / "+fullTimeWeeklyHours()+"h"];
-    if(hasContract) cells.push(e.contracted>0?e.contracted+"h":"—",e.def!==null?((e.def>0?"+":"")+e.def+"h"):"—");
-    cells.forEach((v,i)=>{
-      const td=document.createElement("td"); td.textContent=v;
-      if(i>0) td.style.direction="ltr";
-      tr.appendChild(td);
-    });
-    rb.appendChild(tr);
+  // manager-first view: ONLY reps below their contracted base, largest recovery first,
+  // headline = the total hours (and FTE) recoverable before any external hiring
+  // each rep's true base: roster contract column → else their IRON weekly hours →
+  // else the full-time default (an honest base, not a one-size 42h yardstick)
+  const baseOf=e=>{
+    if(e.contracted>0) return e.contracted;
+    const ir=state.iron&&state.iron.emps.get(e.name);
+    return ir&&ir.contracted>0?Math.round(ir.contracted*10)/10:fullTimeWeeklyHours();
+  };
+  const under=state.roster
+    .map(e=>{ const base=baseOf(e); return {...e,base,def:Math.round((base-e.scheduled)*10)/10}; })
+    .filter(e=>e.def>0.4)
+    .sort((a,b)=>b.def-a.def);
+  if(!under.length){
+    rw.innerHTML=`<div class="banner good" style="display:block">${t("rosterAllOk")}</div>`;
+    return;
+  }
+  const totH=Math.round(under.reduce((s,e)=>s+e.def,0)*10)/10;
+  const fte=Math.round(totH/fullTimeWeeklyHours()*10)/10;
+  const head=document.createElement("div");
+  head.style.cssText="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px";
+  head.innerHTML=`<span style="font-size:1.5rem;font-weight:700;color:var(--navy);direction:ltr">+${totH}h</span>
+    <span class="mini">${t("rosterRecov",{n:under.length,f:fte})}</span>
+    <button class="linklike" id="rosterCopyBtn" style="margin-inline-start:auto">📋 ${t("rosterCopyBtn")}</button>`;
+  rw.appendChild(head);
+  const maxDef=under[0].def;
+  under.slice(0,14).forEach(e=>{
+    const meta=state.rosterMeta.get(e.name)||{};
+    const row=document.createElement("div");
+    row.style.cssText="display:flex;align-items:center;gap:8px;font-size:.8rem;margin:3px 0";
+    const fill=Math.min(100,e.scheduled/e.base*100);
+    row.innerHTML=`<span style="min-width:150px;font-weight:600">${e.name}</span>
+      <span class="mini" style="min-width:88px">${meta.team||""}</span>
+      <div style="flex:1;background:var(--sky-soft);border-radius:5px;height:16px;position:relative;direction:ltr" title="${e.scheduled}h / ${e.base}h">
+        <div style="width:${fill.toFixed(0)}%;background:${e.def>=8?"#c94f2e":"#e3a72f"};height:16px;border-radius:5px"></div>
+      </div>
+      <span style="min-width:56px;direction:ltr;font-weight:700;color:${e.def>=8?"var(--crimson)":"#8a6d1a"}">+${e.def}h</span>`;
+    rw.appendChild(row);
   });
-  tblr.appendChild(rb);
-  rw.appendChild(tblr);
+  if(under.length>14){
+    const more=document.createElement("p"); more.className="mini";
+    more.textContent="+"+(under.length-14)+" …"; rw.appendChild(more);
+  }
   const note=document.createElement("p"); note.className="mini"; note.style.marginTop="6px";
   note.textContent=t(hasContract?"rosterSortDef":"rosterSortSched",{h:fullTimeWeeklyHours()});
   rw.appendChild(note);
+  document.getElementById("rosterCopyBtn").addEventListener("click",e2=>{
+    e2.stopPropagation();
+    const txt=under.map(x=>`${x.name}: ${x.scheduled}h/${x.base}h (+${x.def}h)`).join("\n");
+    navigator.clipboard&&navigator.clipboard.writeText(txt);
+    showToast("📋 "+t("wfValCopied"),true);
+  });
 }
 
 /* perf/memory: only the VISIBLE page is re-rendered; hidden pages are marked
