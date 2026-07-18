@@ -328,23 +328,31 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <span><i style="background:var(--crimson-bg)"></i><span data-i18n="legBad">&lt; 80% — breach</span> <span class="info" data-tipkey="tipBreach" tabindex="0">i</span></span>
         <span><i style="background:#c22;border-radius:50%"></i><span data-i18n="legShort">understaffed (scheduled &lt; required)</span></span>
         <span><i style="background:#8a63d2"></i><span data-i18n="legOver">overstaffed (scheduled &gt; required)</span></span>
-        <span><i style="background:var(--magenta)"></i><span data-i18n="legDecay">flex-policy dip applied</span></span>
+        <!-- legDecay belongs to the hidden Policy Optimizer (see #polSection) -->
+        <span style="display:none"><i style="background:var(--magenta)"></i><span data-i18n="legDecay">flex-policy dip applied</span></span>
         <span data-i18n="legEdit">Click any cell to edit values.</span>
       </div>
     </div>
     <!-- item 3: policy builder relocated to a horizontal panel beneath the matrix -->
     <div class="card">
       <div class="polrow">
-        <h2 style="margin:0"><span data-i18n="policyTitle">Operational Policy Optimizer</span> <span class="info" data-tipkey="tipPolicy" tabindex="0">i</span></h2>
-        <label class="chk"><input type="checkbox" id="polEnable"> <span data-i18n="polEnable">Enable Operational Policy Optimizer</span></label>
-        <fieldset id="polFields" disabled>
-          <span class="pfi"><span data-i18n="polMaxDrops">Max dips per day</span> <span class="info" data-tipkey="tipMaxDrops" tabindex="0">i</span>
-            <input type="number" id="polMaxDrops" min="0" max="10" step="1"></span>
-          <span class="pfi"><span data-i18n="polGap">Min gap between dips (h)</span> <span class="info" data-tipkey="tipGap" tabindex="0">i</span>
-            <input type="number" id="polGap" min="0.5" max="8" step="0.5"></span>
-          <span class="pfi"><span data-i18n="polFloor">SLA floor target (%)</span> <span class="info" data-tipkey="tipFloor" tabindex="0">i</span>
-            <input type="number" id="polFloor" min="40" max="95" step="1"></span>
-        </fieldset>
+        <!-- ===== Operational Policy Optimizer (מייעל מדיניות תפעולית) — HIDDEN =====
+             Hidden 2026-07-18: the value isn't clear enough — the user can't tell what
+             real-life action turns the optimized dips into savings. Kept intact
+             (elements + all JS wiring) for future development: to bring it back,
+             remove display:none from #polSection and the legDecay legend item. -->
+        <div id="polSection" style="display:none">
+          <h2 style="margin:0"><span data-i18n="policyTitle">Operational Policy Optimizer</span> <span class="info" data-tipkey="tipPolicy" tabindex="0">i</span></h2>
+          <label class="chk"><input type="checkbox" id="polEnable"> <span data-i18n="polEnable">Enable Operational Policy Optimizer</span></label>
+          <fieldset id="polFields" disabled>
+            <span class="pfi"><span data-i18n="polMaxDrops">Max dips per day</span> <span class="info" data-tipkey="tipMaxDrops" tabindex="0">i</span>
+              <input type="number" id="polMaxDrops" min="0" max="10" step="1"></span>
+            <span class="pfi"><span data-i18n="polGap">Min gap between dips (h)</span> <span class="info" data-tipkey="tipGap" tabindex="0">i</span>
+              <input type="number" id="polGap" min="0.5" max="8" step="0.5"></span>
+            <span class="pfi"><span data-i18n="polFloor">SLA floor target (%)</span> <span class="info" data-tipkey="tipFloor" tabindex="0">i</span>
+              <input type="number" id="polFloor" min="40" max="95" step="1"></span>
+          </fieldset>
+        </div>
         <span class="grow"></span>
         <button class="btn ghost" id="excModeBtn" data-i18n="excBtn">🗓 Holiday / Exception Control</button>
         <span class="info" data-tipkey="tipExc" tabindex="0">i</span>
@@ -4726,6 +4734,9 @@ function loadState(){
     if(!s) return null;
     Object.assign(state.settings,s.settings||{});
     Object.assign(state.policy,s.policy||{});
+    // Policy Optimizer UI is hidden (see #polSection) — a workspace saved with it
+    // enabled must not keep applying invisible dips to the matrix
+    state.policy.enabled=false;
     // migration: the ensemble is the new default unless the user actively picked a model
     if(!state.settings.modelUserSet&&state.settings.modelVolume==="holt_damped")
       state.settings.modelVolume="ensemble5";
