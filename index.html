@@ -200,6 +200,8 @@ tr.r-ok td{background:var(--emerald-bg)}
 /* iron-dependent features are visibly disabled until a סידור ברזל is loaded */
 .ironGated{opacity:.45;pointer-events:none;filter:grayscale(.6);position:relative}
 .gateNote{font-size:.78rem;color:var(--crimson);font-weight:600;margin:4px 0}
+.cellundo{border:none;background:rgba(255,255,255,.75);border-radius:50%;width:16px;height:16px;line-height:15px;font-size:.68rem;cursor:pointer;padding:0;margin-inline-start:3px;color:var(--navy);vertical-align:middle}
+.cellundo:hover{background:var(--navy);color:#fff}
 /* drop-anywhere overlay + toast */
 #dropOverlay{position:fixed;inset:0;background:rgba(13,42,77,.55);z-index:200;display:none;align-items:center;justify-content:center;pointer-events:none}
 #dropOverlay.show{display:flex}
@@ -492,6 +494,10 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <span class="pill" id="schChipIron"></span>
         <span class="pill" id="schChipCon"></span>
         <span class="grow"></span>
+        <div class="splitbtn" id="schSkillWrap" style="display:none">
+          <button class="btn ghost" id="schSkillBtn"></button>
+          <div class="menu pad" id="schSkillMenu" style="min-width:240px"></div>
+        </div>
         <button class="btn navy" id="schRun" data-i18n="schRun">Generate Optimized Schedule</button>
       </div>
       <p class="gateNote" id="schGate" style="display:none" data-i18n="schNeedIron">The auto-scheduler builds shifts from the סידור ברזל base. Load a Tikshuv workbook with an Iron sheet to enable it.</p>
@@ -587,7 +593,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
 <div id="cellEditor">
   <h4 id="ceTitle"></h4>
   <div class="row"><label id="ceVolL"></label><input type="number" id="ceVol" min="0" step="1"></div>
-  <div class="row"><label id="ceAhtL"></label><input type="number" id="ceAht" min="1" step="1"></div>
+  <div class="row"><label id="ceAhtL"></label><input type="text" id="ceAht" inputmode="numeric" placeholder="mm:ss" style="direction:ltr"></div>
   <div class="row" id="ceAgRow"><label id="ceAgL"></label><input type="number" id="ceAg" min="0" step="0.5"></div>
   <div class="row" id="ceFutRow" style="display:none"><label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox" id="ceFut" checked style="margin:0"><span id="ceFutL"></span></label></div>
   <div class="acts">
@@ -845,6 +851,8 @@ en:{
   skillScopeHint:"Which skills count as ANSWERING capacity for this queue's AR/TSF? (HR & workforce pages always include everyone.) On billing days check בכיר; מרפאות usually answer קו 1 too.",
   skillScopeAllBtn:"Count every skill",
   legScale:"above target → critical (7 bands around your target)",
+  cellUndoTip:"Restore this cell to its original value",
+  schSkillHint:"Which skills join the scheduling pool? Demand is usually the קו-1 queue only — add בכיר on collection days, מרפאות when they answer קו 1. Untagged reps always schedule.",
   fcAuditWarn:"Data audit:", auditImp:"{n} intervals with more answered than offered calls (AR>100% — capped)", auditAht:"{n} intervals with AHT outside 1–60 min", auditFar:"{n} dates more than ~13 months from today — check the date column format",
   mxCalibOn:"Forecasts are automatically tuned to this floor's real measured answer rates.",
   mxCalibOff:"⚠ Uncalibrated model estimates — the file carries no (or too little) measured answered-calls data, so AR/TSF here are pure Erlang and usually read higher than your real floor. Load a forecast export that includes answered-calls columns to calibrate.",
@@ -1125,6 +1133,8 @@ he:{
   skillScopeHint:"אילו מיומנויות נספרות כקיבולת מענה (AR/TSF) של התור? (דפי כוח אדם תמיד כוללים את כולם.) בימי גבייה סמנו גם בכיר; מרפאות לרוב עונות גם קו 1.",
   skillScopeAllBtn:"ספרו את כל המיומנויות",
   legScale:"מעל היעד ← קריטי (7 מדרגות סביב היעד שלכם)",
+  cellUndoTip:"החזרת התא לערך המקורי",
+  schSkillHint:"אילו מיומנויות נכנסות למאגר השיבוץ? הביקוש הוא בדרך כלל תור קו 1 בלבד — הוסיפו בכיר בימי גבייה, מרפאות כשהן עונות קו 1. נציגים ללא תיוג תמיד משתבצים.",
   fcAuditWarn:"בקרת נתונים:", auditImp:"{n} אינטרוולים עם יותר שיחות נענות מנכנסות (מענה>100% — נחסם)", auditAht:"{n} אינטרוולים עם אורך שיחה מחוץ לטווח 1–60 דק'", auditFar:"{n} תאריכים רחוקים מהיום ביותר מ־13 חודשים — בדקו את פורמט עמודת התאריך",
   mxCalibOn:"התחזיות מכוונות אוטומטית לאחוזי המענה האמיתיים שנמדדו במוקד שלכם.",
   mxCalibOff:"⚠ הערכות מודל לא מכוילות — בקובץ אין (או כמעט אין) נתוני שיחות נענות מדודים, ולכן המענה/TSF כאן הם ארלנג תאורטי ולרוב גבוהים מהמציאות במוקד. טענו תחזית עם עמודות שיחות נענות לכיול.",
@@ -1611,7 +1621,9 @@ const state={
   capSkills:null,        // answering-queue scope: null = every skill counts
   rosterCapSkill:{},     // block key -> {skill: distinct reps}
   skillList:[],          // all skills seen in the roster (modular queue list)
-  unallocRows:[]         // sidur rows without shift/absence — bucketed by raw status
+  unallocRows:[],        // sidur rows without shift/absence — bucketed by raw status
+  schedSkills:null,      // auto-scheduler pool scope: null = every skill schedules
+  cellOrig:new Map()     // per-cell restore points for the in-cell undo button
 };
 /* modular shift window (default 08:00–18:00 inclusive) — rebuilt when settings change */
 let TIMES=[];
@@ -2871,8 +2883,50 @@ function schedulerCore(P){
   return {asg,pool:pool.filter(p=>!p.used),gaps};
 }
 function schedulerEmps(){
-  // the scheduling base is the ברזל — validated iron agents only, no synthetic fallback
-  return [...validatedIron().entries()].map(([name,e])=>({name,days:e.days}));
+  // the scheduling base is the ברזל — validated iron agents only, no synthetic fallback.
+  // Scope by answering skill: demand is usually the קו-1 queue, so the pool defaults
+  // to קו-1 agents; the checkbox menu adds בכיר on ימי גבייה, מרפאות, future queues…
+  const sc=state.schedSkills;
+  const skillOf=name=>{
+    const m=state.rosterMeta.get(name)||{}, e=(state.iron&&state.iron.emps.get(name))||{};
+    return m.skill||e.skill||"";
+  };
+  return [...validatedIron().entries()]
+    .filter(([name])=>{ const sk=skillOf(name);
+      return !sc||!sc.length||!sk||sc.includes(sk); }) // untagged reps always schedule
+    .map(([name,e])=>({name,days:e.days}));
+}
+/* skill checkbox menu on the scheduler toolbar — same modular queue list as the matrix */
+function renderSchedSkills(){
+  const wrap=document.getElementById("schSkillWrap"); if(!wrap) return;
+  const skills=state.skillList||[];
+  wrap.style.display=skills.length?"inline-block":"none";
+  if(!skills.length) return;
+  const sc=state.schedSkills;
+  document.getElementById("schSkillBtn").textContent="🎧 "+
+    (!sc||!sc.length?t("skillScopeAll"):(sc.length===1?sc[0]:t("skillScopeN",{n:sc.length})));
+  const menu=document.getElementById("schSkillMenu");
+  if(menu._skills===skills.join("|")){
+    menu.querySelectorAll("input").forEach(cb=>{ cb.checked=!sc||sc.includes(cb._skill); });
+    return;
+  }
+  menu._skills=skills.join("|");
+  menu.innerHTML="";
+  const hint=document.createElement("div"); hint.className="mini"; hint.style.marginBottom="6px";
+  hint.textContent=t("schSkillHint"); menu.appendChild(hint);
+  skills.forEach(s=>{
+    const lb=document.createElement("label");
+    lb.style.cssText="display:flex;gap:6px;align-items:center;font-size:.8rem;margin:3px 0;cursor:pointer";
+    const cb=document.createElement("input"); cb.type="checkbox";
+    cb.checked=!sc||sc.includes(s); cb._skill=s;
+    cb.addEventListener("change",()=>{
+      const on=[...menu.querySelectorAll("input:checked")].map(x=>x._skill);
+      state.schedSkills=on.length===skills.length?null:on;
+      saveData(); renderScheduler();
+    });
+    lb.appendChild(cb); lb.appendChild(document.createTextNode(" "+s));
+    menu.appendChild(lb);
+  });
 }
 async function runScheduler(){
   if(!state.iron){ showToast("⚠ "+t("schNeedIron"),false); return; }
@@ -2962,9 +3016,10 @@ function tikshuvRow(a){
 }
 function renderScheduler(){
   if(!document.getElementById("schChipFc")) return;
+  renderSchedSkills();
   document.getElementById("schChipFc").textContent=t("schChipFc",{n:state.days.size});
   document.getElementById("schChipIron").textContent=state.iron
-    ? t("schChipIron",{n:validatedIron().size})
+    ? t("schChipIron",{n:schedulerEmps().length})
     : t("schChipIronFb",{n:0,h:fullTimeWeeklyHours()});
   document.getElementById("schChipCon").textContent=t("schChipCon",{n:state.weeklyConstraints.length});
   // no ברזל → the scheduler has no base to build from; the button stays gated
@@ -3864,6 +3919,7 @@ function applyDefaultCapSkills(){
   const sk=state.skillList||[];
   const kav=sk.find(s=>/קו\s*1|kav\s*1|line\s*1/i.test(s));
   state.capSkills=kav?[kav]:null; // null = all skills count (no skill data / no קו-1)
+  state.schedSkills=kav?[kav]:null; // the scheduler pool defaults to the same queue as the demand
 }
 function capCounted(key,total){
   const sc=state.capSkills;
@@ -4120,6 +4176,13 @@ function renderMatrix(){
         const edited=state.edits.has(ds+"|"+tm);
         td.innerHTML=`<div class="v">${pct(v)}${row.dropped?'<span class="decay">▼</span>':''}${short?'<span class="short"></span>':''}${over?'<span class="overm"></span>':''}${edited?'<span class="edmark">✎</span>':''}</div>
           <div class="sub">${row.sched}/${row.reqEff} • ${Math.round(row.rec.volume)}</div>`;
+        // edited cells carry their own tiny undo — one click back to the original value
+        if(edited&&state.cellOrig.has(ds+"|"+tm)){
+          const ub=document.createElement("button");
+          ub.className="cellundo"; ub.textContent="↺"; ub.title=t("cellUndoTip");
+          ub.addEventListener("click",e=>{ e.stopPropagation(); revertCell(ds,tm); });
+          td.querySelector(".v").appendChild(ub);
+        }
         const stateLbl=short?t("stateUnder"):(over?t("stateOver"):t("stateBalanced"));
         td.title=`${stateLbl} | ${t("tipVolume")}: ${row.rec.volume} | ${t("tipAht")}: ${fmtSec(row.rec.aht)} | ${t("tipSched")}: ${row.sched} | ${t("tipReq")}: ${row.reqEff}`;
         td.addEventListener("click",e=>openEditor(e,ds,tm,di));
@@ -4458,7 +4521,7 @@ function openTrendEditor(e,ds,curVol,curAht){
   ceCtx={trend:true,ds};
   document.getElementById("ceTitle").textContent=t("ceTitle",{day:fmtD(ds),time:t("forecastTag").trim()});
   document.getElementById("ceVol").value=curVol;
-  document.getElementById("ceAht").value=curAht;
+  document.getElementById("ceAht").value=fmtSec(curAht); // mm:ss everywhere durations are edited
   document.getElementById("ceAgRow").style.display="none";
   document.getElementById("ceFutRow").style.display="none"; // trend edits have day-level semantics
   ce.style.display="block";
@@ -4906,7 +4969,7 @@ function openEditor(e,ds,tm,dayIdx){
   ceCtx={ds,tm,forecast:sd.forecast};
   document.getElementById("ceTitle").textContent=t("ceTitle",{day:t("days")[dayIdx],time:tm});
   document.getElementById("ceVol").value=rec.volume;
-  document.getElementById("ceAht").value=rec.aht;
+  document.getElementById("ceAht").value=fmtSec(rec.aht); // durations edit as mm:ss, never raw seconds
   document.getElementById("ceAg").value=rec.agents;
   document.getElementById("ceFutRow").style.display="";
   document.getElementById("ceFut").checked=true;
@@ -4924,7 +4987,7 @@ document.getElementById("ceApply").addEventListener("click",()=>{
     ce.style.display="none"; ceCtx=null;
     document.getElementById("ceAgRow").style.display="";
     applyTrendEdit(ds,Math.max(0,+document.getElementById("ceVol").value||0),
-                      Math.max(0,+document.getElementById("ceAht").value||0));
+                      Math.max(0,Math.round(toDurationSec(document.getElementById("ceAht").value)||0)));
     return;
   }
   const {ds,tm,forecast}=ceCtx;
@@ -4947,9 +5010,10 @@ document.getElementById("ceApply").addEventListener("click",()=>{
   state.undoStack.push(undoEntry);
   if(state.undoStack.length>200) state.undoStack.shift();
   state.edits.add(ds+"|"+tm);
+  if(!state.cellOrig.has(ds+"|"+tm)) state.cellOrig.set(ds+"|"+tm,{...rec}); // per-cell restore point
   const prevVol=rec.volume;
   rec.volume=Math.max(0,+document.getElementById("ceVol").value||0);
-  rec.aht=Math.max(1,+document.getElementById("ceAht").value||1);
+  rec.aht=Math.max(1,Math.round(toDurationSec(document.getElementById("ceAht").value)||1));
   rec.agents=Math.max(0,+document.getElementById("ceAg").value||0);
   /* forward propagation: a volume edit with the "future weeks" box checked
      becomes a persistent scale factor on this weekday+interval from here on */
@@ -4965,6 +5029,19 @@ document.getElementById("ceApply").addEventListener("click",()=>{
   saveData(); // persist manual edits + propagation factors
   renderAll();
 });
+/* one-click restore of a single edited cell to its pre-edit value */
+function revertCell(ds,tm){
+  const key=ds+"|"+tm, orig=state.cellOrig.get(key);
+  if(!orig) return;
+  const sd=sourceDay(ds); if(!sd) return;
+  const dayMap=sd.forecast?state.simDays.get(ds):state.days.get(ds);
+  if(dayMap&&dayMap.has(tm)) dayMap.set(tm,{...orig});
+  state.cellOrig.delete(key);
+  state.edits.delete(key);
+  state.volAdj=state.volAdj.filter(a=>!(a.ds===ds&&a.tm===tm)); // forward propagation dies with the edit
+  state.undoStack=state.undoStack.filter(u=>!(u.ds===ds&&u.tm===tm));
+  state.fcCache.clear(); saveData(); renderAll();
+}
 function undoEdit(){
   const u=state.undoStack.pop(); if(!u) return;
   const dayMap=u.forecast?state.simDays.get(u.ds):state.days.get(u.ds);
@@ -5410,7 +5487,7 @@ function saveData(){
       meta:Object.fromEntries(state.rosterMeta), vac:state.vacations,
       schedRows:state.schedRows, valErr:state.validationErrors,
       capSkills:state.capSkills, capSkillMap:state.rosterCapSkill, skillList:state.skillList,
-      un:state.unallocRows }));
+      un:state.unallocRows, schedSkills:state.schedSkills }));
   }catch(e){} // quota exceeded on huge files → data simply stays transient
 }
 function loadData(){
@@ -5435,6 +5512,7 @@ function loadData(){
     state.rosterCapSkill=s.capSkillMap||{}; state.skillList=s.skillList||[];
     state.capSkills=s.capSkills===undefined?null:s.capSkills;
     state.unallocRows=s.un||[];
+    state.schedSkills=s.schedSkills===undefined?null:s.schedSkills;
     rebuildRosterCoverage();
     return true;
   }catch(e){ return false; }
