@@ -506,6 +506,25 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <p class="mini" data-i18n="schConHint">Employee | Date | Start | End | Type (Unavailable / Partial / Vacation)</p>
         <input type="file" id="schConInput" accept=".csv,.tsv,.txt,.json,.xlsx,.xlsm,.xls" style="display:none">
       </div>
+      <!-- name reconciliation: unknown names get a did-you-mean flow, never a silent no-op -->
+      <div id="conNameCheck" style="display:none"></div>
+      <!-- manual entry is collapsed by default — minimal cognitive load, there when needed -->
+      <details id="conManual" style="margin-top:6px">
+        <summary class="mini" style="cursor:pointer" data-i18n="conManualT">✍ Add a constraint manually</summary>
+        <div class="toolbar" style="margin-top:6px">
+          <input id="cmName" list="knownNames" style="width:170px" data-i18n-ph="cmNamePh" placeholder="Employee name">
+          <datalist id="knownNames"></datalist>
+          <input id="cmDate" type="date" style="width:140px">
+          <input id="cmStart" type="time" style="width:100px">
+          <input id="cmEnd" type="time" style="width:100px">
+          <select id="cmType" style="width:120px">
+            <option value="vacation" data-i18n="cmTvac">Vacation</option>
+            <option value="unavailable" data-i18n="cmTunav">Unavailable</option>
+            <option value="partial" data-i18n="cmTpart">Partial</option>
+          </select>
+          <button class="btn ghost" id="cmAdd" data-i18n="cmAdd">+ Add</button>
+        </div>
+      </details>
       <div class="banner good" id="schBanner"></div>
     </div>
     <div class="grid2">
@@ -516,10 +535,13 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
       </div>
       <div class="card">
         <h2><span data-i18n="schPoolTitle">Overstaffing Pool (manager review)</span> <span class="info" data-tipkey="tipSchPool" tabindex="0">i</span></h2>
-        <div class="tablewrap" id="schPoolWrap" style="max-height:180px;overflow-y:auto"></div>
-        <h2 style="margin-top:12px" data-i18n="schGapTitle">Uncovered Demand</h2>
-        <div class="tablewrap" id="schGapWrap" style="max-height:160px;overflow-y:auto"></div>
+        <div class="tablewrap" id="schPoolWrap" style="max-height:380px;overflow-y:auto"></div>
       </div>
+    </div>
+    <!-- ביקוש לא מכוסה owns a full-width card: the whole matrix visible, no scrolling -->
+    <div class="card">
+      <h2 data-i18n="schGapTitle">Uncovered Demand</h2>
+      <div id="schGapWrap"></div>
     </div>
   </section>
 
@@ -853,6 +875,15 @@ en:{
   legScale:"above target → critical (7 bands around your target)",
   cellUndoTip:"Restore this cell to its original value",
   schSkillHint:"Which skills join the scheduling pool? Demand is usually the קו-1 queue only — add בכיר on collection days, מרפאות when they answer קו 1. Untagged reps always schedule.",
+  schInsert:"Insert into sidur", schSwapTitle:"Insert {n} on {d} — switch with:",
+  schAddNoSwap:"Insert without switching anyone", schSwapDone:"{n} inserted into the schedule.",
+  schSrc_manual:"Manual",
+  conManualT:"✍ Add a constraint manually", cmNamePh:"Employee name",
+  cmTvac:"Vacation", cmTunav:"Unavailable", cmTpart:"Partial", cmAdd:"+ Add",
+  cmAddOk:"Constraint added for {n}.", cmMissing:"Name and date are required.",
+  conUnknownT:"{n} names don't match any agent in the sidur:",
+  conDidYouMean:"Did you mean \"{x}\"?", conYes:"Yes, fix", conIgnore:"Remove",
+  conNoMatch:"no similar name found — check the spelling",
   fcAuditWarn:"Data audit:", auditImp:"{n} intervals with more answered than offered calls (AR>100% — capped)", auditAht:"{n} intervals with AHT outside 1–60 min", auditFar:"{n} dates more than ~13 months from today — check the date column format",
   mxCalibOn:"Forecasts are automatically tuned to this floor's real measured answer rates.",
   mxCalibOff:"⚠ Uncalibrated model estimates — the file carries no (or too little) measured answered-calls data, so AR/TSF here are pure Erlang and usually read higher than your real floor. Load a forecast export that includes answered-calls columns to calibrate.",
@@ -1135,6 +1166,15 @@ he:{
   legScale:"מעל היעד ← קריטי (7 מדרגות סביב היעד שלכם)",
   cellUndoTip:"החזרת התא לערך המקורי",
   schSkillHint:"אילו מיומנויות נכנסות למאגר השיבוץ? הביקוש הוא בדרך כלל תור קו 1 בלבד — הוסיפו בכיר בימי גבייה, מרפאות כשהן עונות קו 1. נציגים ללא תיוג תמיד משתבצים.",
+  schInsert:"הכנס לסידור", schSwapTitle:"שיבוץ {n} בתאריך {d} — להחליף עם:",
+  schAddNoSwap:"הוספה בלי להחליף אף אחד", schSwapDone:"{n} שובץ לסידור.",
+  schSrc_manual:"ידני",
+  conManualT:"✍ הוספת אילוץ ידנית", cmNamePh:"שם נציג",
+  cmTvac:"חופשה", cmTunav:"לא זמין", cmTpart:"חלקי", cmAdd:"+ הוספה",
+  cmAddOk:"אילוץ נוסף עבור {n}.", cmMissing:"נדרשים שם ותאריך.",
+  conUnknownT:"{n} שמות לא נמצאו בסידור:",
+  conDidYouMean:"האם התכוונת ל\"{x}\"?", conYes:"כן, תקן", conIgnore:"הסר",
+  conNoMatch:"לא נמצא שם דומה — בדקו את האיות",
   fcAuditWarn:"בקרת נתונים:", auditImp:"{n} אינטרוולים עם יותר שיחות נענות מנכנסות (מענה>100% — נחסם)", auditAht:"{n} אינטרוולים עם אורך שיחה מחוץ לטווח 1–60 דק'", auditFar:"{n} תאריכים רחוקים מהיום ביותר מ־13 חודשים — בדקו את פורמט עמודת התאריך",
   mxCalibOn:"התחזיות מכוונות אוטומטית לאחוזי המענה האמיתיים שנמדדו במוקד שלכם.",
   mxCalibOff:"⚠ הערכות מודל לא מכוילות — בקובץ אין (או כמעט אין) נתוני שיחות נענות מדודים, ולכן המענה/TSF כאן הם ארלנג תאורטי ולרוב גבוהים מהמציאות במוקד. טענו תחזית עם עמודות שיחות נענות לכיול.",
@@ -2147,7 +2187,9 @@ function buildForecastGrid(grid,hd){
     if(map.login!=null){ const lg=toNum(row[map.login]); if(isFinite(lg)&&lg>=0) acc.login+=lg; } // actual net login hours
     if(map.answered!=null){ const an=toNum(row[map.answered]); if(isFinite(an)&&an>=0) acc.answered=(acc.answered||0)+an; }
     if(map.ans30!=null){ const a3=toNum(row[map.ans30]); if(isFinite(a3)&&a3>=0) acc.ans30=(acc.ans30||0)+a3; } // measured answered-within-30s count
-    if(map.occup!=null){ const oc=toNum(row[map.occup]); if(isFinite(oc)&&oc>0&&oc<=100) acc.occupW=(acc.occupW||0)+oc*vol; } // file's MEASURED occupancy % (vol-weighted)
+    if(map.occup!=null){ let oc=toNum(row[map.occup]);
+      if(isFinite(oc)&&oc>0&&oc<=1) oc*=100; // files export occupancy as 0.79 or 79 — normalize to %
+      if(isFinite(oc)&&oc>1&&oc<=100) acc.occupW=(acc.occupW||0)+oc*vol; } // file's MEASURED occupancy % (vol-weighted)
     extras.forEach(e=>{
       const v=e.isDur?toDurationSec(row[e.col]):toNum(row[e.col]);
       if(isFinite(v)){ acc.ex[e.name]=(acc.ex[e.name]||0)+v; acc.exN[e.name]=(acc.exN[e.name]||0)+1; } });
@@ -2955,6 +2997,7 @@ async function runScheduler(){
     });
   }else out=schedulerCore(payload);
   state.optimizedOutput=out.asg;
+  state._schedOut=out; // live result — manual pool insertions mutate this
   const b=document.getElementById("schBanner");
   b.textContent=t("schDone",{a:out.asg.length,p:out.pool.length,g:out.gaps.reduce((s,g)=>s+g.n,0)});
   b.classList.add("show");
@@ -2978,8 +3021,25 @@ function renderSchedulerResults(out){
   ow.appendChild(mk(out.asg.map(a=>tikshuvRow(a).slice(0,8)),TIKSHUV_HEADS.slice(0,8)));
   document.getElementById("schCsv").style.display=out.asg.length?"inline-block":"none";
   const pw=document.getElementById("schPoolWrap"); pw.innerHTML="";
-  pw.appendChild(mk(out.pool.map(p=>[p.name,fmtD(p.ds),dayNames[p.di],p.s+"–"+p.e]),
-    [t("rthName"),t("thDate"),t("fldDay"),t("thInterval")]));
+  {
+    const ptbl=document.createElement("table");
+    const phr=document.createElement("tr");
+    [t("rthName"),t("thDate"),t("fldDay"),t("thInterval"),""].forEach(c=>phr.appendChild(th(c)));
+    const pth=document.createElement("thead"); pth.appendChild(phr); ptbl.appendChild(pth);
+    const ptb=document.createElement("tbody");
+    out.pool.forEach(p=>{
+      const tr=document.createElement("tr");
+      [p.name,fmtD(p.ds),dayNames[p.di],p.s+"–"+p.e].forEach(v=>{
+        const td=document.createElement("td"); td.textContent=v; tr.appendChild(td); });
+      const td=document.createElement("td");
+      const bt=document.createElement("button"); bt.className="btn ghost applymini";
+      bt.textContent=t("schInsert");
+      bt.addEventListener("click",e=>{ e.stopPropagation(); openSwapPop(e,p); });
+      td.appendChild(bt); tr.appendChild(td);
+      ptb.appendChild(tr);
+    });
+    ptbl.appendChild(ptb); pw.appendChild(ptbl);
+  }
   // ביקוש לא מכוסה — classic sidur matrix: intervals down, days across
   const gw=document.getElementById("schGapWrap"); gw.innerHTML="";
   if(!out.gaps.length){ gw.innerHTML=`<p class="mini">${t("schNoGaps")}</p>`; return; }
@@ -3017,6 +3077,13 @@ function tikshuvRow(a){
 function renderScheduler(){
   if(!document.getElementById("schChipFc")) return;
   renderSchedSkills();
+  // manual-entry autocomplete from the real agent list + name reconciliation panel
+  const dl=document.getElementById("knownNames");
+  if(dl){ const names=[...knownAgentNames()].sort();
+    if(dl._n!==names.join("|")){ dl._n=names.join("|");
+      dl.innerHTML=names.map(n=>`<option value="${n.replace(/"/g,"&quot;")}">`).join(""); } }
+  const cmn=document.getElementById("cmName"); if(cmn) cmn.placeholder=t("cmNamePh");
+  renderConNameCheck();
   document.getElementById("schChipFc").textContent=t("schChipFc",{n:state.days.size});
   document.getElementById("schChipIron").textContent=state.iron
     ? t("schChipIron",{n:schedulerEmps().length})
@@ -3101,6 +3168,104 @@ function ingestConstraintsFile(f){
   r.readAsArrayBuffer(f);
 }
 wireDropzone("dzSchCon","schConInput",ingestConstraintsFile);
+/* ---- Pool → sidur: insert a surplus agent, optionally switching someone out ---- */
+function openSwapPop(e,p){
+  closeSwapPop();
+  const out=state._schedOut; if(!out) return;
+  const pop=document.createElement("div"); pop.id="swapPop";
+  pop.style.cssText="position:fixed;z-index:300;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 12px 40px rgba(13,42,77,.25);padding:12px;max-width:330px;max-height:340px;overflow-y:auto";
+  const title=document.createElement("b"); title.style.fontSize=".82rem";
+  title.textContent=t("schSwapTitle",{n:p.name,d:fmtD(p.ds)});
+  pop.appendChild(title);
+  const mkBtn=(label,fn)=>{ const b2=document.createElement("button"); b2.className="linklike";
+    b2.style.cssText="display:block;margin:6px 0;text-align:start"; b2.textContent=label;
+    b2.addEventListener("click",fn); pop.appendChild(b2); };
+  mkBtn("➕ "+t("schAddNoSwap"),()=>doSwap(p,null));
+  out.asg.filter(a=>a.ds===p.ds).sort((a,b)=>a.name.localeCompare(b.name))
+    .forEach(a=>mkBtn("⇄ "+a.name+" ("+a.s+"–"+a.e+")",()=>doSwap(p,a)));
+  document.body.appendChild(pop);
+  const r=e.currentTarget.getBoundingClientRect();
+  pop.style.left=Math.max(8,Math.min(r.left,document.documentElement.clientWidth-340))+"px";
+  pop.style.top=Math.min(r.bottom+4,document.documentElement.clientHeight-350)+"px";
+  setTimeout(()=>document.addEventListener("click",swapPopCloser),0);
+}
+function swapPopCloser(e){ if(!e.target.closest("#swapPop")) closeSwapPop(); }
+function closeSwapPop(){ const p=document.getElementById("swapPop"); if(p) p.remove(); document.removeEventListener("click",swapPopCloser); }
+function doSwap(p,repl){
+  const out=state._schedOut; closeSwapPop();
+  out.pool=out.pool.filter(x=>x!==p);
+  if(repl){ out.asg=out.asg.filter(a=>a!==repl);
+    out.pool.push({name:repl.name,ds:repl.ds,di:repl.di,s:repl.s,e:repl.e}); }
+  out.asg.push({name:p.name,ds:p.ds,di:p.di,s:p.s,e:p.e,src:"manual"});
+  state.optimizedOutput=out.asg;
+  renderSchedulerResults(out);
+  showToast("✅ "+t("schSwapDone",{n:p.name}),true);
+}
+/* ---- Constraint name reconciliation: unknown names get a did-you-mean flow ---- */
+function knownAgentNames(){
+  const s=new Set([...state.rosterMeta.keys()]);
+  if(state.iron) for(const n of state.iron.emps.keys()) s.add(n);
+  state.roster.forEach(r=>s.add(r.name));
+  return s;
+}
+function lev(a,b){
+  a=String(a); b=String(b);
+  const m=a.length,n=b.length; if(!m||!n) return m+n;
+  let prev=Array.from({length:n+1},(_,j)=>j);
+  for(let i=1;i<=m;i++){ const cur=[i];
+    for(let j=1;j<=n;j++) cur[j]=Math.min(prev[j]+1,cur[j-1]+1,prev[j-1]+(a[i-1]===b[j-1]?0:1));
+    prev=cur; }
+  return prev[n];
+}
+function bestNameMatch(name,known){
+  let best=null,bd=1e9;
+  for(const k of known){ const d=lev(name,k); if(d<bd){ bd=d; best=k; } }
+  return best&&bd<=Math.max(2,Math.round(best.length*0.35))?best:null;
+}
+function renderConNameCheck(){
+  const box=document.getElementById("conNameCheck"); if(!box) return;
+  const known=knownAgentNames();
+  const unknown=known.size?[...new Set(state.weeklyConstraints.map(c=>c.name))].filter(n=>!known.has(n)):[];
+  if(!unknown.length){ box.style.display="none"; box.innerHTML=""; return; }
+  box.style.display="block";
+  box.innerHTML=`<div class="err-card" style="display:block;text-align:start"><b>⚠ ${t("conUnknownT",{n:unknown.length})}</b></div>`;
+  const card=box.querySelector(".err-card");
+  unknown.forEach(nm=>{
+    const row=document.createElement("div");
+    row.style.cssText="display:flex;align-items:center;gap:8px;margin:5px 0;font-size:.8rem;flex-wrap:wrap";
+    const label=document.createElement("b"); label.textContent=nm; row.appendChild(label);
+    const sug=bestNameMatch(nm,known);
+    if(sug){
+      const q=document.createElement("span"); q.textContent=t("conDidYouMean",{x:sug}); row.appendChild(q);
+      const yes=document.createElement("button"); yes.className="btn ghost applymini"; yes.textContent=t("conYes");
+      yes.addEventListener("click",()=>{
+        state.weeklyConstraints.forEach(c=>{ if(c.name===nm) c.name=sug; });
+        renderScheduler(); showToast("✅ "+nm+" → "+sug,true);
+      });
+      row.appendChild(yes);
+    }else{
+      const q=document.createElement("span"); q.className="mini"; q.textContent=t("conNoMatch"); row.appendChild(q);
+    }
+    const ig=document.createElement("button"); ig.className="linklike"; ig.textContent=t("conIgnore");
+    ig.addEventListener("click",()=>{
+      state.weeklyConstraints=state.weeklyConstraints.filter(c=>c.name!==nm);
+      renderScheduler();
+    });
+    row.appendChild(ig);
+    card.appendChild(row);
+  });
+}
+document.getElementById("cmAdd").addEventListener("click",()=>{
+  const name=document.getElementById("cmName").value.trim();
+  const ds=document.getElementById("cmDate").value;
+  if(!name||!ds){ showToast("⚠ "+t("cmMissing"),false); return; }
+  const s=document.getElementById("cmStart").value||null;
+  const e=document.getElementById("cmEnd").value||null;
+  state.weeklyConstraints.push({name,ds,s,e,type:document.getElementById("cmType").value});
+  document.getElementById("cmName").value="";
+  renderScheduler(); // did-you-mean fires immediately for typos
+  showToast("✅ "+t("cmAddOk",{n:name}),true);
+});
 
 async function bytesToGrid(buf){
   const u8=new Uint8Array(buf);
@@ -4376,7 +4541,8 @@ function renderTrends(){
     let occ=occDen?Math.min(1,occWork/occDen):0;
     // DATA INTEGRITY: when the file reports its own occupancy, display THAT on
     // historical days — never a recomputation that can drift from the floor's metric
-    if(occFileVol>0){ occ=Math.min(1,(occFileW/occFileVol)/100); occWork=occ*occDen; }
+    if(occFileVol>0){ const fo=occFileW/occFileVol; // defensive: pre-fix cached data may hold fractions
+      occ=Math.min(1,fo>1?fo/100:fo); occWork=occ*occDen; }
     T.prodNum+=(answered>0?answered:vol); T.prodDen+=netHrs;
     T.occNum+=occWork; T.occDen+=occDen;
     const met=(S.primaryMetric==="ar"?ar:tsf)>=S.target/100;   // attainment on the Primary Target Metric
@@ -4401,7 +4567,14 @@ function renderTrends(){
     if(d.forecast) tr.className="fcast";
     const dth=document.createElement("th");
     dth.textContent=fmtD(ds)+(d.forecast?t("forecastTag"):"");
-    if(state.simDays.has(ds)) dth.textContent+=" ✎";
+    if(state.simDays.has(ds)){ // edited day: mark + one-click restore, same as matrix cells
+      dth.textContent+=" ✎";
+      const rb=document.createElement("button");
+      rb.className="cellundo"; rb.textContent="↺"; rb.title=t("cellUndoTip");
+      rb.addEventListener("click",e=>{ e.stopPropagation();
+        state.simDays.delete(ds); state.fcCache.clear(); memo.clear(); renderAll(); });
+      dth.appendChild(rb);
+    }
     if(d.forecast){ // intraday compare: check the curve before trusting an edit
       const ib=document.createElement("button"); ib.className="linklike"; ib.textContent="📈";
       ib.title=t("overlayTitle");
