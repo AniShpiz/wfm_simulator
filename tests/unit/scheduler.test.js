@@ -70,7 +70,7 @@ test("schedulerCore: uncovered demand is counted per interval", () => {
 });
 
 // tikshuvRow: output row must speak the input file's structure
-const R = sandbox(["tikshuvRow"], ["TIKSHUV_HEADS", "HE_DAY", "toMinW"], {
+const R = sandbox(["tikshuvRow", "pad"], ["TIKSHUV_HEADS", "HE_DAY", "toMinW"], {
   state: { rosterMeta: new Map([["כהן דנה", { site: "מושלם באר שבע", team: "לוי", skill: "נציג קו 1" }]]), iron: null },
   t: k => k,
   fmtD: d => "05/07/2026",
@@ -82,7 +82,7 @@ test("tikshuvRow: exact Tikshuv sidur-avoda column order and values", () => {
   assert.equal(row.length, R.TIKSHUV_HEADS.length);
   assert.equal(row[0], "מושלם באר שבע");
   assert.equal(row[4], "א");
-  assert.equal(row[6], "8.5");
+  assert.equal(row[6], "8:30"); // שעות displayed as H:MM, exactly like the sidur
   assert.equal(row[8], "לוי");
   assert.equal(row[9], "נציג קו 1");
 });

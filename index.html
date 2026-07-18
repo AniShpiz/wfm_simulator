@@ -92,9 +92,13 @@ tr.fcast td{opacity:.88}
 td.cell{cursor:pointer;min-width:74px}
 td .v{font-weight:700;font-size:.78rem;direction:ltr;unicode-bidi:isolate}
 td .sub{font-size:.58rem;opacity:.75;direction:ltr;unicode-bidi:isolate}
+td.tier-exc{background:#bfe9cf;color:#084f2e;font-weight:600}
 td.tier-good{background:var(--emerald-bg);color:var(--emerald)}
+td.tier-near{background:#eef3c6;color:#5a651a}
 td.tier-warn{background:var(--amber-bg);color:var(--amber)}
+td.tier-poor{background:#fbe1c8;color:#a65312}
 td.tier-bad{background:var(--crimson-bg);color:var(--crimson);box-shadow:inset 0 0 0 1.5px #d98a8a}
+td.tier-crit{background:#f3c1c1;color:#7c1010;font-weight:700;box-shadow:inset 0 0 0 2px #c05252}
 td.closed{background:repeating-linear-gradient(45deg,#eef1f5 0 8px,#e5eaf1 8px 16px);color:#9aa8b8;font-size:.66rem;cursor:default}
 td.nodata{color:#b6c2cf;cursor:default}
 td .decay{display:inline-block;background:var(--magenta);color:#fff;border-radius:3px;font-size:.55rem;padding:0 3px;margin-inline-start:3px;vertical-align:middle}
@@ -296,8 +300,8 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
           <div class="menu pad" id="skillScopeMenu" style="min-width:230px"></div>
         </div>
         <div class="seg" id="metricSeg">
-          <button data-metric="tsf" class="active" id="btnTsf">TSF</button>
-          <button data-metric="ar" data-i18n="metricAr">Answer Rate %</button>
+          <button data-metric="tsf" id="btnTsf">TSF</button>
+          <button data-metric="ar" class="active" data-i18n="metricAr">Answer Rate %</button>
         </div>
         <div class="splitbtn" id="expWrap" style="margin-inline-start:auto">
           <button class="btn ghost" id="expToggle" data-i18n="exportDemand">⬇ Export Demand Profile</button>
@@ -327,6 +331,9 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <span><i style="background:var(--amber-bg)"></i><span data-i18n="legWarn">80–89.9% — warning</span></span>
         <span><i style="background:var(--crimson-bg)"></i><span data-i18n="legBad">&lt; 80% — breach</span> <span class="info" data-tipkey="tipBreach" tabindex="0">i</span></span>
         <span><i style="background:#c22;border-radius:50%"></i><span data-i18n="legShort">understaffed (scheduled &lt; required)</span></span>
+        <span style="display:inline-flex;align-items:center;gap:2px">
+          <i style="background:#bfe9cf"></i><i style="background:var(--emerald-bg)"></i><i style="background:#eef3c6"></i><i style="background:var(--amber-bg)"></i><i style="background:#fbe1c8"></i><i style="background:var(--crimson-bg)"></i><i style="background:#f3c1c1"></i>
+          <span data-i18n="legScale" style="margin-inline-start:4px">above target → critical (7 bands around your target)</span></span>
         <span><i style="background:#8a63d2"></i><span data-i18n="legOver">overstaffed (scheduled &gt; required)</span></span>
         <!-- legDecay belongs to the hidden Policy Optimizer (see #polSection) -->
         <span style="display:none"><i style="background:var(--magenta)"></i><span data-i18n="legDecay">flex-policy dip applied</span></span>
@@ -837,6 +844,7 @@ en:{
   skillScopeAll:"All skills answer", skillScopeN:"{n} answering skills",
   skillScopeHint:"Which skills count as ANSWERING capacity for this queue's AR/TSF? (HR & workforce pages always include everyone.) On billing days check בכיר; מרפאות usually answer קו 1 too.",
   skillScopeAllBtn:"Count every skill",
+  legScale:"above target → critical (7 bands around your target)",
   fcAuditWarn:"Data audit:", auditImp:"{n} intervals with more answered than offered calls (AR>100% — capped)", auditAht:"{n} intervals with AHT outside 1–60 min", auditFar:"{n} dates more than ~13 months from today — check the date column format",
   mxCalibOn:"Forecasts are automatically tuned to this floor's real measured answer rates.",
   mxCalibOff:"⚠ Uncalibrated model estimates — the file carries no (or too little) measured answered-calls data, so AR/TSF here are pure Erlang and usually read higher than your real floor. Load a forecast export that includes answered-calls columns to calibrate.",
@@ -1116,6 +1124,7 @@ he:{
   skillScopeAll:"כל המיומנויות עונות", skillScopeN:"{n} מיומנויות עונות",
   skillScopeHint:"אילו מיומנויות נספרות כקיבולת מענה (AR/TSF) של התור? (דפי כוח אדם תמיד כוללים את כולם.) בימי גבייה סמנו גם בכיר; מרפאות לרוב עונות גם קו 1.",
   skillScopeAllBtn:"ספרו את כל המיומנויות",
+  legScale:"מעל היעד ← קריטי (7 מדרגות סביב היעד שלכם)",
   fcAuditWarn:"בקרת נתונים:", auditImp:"{n} אינטרוולים עם יותר שיחות נענות מנכנסות (מענה>100% — נחסם)", auditAht:"{n} אינטרוולים עם אורך שיחה מחוץ לטווח 1–60 דק'", auditFar:"{n} תאריכים רחוקים מהיום ביותר מ־13 חודשים — בדקו את פורמט עמודת התאריך",
   mxCalibOn:"התחזיות מכוונות אוטומטית לאחוזי המענה האמיתיים שנמדדו במוקד שלכם.",
   mxCalibOff:"⚠ הערכות מודל לא מכוילות — בקובץ אין (או כמעט אין) נתוני שיחות נענות מדודים, ולכן המענה/TSF כאן הם ארלנג תאורטי ולרוב גבוהים מהמציאות במוקד. טענו תחזית עם עמודות שיחות נענות לכיול.",
@@ -1568,7 +1577,7 @@ const state={
   rosterCapWeekly:new Map(),    // aggregate weekly ground truth: "dayIdx|time" -> capacity
   rosterNamed:false, roster:[],
   settings:{mode:"normal",target:90,tsfT:30,mpt:180,attrition:4,headcount:60,shrinkage:0,absence:0,
-            primaryMetric:"tsf",dayStart:8,dayEnd:18,friEnd:13,
+            primaryMetric:"ar",dayStart:8,dayEnd:18,friEnd:13,
             modelVolume:"ensemble5",modelAht:"ma4",modelMpt:"ma4",mptOverride:false,hcOverride:false,modelUserSet:false,
             autoHolidays:true,autoAnomaly:true,profileMode:"adaptive"},
   edits:new Set(), undoStack:[], pristine:new Map(),
@@ -1586,7 +1595,7 @@ const state={
   policy:{enabled:false,maxDrops:3,gapHours:3,floor:75},
   policyApplied:false,          // set only after the Schedule Optimizer engine has actually run
   cohorts:[], injections:[],
-  metric:"tsf", week:null,
+  metric:"ar", week:null,
   trendFrom:null,trendTo:null,
   /* ===== WFM 2.0 — Workforce & Iron + Auto-Scheduler (PRD state schema) ===== */
   iron:null,             // {emps:Map(name→{days:{di:{s,e,h}},contracted,team,skill,site,missing:[di]}), total}
@@ -2945,9 +2954,11 @@ const TIKSHUV_HEADS=["מוקד","כניסה","יציאה","תאריך","יום",
 const HE_DAY=["א","ב","ג","ד","ה","ו",""];
 function tikshuvRow(a){
   const m=state.rosterMeta.get(a.name)||(state.iron&&state.iron.emps.get(a.name))||{};
-  const h=(toMinW(a.e)-toMinW(a.s))/60;
+  const mins=toMinW(a.e)-toMinW(a.s);
+  // שעות exactly as the sidur displays it — H:MM, not a decimal
+  const hhmm=Math.floor(mins/60)+":"+pad(mins%60);
   return [m.site||"",a.s,a.e,fmtD(a.ds),HE_DAY[a.di]||"",a.name,
-    (Math.round(h*100)/100)+"",t("schSrc_"+(a.src||"base")),m.team||"",m.skill||""];
+    hhmm,t("schSrc_"+(a.src||"base")),m.team||"",m.skill||""];
 }
 function renderScheduler(){
   if(!document.getElementById("schChipFc")) return;
@@ -3001,9 +3012,14 @@ document.getElementById("wfValCopy").addEventListener("click",()=>{
 document.getElementById("schRun").addEventListener("click",()=>{ runScheduler(); });
 document.getElementById("schCsv").addEventListener("click",()=>{
   if(!state.optimizedOutput.length) return;
-  // export speaks the same Tikshuv sidur-avoda structure the input files use
+  // export speaks the same Tikshuv sidur-avoda structure the input files use,
+  // grouped like the sidur itself: per employee (within site), days in order
+  const sorted=[...state.optimizedOutput].sort((a,b)=>{
+    const ma=state.rosterMeta.get(a.name)||{}, mb=state.rosterMeta.get(b.name)||{};
+    return (ma.site||"").localeCompare(mb.site||"")||a.name.localeCompare(b.name)||a.ds.localeCompare(b.ds);
+  });
   const rows=[TIKSHUV_HEADS.map(csvQuote).join(",")]
-    .concat(state.optimizedOutput.map(a=>tikshuvRow(a).map(csvQuote).join(",")));
+    .concat(sorted.map(a=>tikshuvRow(a).map(csvQuote).join(",")));
   downloadFile("wfm_optimized_sidur.csv",rows.join("\n"));
 });
 function ingestConstraintsFile(f){
@@ -3943,7 +3959,18 @@ function computeDay(ds){
 }
 
 /* ---------------- Rendering ---------------- */
-function tier(v){ return v>=.9?"tier-good":v>=.8?"tier-warn":"tier-bad"; }
+/* 7-band scale anchored to the user's own target — the matrix shows the whole
+   transition from comfortably-above to critical, not three coarse buckets */
+function tier(v){
+  const g=state.settings.target/100;
+  if(v>=Math.min(1,g+0.07)) return "tier-exc";
+  if(v>=g)                  return "tier-good";
+  if(v>=g-0.04)             return "tier-near";
+  if(v>=g-0.10)             return "tier-warn";
+  if(v>=g-0.18)             return "tier-poor";
+  if(v>=g-0.30)             return "tier-bad";
+  return "tier-crit";
+}
 function pct(v){ return (v*100).toFixed(1)+"%"; }
 function th(x){ const e=document.createElement("th"); e.textContent=x; return e; }
 
@@ -5449,7 +5476,8 @@ document.querySelectorAll("#metricSeg button").forEach(x=>x.classList.toggle("ac
 // deep links: #matrix, #trends, #recruit, #settings — optionally #<page>/he or #<page>/en
 const hash=(typeof location!=="undefined"?location.hash:"").replace("#","").split("/");
 if(hash[0]&&pages.includes(hash[0])) showPage(hash[0]);
-setLang(hash[1]==="he"||hash[1]==="en"?hash[1]:(savedWs&&savedWs.lang==="he"?"he":"en"));
+// Hebrew is the default language — a hard reset (or first visit) lands in HE
+setLang(hash[1]==="he"||hash[1]==="en"?hash[1]:(savedWs&&savedWs.lang==="en"?"en":"he"));
 </script>
 </body>
 </html>
