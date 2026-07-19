@@ -148,6 +148,11 @@ li.insight{border-inline-start:4px solid var(--sky);background:var(--sky-soft)}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-bottom:12px}
 .kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px}
 .kpi .n{font-size:1.25rem;font-weight:700;color:var(--navy);direction:ltr;unicode-bidi:isolate}
+/* dense numeric scanning: digits align in columns everywhere */
+table,.kpi .n,.num,.sub{font-variant-numeric:tabular-nums}
+/* micro target-bar under a KPI: fill = level, color = threshold status */
+.kpibar{height:4px;border-radius:2px;background:var(--sky-soft);margin:5px 0 1px;position:relative;direction:ltr;overflow:hidden}
+.kpibar>i{position:absolute;top:0;bottom:0;left:0;border-radius:2px;transition:width .3s}
 .kpi .l{font-size:.72rem;color:var(--muted);display:flex;align-items:center;gap:5px}
 .kpi .spark{margin-top:5px;direction:ltr}
 .kpi .cap{display:flex;justify-content:space-between;font-size:.62rem;color:var(--muted);direction:ltr;margin-top:1px}
@@ -2977,6 +2982,24 @@ function renderWorkforce(){
   document.getElementById("wfKpiUtil").textContent=W.ironTotal>0?pct(Math.min(1.5,W.sched/W.ironTotal)):t("noData");
   document.getElementById("wfKpiLeak").textContent=W.ironTotal>0?pct(Math.min(1,W.absTot/W.ironTotal)):t("noData");
   document.getElementById("wfKpiDev").textContent=W.tot>0?pct(W.dev/W.tot):t("noData");
+  // micro target-bars: fill = level, color = status vs operational thresholds
+  const setKpiBar=(id,frac,tier)=>{
+    const host=document.getElementById(id); if(!host) return;
+    let bar=host.parentElement.querySelector(".kpibar");
+    if(!bar){ bar=document.createElement("div"); bar.className="kpibar";
+      bar.appendChild(document.createElement("i"));
+      host.insertAdjacentElement("afterend",bar); }
+    const i=bar.firstChild;
+    i.style.width=(frac==null?0:Math.max(3,Math.min(100,frac*100)))+"%";
+    i.style.background=tier==="good"?"#0f6a3f":tier==="warn"?"#c58a1a":"#b3271e";
+  };
+  if(W.ironTotal>0){
+    const u=W.sched/W.ironTotal;
+    setKpiBar("wfKpiUtil",Math.min(1,u),u>=0.9?"good":u>=0.75?"warn":"bad");
+    const l=W.absTot/W.ironTotal;
+    setKpiBar("wfKpiLeak",Math.min(1,l),l<=0.08?"good":l<=0.15?"warn":"bad");
+  }
+  if(W.tot>0){ const d2=W.dev/W.tot; setKpiBar("wfKpiDev",Math.min(1,d2),d2<=0.15?"good":d2<=0.3?"warn":"bad"); }
   renderTreemap(W);
   renderImpactMatrix();
   renderValidation();
@@ -5278,15 +5301,20 @@ function computeTrajectory(base,skillF){
 }
 
 /* ---------------- Charts (single-series, LTR plot, baseline start-point marked) ---------------- */
+let _sparkSeq=0;
 function sparkline(el,capEl,values,color,capA,capB){
   el.innerHTML=""; if(capEl) capEl.innerHTML="";
   if(!values||values.length<2) return;
-  const w=160,h=34,p=4;
+  const w=160,h=34,p=4,gid="spg"+(++_sparkSeq);
   const min=Math.min(...values),max=Math.max(...values),span=(max-min)||1;
   const pts=values.map((v,i)=>[p+i*(w-2*p)/(values.length-1),h-p-(v-min)/span*(h-2*p)]);
   const line=pts.map(q=>q[0].toFixed(1)+","+q[1].toFixed(1)).join(" ");
   el.innerHTML=`<svg viewBox="0 0 ${w} ${h}" width="100%" height="${h}" preserveAspectRatio="none" aria-hidden="true">
-    <polygon points="${p},${h-p} ${line} ${w-p},${h-p}" fill="${color}" opacity=".13"></polygon>
+    <defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="${color}" stop-opacity=".3"></stop>
+      <stop offset="1" stop-color="${color}" stop-opacity="0"></stop>
+    </linearGradient></defs>
+    <polygon points="${p},${h-p} ${line} ${w-p},${h-p}" fill="url(#${gid})"></polygon>
     <polyline points="${line}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></polyline>
     <circle cx="${pts[0][0]}" cy="${pts[0][1]}" r="3" fill="#fff" stroke="${color}" stroke-width="2"></circle>
     <circle cx="${pts[pts.length-1][0]}" cy="${pts[pts.length-1][1]}" r="3.2" fill="${color}"></circle>
@@ -5313,10 +5341,14 @@ function renderOutlook(plan){
   const today=iso(new Date());
   const xlabs=[[0,t("capToday")],[30,fmtD(addDays(today,30)).slice(0,5)],[60,fmtD(addDays(today,60)).slice(0,5)]];
   el.innerHTML=`<svg id="coSvg" viewBox="0 0 ${w} ${h}" width="100%" style="display:block" role="img">
-    ${ticks.map(v=>`<line x1="${pl}" y1="${Y(v)}" x2="${w-pr}" y2="${Y(v)}" stroke="#e7edf4" stroke-width="1"></line>
+    <defs><linearGradient id="coGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3fa9f5" stop-opacity=".28"></stop>
+      <stop offset="1" stop-color="#3fa9f5" stop-opacity="0"></stop>
+    </linearGradient></defs>
+    ${ticks.map(v=>`<line x1="${pl}" y1="${Y(v)}" x2="${w-pr}" y2="${Y(v)}" stroke="#dfe7f0" stroke-width="1" stroke-dasharray="4,4"></line>
       <text x="${pl-5}" y="${Y(v)+3}" text-anchor="end" font-size="8.5" fill="#6b7c90">${Math.round(v)}</text>`).join("")}
     ${xlabs.map(([d,l])=>`<text x="${X(d)}" y="${h-6}" text-anchor="middle" font-size="8.5" fill="#6b7c90">${l}</text>`).join("")}
-    <polygon points="${pl},${Y(min)} ${line} ${w-pr},${Y(min)}" fill="#3fa9f5" opacity=".1"></polygon>
+    <polygon points="${pl},${Y(min)} ${line} ${w-pr},${Y(min)}" fill="url(#coGrad)"></polygon>
     <polyline points="${line}" fill="none" stroke="#3fa9f5" stroke-width="2" stroke-linejoin="round"></polyline>
     <circle cx="${pts[0][0]}" cy="${pts[0][1]}" r="3" fill="#fff" stroke="#3fa9f5" stroke-width="2"></circle>
     <circle cx="${pts[days][0]}" cy="${pts[days][1]}" r="3.2" fill="#3fa9f5"></circle>
