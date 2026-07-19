@@ -836,7 +836,7 @@ en:{
   excTag:"Exception", excRestoreTip:"Click to restore the default forecast",
   resetEdits:"↺ Reset to Original Forecast",
   kpiMaxDef:"Max Daily Representative Deficit",
-  tipMaxDef:"The single largest shortfall (required − scheduled) in any half-hour block of the selected week — the peak number of representatives missing at once. This measures the REAL current week, anchored to your measured answer rates — so the shrinkage/absence sliders are auto-absorbed here (reality outranks estimates). The sliders shape the forward-planning numbers below: staffing curve, hiring gap and the capacity outlook.",
+  tipMaxDef:"The single largest shortfall (required − scheduled) in any half-hour block of the selected week — the peak number of representatives missing at once. Anchored to your measured answer rates: shrinkage/absence sliders are auto-calibrated away wherever measured data exists (they matter only without it). What moves the planning numbers: attrition, courses, the basis and skill selection.",
   sortBy:"Sort by", sortDef:"Availability deficit", sortSched:"Scheduled hours", sortContr:"Contracted hours", sortName:"Name",
   rthName:"Name", rthSched:"Scheduled / possible", rthContr:"Contracted", rthDef:"Δ to extend",
   auditLink:"To see which rows were skipped — click here",
@@ -915,7 +915,7 @@ en:{
   kpiHcAll:"Whole workforce — everyone in the loaded sidur",
   hcBasisAll:"whole workforce", hcBasisSched:"scheduled only",
   hcChipOn:"Plan for {s} only", hcChipOff:"Back to all skills",
-  hcPlanNote:"Planning basis for everything on this page. Shrinkage & absence apply directly here; demand stays center-wide.",
+  hcPlanNote:"Planning basis for everything on this page; demand stays center-wide. With measured answer-rate data loaded, shrinkage/absence are auto-calibrated to reality across the app.",
   cohSkill:"Queue (skill)", cohSkillDef:"קו 1 (default)",
   shrinkAbsorbed:"The model re-calibrated to your MEASURED answer rates — shrinkage/absence changes are absorbed so the matrix stays anchored to reality.",
   shrinkNote:"When your file carries measured answer rates, the model auto-calibrates to them — so changing shrinkage/absence is largely absorbed (reality outranks estimates). These sliders matter most when no measured data is loaded.",
@@ -1160,7 +1160,7 @@ he:{
   excTag:"חריג", excRestoreTip:"לחצו לשחזור התחזית המקורית",
   resetEdits:"↺ איפוס לנתוני מקור",
   kpiMaxDef:"פער נציגים מרבי לכיסוי המוקד",
-  tipMaxDef:"הפער הגדול ביותר (נדרשים − משובצים) בבלוק חצי-שעה כלשהו בשבוע הנבחר — שיא הנציגים החסרים בו-זמנית. המדד משקף את השבוע האמיתי, מעוגן באחוזי המענה שנמדדו — ולכן מחווני שחיקה/היעדרות נבלעים כאן אוטומטית (המציאות גוברת על הערכות). המחוונים כן מעצבים את מספרי התכנון שמתחת: עקומת האיוש, פער הגיוס ותחזית הקיבולת.",
+  tipMaxDef:"הפער הגדול ביותר (נדרשים − משובצים) בבלוק חצי-שעה כלשהו בשבוע הנבחר — שיא הנציגים החסרים בו-זמנית. מעוגן באחוזי המענה שנמדדו: מחווני שחיקה/היעדרות מכוילים אוטומטית מול המציאות בכל מקום שיש נתונים מדודים (יש להם משמעות רק בלעדיהם). מה שכן מזיז את מספרי התכנון: נטישה, קורסים, בסיס התכנון ובחירת המיומנויות.",
   sortBy:"מיון לפי", sortDef:"שעות הרחבת זמינות", sortSched:"שעות משובצות", sortContr:"שעות חוזיות", sortName:"שם",
   rthName:"שם", rthSched:"משובצות / אפשרי", rthContr:"חוזיות", rthDef:"Δ להרחבה",
   auditLink:"כדי לראות אילו שורות דולגו — לחצו כאן",
@@ -1239,7 +1239,7 @@ he:{
   kpiHcAll:"המצבה המלאה — כל מי שבסידור הטעון",
   hcBasisAll:"מצבה מלאה", hcBasisSched:"משובצים בלבד",
   hcChipOn:"תכנון עבור {s} בלבד", hcChipOff:"חזרה לכל המיומנויות",
-  hcPlanNote:"בסיס התכנון לכל העמוד הזה. שחיקה והיעדרות משפיעות כאן ישירות; הביקוש נשאר ברמת כל המוקד.",
+  hcPlanNote:"בסיס התכנון לכל העמוד הזה; הביקוש נשאר ברמת כל המוקד. כשטעונים נתוני מענה מדודים, שחיקה/היעדרות מכוילות אוטומטית מול המציאות בכל האפליקציה.",
   cohSkill:"תור (מיומנות)", cohSkillDef:"קו 1 (ברירת מחדל)",
   shrinkAbsorbed:"המודל כויל מחדש לאחוזי המענה שנמדדו — שינויי שחיקה/היעדרות נבלעים כדי שהמטריצה תישאר מעוגנת במציאות.",
   shrinkNote:"כשהקובץ מכיל אחוזי מענה מדודים, המודל מכייל את עצמו אליהם — ולכן שינוי שחיקה/היעדרות נבלע ברובו (המציאות גוברת על הערכות). למחוונים האלה יש משמעות בעיקר כשאין נתונים מדודים.",
@@ -5059,7 +5059,11 @@ function weightedTSF(scale){
     const sd=state.days.get(ds); if(!sd) continue;
     const dayIdx=fromISO(ds).getDay();
     for(const [tm,rec] of sd){
-      const agents=Math.round((capacityFor(ds,dayIdx,tm,rec)+injectionAgents(dayIdx,tm))*scale*availShare(state.settings));
+      // SAME effective-agent conversion as the matrix (availability × measured-AR
+      // calibration) — without κ this projected a fantasy floor at ~2/3 capacity
+      // and declared reachable targets impossible
+      const effShare=Math.max(0.05,availShare(state.settings)*(state.calib||1));
+      const agents=Math.round((capacityFor(ds,dayIdx,tm,rec)+injectionAgents(dayIdx,tm))*scale*effShare);
       const p=evalInterval(rec.volume,rec.aht,agents,state.settings,rec.mpt);
       vol+=rec.volume; acc+=primVal(p)*rec.volume; // measured on the Primary Target Metric
     }
