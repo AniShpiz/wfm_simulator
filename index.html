@@ -967,6 +967,8 @@ en:{
   trajTitle:"Trajectory Insights",
   trajShift:"{m} trajectory: expected {x}% shift within 30 days under the current hiring rate.",
   trajHire:"Optimal hiring: Add {n} Full-Time Roles to sustain your {t}% {m} target through the forecast period (until {d}).",
+  trajHireBig:"Reaching {t}% {m} would take {n} more full-time roles — {pct}% of your current workforce. Before hiring at that scale, revisit the target or the demand assumptions.",
+  trajUnreach:"The {t}% {m} target is out of reach at any reasonable hiring level — the projection tops out around {p}%. This calls for a target or demand conversation, not mass hiring.",
   trajOk:"On track: the current recruitment pace sustains your {t}% {m} target through the forecast period (until {d}).",
   trajNoData:"Load a forecast and set headcount to unlock predictive trajectory insights.",
   injTitle:"Recruitment Simulation (What-If)", injProfile:"Shift profile",
@@ -1288,8 +1290,10 @@ he:{
   tipOutlook:"מצבה מצטברת חזויה ל־60 הימים הקרובים: מצבת בסיס + קליטה מצנרת ההכשרות (מותאם הסמכה) − נטישה חודשית + סימולציות What-If פעילות (מומרות למשרות מלאות).",
   trajTitle:"תובנות מגמה",
   trajShift:"מגמת {m}: צפוי שינוי של ‎{x}%‎ בתוך 30 יום בקצב הגיוס הנוכחי.",
-  trajHire:"גיוס אופטימלי: הוסיפו ‎{n}‎ משרות מלאות כדי לשמר את יעד ה־{m} שלכם — ‎{t}%‎ — לאורך תקופת התחזית (עד {d}).",
-  trajOk:"במסלול: קצב הגיוס הנוכחי משמר את יעד ה־{m} שלכם — ‎{t}%‎ — לאורך תקופת התחזית (עד {d}).",
+  trajHire:"גיוס מומלץ: עוד ‎{n}‎ משרות מלאות יחזיקו {m} של ‎{t}%‎ עד סוף תקופת התחזית ({d}).",
+  trajHireBig:"כדי להגיע ל-{m} של ‎{t}%‎ צריך עוד ‎{n}‎ משרות — ‎{pct}%‎ מהמצבה. לפני גיוס בהיקף כזה, כדאי לבחון מחדש את היעד או את הנחות הביקוש.",
+  trajUnreach:"יעד {m} של ‎{t}%‎ אינו בר-השגה בשום היקף גיוס סביר — התחזית נעצרת סביב ‎{p}%‎. זו שיחה על היעד או על הביקוש, לא על גיוס המוני.",
+  trajOk:"במסלול: קצב הגיוס הנוכחי מחזיק {m} של ‎{t}%‎ עד סוף תקופת התחזית ({d}).",
   trajNoData:"טענו תחזית והגדירו מצבה כדי לקבל תובנות מגמה חזויות.",
   injTitle:"סימולציית גיוס עובדים (What-If)", injProfile:"פרופיל משמרת",
   profStudent:"סטודנטים אחה\"צ — 12:00–17:00, א'–ה'",
@@ -5071,11 +5075,13 @@ function computeTrajectory(base,skillF){
   // scheduled read as "if my whole workforce were on the floor"
   const now=weightedTSF(hc/S.headcount), in30=weightedTSF(hc30/S.headcount);
   if(now===null||in30===null) return null;
-  let need=80;
+  let need=null;
   for(let n=0;n<=80;n++){
     if(weightedTSF((hc30+n)/S.headcount)>=S.target/100){ need=n; break; }
   }
-  return {delta:(in30-now)*100, need, hc30};
+  // need===null → the target is unreachable within any sane hiring range;
+  // that's a target/demand conversation, not a "hire 80 people" recommendation
+  return {delta:(in30-now)*100, need:need==null?-1:need, reachable:need!=null, in30, hc30};
 }
 
 /* ---------------- Charts (single-series, LTR plot, baseline start-point marked) ---------------- */
@@ -5268,7 +5274,13 @@ function renderRecruit(){
     const vars={t:S.target,d:fmtD(state.horizonISO),m:primName()}; // copy adapts to the Primary Target Metric
     add(t("trajShift",{x:(traj.delta>=0?"+":"")+traj.delta.toFixed(1),m:primName()}),
         Math.abs(traj.delta)<0.05?"insight":(traj.delta<0?"alert":"ok"));
-    if(traj.need<=0) add(t("trajOk",vars),"ok");
+    if(!traj.reachable)
+      // honesty over absurdity: "hire 80" is not advice — say what IS projected and
+      // that the target needs a demand/target conversation, not mass hiring
+      add(t("trajUnreach",{p:(traj.in30*100).toFixed(0),...vars}),"alert");
+    else if(traj.need<=0) add(t("trajOk",vars),"ok");
+    else if(traj.need>Math.max(8,plan.hc*0.25))
+      add(t("trajHireBig",{n:traj.need,pct:Math.round(traj.need/Math.max(1,plan.hc)*100),...vars}),"alert");
     else add(t("trajHire",{n:traj.need,...vars}),"alert");
   }
 
