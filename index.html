@@ -524,6 +524,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
           </select>
           <button class="btn ghost" id="cmAdd" data-i18n="cmAdd">+ Add</button>
         </div>
+        <div id="cmList" style="margin-top:6px"></div>
       </details>
       <div class="banner good" id="schBanner"></div>
     </div>
@@ -605,7 +606,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <div class="frow"><label for="setAutoHol" data-i18n="fmAutoHol">Auto Israeli-holiday calendar</label><input type="checkbox" id="setAutoHol"></div>
         <div class="frow"><label for="setAutoAnom" data-i18n="fmAutoAnom">Auto war/outage detection</label><input type="checkbox" id="setAutoAnom"></div>
         <div class="frow"><label data-i18n="fmProfile">Interval profile window</label><select id="setProfile" style="width:210px"><option value="adaptive" data-i18n="fmProfAdapt">Adaptive (8w, fallback all)</option><option value="w12" data-i18n="fmProf12">12 weeks</option></select></div>
-        <div class="frow" style="border:none;gap:8px"><button class="btn ghost" id="backtestBtn" data-i18n="backtestBtn">🧪 Backtest models</button><button class="btn ghost" id="reviewExclBtn" data-i18n="reviewExclBtn">📅 Review excluded days</button></div>
+        <div class="frow" style="border:none;gap:8px;flex-wrap:wrap"><button class="btn ghost" id="backtestBtn" data-i18n="backtestBtn">🧪 Backtest models</button><button class="btn ghost" id="reviewExclBtn" data-i18n="reviewExclBtn">📅 Review excluded days</button><button class="btn ghost" id="holTableBtn" data-i18n="holTableBtn">🕎 Holidays table</button></div>
       </div>
     </div>
   </section>
@@ -884,6 +885,14 @@ en:{
   conUnknownT:"{n} names don't match any agent in the sidur:",
   conDidYouMean:"Did you mean \"{x}\"?", conYes:"Yes, fix", conIgnore:"Remove",
   conNoMatch:"no similar name found — check the spelling",
+  holTableBtn:"🕎 Holidays & festivals table", holTableTitle:"Holidays & Festivals — working-day classification",
+  holTableMsg:"Set how YOUR center runs on each holiday: regular working day, half day (modeled at the learned eve factor), Chol-HaMoed level, or closed (excluded from learning). Overrides apply to every year and recompute the forecast instantly.",
+  holLvlWork:"Regular working day", holLvlEve:"Half day (eve)", holLvlChm:"Chol HaMoed", holLvlClosed:"Closed",
+  holOverridden:"(changed by you)",
+  btDaily:"Daily-total pipeline (the real forecast)",
+  btApplyCal:"⚙ Apply {c}% calibration", btCalDone:"Calibration set to {c}% — forecasts recentered.",
+  btCalActive:"active calibration: {c}%", btCalReset:"reset calibration",
+  cmAllDay:"all day", cmEdit:"Edit",
   skipRDate:"unreadable date", skipRTime:"unreadable interval/time",
   skipRVol:"invalid call volume", skipRAht:"invalid handle time",
   auditDl:"⬇ Download all {n} skipped rows (CSV with reasons)",
@@ -1178,6 +1187,14 @@ he:{
   conUnknownT:"{n} שמות לא נמצאו בסידור:",
   conDidYouMean:"האם התכוונת ל\"{x}\"?", conYes:"כן, תקן", conIgnore:"הסר",
   conNoMatch:"לא נמצא שם דומה — בדקו את האיות",
+  holTableBtn:"🕎 טבלת חגים ומועדים", holTableTitle:"חגים ומועדים — סיווג ימי עבודה",
+  holTableMsg:"קבעו איך המוקד שלכם עובד בכל חג: יום עבודה רגיל, חצי יום (ממודל לפי מקדם הערב הנלמד), רמת חול-המועד, או סגור (מוחרג מהלמידה). השינוי חל על כל שנה ומעדכן את התחזית מיידית.",
+  holLvlWork:"יום עבודה רגיל", holLvlEve:"חצי יום (ערב חג)", holLvlChm:"חול המועד", holLvlClosed:"סגור",
+  holOverridden:"(שונה על ידכם)",
+  btDaily:"צינור הסך-היומי (התחזית האמיתית)",
+  btApplyCal:"⚙ החלת כיול {c}%", btCalDone:"הכיול נקבע ל-{c}% — התחזיות מוּרכזו מחדש.",
+  btCalActive:"כיול פעיל: {c}%", btCalReset:"איפוס כיול",
+  cmAllDay:"כל היום", cmEdit:"עריכה",
   skipRDate:"תאריך לא קריא", skipRTime:"אינטרוול/שעה לא קריאים",
   skipRVol:"כמות שיחות לא תקינה", skipRAht:"משך שיחה לא תקין",
   auditDl:"⬇ הורדת כל {n} השורות שדולגו (CSV עם סיבות)",
@@ -1635,7 +1652,8 @@ const state={
   settings:{mode:"normal",target:90,tsfT:30,mpt:180,attrition:4,headcount:60,shrinkage:0,absence:0,
             primaryMetric:"ar",dayStart:8,dayEnd:18,friEnd:13,
             modelVolume:"ensemble5",modelAht:"ma4",modelMpt:"ma4",mptOverride:false,hcOverride:false,modelUserSet:false,
-            autoHolidays:true,autoAnomaly:true,profileMode:"adaptive"},
+            autoHolidays:true,autoAnomaly:true,profileMode:"adaptive",
+            holOverride:{"Av|9":"work"},volCal:1},
   edits:new Set(), undoStack:[], pristine:new Map(),
   volAdj:[],                     // forward-propagated volume edits: {ds,di,tm,factor}
   domFactor:null, cleanClipped:0, // calendar uplift factors + outlier-guard audit count
@@ -3093,6 +3111,34 @@ function renderScheduler(){
       dl.innerHTML=names.map(n=>`<option value="${n.replace(/"/g,"&quot;")}">`).join(""); } }
   const cmn=document.getElementById("cmName"); if(cmn) cmn.placeholder=t("cmNamePh");
   renderConNameCheck();
+  // the constraints already entered are visible and editable, not a black box
+  const cl=document.getElementById("cmList");
+  if(cl){
+    cl.innerHTML="";
+    state.weeklyConstraints.forEach((c,i)=>{
+      const row=document.createElement("div");
+      row.style.cssText="display:flex;align-items:center;gap:8px;font-size:.78rem;margin:2px 0";
+      const txt=document.createElement("span");
+      txt.textContent=`${c.name} · ${fmtD(c.ds)} · ${c.s&&c.e?c.s+"–"+c.e:t("cmAllDay")} · ${t("cmT"+({vacation:"vac",unavailable:"unav",partial:"part"}[c.type]||"unav"))}`;
+      row.appendChild(txt);
+      const ed=document.createElement("button"); ed.className="linklike"; ed.textContent="✎"; ed.title=t("cmEdit");
+      ed.addEventListener("click",()=>{ // load into the form for correction, remove the original
+        document.getElementById("cmName").value=c.name;
+        document.getElementById("cmDate").value=c.ds;
+        document.getElementById("cmStart").value=c.s||"";
+        document.getElementById("cmEnd").value=c.e||"";
+        document.getElementById("cmType").value=c.type;
+        state.weeklyConstraints.splice(i,1);
+        document.getElementById("conManual").open=true;
+        renderScheduler();
+      });
+      row.appendChild(ed);
+      const del=document.createElement("button"); del.className="xbtn"; del.textContent="✕";
+      del.addEventListener("click",()=>{ state.weeklyConstraints.splice(i,1); renderScheduler(); });
+      row.appendChild(del);
+      cl.appendChild(row);
+    });
+  }
   document.getElementById("schChipFc").textContent=t("schChipFc",{n:state.days.size});
   document.getElementById("schChipIron").textContent=state.iron
     ? t("schChipIron",{n:schedulerEmps().length})
@@ -3559,17 +3605,33 @@ const HEB_HOLIDAYS={
   "Nisan":{14:"eve",15:"closed",16:"chm",17:"chm",18:"chm",19:"chm",20:"eve",21:"closed"},
   // Sivan — Shavuot
   "Sivan":{5:"eve",6:"closed"},
-  // Av — Tisha B'Av is a REGULAR working day in Israeli call centers (user-confirmed);
-  // it is deliberately absent from this table.
+  // Av — Tisha B'Av: present in the table so the user can classify it, but the
+  // DEFAULT override marks it a regular working day (user-confirmed reality).
+  "Av":{9:"eve"},
   // Iyar — Independence Day (5th, closed) + eve/Memorial (4th, partial)
   "Iyar":{4:"eve",5:"closed"}
 };
 const HOLIDAY_EXCLUDE=lvl=>lvl==="closed";       // fully removed from learning
 const HOLIDAY_FACTORED=lvl=>lvl==="eve"||lvl==="chm"; // learned reduced factor
+/* display names for the holidays table (month|day keys match HEB_HOLIDAYS) */
+const HOL_NAMES={
+  "Tishri":{1:"ראש השנה",2:"ראש השנה — יום ב'",9:"ערב יום כיפור",10:"יום כיפור",
+    15:"סוכות",16:'חוה"מ סוכות',17:'חוה"מ סוכות',18:'חוה"מ סוכות',19:'חוה"מ סוכות',
+    20:'חוה"מ סוכות',21:"הושענא רבה",22:"שמחת תורה"},
+  "Nisan":{14:"ערב פסח",15:"פסח",16:'חוה"מ פסח',17:'חוה"מ פסח',18:'חוה"מ פסח',
+    19:'חוה"מ פסח',20:"ערב שביעי של פסח",21:"שביעי של פסח"},
+  "Iyar":{4:"יום הזיכרון",5:"יום העצמאות"},
+  "Sivan":{5:"ערב שבועות",6:"שבועות"},
+  "Av":{9:"תשעה באב"}
+};
+const HOL_MONTH_ORDER=["Tishri","Nisan","Iyar","Sivan","Av"];
 function holidayLevel(dateObj){
   const mn=hebMonthName(dateObj), p=hebParts(dateObj);
   if(!p||!mn) return null;
   const day=+p.day;
+  // user override wins: each holiday can be reclassified working/half/chm/closed
+  const ov=(state.settings.holOverride||{})[mn+"|"+day];
+  if(ov) return ov==="work"?null:ov;
   const tbl=HEB_HOLIDAYS[mn];
   return tbl&&tbl[day]?tbl[day]:null;
 }
@@ -3933,7 +3995,8 @@ function forecastDay(ds){
      total by the learned factor so a future holiday isn't forecast as a normal day */
   const tgtLvl=state.holidayDates.get(ds);
   const hf=(tgtLvl&&state.holidayFactor&&state.holidayFactor[tgtLvl])||1;
-  const dayForecast=Math.max(0,dailyNorm*cf*hf);
+  // volCal: day-level pace calibration measured by the daily backtest (100±1% goal)
+  const dayForecast=Math.max(0,dailyNorm*cf*hf*(state.settings.volCal||1));
 
   /* HOLIDAY-EVE = FRIDAY: a holiday eve is a short, morning-heavy day just like a
      Friday. So for eve targets we borrow FRIDAY's interval-share profile (and its
@@ -5041,6 +5104,9 @@ function loadState(){
     // Policy Optimizer UI is hidden (see #polSection) — a workspace saved with it
     // enabled must not keep applying invisible dips to the matrix
     state.policy.enabled=false;
+    // pre-holidays-table workspaces: seed the default override (Tisha B'Av = working)
+    if(!state.settings.holOverride) state.settings.holOverride={"Av|9":"work"};
+    if(!(state.settings.volCal>0)) state.settings.volCal=1;
     // migration: the ensemble is the new default unless the user actively picked a model
     if(!state.settings.modelUserSet&&state.settings.modelVolume==="holt_damped")
       state.settings.modelVolume="ensemble5";
@@ -5479,13 +5545,96 @@ document.getElementById("reviewExclBtn").addEventListener("click",()=>{
   });
   document.getElementById("modalBg").classList.add("show");
 });
+/* ---- Holidays & festivals table: reclassify any holiday (working/half/chm/closed) ---- */
+const HOL_LEVELS=[["work","holLvlWork"],["eve","holLvlEve"],["chm","holLvlChm"],["closed","holLvlClosed"]];
+document.getElementById("holTableBtn").addEventListener("click",()=>{
+  document.getElementById("mTitle").textContent=t("holTableTitle");
+  document.getElementById("mCore").textContent=t("holTableMsg");
+  document.getElementById("mMsg").textContent="";
+  document.getElementById("mExport").style.display="none";
+  const mL=document.getElementById("mList"); mL.innerHTML="";
+  const ov=state.settings.holOverride||(state.settings.holOverride={});
+  for(const mn of HOL_MONTH_ORDER){
+    for(const day of Object.keys(HEB_HOLIDAYS[mn]||{}).map(Number).sort((a,b)=>a-b)){
+      const key=mn+"|"+day, def=HEB_HOLIDAYS[mn][day];
+      const cur=ov[key]||def;
+      const li=document.createElement("li"); li.className="insight";
+      li.style.cssText="display:flex;align-items:center;gap:10px;flex-wrap:wrap";
+      const nm=document.createElement("b");
+      nm.textContent=(HOL_NAMES[mn]&&HOL_NAMES[mn][day])||(mn+" "+day);
+      li.appendChild(nm);
+      const sel=document.createElement("select"); sel.style.fontSize=".8rem";
+      HOL_LEVELS.forEach(([v,k])=>{ const o=document.createElement("option");
+        o.value=v; o.textContent=t(k); if(v===cur) o.selected=true; sel.appendChild(o); });
+      sel.addEventListener("change",()=>{
+        if(sel.value===def) delete ov[key]; else ov[key]=sel.value;
+        saveState(); state.fcCache.clear(); memo.clear();
+        rebuildLearningSeries(); renderAll();
+        showToast("✅ "+nm.textContent+" — "+t(HOL_LEVELS.find(x=>x[0]===sel.value)[1]),true);
+      });
+      li.appendChild(sel);
+      if(ov[key]){ const tag=document.createElement("span"); tag.className="mini";
+        tag.textContent=t("holOverridden"); li.appendChild(tag); }
+      mL.appendChild(li);
+    }
+  }
+  document.getElementById("modalBg").classList.add("show");
+});
+/* ---- day-level backtest of the REAL pipeline (daily-total model) + pace calibration ---- */
+function backtestDaily(){
+  if(!state.series) return null;
+  let sumF=0,sumA=0,n=0;
+  for(const di in state.series){
+    const slots=Object.keys(state.series[di]); if(!slots.length) continue;
+    const nWeeks=Math.max(...slots.map(tm=>state.series[di][tm].vols.length));
+    const totals=[];
+    for(let w=0;w<nWeeks;w++){ let tot=0,seen=false;
+      for(const tm of slots){ const v=state.series[di][tm].vols[w]; if(v!=null){ tot+=v; seen=true; } }
+      if(seen) totals.push(tot); }
+    const K=Math.min(6,totals.length-4);
+    for(let k=1;k<=K;k++){
+      const actual=totals[totals.length-k]; if(!(actual>0)) continue;
+      const pred=ForecastEngines.volume(totals.slice(0,totals.length-k),1,{weekday:+di,interval:"day",allSeries:state.series});
+      sumF+=pred; sumA+=actual; n++;
+    }
+  }
+  return n?{pace:sumF/sumA*100,n}:null;
+}
 document.getElementById("backtestBtn").addEventListener("click",()=>{
   document.getElementById("mTitle").textContent=t("backtestTitle");
   document.getElementById("mCore").textContent=t("backtestMsg");
   document.getElementById("mMsg").textContent="";
   document.getElementById("mExport").style.display="none";
   const mL=document.getElementById("mList"); mL.innerHTML="";
-  let any=false;
+  // headline: the daily-total pipeline (what the matrix actually uses) + calibration
+  const bd=backtestDaily();
+  if(bd){
+    const li=document.createElement("li");
+    li.className=Math.abs(bd.pace-100)<=1?"ok":"insight";
+    const cal=state.settings.volCal||1;
+    li.innerHTML=`<span><b>${t("btDaily")}</b>: <span class="num">${bd.pace.toFixed(1)}% ${t("paceWord")}</span> (${bd.n})`
+      +(cal!==1?` · ${t("btCalActive",{c:(cal*100).toFixed(1)})}`:"")+`</span>`;
+    if(Math.abs(bd.pace-100)>1){
+      const b2=document.createElement("button"); b2.className="btn ghost applymini";
+      const target=Math.min(1.15,Math.max(0.85,(state.settings.volCal||1)*100/bd.pace));
+      b2.textContent=t("btApplyCal",{c:(target*100).toFixed(1)});
+      b2.addEventListener("click",()=>{
+        state.settings.volCal=Math.round(target*1000)/1000;
+        saveState(); state.fcCache.clear(); renderAll();
+        showToast("✅ "+t("btCalDone",{c:(state.settings.volCal*100).toFixed(1)}),true);
+        document.getElementById("modalBg").classList.remove("show");
+      });
+      li.appendChild(b2);
+    }
+    if(cal!==1){
+      const rb=document.createElement("button"); rb.className="linklike"; rb.textContent=t("btCalReset");
+      rb.addEventListener("click",()=>{ state.settings.volCal=1; saveState(); state.fcCache.clear(); renderAll();
+        document.getElementById("modalBg").classList.remove("show"); });
+      li.appendChild(rb);
+    }
+    mL.appendChild(li);
+  }
+  let any=!!bd;
   [["volume","btVol"],["aht","btAht"],["mpt","btMpt"]].forEach(([kind,titleKey])=>{
     const scores=Object.keys(Models[kind])
       .map(mid=>({mid,r:backtestModel(kind,mid)}))
