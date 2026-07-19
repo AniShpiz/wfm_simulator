@@ -910,6 +910,7 @@ en:{
   extTlHead:"Hi {team}, possible shift extensions on your team:",
   extTlLine:"• {name} — {day} {date}: {ask}",
   hcNoSkill:"untagged", hcSplitSrc:"split from the loaded sidur ({n} distinct reps)",
+  kpiHcSched:"Scheduled reps (משובצים) in the loaded sidur",
   shrinkAbsorbed:"The model re-calibrated to your MEASURED answer rates — shrinkage/absence changes are absorbed so the matrix stays anchored to reality.",
   shrinkNote:"When your file carries measured answer rates, the model auto-calibrates to them — so changing shrinkage/absence is largely absorbed (reality outranks estimates). These sliders matter most when no measured data is loaded.",
   skipRDate:"unreadable date", skipRTime:"unreadable interval/time",
@@ -1226,6 +1227,7 @@ he:{
   extTlHead:"היי {team}, אפשרויות הרחבה אצל הצוות שלך:",
   extTlLine:"• {name} — יום {day} {date}: {ask}",
   hcNoSkill:"ללא תיוג", hcSplitSrc:"החלוקה מהסידור הטעון ({n} נציגים שונים)",
+  kpiHcSched:"נציגים משובצים בסידור הטעון",
   shrinkAbsorbed:"המודל כויל מחדש לאחוזי המענה שנמדדו — שינויי שחיקה/היעדרות נבלעים כדי שהמטריצה תישאר מעוגנת במציאות.",
   shrinkNote:"כשהקובץ מכיל אחוזי מענה מדודים, המודל מכייל את עצמו אליהם — ולכן שינוי שחיקה/היעדרות נבלע ברובו (המציאות גוברת על הערכות). למחוונים האלה יש משמעות בעיקר כשאין נתונים מדודים.",
   skipRDate:"תאריך לא קריא", skipRTime:"אינטרוול/שעה לא קריאים",
@@ -5118,6 +5120,33 @@ function renderOutlook(){
 function renderRecruit(){
   const S=state.settings;
   document.getElementById("kpiHc").textContent=S.headcount;
+  // say what the number IS: when a named sidur drives it, 91 means scheduled reps
+  {
+    const hcLbl=document.querySelector('#page-recruit .kpi .l[data-i18n^="kpiHc"]');
+    const synced=state.rosterNamed&&state.roster.length&&!S.hcOverride;
+    if(hcLbl){ hcLbl.dataset.i18n=synced?"kpiHcSched":"kpiHc"; hcLbl.textContent=t(hcLbl.dataset.i18n); }
+  }
+  // shortage KPIs must not depend on the matrix page having been opened —
+  // compute them here from the same computeDay results (memoized, cheap)
+  {
+    const mdEl=document.getElementById("kpiMaxDef"), shEl=document.getElementById("kpiShort");
+    let maxDef=0,shortCount=0,any=false;
+    if(state.week&&state.days.size){
+      for(const ds of weekDates(state.week)){
+        const c=computeDay(ds); if(!c) continue;
+        any=true;
+        for(const row of c.rows){
+          if(!row.rec||row.closed||row.exc||row.nodata) continue;
+          if(row.sched<row.reqEff){ shortCount++; maxDef=Math.max(maxDef,row.reqEff-row.sched); }
+        }
+      }
+    }
+    if(any){
+      mdEl.innerHTML=`<span class="num">${maxDef>0?"+"+maxDef:"0"}</span>`;
+      shEl.textContent=shortCount;
+    }else{ mdEl.textContent=t("noData"); shEl.textContent=t("noData"); }
+    document.getElementById("kpiShortL").textContent=t("kpiShortW",{w:state.week?isoWeek(state.week):"—"});
+  }
   // headcount split by skill (מיומנות): the total stays the hero number, the small
   // chips answer the manager's NEXT question — "of whom?" — without a single click.
   // Colors match the queue palette used across the app; untagged reps get their own chip.
