@@ -574,6 +574,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
           </span></div>
         <div class="frow"><label><span data-i18n="setAbsence">Absence — היעדרויות (%)</span> <span class="info" data-tipkey="tipAbsence" tabindex="0">i</span></label><input type="number" id="setAbsence" min="0" max="60" step="1"></div>
         <div class="frow"><label><span data-i18n="setShrink">Shrinkage (%)</span> <span class="info" data-tipkey="tipShrink" tabindex="0">i</span></label><input type="number" id="setShrink" min="0" max="60" step="1"></div>
+        <p class="mini" data-i18n="shrinkNote">When your file carries measured answer rates, the model auto-calibrates to them — so changing shrinkage/absence is largely absorbed (reality outranks estimates). These sliders matter most when no measured data is loaded.</p>
         <details class="danger">
           <summary data-i18n="resetZone">Workspace reset (danger zone)</summary>
           <div class="inner">
@@ -893,6 +894,8 @@ en:{
   btApplyCal:"⚙ Apply {c}% calibration", btCalDone:"Calibration set to {c}% — forecasts recentered.",
   btCalActive:"active calibration: {c}%", btCalReset:"reset calibration",
   cmAllDay:"all day", cmEdit:"Edit",
+  shrinkAbsorbed:"The model re-calibrated to your MEASURED answer rates — shrinkage/absence changes are absorbed so the matrix stays anchored to reality.",
+  shrinkNote:"When your file carries measured answer rates, the model auto-calibrates to them — so changing shrinkage/absence is largely absorbed (reality outranks estimates). These sliders matter most when no measured data is loaded.",
   skipRDate:"unreadable date", skipRTime:"unreadable interval/time",
   skipRVol:"invalid call volume", skipRAht:"invalid handle time",
   auditDl:"⬇ Download all {n} skipped rows (CSV with reasons)",
@@ -1195,6 +1198,8 @@ he:{
   btApplyCal:"⚙ החלת כיול {c}%", btCalDone:"הכיול נקבע ל-{c}% — התחזיות מוּרכזו מחדש.",
   btCalActive:"כיול פעיל: {c}%", btCalReset:"איפוס כיול",
   cmAllDay:"כל היום", cmEdit:"עריכה",
+  shrinkAbsorbed:"המודל כויל מחדש לאחוזי המענה שנמדדו — שינויי שחיקה/היעדרות נבלעים כדי שהמטריצה תישאר מעוגנת במציאות.",
+  shrinkNote:"כשהקובץ מכיל אחוזי מענה מדודים, המודל מכייל את עצמו אליהם — ולכן שינוי שחיקה/היעדרות נבלע ברובו (המציאות גוברת על הערכות). למחוונים האלה יש משמעות בעיקר כשאין נתונים מדודים.",
   skipRDate:"תאריך לא קריא", skipRTime:"אינטרוול/שעה לא קריאים",
   skipRVol:"כמות שיחות לא תקינה", skipRAht:"משך שיחה לא תקין",
   auditDl:"⬇ הורדת כל {n} השורות שדולגו (CSV עם סיבות)",
@@ -5673,7 +5678,9 @@ const bind=(id,key)=>{ const el=document.getElementById(id); el.value=state.sett
     // headcount & attrition now scale forecast-day agents (hcScale) → invalidate the forecast cache
     if(key==="headcount"||key==="attrition") state.fcCache.clear();
     // κ was fitted at the previous availability — refit so effective agents stay aligned with measured AR
-    if(key==="shrinkage"||key==="absence"){ calibrateModel(); computeSlotBias(); }
+    if(key==="shrinkage"||key==="absence"){ calibrateModel(); computeSlotBias();
+      // measured data anchors the matrix: κ absorbs the slider, tell the user WHY nothing moved
+      if(state.calib&&state.calib!==1) showToast("ℹ "+t("shrinkAbsorbed"),true); }
     refreshDynamicLabels(); renderAll(); }); };
 bind("setTarget","target"); bind("setTsfT","tsfT");
 bind("setAttr","attrition"); bind("setHc","headcount"); bind("setShrink","shrinkage"); bind("setAbsence","absence");
