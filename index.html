@@ -2627,7 +2627,9 @@ function applyDataWeek(){
   for(const r of state.schedRows||[]) if(r.ds) ds.push(r.ds);
   for(const v of state.vacations||[]) if(v.ds) ds.push(v.ds);
   if(!ds.length) return;
-  const sun=sundayOf(ds.sort()[0]);
+  // a week the user explicitly chose (restored from the last session) wins once
+  const sun=state._restoredWeek||sundayOf(ds.sort()[0]);
+  state._restoredWeek=null;
   const sel=document.getElementById("weekSelect");
   if(![...sel.options].some(o=>o.value===sun)){
     const o=document.createElement("option");
@@ -3338,7 +3340,7 @@ function renderScheduler(){
       });
       row.appendChild(ed);
       const del=document.createElement("button"); del.className="xbtn"; del.textContent="✕";
-      del.addEventListener("click",()=>{ state.weeklyConstraints.splice(i,1); renderScheduler(); });
+      del.addEventListener("click",()=>{ state.weeklyConstraints.splice(i,1); renderScheduler(); saveData(); });
       row.appendChild(del);
       cl.appendChild(row);
     });
@@ -3374,7 +3376,7 @@ function parseConstraintsGrid(grid){
 /* ---------- WFM 2.0 wiring ---------- */
 [["wfTeam","team"],["wfSkill","skill"],["wfSite","site"]].forEach(([id,key])=>{
   document.getElementById(id).addEventListener("change",e=>{
-    state.wfFilter[key]=e.target.value; renderWorkforce();
+    state.wfFilter[key]=e.target.value; renderWorkforce(); saveData();
   });
 });
 document.getElementById("wfValCsv").addEventListener("click",()=>{
@@ -3671,7 +3673,7 @@ document.getElementById("cmAdd").addEventListener("click",()=>{
   const e=document.getElementById("cmEnd").value||null;
   state.weeklyConstraints.push({name,ds,s,e,type:document.getElementById("cmType").value});
   document.getElementById("cmName").value="";
-  renderScheduler(); // did-you-mean fires immediately for typos
+  renderScheduler(); saveData(); // did-you-mean fires immediately for typos
   showToast("✅ "+t("cmAddOk",{n:name}),true);
 });
 
@@ -5947,7 +5949,7 @@ document.getElementById("metricSeg").addEventListener("click",e=>{
   document.querySelectorAll("#metricSeg button").forEach(x=>x.classList.toggle("active",x===b));
   renderMatrix();
 });
-document.getElementById("weekSelect").addEventListener("change",e=>{ closeEditor(); state.week=e.target.value; renderMatrix(); dirtyPages.add("recruit"); renderDirty(); });
+document.getElementById("weekSelect").addEventListener("change",e=>{ closeEditor(); state.week=e.target.value; renderMatrix(); dirtyPages.add("recruit"); renderDirty(); saveData(); });
 document.getElementById("excModeBtn").addEventListener("click",()=>{
   state.excMode=!state.excMode;
   document.getElementById("excModeBtn").classList.toggle("on",state.excMode);
@@ -5960,7 +5962,7 @@ function stepWeek(dir){
   const i=sel.selectedIndex+dir;
   if(i<0||i>=sel.options.length) return;
   closeEditor();
-  sel.selectedIndex=i; state.week=sel.value; renderMatrix(); dirtyPages.add("recruit"); renderDirty();
+  sel.selectedIndex=i; state.week=sel.value; renderMatrix(); dirtyPages.add("recruit"); renderDirty(); saveData();
 }
 document.getElementById("wkPrev").addEventListener("click",()=>stepWeek(-1));
 document.getElementById("wkNext").addEventListener("click",()=>stepWeek(1));
@@ -6473,7 +6475,8 @@ function saveData(){
       meta:Object.fromEntries(state.rosterMeta), vac:state.vacations,
       schedRows:state.schedRows, valErr:state.validationErrors,
       capSkills:state.capSkills, capSkillMap:state.rosterCapSkill, skillList:state.skillList,
-      un:state.unallocRows, schedSkills:state.schedSkills }));
+      un:state.unallocRows, schedSkills:state.schedSkills,
+      week:state.week, wfFilter:state.wfFilter, cons:state.weeklyConstraints }));
   }catch(e){} // quota exceeded on huge files → data simply stays transient
 }
 function loadData(){
@@ -6499,6 +6502,11 @@ function loadData(){
     state.capSkills=s.capSkills===undefined?null:s.capSkills;
     state.unallocRows=s.un||[];
     state.schedSkills=s.schedSkills===undefined?null:s.schedSkills;
+    // non-data preferences that belong to this dataset: chosen week, workforce
+    // filters and manually entered constraints all survive a refresh
+    if(s.week) state._restoredWeek=s.week;
+    if(s.wfFilter) state.wfFilter=s.wfFilter;
+    if(Array.isArray(s.cons)) state.weeklyConstraints=s.cons;
     rebuildRosterCoverage();
     return true;
   }catch(e){ return false; }
