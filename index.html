@@ -619,6 +619,16 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <div class="frow"><label data-i18n="fmProfile">Interval profile window</label><select id="setProfile" style="width:210px"><option value="adaptive" data-i18n="fmProfAdapt">Adaptive (8w, fallback all)</option><option value="w12" data-i18n="fmProf12">12 weeks</option></select></div>
         <div class="frow" style="border:none;gap:8px;flex-wrap:wrap"><button class="btn ghost" id="backtestBtn" data-i18n="backtestBtn">🧪 Backtest models</button><button class="btn ghost" id="reviewExclBtn" data-i18n="reviewExclBtn">📅 Review excluded days</button><button class="btn ghost" id="holTableBtn" data-i18n="holTableBtn">🕎 Holidays table</button></div>
       </div>
+      <!-- QA / feedback in its own card — nothing is sent automatically -->
+      <div class="card">
+        <h2 data-i18n="qaTitle">QA &amp; Feedback</h2>
+        <textarea id="qaMsg" rows="3" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:8px;font:inherit;font-size:.82rem;resize:vertical"></textarea>
+        <div class="toolbar" style="margin-top:6px">
+          <button class="btn navy" id="qaSend" data-i18n="qaSend">📧 Send by email</button>
+          <button class="btn ghost" id="qaCopy" data-i18n="qaCopy">📋 Copy</button>
+          <span class="mini" data-i18n="qaNote">Opens your email app — includes the page and app context automatically.</span>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -982,6 +992,10 @@ en:{
   schSortTip:"Click to sort; click again to reverse", schFiltN:"Showing {v} of {n} shifts (filtered)",
   emptyState:"No data yet — drop a file anywhere, or load it from the Home page.",
   emptyStateBtn:"Go to Home",
+  qaTitle:"QA & Feedback", qaPh:"Found a bug? Numbers look off? Missing something? Write it here…",
+  qaSend:"📧 Send by email", qaCopy:"📋 Copy",
+  qaNote:"Opens your email app — the page and app context are attached automatically. Nothing is ever sent without you.",
+  qaSubject:"WFM Simulator — QA feedback", qaEmpty:"Write something first 🙂", qaCopied:"Copied — paste it anywhere.",
   trajNoData:"Load a forecast and set headcount to unlock predictive trajectory insights.",
   injTitle:"Recruitment Simulation (What-If)", injProfile:"Shift profile",
   profStudent:"Student Afternoon — 12:00–17:00, Sun–Thu",
@@ -1313,6 +1327,10 @@ he:{
   schSortTip:"לחצו למיון; לחיצה נוספת הופכת את הסדר", schFiltN:"מוצגות {v} מתוך {n} משמרות (מסונן)",
   emptyState:"עדיין אין נתונים — גררו קובץ לכל מקום במסך, או טענו מדף הבית.",
   emptyStateBtn:"לדף הבית",
+  qaTitle:"משוב ודיווח תקלות (QA)", qaPh:"מצאתם באג? מספר נראה מוזר? חסר משהו? כתבו כאן…",
+  qaSend:"📧 שליחה במייל", qaCopy:"📋 העתקה",
+  qaNote:"נפתחת אפליקציית המייל שלכם — ההקשר (עמוד, נתונים) מצורף אוטומטית. שום דבר לא נשלח בלעדיכם.",
+  qaSubject:"סימולטור WFM — משוב QA", qaEmpty:"כתבו משהו קודם 🙂", qaCopied:"הועתק — הדביקו בכל מקום.",
   trajNoData:"טענו תחזית והגדירו מצבה כדי לקבל תובנות מגמה חזויות.",
   injTitle:"סימולציית גיוס עובדים (What-If)", injProfile:"פרופיל משמרת",
   profStudent:"סטודנטים אחה\"צ — 12:00–17:00, א'–ה'",
@@ -1386,6 +1404,7 @@ function refreshDynamicLabels(){
   document.getElementById("btnTsf").textContent=t("metricTsfDyn",{s:S.tsfT});
   document.getElementById("horizonInfo").dataset.tip=
     t("horizonTip",{d:Math.max(0,state.dataDepthDays||0),m:t(state.horizonDays===365?"m12":"m3")});
+  { const qa=document.getElementById("qaMsg"); if(qa) qa.placeholder=t("qaPh"); }
   document.getElementById("ceVolL").textContent=t("tipVolume");
   document.getElementById("ceAhtL").textContent=t("tipAht");
   document.getElementById("ceAgL").textContent=t("tipSched");
@@ -6415,6 +6434,28 @@ document.addEventListener("drop",e=>{
 });
 
 document.getElementById("langSelect").addEventListener("change",e=>setLang(e.target.value));
+
+/* QA / feedback box: builds a context-rich message; user sends it themselves */
+function qaComposed(){
+  const msg=(document.getElementById("qaMsg").value||"").trim();
+  const page=pages.find(q=>document.getElementById("page-"+q).classList.contains("active"))||"?";
+  const ctx=`\n\n— — —\napp: WFM Simulator · page: ${page} · lang: ${lang}`
+    +` · days: ${state.days.size} · roster: ${state.roster.length} · iron: ${state.iron?state.iron.emps.size:0}`
+    +` · κ=${state.calib||1} · ${new Date().toLocaleString()}`;
+  return msg+ctx;
+}
+document.getElementById("qaSend").addEventListener("click",()=>{
+  const msg=(document.getElementById("qaMsg").value||"").trim();
+  if(!msg){ showToast("⚠ "+t("qaEmpty"),false); return; }
+  location.href="mailto:imrific@tikshoov.co.il?subject="+encodeURIComponent(t("qaSubject"))
+    +"&body="+encodeURIComponent(qaComposed());
+});
+document.getElementById("qaCopy").addEventListener("click",()=>{
+  const msg=(document.getElementById("qaMsg").value||"").trim();
+  if(!msg){ showToast("⚠ "+t("qaEmpty"),false); return; }
+  navigator.clipboard&&navigator.clipboard.writeText(qaComposed());
+  showToast("📋 "+t("qaCopied"),true);
+});
 
 /* ---------------- Dataset persistence (item 11): uploads survive refresh ---------------- */
 const PERSIST_DATA="wfmSimData";
