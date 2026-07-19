@@ -1699,7 +1699,7 @@ const state={
             primaryMetric:"ar",dayStart:8,dayEnd:18,friEnd:13,
             modelVolume:"ensemble5",modelAht:"ma4",modelMpt:"ma4",mptOverride:false,hcOverride:false,modelUserSet:false,
             autoHolidays:true,autoAnomaly:true,profileMode:"adaptive",
-            holOverride:{},volCal:1,recruitBasis:"all",recruitSkill:""},
+            holOverride:{},volCal:1,recruitBasis:"all",recruitSkills:[]},
   edits:new Set(), undoStack:[], pristine:new Map(),
   volAdj:[],                     // forward-propagated volume edits: {ds,di,tm,factor}
   domFactor:null, cleanClipped:0, // calendar uplift factors + outlier-guard audit count
@@ -5029,12 +5029,13 @@ function cohortEffective(c){
   const attr=state.settings.attrition;
   return c.count*(c.yield/100)*(1-Math.min(0.9,attr*1.5/100));
 }
-/* a course cohort belongs to a queue: its own tag, else קו 1 (new hires start there) */
+/* a course cohort belongs to a queue: its own tag, else קו 1 (new hires start there).
+   skillF is a Set of selected skills (null = all) — combinations welcome */
 function cohortMatchesSkill(c,skillF){
   if(!skillF) return true;
   const cs=(c.skill||"").trim();
-  if(cs) return cs===skillF;
-  return /קו\s*1|kav\s*1|line\s*1/i.test(skillF); // untagged course = kav-1 by reality
+  if(cs) return skillF.has(cs);
+  return [...skillF].some(s=>/קו\s*1|kav\s*1|line\s*1/i.test(s)); // untagged course = kav-1
 }
 function hcAtDay(d,withSims,base,skillF){
   const S=state.settings;
@@ -5148,19 +5149,21 @@ function renderOutlook(plan){
    optionally narrowed to a single skill (courses start as קו 1). */
 function recruitPlan(){
   const S=state.settings;
-  const skillF=(S.recruitSkill||"").trim()||null;
+  // ANY combination of skills: array in settings, Set at runtime (empty/full = all)
+  const sel=(S.recruitSkills||[]).filter(Boolean);
+  const skillF=sel.length?new Set(sel):null;
   const names=new Set([...state.rosterMeta.keys()]);
   if(state.iron) for(const n of state.iron.emps.keys()) names.add(n);
   const skillOf=n=>{ const m=state.rosterMeta.get(n)||(state.iron&&state.iron.emps.get(n))||{};
     return (m.skill||"").trim(); };
   const match=n=>{ const sk=skillOf(n);
-    return !skillF||sk===skillF||(!sk&&/קו\s*1|kav\s*1/i.test(skillF)); };
+    return !skillF||skillF.has(sk)||(!sk&&[...skillF].some(s=>/קו\s*1|kav\s*1/i.test(s))); };
   const basis=S.recruitBasis||"all";
   let pool;
   if(basis==="sched"&&state.roster.length) pool=state.roster.map(r=>r.name).filter(match);
   else if(names.size) pool=[...names].filter(match);
   else pool=null; // no roster data at all → fall back to the manual setting
-  return {skillF,basis,hc:pool?pool.length:S.headcount,fromData:!!pool};
+  return {skillF,sel,basis,hc:pool?pool.length:S.headcount,fromData:!!pool};
 }
 function renderRecruit(){
   const S=state.settings;
@@ -5171,7 +5174,7 @@ function renderRecruit(){
     const hcLbl=document.querySelector('#page-recruit .kpi .l[data-i18n^="kpiHc"]');
     const key=!plan.fromData?"kpiHc":(plan.basis==="sched"?"kpiHcSched":"kpiHcAll");
     if(hcLbl){ hcLbl.dataset.i18n=key;
-      hcLbl.textContent=t(key)+(plan.skillF?" — "+plan.skillF:""); }
+      hcLbl.textContent=t(key)+(plan.sel.length?" — "+plan.sel.map(s=>s.replace(/^נציג /,"")).join(" + "):""); }
   }
   // shortage KPIs must not depend on the matrix page having been opened —
   // compute them here from the same computeDay results (memoized, cheap)
@@ -5215,13 +5218,20 @@ function renderRecruit(){
         const entries=[...bySkill.entries()].sort((a,b)=>b[1]-a[1]);
         // chips ARE the filter: click a queue to plan for it, click again to clear
         const mkChip=(label,full,n,color,skillVal)=>{
-          const on=plan.skillF===skillVal&&skillVal!==null;
+          // multi-select: each chip toggles independently — plan any COMBINATION of queues
+          const on=skillVal!==null&&plan.sel.includes(skillVal);
           const chip=document.createElement("button");
           chip.style.cssText=`background:${on?color:color+"18"};color:${on?"#fff":color};border:1px solid ${color}55;border-radius:9px;padding:1px 8px;font-size:.7rem;font-weight:700;white-space:nowrap;cursor:pointer`;
           chip.textContent=label+" · "+n;
           chip.title=(on?t("hcChipOff"):t("hcChipOn",{s:full}));
           chip.addEventListener("click",()=>{
-            S.recruitSkill=on?"":(skillVal||""); saveState(); renderRecruit();
+            if(skillVal===null){ S.recruitSkills=[]; } // untagged chip = back to all
+            else{
+              const cur=new Set(S.recruitSkills||[]);
+              cur.has(skillVal)?cur.delete(skillVal):cur.add(skillVal);
+              S.recruitSkills=cur.size===bySkill.size?[]:[...cur]; // all selected = all
+            }
+            saveState(); renderRecruit();
           });
           box.appendChild(chip);
         };
@@ -5419,6 +5429,9 @@ function loadState(){
     // enabled must not keep applying invisible dips to the matrix
     state.policy.enabled=false;
     if(!state.settings.holOverride) state.settings.holOverride={};
+    // migration: single-skill recruit filter became a combination array
+    if(!Array.isArray(state.settings.recruitSkills))
+      state.settings.recruitSkills=state.settings.recruitSkill?[state.settings.recruitSkill]:[];
     // migration: an early build seeded Av|9=work as an override — it is now the
     // table default, so drop it (otherwise it shows a permanent "changed" tag)
     if(state.settings.holOverride["Av|9"]==="work") delete state.settings.holOverride["Av|9"];
