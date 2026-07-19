@@ -387,7 +387,9 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
   <!-- ============ RECRUITMENT & TRAINING ============ -->
   <section class="page" id="page-recruit">
     <div class="kpis">
-      <div class="kpi"><div class="n" id="kpiHc">—</div><div class="l" data-i18n="kpiHc">Current headcount (reps)</div></div>
+      <div class="kpi"><div class="n" id="kpiHc">—</div><div class="l" data-i18n="kpiHc">Current headcount (reps)</div>
+        <!-- skill split: the total stays the hero, the queues read at a glance -->
+        <div id="kpiHcSkills" style="display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-top:6px"></div></div>
       <div class="kpi"><div class="n" id="kpiMaxDef">—</div><div class="l"><span data-i18n="kpiMaxDef">Max Daily Representative Deficit</span> <span class="info" data-tipkey="tipMaxDef" tabindex="0">i</span></div></div>
       <div class="kpi"><div class="n" id="kpiShort">—</div><div class="l"><span id="kpiShortL"></span> <span class="info" data-tipkey="tipShort" tabindex="0">i</span></div></div>
     </div>
@@ -907,6 +909,7 @@ en:{
   extMsg:"Hi {name}, we're short on {day} {date}. Could you {ask}? Thanks! 🙏",
   extTlHead:"Hi {team}, possible shift extensions on your team:",
   extTlLine:"• {name} — {day} {date}: {ask}",
+  hcNoSkill:"untagged", hcSplitSrc:"split from the loaded sidur ({n} distinct reps)",
   shrinkAbsorbed:"The model re-calibrated to your MEASURED answer rates — shrinkage/absence changes are absorbed so the matrix stays anchored to reality.",
   shrinkNote:"When your file carries measured answer rates, the model auto-calibrates to them — so changing shrinkage/absence is largely absorbed (reality outranks estimates). These sliders matter most when no measured data is loaded.",
   skipRDate:"unreadable date", skipRTime:"unreadable interval/time",
@@ -1222,6 +1225,7 @@ he:{
   extMsg:"היי {name}, חסר לנו כיסוי ביום {day} {date}. תוכל/י {ask}? תודה! 🙏",
   extTlHead:"היי {team}, אפשרויות הרחבה אצל הצוות שלך:",
   extTlLine:"• {name} — יום {day} {date}: {ask}",
+  hcNoSkill:"ללא תיוג", hcSplitSrc:"החלוקה מהסידור הטעון ({n} נציגים שונים)",
   shrinkAbsorbed:"המודל כויל מחדש לאחוזי המענה שנמדדו — שינויי שחיקה/היעדרות נבלעים כדי שהמטריצה תישאר מעוגנת במציאות.",
   shrinkNote:"כשהקובץ מכיל אחוזי מענה מדודים, המודל מכייל את עצמו אליהם — ולכן שינוי שחיקה/היעדרות נבלע ברובו (המציאות גוברת על הערכות). למחוונים האלה יש משמעות בעיקר כשאין נתונים מדודים.",
   skipRDate:"תאריך לא קריא", skipRTime:"אינטרוול/שעה לא קריאים",
@@ -5114,6 +5118,49 @@ function renderOutlook(){
 function renderRecruit(){
   const S=state.settings;
   document.getElementById("kpiHc").textContent=S.headcount;
+  // headcount split by skill (מיומנות): the total stays the hero number, the small
+  // chips answer the manager's NEXT question — "of whom?" — without a single click.
+  // Colors match the queue palette used across the app; untagged reps get their own chip.
+  {
+    const box=document.getElementById("kpiHcSkills");
+    if(box){
+      box.innerHTML="";
+      const bySkill=new Map(); let untagged=0,total=0;
+      const names=new Set([...state.rosterMeta.keys()]);
+      if(state.iron) for(const n of state.iron.emps.keys()) names.add(n);
+      for(const n of names){
+        const m=state.rosterMeta.get(n)||(state.iron&&state.iron.emps.get(n))||{};
+        const sk=(m.skill||"").trim();
+        total++;
+        if(sk) bySkill.set(sk,(bySkill.get(sk)||0)+1); else untagged++;
+      }
+      if(bySkill.size){
+        const PAL=["#0f6a3f","#2c7fb8","#8a5fd0","#c0762c","#b03060","#5f9e6e","#a08a2e"];
+        const entries=[...bySkill.entries()].sort((a,b)=>b[1]-a[1]);
+        entries.forEach(([sk,n],i)=>{
+          const chip=document.createElement("span");
+          chip.style.cssText=`background:${PAL[i%PAL.length]}18;color:${PAL[i%PAL.length]};border:1px solid ${PAL[i%PAL.length]}55;border-radius:9px;padding:1px 8px;font-size:.7rem;font-weight:700;white-space:nowrap`;
+          chip.textContent=sk.replace(/^נציג /,"")+" · "+n; // "נציג קו 1" → "קו 1": chips stay short
+          chip.title=sk+": "+n;
+          box.appendChild(chip);
+        });
+        if(untagged>0){
+          const chip=document.createElement("span");
+          chip.style.cssText="background:#6b7c9018;color:#6b7c90;border:1px solid #6b7c9055;border-radius:9px;padding:1px 8px;font-size:.7rem;font-weight:700";
+          chip.textContent=t("hcNoSkill")+" · "+untagged;
+          box.appendChild(chip);
+        }
+        // honesty note: chips count DISTINCT people in the loaded sidur/iron — if that
+        // differs from the manual headcount setting, say so instead of confusing
+        if(total!==S.headcount){
+          const d=document.createElement("span"); d.className="mini";
+          d.style.cssText="width:100%;text-align:center";
+          d.textContent=t("hcSplitSrc",{n:total});
+          box.appendChild(d);
+        }
+      }
+    }
+  }
 
   const traj=computeTrajectory();
   const ul=document.getElementById("trajList"); ul.innerHTML="";
