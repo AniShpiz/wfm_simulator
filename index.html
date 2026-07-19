@@ -3115,26 +3115,8 @@ function renderSchedulerResults(out){
   state._schedFilter={}; state._schedSort=null;
   renderSchedTable();
   document.getElementById("schCsv").style.display=out.asg.length?"inline-block":"none";
-  const pw=document.getElementById("schPoolWrap"); pw.innerHTML="";
-  {
-    const ptbl=document.createElement("table");
-    const phr=document.createElement("tr");
-    [t("rthName"),t("thDate"),t("fldDay"),t("thInterval"),""].forEach(c=>phr.appendChild(th(c)));
-    const pth=document.createElement("thead"); pth.appendChild(phr); ptbl.appendChild(pth);
-    const ptb=document.createElement("tbody");
-    out.pool.forEach(p=>{
-      const tr=document.createElement("tr");
-      [p.name,fmtD(p.ds),dayNames[p.di],p.s+"–"+p.e].forEach(v=>{
-        const td=document.createElement("td"); td.textContent=v; tr.appendChild(td); });
-      const td=document.createElement("td");
-      const bt=document.createElement("button"); bt.className="btn ghost applymini";
-      bt.textContent=t("schInsert");
-      bt.addEventListener("click",e=>{ e.stopPropagation(); openSwapPop(e,p); });
-      td.appendChild(bt); tr.appendChild(td);
-      ptb.appendChild(tr);
-    });
-    ptbl.appendChild(ptb); pw.appendChild(ptbl);
-  }
+  state._poolFilter={}; state._poolSort=null;
+  renderPoolTable();
   // ביקוש לא מכוסה — classic sidur matrix: intervals down, days across
   const gw=document.getElementById("schGapWrap"); gw.innerHTML="";
   if(!out.gaps.length){ gw.innerHTML=`<p class="mini">${t("schNoGaps")}</p>`; renderExtensionOffers(out); return; }
@@ -3158,6 +3140,75 @@ function renderSchedulerResults(out){
   });
   tbl.appendChild(tb); gw.appendChild(tbl);
   renderExtensionOffers(out); // gaps drive the who-to-ask offer list
+}
+/* the surplus pool with the same Excel-style sort + filters (insert button kept) */
+function renderPoolTable(){
+  const pw=document.getElementById("schPoolWrap"); if(!pw) return;
+  pw.innerHTML="";
+  const pool=(state._schedOut&&state._schedOut.pool)||[];
+  if(!pool.length) return;
+  const dayNames=t("days");
+  const items=pool.map(p=>({p,cells:[p.name,fmtD(p.ds),dayNames[p.di],p.s+"–"+p.e]}));
+  const heads=[t("rthName"),t("thDate"),t("fldDay"),t("thInterval")];
+  const f=state._poolFilter||{}, srt=state._poolSort;
+  const keyFn=(v,c)=>{
+    if(c===1){ const m=String(v).split("/"); return m.length===3?m[2]+m[1]+m[0]:String(v); }
+    if(c===3){ const mm=String(v).match(/^(\d{1,2}):(\d{2})/); if(mm) return +mm[1]*60+ +mm[2]; }
+    return String(v);
+  };
+  let view=items.filter(it=>heads.every((_,c)=>!f[c]||String(it.cells[c])===f[c]));
+  if(srt) view=view.slice().sort((a,b)=>{
+    const ka=keyFn(a.cells[srt.col],srt.col), kb=keyFn(b.cells[srt.col],srt.col);
+    const cmp=(typeof ka==="number"&&typeof kb==="number")?ka-kb
+      :String(ka).localeCompare(String(kb),"he",{numeric:true});
+    return srt.dir*cmp;
+  });
+  const tbl=document.createElement("table");
+  const thead=document.createElement("thead");
+  const hr2=document.createElement("tr");
+  heads.forEach((h,c)=>{
+    const e=document.createElement("th");
+    e.style.cursor="pointer"; e.title=t("schSortTip");
+    e.textContent=h+(srt&&srt.col===c?(srt.dir>0?" ▲":" ▼"):"");
+    e.addEventListener("click",()=>{
+      state._poolSort=(srt&&srt.col===c)?{col:c,dir:-srt.dir}:{col:c,dir:1};
+      renderPoolTable();
+    });
+    hr2.appendChild(e);
+  });
+  hr2.appendChild(th(""));
+  thead.appendChild(hr2);
+  const fr=document.createElement("tr");
+  heads.forEach((h,c)=>{
+    const td=document.createElement("th");
+    const sel=document.createElement("select");
+    sel.style.cssText="width:100%;max-width:120px;font-size:.7rem";
+    const vals=[...new Set(items.map(it=>String(it.cells[c])))].sort((a,b)=>a.localeCompare(b,"he",{numeric:true}));
+    sel.innerHTML=`<option value="">${t("wfAll")}</option>`
+      +vals.map(v=>`<option${f[c]===v?" selected":""}>${v.replace(/&/g,"&amp;").replace(/</g,"&lt;")}</option>`).join("");
+    sel.addEventListener("change",()=>{ (state._poolFilter=state._poolFilter||{})[c]=sel.value; renderPoolTable(); });
+    td.appendChild(sel); fr.appendChild(td);
+  });
+  fr.appendChild(th(""));
+  thead.appendChild(fr);
+  tbl.appendChild(thead);
+  const tb=document.createElement("tbody");
+  view.forEach(it=>{
+    const tr=document.createElement("tr");
+    it.cells.forEach(v=>{ const td=document.createElement("td"); td.textContent=v; tr.appendChild(td); });
+    const td=document.createElement("td");
+    const bt=document.createElement("button"); bt.className="btn ghost applymini";
+    bt.textContent=t("schInsert");
+    bt.addEventListener("click",e=>{ e.stopPropagation(); openSwapPop(e,it.p); });
+    td.appendChild(bt); tr.appendChild(td);
+    tb.appendChild(tr);
+  });
+  tbl.appendChild(tb); pw.appendChild(tbl);
+  if(view.length!==items.length){
+    const m=document.createElement("p"); m.className="mini";
+    m.textContent=t("schFiltN",{v:view.length,n:items.length});
+    pw.appendChild(m);
+  }
 }
 /* the optimized-schedule table with Excel-style header sort + per-column filters */
 function renderSchedTable(){
