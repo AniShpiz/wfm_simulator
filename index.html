@@ -365,7 +365,9 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <span class="grow"></span>
         <button class="btn ghost" id="excModeBtn" data-i18n="excBtn">🗓 Holiday / Exception Control</button>
         <span class="info" data-tipkey="tipExc" tabindex="0">i</span>
-        <button class="btn navy" id="optimizerBtn" data-i18n="optimizerBtn">🛠 Run Schedule Optimizer</button>
+        <!-- Schedule Optimizer hidden 2026-07-19 alongside the Policy Optimizer (its
+             engine) — kept wired for future development; remove display:none to revive -->
+        <button class="btn navy" id="optimizerBtn" style="display:none" data-i18n="optimizerBtn">🛠 Run Schedule Optimizer</button>
       </div>
     </div>
   </section>
@@ -947,7 +949,7 @@ en:{
   schGapTitle:"Uncovered Demand — and how to close it",
   schCsv:"⬇ Download Optimized Schedule (CSV)",
   schNeedData:"Load a forecast and a roster / Iron workbook first.",
-  schDone:"Schedule generated: {a} shifts assigned · {p} in the review pool · {g} uncovered agent-blocks.",
+  schDone:"✅ Schedule ready: {a} shifts assigned. {p} surplus agents await your decision (pool below). Still uncovered: {h} agent-hours — see how to close them under Uncovered Demand.",
   schSrcL:"Source", schSrc_base:"Baseline", schSrc_adj:"Constraint-adjusted", schSrc_swap:"Pool swap",
   days:["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
   tipVolume:"Incoming calls", tipAht:"Average handling time", tipSched:"Scheduled", tipReq:"Required",
@@ -972,6 +974,8 @@ en:{
   trajOk:"On track: the current recruitment pace sustains your {t}% {m} target through the forecast period (until {d}).",
   trajCalc:"Model transparency: projected weekly {m} of {p}% on the last full week · each scheduled rep counts as {e}% of an effective position — calibrated from your MEASURED answer rates, i.e. real combined shrinkage+absence of about {loss}% (the sliders are estimates; this is what the floor actually shows).",
   trajCalcFull:"Model transparency: projected weekly {m} of {p}% on the last full week · per your measured answer rates, scheduled reps deliver a full effective position — real-world shrinkage/absence are already baked into the measurements.",
+  trajProfile:"Hiring profile: a {win} shift (mostly {days}) carries {pct}% of this week's shortage — ~{n} reps in that window close most of the gap.",
+  trajMore:"More details (trend & model)",
   trajNoData:"Load a forecast and set headcount to unlock predictive trajectory insights.",
   injTitle:"Recruitment Simulation (What-If)", injProfile:"Shift profile",
   profStudent:"Student Afternoon — 12:00–17:00, Sun–Thu",
@@ -1273,7 +1277,7 @@ he:{
   schGapTitle:"ביקוש לא מכוסה — ואיך סוגרים אותו",
   schCsv:"⬇ הורדת הסידור המיטבי (CSV)",
   schNeedData:"טענו תחילה תחזית וסידור / קובץ ברזל.",
-  schDone:"הסידור נוצר: {a} משמרות שובצו · {p} במאגר לבחינה · {g} בלוקי נציג לא מכוסים.",
+  schDone:"✅ הסידור מוכן: {a} משמרות שובצו. {p} נציגים עודפים ממתינים להחלטה שלכם (המאגר למטה). עדיין חסר כיסוי של {h} שעות-נציג — איך סוגרים? בכרטיס הביקוש הלא מכוסה.",
   schSrcL:"מקור", schSrc_base:"בסיס", schSrc_adj:"מותאם אילוץ", schSrc_swap:"החלפה מהמאגר",
   days:["ראשון","שני","שלישי","רביעי","חמישי","שישי","שבת"],
   tipVolume:"שיחות נכנסות", tipAht:"משך שיחה", tipSched:"משובצים", tipReq:"נדרשים",
@@ -1298,6 +1302,8 @@ he:{
   trajOk:"במסלול: קצב הגיוס הנוכחי מחזיק {m} של ‎{t}%‎ עד סוף תקופת התחזית ({d}).",
   trajCalc:"שקיפות המודל: {m} שבועי חזוי ‎{p}%‎ על השבוע המלא האחרון · כל נציג משובץ נספר כ-‎{e}%‎ עמדה אפקטיבית — מכויל מהמענה המדוד שלכם, כלומר שחיקה+היעדרות משולבות בפועל של כ-‎{loss}%‎ (המחוונים הם הערכות; זה מה שהמוקד מראה בפועל).",
   trajCalcFull:"שקיפות המודל: {m} שבועי חזוי ‎{p}%‎ על השבוע המלא האחרון · לפי המענה המדוד, הנציגים מספקים עמדה אפקטיבית מלאה — השחיקה וההיעדרות בפועל כבר משוקללות במדידות.",
+  trajProfile:"פרופיל גיוס: משמרת {win} (בעיקר ימי {days}) מרכזת ‎{pct}%‎ מהחוסר השבועי — כ-{n} נציגים בחלון הזה יסגרו את רוב הפער.",
+  trajMore:"פרטים נוספים (מגמה ומודל)",
   trajNoData:"טענו תחזית והגדירו מצבה כדי לקבל תובנות מגמה חזויות.",
   injTitle:"סימולציית גיוס עובדים (What-If)", injProfile:"פרופיל משמרת",
   profStudent:"סטודנטים אחה\"צ — 12:00–17:00, א'–ה'",
@@ -3080,7 +3086,8 @@ async function runScheduler(){
   state.optimizedOutput=out.asg;
   state._schedOut=out; // live result — manual pool insertions mutate this
   const b=document.getElementById("schBanner");
-  b.textContent=t("schDone",{a:out.asg.length,p:out.pool.length,g:out.gaps.reduce((s,g)=>s+g.n,0)});
+  b.textContent=t("schDone",{a:out.asg.length,p:out.pool.length,
+    h:Math.round(out.gaps.reduce((s,g)=>s+g.n,0)/2)}); // half-hour blocks → agent-hours
   b.classList.add("show");
   renderSchedulerResults(out);
 }
@@ -5161,6 +5168,37 @@ function renderOutlook(plan){
    whole workforce (default — recruitment thinks in the full מצבה, and
    shrinkage/absence apply directly here) or scheduled reps only,
    optionally narrowed to a single skill (courses start as קו 1). */
+/* WHERE the deficit lives: the contiguous 2–4h window carrying the biggest share
+   of the selected week's understaffing → a concrete hiring profile, not a number */
+function hiringProfile(){
+  if(!state.week||!state.days.size) return null;
+  const defByTm={}, dayHit={};
+  let tot=0, daysN=0;
+  for(const ds of weekDates(state.week)){
+    const c=computeDay(ds); if(!c) continue;
+    daysN++;
+    const di=fromISO(ds).getDay();
+    for(const row of c.rows){
+      if(!row.rec||row.closed||row.exc||row.nodata) continue;
+      const d=row.reqEff-row.sched;
+      if(d>0){ defByTm[row.tm]=(defByTm[row.tm]||0)+d; dayHit[di]=(dayHit[di]||0)+d; tot+=d; }
+    }
+  }
+  if(tot<4||!daysN) return null;
+  let best={sum:0,s:0,w:0};
+  for(let w=4;w<=8;w++) for(let i=0;i+w<=TIMES.length;i++){
+    let s2=0; for(let j=i;j<i+w;j++) s2+=defByTm[TIMES[j]]||0;
+    if(s2>best.sum){ best={sum:s2,s:i,w}; }
+  }
+  if(!(best.sum>0)) return null;
+  const dayNames=t("days");
+  return {
+    win:TIMES[best.s]+"–"+addHalf(TIMES[best.s+best.w-1]),
+    pct:Math.round(best.sum/tot*100),
+    n:Math.max(1,Math.round(best.sum/(best.w*daysN))),
+    days:Object.entries(dayHit).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([di])=>dayNames[+di]).join(", ")
+  };
+}
 function recruitPlan(){
   const S=state.settings;
   // ANY combination of skills: array in settings, Set at runtime (empty/full = all)
@@ -5280,27 +5318,34 @@ function renderRecruit(){
   if(!traj) add(t("trajNoData"));
   else{
     const vars={t:S.target,d:fmtD(state.horizonISO),m:primName()}; // copy adapts to the Primary Target Metric
-    add(t("trajShift",{x:(traj.delta>=0?"+":"")+traj.delta.toFixed(1),m:primName()}),
-        Math.abs(traj.delta)<0.05?"insight":(traj.delta<0?"alert":"ok"));
+    // TWO primary insights max — the decision line and the WHERE-to-hire line;
+    // trend + model transparency fold into a details row (cognitive load ceiling)
     if(!traj.reachable)
-      // honesty over absurdity: "hire 80" is not advice — say what IS projected and
-      // that the target needs a demand/target conversation, not mass hiring
       add(t("trajUnreach",{p:(traj.in30*100).toFixed(0),...vars}),"alert");
     else if(traj.need<=0) add(t("trajOk",vars),"ok");
     else if(traj.need>Math.max(8,plan.hc*0.25))
-      // lead with the POINTS gap, offer the cheap lever first — uniform hiring is
-      // the most expensive way to fix a peak problem
       add(t("trajHireBig",{n:traj.need,pct:Math.round(traj.need/Math.max(1,plan.hc)*100),
         p:(traj.nowP*100).toFixed(0),...vars}),"alert");
     else add(t("trajHire",{n:traj.need,...vars}),"alert");
-    // model transparency: show the calibrated assumptions the numbers stand on
-    {
-      const eff=Math.max(0.05,availShare(S)*(state.calib||1));
-      add("🔍 "+(eff<1
-        ? t("trajCalc",{p:(traj.nowP*100).toFixed(1),e:(eff*100).toFixed(0),
-            loss:Math.max(0,Math.round((1-eff)*100)),m:primName()})
-        : t("trajCalcFull",{p:(traj.nowP*100).toFixed(1),m:primName()})),"insight");
-    }
+    // WHAT PROFILE to hire: the pain-hours window carrying most of the weekly deficit
+    const prof=hiringProfile();
+    if(prof) add("🧲 "+t("trajProfile",prof),"insight");
+    // secondary details, folded
+    const det=document.createElement("li"); det.className="insight";
+    const dd=document.createElement("details");
+    const sm=document.createElement("summary"); sm.style.cursor="pointer";
+    sm.textContent=t("trajMore"); dd.appendChild(sm);
+    const p1=document.createElement("p"); p1.className="mini";
+    p1.textContent=t("trajShift",{x:(traj.delta>=0?"+":"")+traj.delta.toFixed(1),m:primName()});
+    dd.appendChild(p1);
+    const eff=Math.max(0.05,availShare(S)*(state.calib||1));
+    const p2=document.createElement("p"); p2.className="mini";
+    p2.textContent="🔍 "+(eff<1
+      ? t("trajCalc",{p:(traj.nowP*100).toFixed(1),e:(eff*100).toFixed(0),
+          loss:Math.max(0,Math.round((1-eff)*100)),m:primName()})
+      : t("trajCalcFull",{p:(traj.nowP*100).toFixed(1),m:primName()}));
+    dd.appendChild(p2);
+    det.appendChild(dd); ul.appendChild(det);
   }
 
   const curve=[]; for(let d=0;d<=30;d+=2) curve.push(hcAtDay(d,false,plan.hc,plan.skillF));
