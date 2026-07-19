@@ -539,17 +539,12 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <div class="tablewrap" id="schPoolWrap" style="max-height:380px;overflow-y:auto"></div>
       </div>
     </div>
-    <!-- ביקוש לא מכוסה owns a full-width card: the whole matrix visible, no scrolling -->
+    <!-- ONE story, one card: the gap (the problem) with its offers (the action)
+         layered on top — the manager reads top-down: who to ask, then the map -->
     <div class="card">
-      <h2 data-i18n="schGapTitle">Uncovered Demand</h2>
-      <div id="schGapWrap"></div>
-    </div>
-    <!-- extension offers: who to ask to come earlier / stay later, ranked by
-         who is most likely to say yes (furthest below their contract base) -->
-    <div class="card" id="schExtCard" style="display:none">
-      <h2><span data-i18n="extTitle">Shift-Extension Offers</span> <span class="info" data-tipkey="tipExt" tabindex="0">i</span></h2>
-      <p class="mini" data-i18n="extHint">Each offer plugs an uncovered gap by asking an ADJACENT agent to start earlier or stay later (up to 2 hours). Ranked by likelihood to agree — reps below their contracted base want the hours.</p>
+      <h2><span data-i18n="schGapTitle">Uncovered Demand</span> <span class="info" data-tipkey="tipExt" tabindex="0">i</span></h2>
       <div id="schExtWrap"></div>
+      <div id="schGapWrap" style="margin-top:10px"></div>
     </div>
   </section>
 
@@ -901,15 +896,17 @@ en:{
   btApplyCal:"⚙ Apply {c}% calibration", btCalDone:"Calibration set to {c}% — forecasts recentered.",
   btCalActive:"active calibration: {c}%", btCalReset:"reset calibration",
   cmAllDay:"all day", cmEdit:"Edit",
-  extTitle:"Shift-Extension Offers", tipExt:"Candidates are agents already scheduled ADJACENT to an uncovered gap — asking them to stay 1–2h later (משיכה) or start 1–2h earlier (הקדמה) plugs the gap with zero new shifts. Ranking: reps furthest below their contracted weekly base are the likeliest to want the hours.",
-  extHint:"Each offer plugs an uncovered gap by asking an ADJACENT agent to start earlier or stay later (up to 2 hours). Ranked by likelihood to agree — reps below their contracted base want the hours.",
-  extNone:"No adjacent agents can plug these gaps by extending — consider the overstaffing pool or hiring.",
-  extPull:"stay later", extEarly:"start earlier",
+  tipExt:"Offer candidates are agents already scheduled right next to an uncovered gap — asking them to stay up to 2h later or start up to 2h earlier closes the gap with zero new shifts. Sorted by the worst gap first, then by who is likeliest to say yes (reps below their weekly contract base want the hours).",
+  extNone:"No adjacent agents can close these gaps by extending — consider the overstaffing pool or hiring.",
+  extSummary:"{n} extension offers can help close the gaps",
+  extTierN:"{n} offers", extExport:"⬇ Export list (CSV)", extTlBtn:"📱 Team-leader messages ({n})",
   extProb_hi:"High", extProb_med:"Medium", extProb_lo:"Low",
-  extCovers:"covers {w} (short {n})", extDeficit:"{h}h below base", extAtBase:"at contract base",
+  extAsk_pull:"stay until {to} (+{h}h)", extAsk_early:"start at {from} (+{h}h)",
+  extShort:"short {n} at {w}", extDeficit:"{h}h below weekly base",
   extCopy:"Copy message",
-  extMsg:"Hi {name}, we're short on {day} {date}. Could you {kind} — {from} to {to}? Thanks! 🙏",
-  extMsgPull:"stay until", extMsgEarly:"start earlier, from",
+  extMsg:"Hi {name}, we're short on {day} {date}. Could you {ask}? Thanks! 🙏",
+  extTlHead:"Hi {team}, possible shift extensions on your team:",
+  extTlLine:"• {name} — {day} {date}: {ask}",
   shrinkAbsorbed:"The model re-calibrated to your MEASURED answer rates — shrinkage/absence changes are absorbed so the matrix stays anchored to reality.",
   shrinkNote:"When your file carries measured answer rates, the model auto-calibrates to them — so changing shrinkage/absence is largely absorbed (reality outranks estimates). These sliders matter most when no measured data is loaded.",
   skipRDate:"unreadable date", skipRTime:"unreadable interval/time",
@@ -937,7 +934,7 @@ en:{
   schOutTitle:"Optimized Schedule",
   schPoolTitle:"Overstaffing Pool (manager review)",
   tipSchPool:"Contracted representatives the demand curve did not require — left unscheduled by design, listed for manager review instead of arbitrary placement.",
-  schGapTitle:"Uncovered Demand",
+  schGapTitle:"Uncovered Demand — and how to close it",
   schCsv:"⬇ Download Optimized Schedule (CSV)",
   schNeedData:"Load a forecast and a roster / Iron workbook first.",
   schDone:"Schedule generated: {a} shifts assigned · {p} in the review pool · {g} uncovered agent-blocks.",
@@ -1214,15 +1211,17 @@ he:{
   btApplyCal:"⚙ החלת כיול {c}%", btCalDone:"הכיול נקבע ל-{c}% — התחזיות מוּרכזו מחדש.",
   btCalActive:"כיול פעיל: {c}%", btCalReset:"איפוס כיול",
   cmAllDay:"כל היום", cmEdit:"עריכה",
-  extTitle:"הצעות הרחבת משמרות", tipExt:"המועמדים הם נציגים שכבר משובצים צמוד לפער לא מכוסה — בקשה להישאר שעה-שעתיים (משיכה) או להקדים כניסה (הקדמה) סוגרת את הפער בלי משמרות חדשות. הדירוג: נציגים הרחוקים ביותר מתחת לבסיס השבועי החוזי — הכי סביר שירצו את השעות.",
-  extHint:"כל הצעה סוגרת פער לא מכוסה בעזרת נציג צמוד — הקדמת כניסה או משיכת משמרת (עד שעתיים). מדורג לפי הסבירות להסכים: נציגים מתחת לבסיס החוזי רוצים את השעות.",
+  tipExt:"ההצעות הן לנציגים שכבר משובצים צמוד לפער — להישאר עד שעתיים אחרי או להגיע עד שעתיים לפני, וזה סוגר את החוסר בלי משמרת חדשה. הסדר: קודם הפער הכי כבד, ואז מי שהכי סביר שיגיד כן (מי שחסרות לו שעות מהבסיס השבועי).",
   extNone:"אין נציגים צמודים שיכולים לסגור את הפערים בהרחבה — שקלו את מאגר העודפים או גיוס.",
-  extPull:"משיכת משמרת", extEarly:"הקדמת כניסה",
+  extSummary:"{n} הצעות הרחבה יכולות לעזור לסגור את החוסרים",
+  extTierN:"{n} הצעות", extExport:"⬇ ייצוא הרשימה (CSV)", extTlBtn:"📱 הודעות למנהלי צוות ({n})",
   extProb_hi:"גבוהה", extProb_med:"בינונית", extProb_lo:"נמוכה",
-  extCovers:"מכסה {w} (חסרים {n})", extDeficit:"{h} שעות מתחת לבסיס", extAtBase:"בבסיס החוזי",
+  extAsk_pull:"להישאר עד {to} (+{h} ש׳)", extAsk_early:"להגיע כבר ב-{from} (+{h} ש׳)",
+  extShort:"חסרים {n} בחלון {w}", extDeficit:"חסרות לו {h} ש׳ מהבסיס",
   extCopy:"העתקת הודעה",
-  extMsg:"היי {name}, חסר לנו כיסוי ביום {day} {date}. אפשר {kind} {from} עד {to}? תודה! 🙏",
-  extMsgPull:"למשוך את המשמרת מ-", extMsgEarly:"להקדים את הכניסה — מ-",
+  extMsg:"היי {name}, חסר לנו כיסוי ביום {day} {date}. תוכל/י {ask}? תודה! 🙏",
+  extTlHead:"היי {team}, אפשרויות הרחבה אצל הצוות שלך:",
+  extTlLine:"• {name} — יום {day} {date}: {ask}",
   shrinkAbsorbed:"המודל כויל מחדש לאחוזי המענה שנמדדו — שינויי שחיקה/היעדרות נבלעים כדי שהמטריצה תישאר מעוגנת במציאות.",
   shrinkNote:"כשהקובץ מכיל אחוזי מענה מדודים, המודל מכייל את עצמו אליהם — ולכן שינוי שחיקה/היעדרות נבלע ברובו (המציאות גוברת על הערכות). למחוונים האלה יש משמעות בעיקר כשאין נתונים מדודים.",
   skipRDate:"תאריך לא קריא", skipRTime:"אינטרוול/שעה לא קריאים",
@@ -1250,7 +1249,7 @@ he:{
   schOutTitle:"סידור מיטבי",
   schPoolTitle:"מאגר עודפי איוש (לבחינת מנהל)",
   tipSchPool:"נציגים חוזיים שעקומת הביקוש לא דרשה — נשארים ללא שיבוץ בכוונה ומוצגים לבחינת המנהל במקום שיבוץ שרירותי.",
-  schGapTitle:"ביקוש לא מכוסה",
+  schGapTitle:"ביקוש לא מכוסה — ואיך סוגרים אותו",
   schCsv:"⬇ הורדת הסידור המיטבי (CSV)",
   schNeedData:"טענו תחילה תחזית וסידור / קובץ ברזל.",
   schDone:"הסידור נוצר: {a} משמרות שובצו · {p} במאגר לבחינה · {g} בלוקי נציג לא מכוסים.",
@@ -3304,45 +3303,104 @@ function computeExtensionOffers(out){
       }
     }
   }
-  // most-likely-to-agree first: biggest weekly deficit, then bigger gap, then shorter ask
-  offers.sort((a,b)=>(b.def-a.def)||(b.need-a.need)||(a.hours-b.hours));
+  // the WORST gap first (interval importance), then most-likely-to-agree, then shorter ask
+  offers.sort((a,b)=>(b.need-a.need)||(b.def-a.def)||(a.hours-b.hours));
   // one offer per agent per day per direction — duplicates only add noise
   const seen=new Set();
   return offers.filter(o=>{ const k=o.name+"|"+o.ds+"|"+o.kind;
     if(seen.has(k)) return false; seen.add(k); return true; });
 }
+function extAskText(o){
+  return o.kind==="pull"?t("extAsk_pull",{to:o.to,h:o.hours}):t("extAsk_early",{from:o.from,h:o.hours});
+}
+function extMetaOf(name){
+  const m=state.rosterMeta.get(name)||(state.iron&&state.iron.emps.get(name))||{};
+  return {team:m.team||"",site:m.site||""};
+}
 function renderExtensionOffers(out){
-  const card=document.getElementById("schExtCard"), wrap=document.getElementById("schExtWrap");
-  if(!card) return;
-  const offers=computeExtensionOffers(out);
-  card.style.display=out.gaps.length?"block":"none";
+  const wrap=document.getElementById("schExtWrap");
+  if(!wrap) return;
   wrap.innerHTML="";
   if(!out.gaps.length) return;
+  const offers=computeExtensionOffers(out);
   if(!offers.length){ wrap.innerHTML=`<p class="mini">${t("extNone")}</p>`; return; }
   const dayNames=t("days");
-  const tierOf=d=>d>=4?["hi","#0f6a3f","#d2f2df"]:(d>0?["med","#8a6d1a","#fdf3d0"]:["lo","#7c1010","#f8dede"]);
-  offers.slice(0,15).forEach(o=>{
-    const [tier,fg,bg]=tierOf(o.def);
-    const row=document.createElement("div");
-    row.style.cssText="display:flex;align-items:center;gap:10px;font-size:.8rem;margin:4px 0;flex-wrap:wrap";
-    row.innerHTML=
-      `<span style="background:${bg};color:${fg};border-radius:10px;padding:2px 9px;font-weight:700;min-width:52px;text-align:center">${t("extProb_"+tier)}</span>
-       <b style="min-width:140px">${o.name}</b>
-       <span class="mini" style="min-width:96px">${dayNames[o.di]} ${fmtD(o.ds)}</span>
-       <span style="direction:ltr;min-width:150px">${o.from}→${o.to} (${t(o.kind==="pull"?"extPull":"extEarly")}, +${o.hours}h)</span>
-       <span class="mini">${t("extCovers",{w:o.win,n:o.need})} · ${o.def>0?t("extDeficit",{h:o.def}):t("extAtBase")}</span>`;
-    const cp=document.createElement("button"); cp.className="btn ghost applymini"; cp.textContent="📱 "+t("extCopy");
-    cp.addEventListener("click",()=>{
-      const msg=t("extMsg",{name:o.name.split(" ")[0],day:dayNames[o.di],date:fmtD(o.ds),
-        kind:t(o.kind==="pull"?"extMsgPull":"extMsgEarly"),from:o.from,to:o.to});
-      navigator.clipboard&&navigator.clipboard.writeText(msg);
-      showToast("📋 "+t("waCopied",{team:o.name}),true);
-    });
-    row.appendChild(cp);
-    wrap.appendChild(row);
+  const tierOf=d=>d>=4?"hi":(d>0?"med":"lo");
+  const TIER_STYLE={hi:["#0f6a3f","#d2f2df"],med:["#8a6d1a","#fdf3d0"],lo:["#7c1010","#f8dede"]};
+  // ---- headline + actions: one glance, one click ----
+  const bar=document.createElement("div");
+  bar.className="toolbar"; bar.style.margin="0 0 4px";
+  const head=document.createElement("b"); head.style.fontSize=".85rem";
+  head.textContent="🎯 "+t("extSummary",{n:offers.length});
+  bar.appendChild(head);
+  const grow=document.createElement("span"); grow.className="grow"; bar.appendChild(grow);
+  // export EVERYTHING: site + team leader + the exact suggestion, ready for Excel
+  const ex=document.createElement("button"); ex.className="btn ghost applymini";
+  ex.textContent=t("extExport");
+  ex.addEventListener("click",()=>{
+    const rows=[["מוקד","מנהל צוות","שם הנציג/ה","יום","תאריך","ההצעה","משעה","עד שעה","חלון חסר","חסרים","סבירות להסכמה","פער שבועי (ש')"]
+      .map(csvQuote).join(",")]
+      .concat(offers.map(o=>{ const m=extMetaOf(o.name);
+        return [m.site,m.team,o.name,dayNames[o.di],fmtD(o.ds),extAskText(o),o.from,o.to,
+          o.win,o.need,t("extProb_"+tierOf(o.def)),o.def].map(csvQuote).join(","); }));
+    downloadFile("extension_offers.csv",rows.join("\n"));
   });
-  if(offers.length>15){ const m=document.createElement("p"); m.className="mini";
-    m.textContent="+"+(offers.length-15)+" …"; wrap.appendChild(m); }
+  bar.appendChild(ex);
+  // one message per TEAM LEADER, bundling all their agents' asks
+  const byTeam={};
+  offers.forEach(o=>{ const tl=extMetaOf(o.name).team||t("wfAll"); (byTeam[tl]=byTeam[tl]||[]).push(o); });
+  const tlWrap=document.createElement("div"); tlWrap.className="splitbtn";
+  const tlBtn=document.createElement("button"); tlBtn.className="btn ghost applymini";
+  tlBtn.textContent=t("extTlBtn",{n:Object.keys(byTeam).length});
+  tlWrap.appendChild(tlBtn);
+  const tlMenu=document.createElement("div"); tlMenu.className="menu pad"; tlMenu.style.minWidth="240px";
+  for(const tl in byTeam){
+    const b2=document.createElement("button");
+    b2.textContent="📱 "+tl+" ("+byTeam[tl].length+")";
+    b2.addEventListener("click",()=>{
+      const lines=byTeam[tl].map(o=>t("extTlLine",{name:o.name,day:dayNames[o.di],date:fmtD(o.ds),ask:extAskText(o)}));
+      navigator.clipboard&&navigator.clipboard.writeText(t("extTlHead",{team:tl})+"\n"+lines.join("\n"));
+      showToast("📋 "+t("waCopied",{team:tl}),true);
+    });
+    tlMenu.appendChild(b2);
+  }
+  tlWrap.appendChild(tlMenu); bar.appendChild(tlWrap);
+  wrap.appendChild(bar);
+  // ---- tiers as accordions: HIGH open (that's where the yeses are), rest folded ----
+  [["hi",true],["med",false],["lo",false]].forEach(([tier,open])=>{
+    const list=offers.filter(o=>tierOf(o.def)===tier);
+    if(!list.length) return;
+    const [fg,bg]=TIER_STYLE[tier];
+    const det=document.createElement("details"); det.open=open;
+    det.style.cssText="margin:4px 0;border:1px solid var(--border);border-radius:8px;padding:4px 10px";
+    const sum=document.createElement("summary");
+    sum.style.cssText="cursor:pointer;font-size:.82rem;font-weight:700";
+    sum.innerHTML=`<span style="background:${bg};color:${fg};border-radius:10px;padding:1px 9px">${t("extProb_"+tier)}</span> <span class="mini">${t("extTierN",{n:list.length})}</span>`;
+    det.appendChild(sum);
+    list.slice(0,30).forEach(o=>{
+      const row=document.createElement("div");
+      row.style.cssText="display:flex;align-items:center;gap:8px;font-size:.8rem;margin:4px 0;flex-wrap:wrap";
+      const m=extMetaOf(o.name);
+      row.innerHTML=
+        `<b style="min-width:135px">${o.name}</b>
+         <span class="mini" style="min-width:80px">${m.team||""}</span>
+         <span style="min-width:120px">${dayNames[o.di]} ${fmtD(o.ds).slice(0,5)}</span>
+         <span style="min-width:170px;font-weight:600">${extAskText(o)}</span>
+         <span class="mini">${t("extShort",{n:o.need,w:o.win})}${o.def>0?" · "+t("extDeficit",{h:o.def}):""}</span>`;
+      const cp=document.createElement("button"); cp.className="linklike"; cp.textContent="📱";
+      cp.title=t("extCopy");
+      cp.addEventListener("click",()=>{
+        const msg=t("extMsg",{name:o.name.split(" ")[0],day:dayNames[o.di],date:fmtD(o.ds),ask:extAskText(o)});
+        navigator.clipboard&&navigator.clipboard.writeText(msg);
+        showToast("📋 "+t("waCopied",{team:o.name}),true);
+      });
+      row.appendChild(cp);
+      det.appendChild(row);
+    });
+    if(list.length>30){ const mm=document.createElement("p"); mm.className="mini";
+      mm.textContent="+"+(list.length-30)+" …"; det.appendChild(mm); }
+    wrap.appendChild(det);
+  });
 }
 /* ---- Pool → sidur: insert a surplus agent, optionally switching someone out ---- */
 function openSwapPop(e,p){
