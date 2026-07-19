@@ -884,6 +884,9 @@ en:{
   conUnknownT:"{n} names don't match any agent in the sidur:",
   conDidYouMean:"Did you mean \"{x}\"?", conYes:"Yes, fix", conIgnore:"Remove",
   conNoMatch:"no similar name found — check the spelling",
+  skipRDate:"unreadable date", skipRTime:"unreadable interval/time",
+  skipRVol:"invalid call volume", skipRAht:"invalid handle time",
+  auditDl:"⬇ Download all {n} skipped rows (CSV with reasons)",
   fcAuditWarn:"Data audit:", auditImp:"{n} intervals with more answered than offered calls (AR>100% — capped)", auditAht:"{n} intervals with AHT outside 1–60 min", auditFar:"{n} dates more than ~13 months from today — check the date column format",
   mxCalibOn:"Forecasts are automatically tuned to this floor's real measured answer rates.",
   mxCalibOff:"⚠ Uncalibrated model estimates — the file carries no (or too little) measured answered-calls data, so AR/TSF here are pure Erlang and usually read higher than your real floor. Load a forecast export that includes answered-calls columns to calibrate.",
@@ -1175,6 +1178,9 @@ he:{
   conUnknownT:"{n} שמות לא נמצאו בסידור:",
   conDidYouMean:"האם התכוונת ל\"{x}\"?", conYes:"כן, תקן", conIgnore:"הסר",
   conNoMatch:"לא נמצא שם דומה — בדקו את האיות",
+  skipRDate:"תאריך לא קריא", skipRTime:"אינטרוול/שעה לא קריאים",
+  skipRVol:"כמות שיחות לא תקינה", skipRAht:"משך שיחה לא תקין",
+  auditDl:"⬇ הורדת כל {n} השורות שדולגו (CSV עם סיבות)",
   fcAuditWarn:"בקרת נתונים:", auditImp:"{n} אינטרוולים עם יותר שיחות נענות מנכנסות (מענה>100% — נחסם)", auditAht:"{n} אינטרוולים עם אורך שיחה מחוץ לטווח 1–60 דק'", auditFar:"{n} תאריכים רחוקים מהיום ביותר מ־13 חודשים — בדקו את פורמט עמודת התאריך",
   mxCalibOn:"התחזיות מכוונות אוטומטית לאחוזי המענה האמיתיים שנמדדו במוקד שלכם.",
   mxCalibOff:"⚠ הערכות מודל לא מכוילות — בקובץ אין (או כמעט אין) נתוני שיחות נענות מדודים, ולכן המענה/TSF כאן הם ארלנג תאורטי ולרוב גבוהים מהמציאות במוקד. טענו תחזית עם עמודות שיחות נענות לכיול.",
@@ -2171,7 +2177,10 @@ function buildForecastGrid(grid,hd){
     if(!ds||!tm0||!isFinite(vol)||vol<0||!isFinite(aht)||aht<=0||aht>7200||vol>500000){
       if(row.some(c=>c!=null&&String(c).trim()!=="")){
         skipped++;
-        if(skippedRows.length<100) skippedRows.push({n:r+1,
+        // every skipped row records WHY — a 466-row mystery is not acceptable
+        const reason=!ds?t("skipRDate"):!tm0?t("skipRTime")
+          :(!isFinite(vol)||vol<0||vol>500000)?t("skipRVol"):t("skipRAht");
+        if(skippedRows.length<2000) skippedRows.push({n:r+1,r:reason,
           s:row.slice(0,6).map(c=>String(c??"").trim()).filter(Boolean).join(", ").slice(0,70)});
       }
       continue;
@@ -3404,11 +3413,22 @@ function showAuditPop(anchor,rows){
   const pop=document.getElementById("auditPop");
   document.getElementById("auditTitleEl").textContent=t("auditTitle");
   const body=document.getElementById("auditBody"); body.innerHTML="";
-  rows.forEach(r=>{
+  // full transparency: reason per row on screen (first 150) + ALL rows as CSV
+  const dl=document.createElement("button"); dl.className="btn ghost applymini";
+  dl.textContent=t("auditDl",{n:rows.length});
+  dl.addEventListener("click",()=>{
+    const csv=[["row","reason","content"].join(",")]
+      .concat(rows.map(r=>[r.n,csvQuote(r.r||""),csvQuote(r.s||"")].join(",")));
+    downloadFile("skipped_rows.csv",csv.join("\n"));
+  });
+  body.appendChild(dl);
+  rows.slice(0,150).forEach(r=>{
     const d=document.createElement("div");
-    d.textContent=t("auditRow",{n:r.n,s:r.s||"—"});
+    d.textContent=t("auditRow",{n:r.n,s:r.s||"—"})+(r.r?" · "+r.r:"");
     body.appendChild(d);
   });
+  if(rows.length>150){ const m=document.createElement("div"); m.className="mini";
+    m.textContent="+"+(rows.length-150)+" …"; body.appendChild(m); }
   const rc=anchor.getBoundingClientRect();
   pop.style.display="block";
   pop.style.left=Math.max(8,Math.min(rc.left,document.documentElement.clientWidth-440))+"px";
@@ -3539,8 +3559,8 @@ const HEB_HOLIDAYS={
   "Nisan":{14:"eve",15:"closed",16:"chm",17:"chm",18:"chm",19:"chm",20:"eve",21:"closed"},
   // Sivan — Shavuot
   "Sivan":{5:"eve",6:"closed"},
-  // Av — Tisha B'Av (reduced activity)
-  "Av":{9:"eve"},
+  // Av — Tisha B'Av is a REGULAR working day in Israeli call centers (user-confirmed);
+  // it is deliberately absent from this table.
   // Iyar — Independence Day (5th, closed) + eve/Memorial (4th, partial)
   "Iyar":{4:"eve",5:"closed"}
 };
@@ -3599,6 +3619,27 @@ function detectAnomalies(dayTot,dom,median){
     // and treat any day under 45% of its weekday median as an anomaly regardless
     if(z<-3.5||norm<0.45*s.med) flagged.set(ds,{ratio:norm/s.med,dir:"low"});
     else if(z>4.5) flagged.set(ds,{ratio:norm/s.med,dir:"high"}); // rare; genuine surges kept unless extreme
+  }
+  /* SUSTAINED events (war, strike, outage weeks): each day is only mildly low
+     (−15–25%, far under the z-gate) but the depression lasts weeks — averaging
+     those days into the baseline silently drags every future forecast down.
+     A sliding 7-data-day window whose MEDIAN ratio sits under 0.88 flags the
+     whole stretch, so an April-war month stops teaching "normal". */
+  {
+    const ratioOf=new Map();
+    for(const [ds,tot] of dayTot){
+      const di=fromISO(ds).getDay(), s=stat[di];
+      if(s&&s.med>0) ratioOf.set(ds,(tot/(dom[+ds.slice(8,10)]||1))/s.med);
+    }
+    const seq=[...ratioOf.keys()].sort();
+    for(let i=0;i+7<=seq.length;i++){
+      const win=seq.slice(i,i+7);
+      if((fromISO(win[6])-fromISO(win[0]))/86400000>9) continue; // must be a contiguous stretch
+      const m=median(win.map(ds=>ratioOf.get(ds)));
+      if(m<0.88) win.forEach(ds=>{
+        if(!flagged.has(ds)) flagged.set(ds,{ratio:ratioOf.get(ds),dir:"low-period"});
+      });
+    }
   }
   return flagged;
 }
@@ -5189,9 +5230,13 @@ document.getElementById("ceApply").addEventListener("click",()=>{
   rec.aht=Math.max(1,Math.round(toDurationSec(document.getElementById("ceAht").value)||1));
   rec.agents=Math.max(0,+document.getElementById("ceAg").value||0);
   /* forward propagation: a volume edit with the "future weeks" box checked
-     becomes a persistent scale factor on this weekday+interval from here on */
-  if(document.getElementById("ceFut").checked&&prevVol>0&&rec.volume!==prevVol){
-    const adj={ds,tm,di:fromISO(ds).getDay(),factor:rec.volume/prevVol};
+     becomes a persistent scale factor on this weekday+interval from here on.
+     GUARDED: a near-empty cell (e.g. a closed block edited to 40 calls) must not
+     mint a ×100 factor that explodes next week's forecast to 25k — factors need
+     a real base (≥10 calls) and are clamped to [0.25, 3]. */
+  if(document.getElementById("ceFut").checked&&prevVol>=10&&rec.volume!==prevVol){
+    const factor=Math.min(3,Math.max(0.25,rec.volume/prevVol));
+    const adj={ds,tm,di:fromISO(ds).getDay(),factor};
     // an existing factor on the same cell is replaced, not stacked
     state.volAdj=state.volAdj.filter(a=>!(a.ds===ds&&a.tm===tm));
     state.volAdj.push(adj);
