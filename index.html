@@ -433,6 +433,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
           <div class="frow"><label data-i18n="cohStart">Course start</label><input type="date" id="cohDate" style="width:150px"></div>
           <div class="frow"><label><span data-i18n="cohDur">Duration (days)</span> <span class="info" data-tipkey="tipDur" tabindex="0">i</span></label><input type="number" id="cohDur" min="1" max="120" value="21" style="width:70px"></div>
           <div class="frow"><label><span data-i18n="cohYield">Yield rate (%)</span> <span class="info" data-tipkey="tipYield" tabindex="0">i</span></label><input type="number" id="cohYield" min="10" max="100" value="85" style="width:70px"></div>
+          <div class="frow"><label data-i18n="cohSkill">Queue (skill)</label><select id="cohSkill" style="width:130px"></select></div>
           <div class="frow" style="border:none"><button class="btn ghost" id="cohAdd" data-i18n="cohAdd">Add course</button></div>
         </div>
         <div class="dropzone" id="dzCourses" style="margin-top:10px">
@@ -911,6 +912,11 @@ en:{
   extTlLine:"• {name} — {day} {date}: {ask}",
   hcNoSkill:"untagged", hcSplitSrc:"split from the loaded sidur ({n} distinct reps)",
   kpiHcSched:"Scheduled reps (משובצים) in the loaded sidur",
+  kpiHcAll:"Whole workforce — everyone in the loaded sidur",
+  hcBasisAll:"whole workforce", hcBasisSched:"scheduled only",
+  hcChipOn:"Plan for {s} only", hcChipOff:"Back to all skills",
+  hcPlanNote:"Planning basis for everything on this page. Shrinkage & absence apply directly here; demand stays center-wide.",
+  cohSkill:"Queue (skill)", cohSkillDef:"קו 1 (default)",
   shrinkAbsorbed:"The model re-calibrated to your MEASURED answer rates — shrinkage/absence changes are absorbed so the matrix stays anchored to reality.",
   shrinkNote:"When your file carries measured answer rates, the model auto-calibrates to them — so changing shrinkage/absence is largely absorbed (reality outranks estimates). These sliders matter most when no measured data is loaded.",
   skipRDate:"unreadable date", skipRTime:"unreadable interval/time",
@@ -1228,6 +1234,11 @@ he:{
   extTlLine:"• {name} — יום {day} {date}: {ask}",
   hcNoSkill:"ללא תיוג", hcSplitSrc:"החלוקה מהסידור הטעון ({n} נציגים שונים)",
   kpiHcSched:"נציגים משובצים בסידור הטעון",
+  kpiHcAll:"המצבה המלאה — כל מי שבסידור הטעון",
+  hcBasisAll:"מצבה מלאה", hcBasisSched:"משובצים בלבד",
+  hcChipOn:"תכנון עבור {s} בלבד", hcChipOff:"חזרה לכל המיומנויות",
+  hcPlanNote:"בסיס התכנון לכל העמוד הזה. שחיקה והיעדרות משפיעות כאן ישירות; הביקוש נשאר ברמת כל המוקד.",
+  cohSkill:"תור (מיומנות)", cohSkillDef:"קו 1 (ברירת מחדל)",
   shrinkAbsorbed:"המודל כויל מחדש לאחוזי המענה שנמדדו — שינויי שחיקה/היעדרות נבלעים כדי שהמטריצה תישאר מעוגנת במציאות.",
   shrinkNote:"כשהקובץ מכיל אחוזי מענה מדודים, המודל מכייל את עצמו אליהם — ולכן שינוי שחיקה/היעדרות נבלע ברובו (המציאות גוברת על הערכות). למחוונים האלה יש משמעות בעיקר כשאין נתונים מדודים.",
   skipRDate:"תאריך לא קריא", skipRTime:"אינטרוול/שעה לא קריאים",
@@ -1688,7 +1699,7 @@ const state={
             primaryMetric:"ar",dayStart:8,dayEnd:18,friEnd:13,
             modelVolume:"ensemble5",modelAht:"ma4",modelMpt:"ma4",mptOverride:false,hcOverride:false,modelUserSet:false,
             autoHolidays:true,autoAnomaly:true,profileMode:"adaptive",
-            holOverride:{},volCal:1},
+            holOverride:{},volCal:1,recruitBasis:"all",recruitSkill:""},
   edits:new Set(), undoStack:[], pristine:new Map(),
   volAdj:[],                     // forward-propagated volume edits: {ds,di,tm,factor}
   domFactor:null, cleanClipped:0, // calendar uplift factors + outlier-guard audit count
@@ -5018,11 +5029,20 @@ function cohortEffective(c){
   const attr=state.settings.attrition;
   return c.count*(c.yield/100)*(1-Math.min(0.9,attr*1.5/100));
 }
-function hcAtDay(d,withSims){
+/* a course cohort belongs to a queue: its own tag, else קו 1 (new hires start there) */
+function cohortMatchesSkill(c,skillF){
+  if(!skillF) return true;
+  const cs=(c.skill||"").trim();
+  if(cs) return cs===skillF;
+  return /קו\s*1|kav\s*1|line\s*1/i.test(skillF); // untagged course = kav-1 by reality
+}
+function hcAtDay(d,withSims,base,skillF){
   const S=state.settings;
+  const hc=(base>0)?base:S.headcount; // optional planning basis (recruit page); default untouched
   const limit=addDays(iso(new Date()),d);
-  const grads=state.cohorts.filter(c=>cohortFloorDate(c)<=limit).reduce((a,c)=>a+cohortEffective(c),0);
-  return S.headcount*(1-S.attrition/100*(d/30))+grads+(withSims?simulationFTE():0);
+  const grads=state.cohorts.filter(c=>cohortFloorDate(c)<=limit&&cohortMatchesSkill(c,skillF))
+    .reduce((a,c)=>a+cohortEffective(c),0);
+  return hc*(1-S.attrition/100*(d/30))+grads+(withSims?simulationFTE():0);
 }
 
 /* ---------------- Trajectory ---------------- */
@@ -5041,11 +5061,14 @@ function weightedTSF(scale){
   }
   return vol?acc/vol:null;
 }
-function computeTrajectory(){
+function computeTrajectory(base,skillF){
   const S=state.settings;
-  if(!state.days.size||S.headcount<=0) return null;
-  const hc30=hcAtDay(30,false);
-  const now=weightedTSF(1), in30=weightedTSF(hc30/S.headcount);
+  const hc=(base>0)?base:S.headcount;
+  if(!state.days.size||hc<=0) return null;
+  const hc30=hcAtDay(30,false,hc,skillF);
+  // scale is relative to the CURRENT scheduled capacity — planning bases >
+  // scheduled read as "if my whole workforce were on the floor"
+  const now=weightedTSF(hc/S.headcount), in30=weightedTSF(hc30/S.headcount);
   if(now===null||in30===null) return null;
   let need=80;
   for(let n=0;n<=80;n++){
@@ -5072,12 +5095,14 @@ function sparkline(el,capEl,values,color,capA,capB){
 }
 /* item 8: capacity outlook line chart with hover crosshair + tooltip */
 let coData=null;
-function renderOutlook(){
+function renderOutlook(plan){
   const el=document.getElementById("coChart"), tip=document.getElementById("coTip");
   el.innerHTML=""; tip.style.display="none";
-  if(state.settings.headcount<=0){ coData=null; return; }
+  const base=(plan&&plan.hc>0)?plan.hc:state.settings.headcount;
+  const skillF=plan?plan.skillF:null;
+  if(base<=0){ coData=null; return; }
   const days=60;
-  const vals=[]; for(let d=0;d<=days;d++) vals.push(hcAtDay(d,true));
+  const vals=[]; for(let d=0;d<=days;d++) vals.push(hcAtDay(d,true,base,skillF));
   const w=520,h=130,pl=34,pr=10,pt=8,pb=20;
   const min=Math.floor(Math.min(...vals)*0.98), max=Math.ceil(Math.max(...vals)*1.02);
   const span=(max-min)||1;
@@ -5117,14 +5142,36 @@ function renderOutlook(){
 }
 
 /* ---------------- Recruitment page ---------------- */
+/* the recruit page plans on ONE explicit basis the user controls:
+   whole workforce (default — recruitment thinks in the full מצבה, and
+   shrinkage/absence apply directly here) or scheduled reps only,
+   optionally narrowed to a single skill (courses start as קו 1). */
+function recruitPlan(){
+  const S=state.settings;
+  const skillF=(S.recruitSkill||"").trim()||null;
+  const names=new Set([...state.rosterMeta.keys()]);
+  if(state.iron) for(const n of state.iron.emps.keys()) names.add(n);
+  const skillOf=n=>{ const m=state.rosterMeta.get(n)||(state.iron&&state.iron.emps.get(n))||{};
+    return (m.skill||"").trim(); };
+  const match=n=>{ const sk=skillOf(n);
+    return !skillF||sk===skillF||(!sk&&/קו\s*1|kav\s*1/i.test(skillF)); };
+  const basis=S.recruitBasis||"all";
+  let pool;
+  if(basis==="sched"&&state.roster.length) pool=state.roster.map(r=>r.name).filter(match);
+  else if(names.size) pool=[...names].filter(match);
+  else pool=null; // no roster data at all → fall back to the manual setting
+  return {skillF,basis,hc:pool?pool.length:S.headcount,fromData:!!pool};
+}
 function renderRecruit(){
   const S=state.settings;
-  document.getElementById("kpiHc").textContent=S.headcount;
-  // say what the number IS: when a named sidur drives it, 91 means scheduled reps
+  const plan=recruitPlan();
+  document.getElementById("kpiHc").textContent=plan.hc;
+  // say what the number IS — basis + optional skill, always explicit
   {
     const hcLbl=document.querySelector('#page-recruit .kpi .l[data-i18n^="kpiHc"]');
-    const synced=state.rosterNamed&&state.roster.length&&!S.hcOverride;
-    if(hcLbl){ hcLbl.dataset.i18n=synced?"kpiHcSched":"kpiHc"; hcLbl.textContent=t(hcLbl.dataset.i18n); }
+    const key=!plan.fromData?"kpiHc":(plan.basis==="sched"?"kpiHcSched":"kpiHcAll");
+    if(hcLbl){ hcLbl.dataset.i18n=key;
+      hcLbl.textContent=t(key)+(plan.skillF?" — "+plan.skillF:""); }
   }
   // shortage KPIs must not depend on the matrix page having been opened —
   // compute them here from the same computeDay results (memoized, cheap)
@@ -5166,32 +5213,44 @@ function renderRecruit(){
       if(bySkill.size){
         const PAL=["#0f6a3f","#2c7fb8","#8a5fd0","#c0762c","#b03060","#5f9e6e","#a08a2e"];
         const entries=[...bySkill.entries()].sort((a,b)=>b[1]-a[1]);
-        entries.forEach(([sk,n],i)=>{
-          const chip=document.createElement("span");
-          chip.style.cssText=`background:${PAL[i%PAL.length]}18;color:${PAL[i%PAL.length]};border:1px solid ${PAL[i%PAL.length]}55;border-radius:9px;padding:1px 8px;font-size:.7rem;font-weight:700;white-space:nowrap`;
-          chip.textContent=sk.replace(/^נציג /,"")+" · "+n; // "נציג קו 1" → "קו 1": chips stay short
-          chip.title=sk+": "+n;
+        // chips ARE the filter: click a queue to plan for it, click again to clear
+        const mkChip=(label,full,n,color,skillVal)=>{
+          const on=plan.skillF===skillVal&&skillVal!==null;
+          const chip=document.createElement("button");
+          chip.style.cssText=`background:${on?color:color+"18"};color:${on?"#fff":color};border:1px solid ${color}55;border-radius:9px;padding:1px 8px;font-size:.7rem;font-weight:700;white-space:nowrap;cursor:pointer`;
+          chip.textContent=label+" · "+n;
+          chip.title=(on?t("hcChipOff"):t("hcChipOn",{s:full}));
+          chip.addEventListener("click",()=>{
+            S.recruitSkill=on?"":(skillVal||""); saveState(); renderRecruit();
+          });
           box.appendChild(chip);
+        };
+        entries.forEach(([sk,n],i)=>mkChip(sk.replace(/^נציג /,""),sk,n,PAL[i%PAL.length],sk));
+        if(untagged>0) mkChip(t("hcNoSkill"),t("hcNoSkill"),untagged,"#6b7c90",null);
+        // basis toggle: whole workforce (planning default) vs scheduled only
+        const seg=document.createElement("span");
+        seg.style.cssText="width:100%;display:flex;justify-content:center;gap:4px;margin-top:4px";
+        [["all","hcBasisAll",total],["sched","hcBasisSched",state.roster.length]].forEach(([v,k,n])=>{
+          const b2=document.createElement("button"); b2.className="linklike";
+          b2.style.cssText="font-size:.7rem"+(plan.basis===v?";font-weight:800;text-decoration:underline":";opacity:.6");
+          b2.textContent=t(k)+" ("+n+")";
+          b2.addEventListener("click",()=>{ S.recruitBasis=v; saveState(); renderRecruit(); });
+          seg.appendChild(b2);
         });
-        if(untagged>0){
-          const chip=document.createElement("span");
-          chip.style.cssText="background:#6b7c9018;color:#6b7c90;border:1px solid #6b7c9055;border-radius:9px;padding:1px 8px;font-size:.7rem;font-weight:700";
-          chip.textContent=t("hcNoSkill")+" · "+untagged;
-          box.appendChild(chip);
-        }
-        // honesty note: chips count DISTINCT people in the loaded sidur/iron — if that
-        // differs from the manual headcount setting, say so instead of confusing
-        if(total!==S.headcount){
+        box.appendChild(seg);
+        // planning honesty: this page uses shrinkage/absence directly; center-level demand
+        if(plan.skillF||plan.basis==="all"){
           const d=document.createElement("span"); d.className="mini";
           d.style.cssText="width:100%;text-align:center";
-          d.textContent=t("hcSplitSrc",{n:total});
+          d.textContent=t("hcPlanNote");
           box.appendChild(d);
         }
       }
     }
   }
 
-  const traj=computeTrajectory();
+  syncCohSkillUI(); // course-form queue options track the loaded skill list
+  const traj=computeTrajectory(plan.hc,plan.skillF);
   const ul=document.getElementById("trajList"); ul.innerHTML="";
   const add=(txt,cls)=>{ const li=document.createElement("li"); li.className=cls||"insight"; li.textContent=txt; ul.appendChild(li); };
   if(!traj) add(t("trajNoData"));
@@ -5203,9 +5262,9 @@ function renderRecruit(){
     else add(t("trajHire",{n:traj.need,...vars}),"alert");
   }
 
-  const curve=[]; for(let d=0;d<=30;d+=2) curve.push(hcAtDay(d,false));
+  const curve=[]; for(let d=0;d<=30;d+=2) curve.push(hcAtDay(d,false,plan.hc,plan.skillF));
   sparkline(document.getElementById("spark1"),document.getElementById("spark1c"),curve,"#3fa9f5",t("capToday"),t("capEnd"));
-  document.getElementById("spark1v").textContent=Math.round(hcAtDay(30,false));
+  document.getElementById("spark1v").textContent=Math.round(hcAtDay(30,false,plan.hc,plan.skillF));
   const yields=state.cohorts.slice().sort((a,b)=>cohortFloorDate(a)<cohortFloorDate(b)?-1:1).map(c=>c.yield);
   const yv=document.getElementById("spark2v");
   if(yields.length){ yv.textContent=Math.round(yields.reduce((a,b)=>a+b,0)/yields.length)+"%";
@@ -5214,14 +5273,14 @@ function renderRecruit(){
   }else{ yv.textContent="—"; document.getElementById("spark2").innerHTML=""; document.getElementById("spark2c").innerHTML=""; }
   const g3=document.getElementById("spark3"), g3v=document.getElementById("spark3v");
   if(traj){
-    const target=S.headcount+(traj.need>0?traj.need:0);
+    const target=plan.hc+(traj.need>0?traj.need:0);
     const gaps=curve.map(v=>Math.max(0,target-v));
-    const gapNow=Math.max(0,Math.round(target-hcAtDay(30,false)));
+    const gapNow=Math.max(0,Math.round(target-hcAtDay(30,false,plan.hc,plan.skillF)));
     g3v.innerHTML=`<span class="num">${gapNow>0?"+"+gapNow:"0"}</span>`;
     sparkline(g3,document.getElementById("spark3c"),gaps,gaps.some(x=>x>0)?"#a11a1a":"#0f6a3f",t("capToday"),t("capEnd"));
   }else{ g3v.textContent="—"; g3.innerHTML=""; document.getElementById("spark3c").innerHTML=""; }
 
-  renderOutlook();
+  renderOutlook(plan);
 
   const il=document.getElementById("injList"); il.innerHTML="";
   if(!state.injections.length){ const li=document.createElement("li"); li.textContent=t("injNone"); il.appendChild(li); }
@@ -5992,13 +6051,22 @@ const winBind=(id,key)=>{ const el=document.getElementById(id); el.value=state.s
   }); };
 winBind("setDayStart","dayStart"); winBind("setDayEnd","dayEnd"); winBind("setFriEnd","friEnd");
 
+/* course queue select: filled from the roster's skill list; default = קו 1 (new hires start there) */
+function syncCohSkillUI(){
+  const sel=document.getElementById("cohSkill"); if(!sel) return;
+  const skills=state.skillList||[];
+  const cur=sel.value;
+  sel.innerHTML=`<option value="">${t("cohSkillDef")}</option>`+skills.map(s=>`<option>${s}</option>`).join("");
+  if(skills.includes(cur)) sel.value=cur;
+}
 document.getElementById("cohAdd").addEventListener("click",()=>{
   const name=document.getElementById("cohName").value.trim()||(t("courseDefault")+" "+(state.cohorts.length+1));
   const count=+document.getElementById("cohCount").value||0;
   const start=document.getElementById("cohDate").value;
   const duration=+document.getElementById("cohDur").value||21;
   const yld=Math.min(100,Math.max(10,+document.getElementById("cohYield").value||85));
-  if(count>0&&start){ state.cohorts.push({name,count,start,duration,yield:yld});
+  const skill=(document.getElementById("cohSkill")||{}).value||"";
+  if(count>0&&start){ state.cohorts.push({name,count,start,duration,yield:yld,skill});
     state.fcCache.clear(); // course graduates scale forecast-day agents → refresh forecasts
     document.getElementById("cohName").value=""; renderAll(); }
 });
@@ -6019,7 +6087,8 @@ document.getElementById("injGo").addEventListener("click",()=>{
    format via normDateAny, duration from end-date or days column, sane defaults */
 function parseCoursesGrid(grid){
   const KEYS={name:/קורס|course|שם/i,start:/התחל|start|תאריך|date/i,end:/סיום|end/i,
-    dur:/משך|ימים|duration|days/i,count:/כמות|חניכ|נציג|trainee|count/i,yield:/הסמכ|yield|אחוז/i};
+    dur:/משך|ימים|duration|days/i,count:/כמות|חניכ|נציג|trainee|count/i,yield:/הסמכ|yield|אחוז/i,
+    skill:/מיומנות|תור|skill|queue/i};
   let hd=null;
   for(let r=0;r<Math.min(15,grid.length);r++){
     const map={};
@@ -6040,7 +6109,8 @@ function parseCoursesGrid(grid){
     let yld=m.yield!=null?toNum(row[m.yield]):NaN;
     if(isFinite(yld)&&yld<=1) yld*=100; // 0.85 and 85 both mean 85%
     if(!isFinite(yld)||yld<=0) yld=85;
-    state.cohorts.push({name,count,start,duration,yield:Math.min(100,Math.round(yld))});
+    const skill=m.skill!=null?String(row[m.skill]??"").trim():"";
+    state.cohorts.push({name,count,start,duration,yield:Math.min(100,Math.round(yld)),skill});
     n++;
   }
   return n;
