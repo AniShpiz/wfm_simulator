@@ -535,8 +535,12 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
     </div>
     <div class="grid2">
       <div class="card">
-        <h2 data-i18n="schOutTitle">Optimized Schedule</h2>
-        <div class="toolbar"><button class="btn ghost" id="schCsv" style="display:none" data-i18n="schCsv">⬇ Download Optimized Schedule (CSV)</button></div>
+        <!-- export sits beside the headline → both cards' titles align -->
+        <div class="toolbar" style="margin:0 0 6px">
+          <h2 style="margin:0" data-i18n="schOutTitle">Optimized Schedule</h2>
+          <span class="grow"></span>
+          <button class="btn ghost" id="schCsv" style="display:none" data-i18n="schCsv">⬇ Download Optimized Schedule (CSV)</button>
+        </div>
         <div class="tablewrap" id="schOutWrap" style="max-height:380px;overflow-y:auto"></div>
       </div>
       <div class="card">
@@ -976,6 +980,7 @@ en:{
   trajCalcFull:"Model transparency: projected weekly {m} of {p}% on the last full week · per your measured answer rates, scheduled reps deliver a full effective position — real-world shrinkage/absence are already baked into the measurements.",
   trajProfile:"Hiring profile: a {win} shift (mostly {days}) carries {pct}% of this week's shortage — ~{n} reps in that window close most of the gap.",
   trajMore:"More details (trend & model)",
+  schSortTip:"Click to sort; click again to reverse", schFiltN:"Showing {v} of {n} shifts (filtered)",
   trajNoData:"Load a forecast and set headcount to unlock predictive trajectory insights.",
   injTitle:"Recruitment Simulation (What-If)", injProfile:"Shift profile",
   profStudent:"Student Afternoon — 12:00–17:00, Sun–Thu",
@@ -1304,6 +1309,7 @@ he:{
   trajCalcFull:"שקיפות המודל: {m} שבועי חזוי ‎{p}%‎ על השבוע המלא האחרון · לפי המענה המדוד, הנציגים מספקים עמדה אפקטיבית מלאה — השחיקה וההיעדרות בפועל כבר משוקללות במדידות.",
   trajProfile:"פרופיל גיוס: משמרת {win} (בעיקר ימי {days}) מרכזת ‎{pct}%‎ מהחוסר השבועי — כ-{n} נציגים בחלון הזה יסגרו את רוב הפער.",
   trajMore:"פרטים נוספים (מגמה ומודל)",
+  schSortTip:"לחצו למיון; לחיצה נוספת הופכת את הסדר", schFiltN:"מוצגות {v} מתוך {n} משמרות (מסונן)",
   trajNoData:"טענו תחזית והגדירו מצבה כדי לקבל תובנות מגמה חזויות.",
   injTitle:"סימולציית גיוס עובדים (What-If)", injProfile:"פרופיל משמרת",
   profStudent:"סטודנטים אחה\"צ — 12:00–17:00, א'–ה'",
@@ -3104,9 +3110,11 @@ function renderSchedulerResults(out){
     tbl.appendChild(tb); return tbl;
   };
   // on-screen schedule mirrors the Tikshuv סידור עבודה column structure exactly,
-  // so the output can round-trip back into the same pipeline as the input file
-  const ow=document.getElementById("schOutWrap"); ow.innerHTML="";
-  ow.appendChild(mk(out.asg.map(a=>tikshuvRow(a).slice(0,8)),TIKSHUV_HEADS.slice(0,8)));
+  // so the output can round-trip back into the same pipeline as the input file.
+  // Excel-like header sort + per-column filters (this table only).
+  state._schedRows=out.asg.map(a=>tikshuvRow(a).slice(0,8));
+  state._schedFilter={}; state._schedSort=null;
+  renderSchedTable();
   document.getElementById("schCsv").style.display=out.asg.length?"inline-block":"none";
   const pw=document.getElementById("schPoolWrap"); pw.innerHTML="";
   {
@@ -3151,6 +3159,65 @@ function renderSchedulerResults(out){
   });
   tbl.appendChild(tb); gw.appendChild(tbl);
   renderExtensionOffers(out); // gaps drive the who-to-ask offer list
+}
+/* the optimized-schedule table with Excel-style header sort + per-column filters */
+function renderSchedTable(){
+  const ow=document.getElementById("schOutWrap"); if(!ow) return;
+  ow.innerHTML="";
+  const rows=state._schedRows||[];
+  if(!rows.length) return;
+  const heads=TIKSHUV_HEADS.slice(0,8);
+  const f=state._schedFilter||{}, srt=state._schedSort;
+  const keyFn=(v,c)=>{
+    if(c===3){ const m=String(v).split("/"); return m.length===3?m[2]+m[1]+m[0]:String(v); } // dd/mm/yyyy
+    if(c===1||c===2||c===6){ const mm=String(v).match(/^(\d{1,2}):(\d{2})$/); if(mm) return +mm[1]*60+ +mm[2]; }
+    return String(v);
+  };
+  let view=rows.filter(r=>heads.every((_,c)=>!f[c]||String(r[c])===f[c]));
+  if(srt) view=view.slice().sort((a,b)=>{
+    const ka=keyFn(a[srt.col],srt.col), kb=keyFn(b[srt.col],srt.col);
+    const cmp=(typeof ka==="number"&&typeof kb==="number")?ka-kb
+      :String(ka).localeCompare(String(kb),"he",{numeric:true});
+    return srt.dir*cmp;
+  });
+  const tbl=document.createElement("table");
+  const thead=document.createElement("thead");
+  const hr=document.createElement("tr");
+  heads.forEach((h,c)=>{
+    const e=document.createElement("th");
+    e.style.cursor="pointer"; e.title=t("schSortTip");
+    e.textContent=h+(srt&&srt.col===c?(srt.dir>0?" ▲":" ▼"):"");
+    e.addEventListener("click",()=>{
+      state._schedSort=(srt&&srt.col===c)?{col:c,dir:-srt.dir}:{col:c,dir:1};
+      renderSchedTable();
+    });
+    hr.appendChild(e);
+  });
+  thead.appendChild(hr);
+  // Excel-style autofilter row: distinct values per column
+  const fr=document.createElement("tr");
+  heads.forEach((h,c)=>{
+    const td=document.createElement("th");
+    const sel=document.createElement("select");
+    sel.style.cssText="width:100%;max-width:130px;font-size:.7rem";
+    const vals=[...new Set(rows.map(r=>String(r[c])))].sort((a,b)=>a.localeCompare(b,"he",{numeric:true}));
+    sel.innerHTML=`<option value="">${t("wfAll")}</option>`
+      +vals.map(v=>`<option${f[c]===v?" selected":""}>${v.replace(/&/g,"&amp;").replace(/</g,"&lt;")}</option>`).join("");
+    sel.addEventListener("change",()=>{ (state._schedFilter=state._schedFilter||{})[c]=sel.value; renderSchedTable(); });
+    td.appendChild(sel); fr.appendChild(td);
+  });
+  thead.appendChild(fr);
+  tbl.appendChild(thead);
+  const tb=document.createElement("tbody");
+  view.forEach(r=>{ const tr=document.createElement("tr");
+    r.forEach(v=>{ const td=document.createElement("td"); td.textContent=v; tr.appendChild(td); });
+    tb.appendChild(tr); });
+  tbl.appendChild(tb); ow.appendChild(tbl);
+  if(view.length!==rows.length){
+    const m=document.createElement("p"); m.className="mini";
+    m.textContent=t("schFiltN",{v:view.length,n:rows.length});
+    ow.appendChild(m);
+  }
 }
 /* Tikshuv sidur-avoda row shape — the single structure ALL scheduler I/O speaks */
 const TIKSHUV_HEADS=["מוקד","כניסה","יציאה","תאריך","יום","שם הנציג/ה","שעות","סטאטוס","מנהל צוות","מיומנות"];
