@@ -485,7 +485,6 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
     </div>
     <div class="card">
       <h2><span data-i18n="rosterTitle">Internal Roster Optimization</span></h2>
-      <p class="mini" data-i18n="rosterHint">Representatives below their contracted weekly hours — broaden their availability before hiring externally.</p>
       <div class="tablewrap" id="rosterWrap" style="max-height:300px;overflow-y:auto;margin-top:8px"></div>
     </div>
   </section>
@@ -5494,7 +5493,9 @@ function renderInternalRoster(){
   const under=state.roster
     .map(e=>{ const base=baseOf(e); return {...e,base,def:Math.round((base-e.scheduled)*10)/10}; })
     .filter(e=>e.def>0.4)
-    .sort((a,b)=>b.def-a.def);
+    // sorted by the BAR: emptiest fill first (lowest scheduled/base ratio), so the
+    // visual order and the priority order are the same thing
+    .sort((a,b)=>(a.scheduled/a.base)-(b.scheduled/b.base)||b.def-a.def);
   if(!under.length){
     rw.innerHTML=`<div class="banner good" style="display:block">${t("rosterAllOk")}</div>`;
     return;
