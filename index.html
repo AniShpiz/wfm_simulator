@@ -1658,7 +1658,7 @@ const state={
             primaryMetric:"ar",dayStart:8,dayEnd:18,friEnd:13,
             modelVolume:"ensemble5",modelAht:"ma4",modelMpt:"ma4",mptOverride:false,hcOverride:false,modelUserSet:false,
             autoHolidays:true,autoAnomaly:true,profileMode:"adaptive",
-            holOverride:{"Av|9":"work"},volCal:1},
+            holOverride:{},volCal:1},
   edits:new Set(), undoStack:[], pristine:new Map(),
   volAdj:[],                     // forward-propagated volume edits: {ds,di,tm,factor}
   domFactor:null, cleanClipped:0, // calendar uplift factors + outlier-guard audit count
@@ -3610,9 +3610,9 @@ const HEB_HOLIDAYS={
   "Nisan":{14:"eve",15:"closed",16:"chm",17:"chm",18:"chm",19:"chm",20:"eve",21:"closed"},
   // Sivan — Shavuot
   "Sivan":{5:"eve",6:"closed"},
-  // Av — Tisha B'Av: present in the table so the user can classify it, but the
-  // DEFAULT override marks it a regular working day (user-confirmed reality).
-  "Av":{9:"eve"},
+  // Av — Tisha B'Av: listed so the user can reclassify it, with "work" as its
+  // TABLE DEFAULT (regular working day, user-confirmed) — not a stored override.
+  "Av":{9:"work"},
   // Iyar — Independence Day (5th, closed) + eve/Memorial (4th, partial)
   "Iyar":{4:"eve",5:"closed"}
 };
@@ -3634,11 +3634,11 @@ function holidayLevel(dateObj){
   const mn=hebMonthName(dateObj), p=hebParts(dateObj);
   if(!p||!mn) return null;
   const day=+p.day;
-  // user override wins: each holiday can be reclassified working/half/chm/closed
+  // user override wins; "work" (default or override) means a regular day → no level
   const ov=(state.settings.holOverride||{})[mn+"|"+day];
-  if(ov) return ov==="work"?null:ov;
   const tbl=HEB_HOLIDAYS[mn];
-  return tbl&&tbl[day]?tbl[day]:null;
+  const lvl=ov||(tbl&&tbl[day])||null;
+  return lvl&&lvl!=="work"?lvl:null;
 }
 /* scan the loaded date range once, cache the set of holiday ISO dates */
 function computeHolidayDates(){
@@ -5109,8 +5109,10 @@ function loadState(){
     // Policy Optimizer UI is hidden (see #polSection) — a workspace saved with it
     // enabled must not keep applying invisible dips to the matrix
     state.policy.enabled=false;
-    // pre-holidays-table workspaces: seed the default override (Tisha B'Av = working)
-    if(!state.settings.holOverride) state.settings.holOverride={"Av|9":"work"};
+    if(!state.settings.holOverride) state.settings.holOverride={};
+    // migration: an early build seeded Av|9=work as an override — it is now the
+    // table default, so drop it (otherwise it shows a permanent "changed" tag)
+    if(state.settings.holOverride["Av|9"]==="work") delete state.settings.holOverride["Av|9"];
     if(!(state.settings.volCal>0)) state.settings.volCal=1;
     // migration: the ensemble is the new default unless the user actively picked a model
     if(!state.settings.modelUserSet&&state.settings.modelVolume==="holt_damped")
