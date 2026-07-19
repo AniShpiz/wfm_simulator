@@ -711,7 +711,7 @@ en:{
   homeSub:"Capacity planning, hiring scenarios and schedule optimization — 100% in your browser.",
   step1t:"Load your forecast", step1d:"Drop your forecast export below.",
   step2t:"Add real rosters (optional)", step2d:"Drop the actual sidur — it becomes the ground-truth capacity.",
-  step3t:"Set targets & policies", step3d:"Targets, queue behavior and flex rules.",
+  step3t:"Set targets & policies", step3d:"Service targets and queue behavior.",
   step4t:"Simulate & optimize", step4d:"Matrix, what-if simulations, optimizer.",
   stepOpen:"Open",
   fcTitle:"Forecast Ingestion — drag & drop Excel / CSV / JSON",
@@ -980,6 +980,8 @@ en:{
   trajProfile:"Hiring profile: a {win} shift (mostly {days}) carries {pct}% of this week's shortage — ~{n} reps in that window close most of the gap.",
   trajMore:"More details (trend & model)",
   schSortTip:"Click to sort; click again to reverse", schFiltN:"Showing {v} of {n} shifts (filtered)",
+  emptyState:"No data yet — drop a file anywhere, or load it from the Home page.",
+  emptyStateBtn:"Go to Home",
   trajNoData:"Load a forecast and set headcount to unlock predictive trajectory insights.",
   injTitle:"Recruitment Simulation (What-If)", injProfile:"Shift profile",
   profStudent:"Student Afternoon — 12:00–17:00, Sun–Thu",
@@ -1040,7 +1042,7 @@ he:{
   homeSub:"תכנון קיבולת, תרחישי גיוס ואופטימיזציית סידורים — 100% בדפדפן שלכם.",
   step1t:"טעינת תחזית", step1d:"גררו את קובץ התחזית למטה.",
   step2t:"הוספת סידור אמיתי (אופציונלי)", step2d:"גררו את הסידור בפועל — הוא הופך לקיבולת האמת.",
-  step3t:"הגדרת יעדים ומדיניות", step3d:"יעדים, התנהגות תור וכללי גמישות.",
+  step3t:"הגדרת יעדים ומדיניות", step3d:"יעדי שירות והתנהגות התור.",
   step4t:"סימולציה ואופטימיזציה", step4d:"מטריצה, סימולציות What-If, מייעל.",
   stepOpen:"פתיחה",
   fcTitle:"קליטת תחזית — גררו ושחררו Excel / CSV / JSON",
@@ -1309,6 +1311,8 @@ he:{
   trajProfile:"פרופיל גיוס: משמרת {win} (בעיקר ימי {days}) מרכזת ‎{pct}%‎ מהחוסר השבועי — כ-{n} נציגים בחלון הזה יסגרו את רוב הפער.",
   trajMore:"פרטים נוספים (מגמה ומודל)",
   schSortTip:"לחצו למיון; לחיצה נוספת הופכת את הסדר", schFiltN:"מוצגות {v} מתוך {n} משמרות (מסונן)",
+  emptyState:"עדיין אין נתונים — גררו קובץ לכל מקום במסך, או טענו מדף הבית.",
+  emptyStateBtn:"לדף הבית",
   trajNoData:"טענו תחזית והגדירו מצבה כדי לקבל תובנות מגמה חזויות.",
   injTitle:"סימולציית גיוס עובדים (What-If)", injProfile:"פרופיל משמרת",
   profStudent:"סטודנטים אחה\"צ — 12:00–17:00, א'–ה'",
@@ -2940,6 +2944,7 @@ function populateWfFilters(){
 }
 function renderWorkforce(){
   if(!document.getElementById("wfKpiUtil")) return;
+  ensureEmptyState("workforce");
   const gated=!state.iron;
   document.getElementById("wfNoIron").style.display=gated?"block":"none";
   // iron-derived analytics stay visibly disabled until a real ברזל base exists
@@ -3058,7 +3063,7 @@ function renderSchedSkills(){
       state.schedSkills=on.length===skills.length?null:on;
       saveData(); renderScheduler();
     });
-    lb.appendChild(cb); lb.appendChild(document.createTextNode(" "+s));
+    lb.appendChild(cb); lb.appendChild(skillDot(s)); lb.appendChild(document.createTextNode(" "+s));
     menu.appendChild(lb);
   });
 }
@@ -3282,6 +3287,7 @@ function tikshuvRow(a){
 }
 function renderScheduler(){
   if(!document.getElementById("schChipFc")) return;
+  ensureEmptyState("scheduler");
   renderSchedSkills();
   // manual-entry autocomplete from the real agent list + name reconciliation panel
   const dl=document.getElementById("knownNames");
@@ -4627,6 +4633,38 @@ function tier(v){
 function pct(v){ return (v*100).toFixed(1)+"%"; }
 function th(x){ const e=document.createElement("th"); e.textContent=x; return e; }
 
+/* ---- ONE queue palette for the whole app: a skill keeps its color on every
+   page (recruit chips, matrix scope menu, scheduler pool menu). Index is the
+   skill's stable position in state.skillList, not per-page sort order. ---- */
+const QPAL=["#0f6a3f","#2c7fb8","#8a5fd0","#c0762c","#b03060","#5f9e6e","#a08a2e"];
+function skillColor(sk){
+  const i=(state.skillList||[]).indexOf(sk);
+  return QPAL[(i<0?0:i)%QPAL.length];
+}
+function skillDot(sk){
+  const d=document.createElement("i");
+  d.style.cssText=`display:inline-block;width:9px;height:9px;border-radius:50%;background:${skillColor(sk)};margin-inline-end:2px;flex:none`;
+  return d;
+}
+/* ---- friendly empty state: a data page without data says WHERE to go instead
+   of showing a dead toolbar skeleton ---- */
+function ensureEmptyState(pageId){
+  const page=document.getElementById("page-"+pageId); if(!page) return false;
+  const hasData=state.days.size||state.rosterCap.size||state.iron||state.schedRows.length;
+  let es=page.querySelector(".emptyState");
+  if(hasData){ if(es) es.remove(); return false; }
+  if(!es){
+    es=document.createElement("div"); es.className="emptyState banner tip";
+    es.style.cssText="display:block;text-align:center;font-size:.95rem;padding:22px";
+    es.innerHTML=`📂 ${t("emptyState")} `;
+    const b2=document.createElement("button"); b2.className="btn navy"; b2.style.marginInlineStart="10px";
+    b2.textContent=t("emptyStateBtn");
+    b2.addEventListener("click",()=>showPage("home"));
+    es.appendChild(b2);
+    page.insertBefore(es,page.firstElementChild);
+  }
+  return true;
+}
 /* queue-scope selector on the matrix toolbar — checkboxes per skill, modular */
 function renderSkillScope(){
   const wrap=document.getElementById("skillScopeWrap"); if(!wrap) return;
@@ -4658,7 +4696,7 @@ function renderSkillScope(){
       capScopeChanged();
     });
     cb._skill=s;
-    lb.appendChild(cb); lb.appendChild(document.createTextNode(" "+s));
+    lb.appendChild(cb); lb.appendChild(skillDot(s)); lb.appendChild(document.createTextNode(" "+s));
     menu.appendChild(lb);
   });
   const all=document.createElement("button"); all.className="linklike"; all.style.marginTop="6px";
@@ -4674,6 +4712,7 @@ function capScopeChanged(){
 function renderMatrix(){
   renderSkillScope();
   const tbl=document.getElementById("matrixTable"); tbl.innerHTML="";
+  if(ensureEmptyState("matrix")) return;
   if(!state.week) return;
   // credibility note: an uncalibrated Erlang model reads optimistic (90%+ AR) —
   // say so explicitly instead of letting the numbers pretend to be measurements
@@ -4881,6 +4920,7 @@ function trendDates(){
 }
 function renderTrends(){
   const tbl=document.getElementById("trendsTable"); tbl.innerHTML="";
+  if(ensureEmptyState("trends")) return;
   const S=state.settings;
   const thead=document.createElement("thead"); const hr=document.createElement("tr");
   /* fixed corporate schema (no dynamic columns) + a formula tooltip on every header */
@@ -5336,8 +5376,10 @@ function recruitPlan(){
 }
 function renderRecruit(){
   const S=state.settings;
+  ensureEmptyState("recruit");
   const plan=recruitPlan();
-  document.getElementById("kpiHc").textContent=plan.hc;
+  // never show the manual default (e.g. 60) as if it were real data
+  document.getElementById("kpiHc").textContent=(plan.fromData||state.days.size)?plan.hc:t("noData");
   // say what the number IS — basis + optional skill, always explicit
   {
     const hcLbl=document.querySelector('#page-recruit .kpi .l[data-i18n^="kpiHc"]');
@@ -5383,7 +5425,6 @@ function renderRecruit(){
         if(sk) bySkill.set(sk,(bySkill.get(sk)||0)+1); else untagged++;
       }
       if(bySkill.size){
-        const PAL=["#0f6a3f","#2c7fb8","#8a5fd0","#c0762c","#b03060","#5f9e6e","#a08a2e"];
         const entries=[...bySkill.entries()].sort((a,b)=>b[1]-a[1]);
         // chips ARE the filter: click a queue to plan for it, click again to clear
         const mkChip=(label,full,n,color,skillVal)=>{
@@ -5404,7 +5445,7 @@ function renderRecruit(){
           });
           box.appendChild(chip);
         };
-        entries.forEach(([sk,n],i)=>mkChip(sk.replace(/^נציג /,""),sk,n,PAL[i%PAL.length],sk));
+        entries.forEach(([sk,n])=>mkChip(sk.replace(/^נציג /,""),sk,n,skillColor(sk),sk));
         if(untagged>0) mkChip(t("hcNoSkill"),t("hcNoSkill"),untagged,"#6b7c90",null);
         // basis toggle: whole workforce (planning default) vs scheduled only
         const seg=document.createElement("span");
