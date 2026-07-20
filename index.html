@@ -211,6 +211,15 @@ tr.r-ok td{background:var(--emerald-bg)}
 #dropOverlay{position:fixed;inset:0;background:rgba(13,42,77,.55);z-index:200;display:none;align-items:center;justify-content:center;pointer-events:none}
 #dropOverlay.show{display:flex}
 #dropOverlay .box{background:#fff;border:3px dashed var(--sky);border-radius:16px;padding:34px 48px;font-size:1.1rem;font-weight:600;color:var(--navy)}
+/* processing feedback: shown the INSTANT a file is dropped/selected, before any
+   parsing starts, so a slow read (large file, cloud-sync placeholder) never
+   looks like nothing happened */
+#busyOverlay{position:fixed;inset:0;background:rgba(13,42,77,.4);z-index:210;display:none;align-items:center;justify-content:center}
+#busyOverlay.show{display:flex}
+#busyOverlay .box{background:#fff;border-radius:16px;padding:22px 34px;font-size:1rem;font-weight:600;color:var(--navy);display:flex;align-items:center;gap:12px;box-shadow:0 12px 40px rgba(13,42,77,.3)}
+.spinner{width:22px;height:22px;border:3px solid var(--sky-soft);border-top-color:var(--sky);border-radius:50%;animation:spin .7s linear infinite;flex:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.dropzone.busy{opacity:.6;pointer-events:none}
 #toast{position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--emerald);color:#fff;padding:10px 22px;border-radius:999px;font-size:.85rem;font-weight:600;z-index:210;transition:.25s;box-shadow:0 8px 24px rgba(0,0,0,.25);max-width:90%;text-align:center;pointer-events:auto;cursor:pointer}
 #toast.show{transform:translateX(-50%) translateY(0)}
 details.danger{border:1.5px solid var(--crimson);border-radius:8px;padding:8px 12px;margin-top:12px}
@@ -660,6 +669,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
 </div></div>
 
 <div id="dropOverlay"><div class="box" data-i18n="dropAnywhere">📂 Drop your file anywhere — the system will recognize it</div></div>
+<div id="busyOverlay"><div class="box"><span class="spinner"></span><span id="busyMsg" data-i18n="processing">Reading file…</span></div></div>
 <div id="toast"></div>
 <div id="auditPop">
   <div class="ahead"><b id="auditTitleEl"></b><button class="xbtn" id="auditClose">✕</button></div>
@@ -742,6 +752,7 @@ en:{
   tipRoster:"When a roster file is active, its interval capacity replaces the generic headcount and any scheduled counts from the forecast — the engine treats it as the hard ground truth. Supported: dated intervals, named shifts (day/date + start + end + name), or an anonymous aggregate weekly grid.",
   dropErrType:"Unsupported file type. Excel (.xlsx / .xls / .xlsm), CSV, TSV or JSON files work.",
   dropErrParse:"The file couldn't be read. Try re-saving it from Excel, or check that it isn't password-protected.",
+  processing:"Reading file…", processingName:"Reading {n}… large files or cloud-synced folders (OneDrive/SharePoint) can take a few seconds to download first.",
   fcFormats:"Excel / CSV / TSV / JSON — columns auto-detected in Hebrew or English, any order.",
   roFormats:"Excel / CSV / TSV / JSON — layout auto-detected.",
   fcOk:"Forecast recognized — {d} days, {n} interval rows loaded.",
@@ -1077,6 +1088,7 @@ he:{
   tipRoster:"כשקובץ סידור פעיל, קיבולת האינטרוולים שלו מחליפה את המצבה הכללית ואת האיוש מהתחזית — המנוע מתייחס אליו כאמת קשיחה. נתמכים: אינטרוולים מתוארכים, משמרות בשמות (יום/תאריך + התחלה + סיום + שם) או רשת שבועית מצרפית אנונימית.",
   dropErrType:"סוג קובץ לא נתמך. קבצי Excel‏ (‎.xlsx / .xls / .xlsm‎), CSV‏, TSV או JSON עובדים.",
   dropErrParse:"לא ניתן לקרוא את הקובץ. נסו לשמור אותו מחדש מ־Excel, או ודאו שאינו מוגן בסיסמה.",
+  processing:"קורא את הקובץ…", processingName:"קורא את {n}… קבצים גדולים או תיקיות מסונכרנות בענן (OneDrive/SharePoint) עשויים לקחת כמה שניות להורדה קודם.",
   fcFormats:"Excel / CSV / TSV / JSON — עמודות מזוהות אוטומטית בעברית או באנגלית, בכל סדר.",
   roFormats:"Excel / CSV / TSV / JSON — הפריסה מזוהה אוטומטית.",
   fcOk:"תחזית זוהתה — {d} ימים, {n} שורות אינטרוול נטענו.",
@@ -3429,9 +3441,11 @@ document.getElementById("schCsv").addEventListener("click",()=>{
   downloadFile("wfm_optimized_sidur.csv",rows.join("\n"));
 });
 function ingestConstraintsFile(f){
+  beginBusy(t("processingName",{n:f.name}));
   const r=new FileReader();
   r.onload=()=>{ (async()=>{
     try{
+      await nextPaint();
       const res=await bytesToGrid(r.result);
       // multi-sheet workbooks: try every sheet until one yields constraints
       let grids=res.grids?res.grids.map(s=>(s&&s.grid)||s||[]):[res.grid||[]];
@@ -3448,7 +3462,9 @@ function ingestConstraintsFile(f){
       showToast("✅ "+t("schConOk",{n:stats.rows}),true);
       renderScheduler();
     }catch(err){ showToast("⚠ "+t("dropErrParse"),false); }
+    finally{ endBusy(); }
   })(); };
+  r.onerror=()=>{ showToast("⚠ "+t("dropErrParse"),false); endBusy(); };
   r.readAsArrayBuffer(f);
 }
 wireDropzone("dzSchCon","schConInput",ingestConstraintsFile);
@@ -3791,16 +3807,43 @@ function ingestRows(res,hint){
   if(mx) return applyMx(mx);
   throw {code:"noheader",headers:hd.raw};
 }
+/* ---- processing feedback: visible the INSTANT a file is dropped/selected —
+   a slow read (large file, a cloud-sync placeholder that must download first,
+   antivirus scan) must never look like the drop did nothing. Also guards
+   against the pile-up of an anxious triple-drop: each queued file still
+   processes, but the user SEES it's working instead of dropping it again. */
+let _busyCount=0;
+function beginBusy(msg){
+  _busyCount++;
+  const ov=document.getElementById("busyOverlay");
+  document.getElementById("busyMsg").textContent=msg||t("processing");
+  if(ov) ov.classList.add("show");
+  document.querySelectorAll(".dropzone").forEach(z=>z.classList.add("busy"));
+}
+function endBusy(){
+  _busyCount=Math.max(0,_busyCount-1);
+  if(_busyCount>0) return;
+  const ov=document.getElementById("busyOverlay");
+  if(ov) ov.classList.remove("show");
+  document.querySelectorAll(".dropzone").forEach(z=>z.classList.remove("busy"));
+}
+// one repaint tick between "show the spinner" and "start the heavy synchronous
+// parse" — otherwise the browser can paint the DOM change and the CPU-bound
+// work in the same frame, and the spinner never actually appears
+function nextPaint(){ return new Promise(res=>requestAnimationFrame(()=>requestAnimationFrame(res))); }
 function ingestFile(f,hint){
   const name=(f.name||"").toLowerCase();
   if(!/\.(csv|tsv|txt|json|xlsx|xlsm|xls)$/.test(name)){
     ingestFail(hint,{code:"type"}); return;
   }
+  beginBusy(t("processingName",{n:f.name}));
   const r=new FileReader();
   r.onload=()=>{ (async()=>{
-    try{ ingestSuccess(ingestRows(await bytesToGrid(r.result),hint),hint); }
+    try{ await nextPaint(); ingestSuccess(ingestRows(await bytesToGrid(r.result),hint),hint); }
     catch(err){ ingestFail(hint,err); }
+    finally{ endBusy(); }
   })(); };
+  r.onerror=()=>{ ingestFail(hint,{code:"read"}); endBusy(); };
   r.readAsArrayBuffer(f);
 }
 function portalEls(kind){
@@ -6418,9 +6461,11 @@ function parseCoursesGrid(grid){
   return n;
 }
 function ingestCourseFile(f){
+  beginBusy(t("processingName",{n:f.name}));
   const r=new FileReader();
   r.onload=()=>{ (async()=>{
     try{
+      await nextPaint();
       const res=await bytesToGrid(r.result);
       let grids=res.grids?res.grids.map(s=>(s&&s.grid)||s||[]):[res.grid||[]];
       if(res.json&&Array.isArray(res.json)){
@@ -6434,7 +6479,9 @@ function ingestCourseFile(f){
       showToast("✅ "+t("crsOk",{n}),true);
       renderAll();
     }catch(err){ showToast("⚠ "+t("dropErrParse"),false); }
+    finally{ endBusy(); }
   })(); };
+  r.onerror=()=>{ showToast("⚠ "+t("dropErrParse"),false); endBusy(); };
   r.readAsArrayBuffer(f);
 }
 wireDropzone("dzCourses","crsInput",ingestCourseFile);
