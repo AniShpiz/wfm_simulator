@@ -431,7 +431,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
       <div class="grid2" style="align-items:center">
         <div>
           <!-- every slider is an IMPROVEMENT: right = better. 0 = today's baseline. -->
-          <div style="display:grid;grid-template-columns:auto 1fr 4ch;gap:9px 12px;align-items:center;max-width:460px">
+          <div style="display:grid;grid-template-columns:auto 1fr auto;gap:9px 12px;align-items:center;max-width:480px">
             <label class="mini" data-i18n="wiAht">Shorter handle time</label><input type="range" id="wiAht" min="0" max="30" step="1" value="0"><span class="num" id="wiAhtV"></span>
             <label class="mini" data-i18n="wiAttr">Less attrition</label><input type="range" id="wiAttr" min="0" max="100" step="5" value="0"><span class="num" id="wiAttrV"></span>
             <label class="mini" data-i18n="wiShrink">Less unavailable time</label><input type="range" id="wiShrink" min="0" max="100" step="5" value="0"><span class="num" id="wiShrinkV"></span>
@@ -5420,9 +5420,21 @@ function whatIfRun(){
   card.style.display="block";
   const val=id=>+(document.getElementById(id)||{}).value||0;
   const wi={ahtCut:val("wiAht"),attrCut:val("wiAttr"),shrinkCut:val("wiShrink"),absCut:val("wiAbsence")};
-  // live value labels — all read as improvements (right = better)
-  [["wiAht",wi.ahtCut],["wiAttr",wi.attrCut],["wiShrink",wi.shrinkCut],["wiAbsence",wi.absCut]]
-   .forEach(([id,v])=>{ const el=document.getElementById(id+"V"); if(el) el.textContent=v?"−"+v+"%":"0"; });
+  // current volume-weighted AHT so the handle-time lever can show its resulting value
+  let vw=0,va=0; { const sun=sundayOf(state.maxDate);
+    for(const ds of weekDates(sun)){ const sd=state.days.get(ds); if(!sd) continue;
+      for(const [,rec] of sd){ vw+=rec.volume; va+=rec.aht*rec.volume; } } }
+  const avgAht=vw?va/vw:0;
+  const S=state.settings;
+  const trim=n=>(Math.round(n*10)/10).toString().replace(/\.0$/,"");
+  // each lever shows the RESULTING absolute value (bold) + the improvement delta (muted)
+  const rows=[
+    ["wiAht",wi.ahtCut,fmtSec(avgAht*(1-wi.ahtCut/100))],
+    ["wiAttr",wi.attrCut,trim(S.attrition*(1-wi.attrCut/100))+"%"],
+    ["wiShrink",wi.shrinkCut,trim(S.shrinkage*(1-wi.shrinkCut/100))+"%"],
+    ["wiAbsence",wi.absCut,trim(S.absence*(1-wi.absCut/100))+"%"]];
+  rows.forEach(([id,delta,abs])=>{ const el=document.getElementById(id+"V");
+    if(el) el.innerHTML=`<b>${abs}</b>${delta?` <span style="opacity:.55;font-size:.85em">−${delta}%</span>`:""}`; });
   const res=whatIfCurve(wi);
   renderWhatIfOut(res);
 }
