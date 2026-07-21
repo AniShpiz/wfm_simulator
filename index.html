@@ -156,6 +156,11 @@ table,.kpi .n,.num,.sub{font-variant-numeric:tabular-nums}
 /* range sliders adopt the brand color everywhere (consistent with the app) */
 input[type=range]{accent-color:var(--navy);cursor:pointer}
 #whatIfCard .num{font-weight:700;color:var(--navy);text-align:end}
+/* Recruitment flow: KPI snapshot → What-If simulator (the hero) → supporting detail.
+   CSS order (not a DOM move) keeps the markup untouched; only the recruit page turns flex. */
+#page-recruit.active{display:flex;flex-direction:column}
+#page-recruit>.kpis:first-of-type{order:-2}
+#whatIfCard{order:-1}
 .kpi .l{font-size:.72rem;color:var(--muted);display:flex;align-items:center;gap:5px}
 .kpi .spark{margin-top:5px;direction:ltr}
 .kpi .cap{display:flex;justify-content:space-between;font-size:.62rem;color:var(--muted);direction:ltr;margin-top:1px}
@@ -1043,11 +1048,11 @@ en:{
   cohEditTip:"Click to edit this course",
   wiZeroBase:"This is 0 in Advanced Settings — nothing to reduce. Set a value there to model reducing it.",
   wiAht:"Shorter handle time", wiAttr:"Less attrition", wiShrink:"Less unavailable time", wiAbsence:"Fewer no-shows",
-  wiAgentsNote:"➕ Extra agents come from your Courses & What-If profiles below.",
+  wiAgentsNote:"➕ Extra agents come from your Courses & Staffing profiles below.",
   wiReset:"↺ Back to current",
   wiTargetN:"target {t}", wiTargetTick:"target {t}", wiWk:"w",
   wiAlready:"already at target", wiUnreach:"not reached within 6 months", wiBy:"reached by {d}",
-  injTitle:"Recruitment Simulation (What-If)", injProfile:"Shift profile",
+  injTitle:"Staffing Profiles — feeds the simulator", injProfile:"Shift profile",
   profStudent:"Student Afternoon — 12:00–17:00, Sun–Thu",
   profMorning:"Full-Time Morning — 08:00–13:00, Sun–Fri",
   profFull:"Full-Time — 08:00–17:00, Sun–Thu", profCustom:"Custom per-day profile…",
@@ -1388,11 +1393,11 @@ he:{
   cohEditTip:"לחצו לעריכת הקורס",
   wiZeroBase:"הערך 0 בהגדרות מתקדמות — אין מה להפחית. הגדירו ערך שם כדי לדמות הפחתה.",
   wiAht:"קיצור משך שיחה", wiAttr:"הפחתת נטישה", wiShrink:"הפחתת זמן לא-זמין", wiAbsence:"הפחתת הברזות",
-  wiAgentsNote:"➕ תוספת נציגים מגיעה מהקורסים ומפרופילי ה-What-If שמתחת.",
+  wiAgentsNote:"➕ תוספת נציגים מגיעה מהקורסים ומפרופילי האיוש שמתחת.",
   wiReset:"↺ חזרה למצב הנוכחי",
   wiTargetN:"יעד {t}", wiTargetTick:"יעד {t}", wiWk:"שב'",
   wiAlready:"כבר עומדים ביעד", wiUnreach:"לא יושג בחצי השנה הקרובה", wiBy:"יושג עד {d}",
-  injTitle:"סימולציית גיוס עובדים (What-If)", injProfile:"פרופיל משמרת",
+  injTitle:"פרופילי איוש — מזינים את הסימולטור", injProfile:"פרופיל משמרת",
   profStudent:"סטודנטים אחה\"צ — 12:00–17:00, א'–ה'",
   profMorning:"משרה מלאה בוקר — 08:00–13:00, א'–ו'",
   profFull:"משרה מלאה — 08:00–17:00, א'–ה'", profCustom:"פרופיל מותאם לפי יום…",
