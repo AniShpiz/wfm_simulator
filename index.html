@@ -153,6 +153,11 @@ table,.kpi .n,.num,.sub{font-variant-numeric:tabular-nums}
 /* micro target-bar under a KPI: fill = level, color = threshold status */
 .kpibar{height:4px;border-radius:2px;background:var(--sky-soft);margin:5px 0 1px;position:relative;direction:ltr;overflow:hidden}
 .kpibar>i{position:absolute;top:0;bottom:0;left:0;border-radius:2px;transition:width .3s}
+/* coverage rule rows: clean flex summary with an expand chevron affordance */
+#wfCovList summary::-webkit-details-marker{display:none}
+#wfCovList summary::after{content:"▾";margin-inline-start:4px;color:var(--muted);font-size:.7rem;transition:transform .2s;flex:none}
+#wfCovList details[open] summary::after{transform:rotate(180deg)}
+#wfCovList td{text-align:center;min-width:26px}
 .kpi .l{font-size:.72rem;color:var(--muted);display:flex;align-items:center;gap:5px}
 .kpi .spark{margin-top:5px;direction:ltr}
 .kpi .cap{display:flex;justify-content:space-between;font-size:.62rem;color:var(--muted);direction:ltr;margin-top:1px}
@@ -343,14 +348,12 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
       <div class="banner good" id="decayBanner"></div>
       <div class="tablewrap"><table id="matrixTable"></table></div>
       <div class="legend">
-        <span><i style="background:var(--emerald-bg)"></i><span data-i18n="legGood">≥ 90% — meets target</span></span>
-        <span><i style="background:var(--amber-bg)"></i><span data-i18n="legWarn">80–89.9% — warning</span></span>
-        <span><i style="background:var(--crimson-bg)"></i><span data-i18n="legBad">&lt; 80% — breach</span> <span class="info" data-tipkey="tipBreach" tabindex="0">i</span></span>
-        <span><i style="background:#c22;border-radius:50%"></i><span data-i18n="legShort">understaffed (scheduled &lt; required)</span></span>
         <span style="display:inline-flex;align-items:center;gap:2px">
           <i style="background:#bfe9cf"></i><i style="background:var(--emerald-bg)"></i><i style="background:#eef3c6"></i><i style="background:var(--amber-bg)"></i><i style="background:#fbe1c8"></i><i style="background:var(--crimson-bg)"></i><i style="background:#f3c1c1"></i>
-          <span data-i18n="legScale" style="margin-inline-start:4px">above target → critical (7 bands around your target)</span></span>
-        <span><i style="background:#8a63d2"></i><span data-i18n="legOver">overstaffed (scheduled &gt; required)</span></span>
+          <span data-i18n="legScale" style="margin-inline-start:4px">service level vs your target: above → critical</span>
+          <span class="info" data-tipkey="tipBreach" tabindex="0">i</span></span>
+        <span><i style="background:#c22;border-radius:50%"></i><span data-i18n="legShort">understaffed — fewer scheduled than the target needs</span></span>
+        <span><i style="background:#8a63d2"></i><span data-i18n="legOver">overstaffed — more than the target needs (answer rate won't be 100% — that's normal)</span></span>
         <!-- legDecay belongs to the hidden Policy Optimizer (see #polSection) -->
         <span style="display:none"><i style="background:var(--magenta)"></i><span data-i18n="legDecay">flex-policy dip applied</span></span>
         <span data-i18n="legEdit">Click any cell to edit values.</span>
@@ -480,6 +483,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
       <div class="card">
         <h2><span data-i18n="wfTreeTitle">Iron Hours Allocation (Treemap)</span> <span class="info" data-tipkey="tipWfTree" tabindex="0">i</span></h2>
         <div id="wfTreemap" style="direction:ltr"></div>
+        <p class="mini" id="wfTreeTotal" style="text-align:center;margin-top:4px"></p>
         <div class="legend" id="wfTreeLegend"></div>
       </div>
       <div class="card" id="wfImpactCard">
@@ -488,6 +492,25 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <div class="tablewrap"><table id="wfImpact"></table></div>
         <p class="mini" id="wfImpactStars" style="display:none"></p>
       </div>
+    </div>
+    <!-- Mandatory skill coverage: minimum agents of a skill required per interval.
+         Reads from the roster's per-interval skill counts — modular, so a future
+         queue (digital/clinics) starts tracking the moment its agents appear. -->
+    <div class="card" id="wfCovCard">
+      <h2><span id="wfCovHead" data-i18n="covTitle">Mandatory Skill Coverage</span> <span class="info" data-tipkey="tipCov" tabindex="0">i</span></h2>
+      <div id="wfCovList"></div>
+      <details id="wfCovAdd" style="margin-top:8px">
+        <summary class="mini" style="cursor:pointer" data-i18n="covAddT">+ Add a coverage rule</summary>
+        <div class="covform" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px">
+          <select id="covSkill" style="min-width:130px"></select>
+          <label class="mini"><span>≥</span> <input id="covMin" type="number" min="1" max="20" value="1" style="width:52px"></label>
+          <label class="mini"><span data-i18n="covPrefL">target</span> <input id="covPref" type="number" min="0" max="20" value="0" style="width:52px"></label>
+          <label class="mini"><span data-i18n="covFromL">from</span> <input id="covFrom" type="time" style="width:96px"></label>
+          <label class="mini"><span data-i18n="covToL">to</span> <input id="covTo" type="time" style="width:96px"></label>
+          <button class="btn ghost" id="covAdd" data-i18n="covAdd">+ Add</button>
+        </div>
+        <p class="mini" data-i18n="covHint">Set the minimum agents of a skill required in each interval (leave the time window empty for all day). A gap = an interval that has agents scheduled but too few of this skill.</p>
+      </details>
     </div>
     <div class="card" id="wfValCard">
       <h2><span data-i18n="wfValTitle">Iron Base Validation Matrix</span> <span class="info" data-tipkey="tipWfVal" tabindex="0">i</span></h2>
@@ -809,8 +832,17 @@ en:{
   tipBreach:"Breach/Critical is triggered when the interval's calculated performance falls below your custom safety target. This threshold is managed globally under Advanced Settings (e.g., when cumulative TSF drops below 80% or Answer Rate falls below 85% for the day).",
   applyRec:"Apply", appliedRec:"Applied ✓",
   editsBadge:"{n} manual edit(s) · Ctrl+Z undoes",
-  legOver:"overstaffed (scheduled > required)",
+  legScale:"service level vs your target: above → critical",
+  legShort:"understaffed — fewer scheduled than the target needs",
+  legOver:"overstaffed — more than the target needs (answer rate won't be 100% — that's normal)",
   stateUnder:"Understaffing", stateOver:"Overstaffing", stateBalanced:"Balanced",
+  mxTipHead:"{m}: {v} — {src}", mxSrcMeas:"measured", mxSrcFc:"forecast",
+  mxTipBody:"target {t}% · scheduled {s} · needed for target {r}",
+  mxVerdOverOk:"More agents than the target needs — service is above target (100% is neither realistic nor economical).",
+  mxVerdOverLow:"More agents than the model needs, yet measured service came in below target — check real abandonment / absences that day.",
+  mxVerdShortOk:"Fewer agents than the model wants, yet measured service still met the target that day.",
+  mxVerdShortLow:"Short of the agents the target needs — service is below target here.",
+  mxVerdBalanced:"Staffing matches what the target needs.",
   setPrimary:"Primary Target Metric",
   tipPrimary:"Sets the metric every requirement, KPI card, attainment status and trajectory alert is measured against — speed of answer (TSF) or captured-call share (Answer Rate).",
   optTsf:"TSF — speed of answer", optAr:"Answer Rate — capture every call",
@@ -886,10 +918,10 @@ en:{
   wfKpiDev:"Contractual Deviation Index",
   tipWfDev:"WHEN: % of existing shifts whose start/end differ from their Iron times — measures shape, not volume. Independent of Utilization: 100% utilization with every shift moved = high deviation; 60% utilization at exact contract times = 0 deviation.",
   wfTreeTitle:"Iron Hours Allocation (Treemap)",
-  tipWfTree:"Total contractual capacity split into productive scheduled hours, absence types, and unallocated remainder. Filter by team / skill / site above.",
+  tipWfTree:"The iron base split into: scheduled hours, absence types, per-employee statuses from the sidur (incl. 'empty shift' — a rep left blank on purpose), and 'unused iron base' — contracted hours not covered by any of those (the leftover of the pool, not tied to specific people). Filter by team / skill / site above.",
   wf_prod:"Scheduled (actual)", wf_vacation:"Vacation", wf_miluim:"Reserve duty", wf_medical:"Medical",
-  wf_training:"Training", wf_exam:"Exams", wf_other:"Other absence", wf_unalloc:"Unallocated",
-  wfNoStatus:"No status (empty)",
+  wf_training:"Training", wf_exam:"Exams", wf_other:"Other absence", wf_unalloc:"Unused iron base",
+  wfNoStatus:"Empty shift (no status)",
   wfImpactTitle:"Daily Vacation & SLA Impact Matrix",
   tipWfImpact:"Background Erlang A simulation per skill × day: the answer-rate before → after removing one productive agent from that slice. Green = low-risk vacation approval; red = critical.",
   wfImpactNone:"Needs a forecast + roster with a skill column (מיומנות) to simulate.",
@@ -1008,6 +1040,18 @@ en:{
   schSortTip:"Click to sort; click again to reverse", schFiltN:"Showing {v} of {n} shifts (filtered)",
   emptyState:"No data yet — drop a file anywhere, or load it from the Home page.",
   emptyStateBtn:"Go to Home",
+  covTitle:"Mandatory Skill Coverage",
+  tipCov:"For each rule, every interval of the selected week is checked for the minimum agents of that skill. A gap is an interval that HAS agents but too few of this skill. Fully modular — a future queue (digital, clinics) starts tracking the moment its agents appear in the roster.",
+  covAddT:"+ Add a coverage rule", covAdd:"+ Add",
+  covPrefL:"target", covFromL:"from", covToL:"to",
+  covHint:"Minimum agents of a skill required in each interval (leave the time window empty for all day). Target is a nice-to-have above the minimum.",
+  covEmpty:"No rules yet — e.g. at least 1 clinics agent in every interval. Add one below.",
+  covTarget:"target {n}", covAllDay:"all day",
+  covHeadGap:"gaps in {n}", covHeadOk:"all covered ✓",
+  covGaps:"{n} gaps", covFull:"fully covered", covWait:"waiting for data",
+  covWaitNote:"No scheduled intervals match this rule's window yet — coverage will appear once that queue's agents are in the roster.",
+  covNoSkill:"Pick a skill first.", covBadWin:"End time must be after start.", covAdded:"Coverage rule added for {s}.",
+  wfTreeTotal:"Total shown: {n} h",
   qaTitle:"QA & Feedback", qaPh:"Found a bug? Numbers look off? Missing something? Write it here…",
   qaSend:"📧 Send by email", qaCopy:"📋 Copy",
   qaNote:"Opens your email app — the page and app context are attached automatically. Nothing is ever sent without you.",
@@ -1145,8 +1189,17 @@ he:{
   tipBreach:"מצב חריג/קריטי מופעל כאשר הביצועים המחושבים של האינטרוול יורדים מתחת ליעד הבטיחות המותאם שלכם. הסף מנוהל גלובלית בהגדרות המתקדמות (למשל, כאשר TSF מצטבר יורד מתחת ל־80% או אחוז המענה יורד מתחת ל־85% ביום).",
   applyRec:"החלה", appliedRec:"הוחל ✓",
   editsBadge:"{n} עריכות ידניות · Ctrl+Z לביטול",
-  legOver:"איוש יתר (משובצים > נדרשים)",
+  legScale:"רמת השירות מול היעד שלכם: מעל ← קריטי",
+  legShort:"תת-איוש — פחות משובצים מהנדרש ליעד",
+  legOver:"איוש יתר — יותר מהנדרש ליעד (אחוז המענה לא יהיה 100% — וזה תקין)",
   stateUnder:"תת-איוש", stateOver:"איוש יתר", stateBalanced:"מאוזן",
+  mxTipHead:"{m}: {v} — {src}", mxSrcMeas:"נמדד", mxSrcFc:"חזוי",
+  mxTipBody:"יעד {t}% · משובצים {s} · נדרשים ליעד {r}",
+  mxVerdOverOk:"יותר נציגים מהנדרש ליעד — השירות מעל היעד (100% אינו מציאותי ולא כלכלי).",
+  mxVerdOverLow:"יותר נציגים מהנדרש לפי המודל, אך השירות שנמדד היה מתחת ליעד — בדקו נטישה/היעדרויות בפועל באותו יום.",
+  mxVerdShortOk:"פחות נציגים ממה שהמודל דורש, אך השירות שנמדד עמד ביעד באותו יום.",
+  mxVerdShortLow:"חסרים נציגים ליעד — השירות כאן מתחת ליעד.",
+  mxVerdBalanced:"האיוש תואם את הנדרש ליעד.",
   setPrimary:"מדד יעד מוביל",
   tipPrimary:"קובע את המדד שמולו נמדדים כל הדרישות, כרטיסי ה־KPI, סטטוס העמידה ביעד והתראות המגמה — מהירות מענה (TSF) או שיעור שיחות נענות (אחוז מענה).",
   optTsf:"TSF — מהירות מענה", optAr:"אחוז מענה — קליטת כל שיחה",
@@ -1222,10 +1275,10 @@ he:{
   wfKpiDev:"מדד סטייה חוזית",
   tipWfDev:"מתי: אחוז המשמרות הקיימות ששעת ההתחלה/סיום שלהן שונה משעות הברזל — מודד צורה, לא כמות. בלתי תלוי בניצול: ניצול 100% עם כל המשמרות מוזזות = סטייה גבוהה; ניצול 60% בשעות החוזה המדויקות = סטייה 0.",
   wfTreeTitle:"הקצאת שעות ברזל (Treemap)",
-  tipWfTree:"סך הקיבולת החוזית מפוצל לשעות פרודוקטיביות, סוגי היעדרות ויתרה לא מוקצית. סינון לפי צוות / מיומנות / מוקד למעלה.",
+  tipWfTree:"בסיס הברזל מפוצל ל: שעות משובצות, סוגי היעדרות, סטטוסים לפי נציג מהסידור (כולל 'משמרת ריקה' — נציג שהושאר ריק בכוונה), ו'יתרת ברזל לא-מנוצלת' — שעות חוזיות שאינן מכוסות באף אחד מאלה (יתרת המאגר, לא קשורה לנציגים ספציפיים). סינון לפי צוות / מיומנות / מוקד למעלה.",
   wf_prod:"משובץ בפועל", wf_vacation:"חופשה", wf_miluim:"מילואים", wf_medical:"רפואי",
-  wf_training:"הדרכה", wf_exam:"מבחנים", wf_other:"היעדרות אחרת", wf_unalloc:"לא מוקצה",
-  wfNoStatus:"ללא סטטוס (ריק)",
+  wf_training:"הדרכה", wf_exam:"מבחנים", wf_other:"היעדרות אחרת", wf_unalloc:"יתרת ברזל לא-מנוצלת",
+  wfNoStatus:"משמרת ריקה (ללא סטטוס)",
   wfImpactTitle:"מטריצת חופשות יומית והשפעת SLA",
   tipWfImpact:"סימולציית Erlang A ברקע לכל מיומנות × יום: אחוז המענה לפני ← אחרי הסרת נציג פרודוקטיבי אחד מהפלח. ירוק = אישור חופשה בסיכון נמוך; אדום = קריטי.",
   wfImpactNone:"נדרשים תחזית + סידור עם עמודת מיומנות כדי לסמלץ.",
@@ -1344,6 +1397,18 @@ he:{
   schSortTip:"לחצו למיון; לחיצה נוספת הופכת את הסדר", schFiltN:"מוצגות {v} מתוך {n} משמרות (מסונן)",
   emptyState:"עדיין אין נתונים — גררו קובץ לכל מקום במסך, או טענו מדף הבית.",
   emptyStateBtn:"לדף הבית",
+  covTitle:"כיסוי מיומנויות חובה",
+  tipCov:"לכל כלל, כל אינטרוול בשבוע הנבחר נבדק מול המינימום הנדרש מהמיומנות הזו. פער = אינטרוול שיש בו נציגים אבל מעט מדי מהמיומנות. מודולרי לחלוטין — תור עתידי (דיגיטל, מרפאות) יתחיל להימדד ברגע שהנציגים שלו יופיעו בסידור.",
+  covAddT:"+ הוספת כלל כיסוי", covAdd:"+ הוספה",
+  covPrefL:"יעד", covFromL:"משעה", covToL:"עד שעה",
+  covHint:"מינימום נציגים מהמיומנות הנדרשים בכל אינטרוול (השאירו את חלון השעות ריק ל'כל היום'). היעד הוא רצוי מעבר למינימום.",
+  covEmpty:"עדיין אין כללים — למשל נציג מרפאות אחד לפחות בכל אינטרוול. הוסיפו כלל למטה.",
+  covTarget:"יעד {n}", covAllDay:"כל היום",
+  covHeadGap:"פערים ב-{n}", covHeadOk:"הכל מכוסה ✓",
+  covGaps:"{n} פערים", covFull:"מכוסה במלואו", covWait:"ממתין לנתונים",
+  covWaitNote:"אין עדיין אינטרוולים משובצים שתואמים את חלון הכלל — הכיסוי יופיע ברגע שנציגי התור יופיעו בסידור.",
+  covNoSkill:"בחרו מיומנות קודם.", covBadWin:"שעת הסיום חייבת להיות אחרי שעת ההתחלה.", covAdded:"נוסף כלל כיסוי עבור {s}.",
+  wfTreeTotal:"סה\"כ מוצג: {n} שעות",
   qaTitle:"משוב ודיווח תקלות (QA)", qaPh:"מצאתם באג? מספר נראה מוזר? חסר משהו? כתבו כאן…",
   qaSend:"📧 שליחה במייל", qaCopy:"📋 העתקה",
   qaNote:"נפתחת אפליקציית המייל שלכם — ההקשר (עמוד, נתונים) מצורף אוטומטית. שום דבר לא נשלח בלעדיכם.",
@@ -1758,7 +1823,7 @@ const state={
             primaryMetric:"ar",dayStart:8,dayEnd:18,friEnd:13,
             modelVolume:"ensemble5",modelAht:"ma4",modelMpt:"ma4",mptOverride:false,hcOverride:false,modelUserSet:false,
             autoHolidays:true,autoAnomaly:true,profileMode:"adaptive",
-            holOverride:{},volCal:1,recruitBasis:"all",recruitSkills:[]},
+            holOverride:{},volCal:1,recruitBasis:"all",recruitSkills:[],skillReqs:[]},
   edits:new Set(), undoStack:[], pristine:new Map(),
   volAdj:[],                     // forward-propagated volume edits: {ds,di,tm,factor}
   domFactor:null, cleanClipped:0, // calendar uplift factors + outlier-guard audit count
@@ -2759,6 +2824,10 @@ function renderTreemap(W){
     x+=tw;
   }
   host.innerHTML=`<svg viewBox="0 0 ${w} ${h}" width="100%" role="img">${parts.join("")}</svg>`;
+  // the sum of every square = the pool the tiles are drawn against (iron base, or the
+  // accounted hours when absences+unallocated exceed it). One honest total, no clutter.
+  const totEl=document.getElementById("wfTreeTotal");
+  if(totEl) totEl.textContent=t("wfTreeTotal",{n:Math.round(total).toLocaleString()});
   leg.innerHTML=[
     `<span><i style="background:${WF_COLORS.prod}"></i>${t("wf_prod")}</span>`,
     ...Object.keys(W.absByType).map(k=>`<span><i style="background:${WF_COLORS[k]||"#999"}"></i>${t("wf_"+k)}</span>`),
@@ -2980,6 +3049,173 @@ function populateWfFilters(){
       +wfFilterValues(key).map(v=>`<option${v===cur?" selected":""}>${v}</option>`).join("");
   });
 }
+/* ============================================================
+   MANDATORY SKILL COVERAGE — minimum agents of a skill per interval.
+   Reads state.rosterCapSkill (per-interval distinct reps by skill). The
+   0-vs-null distinction is the whole point: 0 = interval is scheduled but
+   short this skill (a real GAP); null = interval isn't in the schedule at
+   all (nothing to judge → "waiting for data", the future-queue case).
+   Rules live in settings.skillReqs so they persist and cost no data weight.
+   ============================================================ */
+function skillCountAt(ds,di,tm,skill){
+  const rcs=state.rosterCapSkill||{};
+  const dk=ds+"|"+tm;
+  if(rcs[dk]) return rcs[dk][skill]||0;
+  if(state.rosterDates&&state.rosterDates.has(ds)) return 0; // dated day covered, skill absent here
+  const wk=di+"|"+tm;
+  if(rcs[wk]) return rcs[wk][skill]||0;
+  if(state.rosterDays&&state.rosterDays.has(String(di))) return 0;
+  return null; // this interval isn't scheduled at all
+}
+function covRuleText(r){
+  return "≥"+r.min+(r.pref>r.min?" · "+t("covTarget",{n:r.pref}):"")
+    +" · "+((r.from&&r.to)?r.from+"–"+r.to:t("covAllDay"));
+}
+/* the roster's ACTUAL interval times per date in the week — NOT the fixed 8–18
+   planning grid. This is what lets an evening rule (18:00–20:00) see the evening
+   shifts the sidur really has; any window the user sets is honored against real data. */
+function weekRosterIntervals(){
+  const wk=wfWeek(); if(!wk) return null;
+  const dates=weekDates(wk);
+  const map={}; dates.forEach(ds=>map[ds]=new Set());
+  for(const k of state.rosterCap.keys()){
+    const ds=k.slice(0,10), tm=k.slice(11);
+    if(map[ds]&&tm) map[ds].add(tm);
+  }
+  for(const k of state.rosterCapWeekly.keys()){
+    const i=k.indexOf("|"), d=k.slice(0,i), tm=k.slice(i+1);
+    const ds=dates[+d]; if(ds!=null&&tm) map[ds].add(tm);
+  }
+  return {dates,map};
+}
+function computeCoverage(r,wri){
+  wri=wri||weekRosterIntervals(); if(!wri) return null;
+  const {dates,map}=wri;
+  const inWin=tm=>(!r.from||tm>=r.from)&&(!r.to||tm<r.to);
+  const cells=[]; let met=0,pref=0,breaches=0,worst=0,dataCells=0;
+  dates.forEach((ds,di)=>{
+    for(const tm of [...map[ds]].filter(inWin).sort()){
+      const c=skillCountAt(ds,di,tm,r.skill); // interval exists in the roster → a number (≥0)
+      dataCells++;
+      let status;
+      if(c>=r.min){ met++; if(!r.pref||r.pref<=r.min||c>=r.pref){ pref++; status="good"; } else status="warn"; }
+      else{ breaches++; worst=Math.max(worst,r.min-c); status="bad"; }
+      cells.push({ds,di,tm,count:c,status});
+    }
+  });
+  return {cells,met,pref,breaches,worst,dataCells,hasData:dataCells>0};
+}
+function populateCovSkill(){
+  const sel=document.getElementById("covSkill"); if(!sel) return;
+  const cur=sel.value, sk=state.skillList||[];
+  sel.innerHTML=sk.map(s=>`<option>${s.replace(/</g,"&lt;")}</option>`).join("");
+  if(sk.includes(cur)) sel.value=cur;
+}
+function renderSkillCoverage(){
+  const card=document.getElementById("wfCovCard"), list=document.getElementById("wfCovList");
+  if(!card||!list) return;
+  const skills=state.skillList||[];
+  // gate on skill data — the whole feature is meaningless without a skill column
+  card.style.display=skills.length?"block":"none";
+  if(!skills.length) return;
+  populateCovSkill();
+  const reqs=state.settings.skillReqs||[];
+  const head=document.getElementById("wfCovHead");
+  list.innerHTML="";
+  if(!reqs.length){
+    list.innerHTML=`<p class="mini">${t("covEmpty")}</p>`;
+    if(head) head.textContent=t("covTitle");
+    return;
+  }
+  // compute once; sort worst-first so exposure floats to the top (3-second read)
+  const wri=weekRosterIntervals();
+  const rows=reqs.map((r,i)=>({r,i,cov:computeCoverage(r,wri)}))
+    .sort((a,b)=>(b.cov?b.cov.breaches:0)-(a.cov?a.cov.breaches:0));
+  const totalBreaches=rows.reduce((s,x)=>s+(x.cov?x.cov.breaches:0),0);
+  const rulesWithGaps=rows.filter(x=>x.cov&&x.cov.breaches>0).length;
+  if(head) head.textContent=t("covTitle")+" — "+(totalBreaches
+    ? t("covHeadGap",{n:rulesWithGaps}) : t("covHeadOk"));
+  if(head) head.style.color=totalBreaches?"var(--crimson)":"var(--emerald)";
+  const dayNames=t("days");
+  rows.forEach(({r,i,cov})=>{
+    const det=document.createElement("details");
+    det.style.cssText="border:1px solid var(--border);border-radius:8px;padding:4px 10px;margin:5px 0";
+    const sum=document.createElement("summary");
+    sum.style.cssText="cursor:pointer;display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:.82rem;list-style:none";
+    const pctMet=cov&&cov.dataCells?Math.round((cov.met/cov.dataCells)*100):null;
+    const tier=!cov||!cov.hasData?"nodata":(cov.breaches>0?"bad":(cov.pref<cov.dataCells?"warn":"good"));
+    const tcol=tier==="good"?"#0f6a3f":tier==="warn"?"#c58a1a":tier==="bad"?"#b3271e":"#6b7c90";
+    const statusLabel=!cov||!cov.hasData?"⏳ "+t("covWait")
+      :(cov.breaches>0?"⚠ "+t("covGaps",{n:cov.breaches}):"✓ "+t("covFull"));
+    sum.innerHTML=
+      `<span style="display:inline-flex;align-items:center;gap:5px;min-width:120px;font-weight:700">
+         <i style="width:10px;height:10px;border-radius:50%;background:${skillColor(r.skill)};flex:none"></i>${r.skill.replace(/^נציג /,"")}</span>
+       <span class="mini" style="min-width:150px">${covRuleText(r)}</span>
+       <span class="kpibar" style="flex:1;min-width:90px;max-width:200px"><i style="width:${pctMet==null?0:Math.max(3,pctMet)}%;background:${tcol}"></i></span>
+       <span style="min-width:92px;font-weight:600;color:${tcol}">${statusLabel}</span>`;
+    const acts=document.createElement("span");
+    acts.style.cssText="display:inline-flex;gap:4px;margin-inline-start:auto";
+    const ed=document.createElement("button"); ed.className="linklike"; ed.textContent="✎"; ed.title=t("cmEdit");
+    ed.addEventListener("click",e=>{ e.preventDefault(); e.stopPropagation();
+      document.getElementById("covSkill").value=r.skill;
+      document.getElementById("covMin").value=r.min;
+      document.getElementById("covPref").value=r.pref||0;
+      document.getElementById("covFrom").value=r.from||"";
+      document.getElementById("covTo").value=r.to||"";
+      state.settings.skillReqs.splice(i,1); saveState();
+      document.getElementById("wfCovAdd").open=true; renderSkillCoverage();
+    });
+    const del=document.createElement("button"); del.className="xbtn"; del.textContent="✕";
+    del.addEventListener("click",e=>{ e.preventDefault(); e.stopPropagation();
+      state.settings.skillReqs.splice(i,1); saveState(); renderSkillCoverage(); });
+    acts.appendChild(ed); acts.appendChild(del); sum.appendChild(acts);
+    det.appendChild(sum);
+    // expand → the exact intervals × days heat grid (same mental model as the matrix)
+    const wrap=document.createElement("div"); wrap.className="tablewrap"; wrap.style.marginTop="6px";
+    if(!cov||!cov.hasData){
+      const pnote=document.createElement("p"); pnote.className="mini"; pnote.textContent=t("covWaitNote");
+      det.appendChild(pnote);
+    }else{
+      const times=[...new Set(cov.cells.map(c=>c.tm))].sort();
+      const dds=[...new Set(cov.cells.map(c=>c.ds))].sort();
+      const byKey={}; cov.cells.forEach(c=>byKey[c.ds+"|"+c.tm]=c);
+      const tbl=document.createElement("table");
+      const hr=document.createElement("tr"); hr.appendChild(th(t("thInterval")));
+      dds.forEach(ds=>hr.appendChild(th(dayNames[fromISO(ds).getDay()])));
+      const thead=document.createElement("thead"); thead.appendChild(hr); tbl.appendChild(thead);
+      const tb=document.createElement("tbody");
+      times.forEach(tm=>{
+        const tr=document.createElement("tr");
+        const tht=document.createElement("th"); tht.textContent=tm; tr.appendChild(tht);
+        dds.forEach(ds=>{
+          const c=byKey[ds+"|"+tm]; const td=document.createElement("td");
+          if(!c||c.status==="nodata"){ td.className="nodata"; td.textContent="·"; }
+          else{ td.className=c.status==="good"?"tier-good":c.status==="warn"?"tier-near":"tier-bad";
+            td.textContent=c.count; }
+          tr.appendChild(td);
+        });
+        tb.appendChild(tr);
+      });
+      tbl.appendChild(tb); wrap.appendChild(tbl); det.appendChild(wrap);
+    }
+    list.appendChild(det);
+  });
+}
+document.getElementById("covAdd").addEventListener("click",()=>{
+  const skill=document.getElementById("covSkill").value;
+  const min=Math.max(1,+document.getElementById("covMin").value||1);
+  const pref=Math.max(0,+document.getElementById("covPref").value||0);
+  const from=document.getElementById("covFrom").value||"";
+  const to=document.getElementById("covTo").value||"";
+  if(!skill){ showToast("⚠ "+t("covNoSkill"),false); return; }
+  if(from&&to&&to<=from){ showToast("⚠ "+t("covBadWin"),false); return; }
+  (state.settings.skillReqs=state.settings.skillReqs||[]).push({skill,min,pref,from,to});
+  saveState(); renderSkillCoverage();
+  // clear the rule-specific fields so the next rule can't silently inherit a window
+  document.getElementById("covFrom").value=""; document.getElementById("covTo").value="";
+  document.getElementById("covPref").value="0";
+  showToast("✅ "+t("covAdded",{s:skill}),true);
+});
 function renderWorkforce(){
   if(!document.getElementById("wfKpiUtil")) return;
   ensureEmptyState("workforce");
@@ -3014,6 +3250,7 @@ function renderWorkforce(){
   if(W.tot>0){ const d2=W.dev/W.tot; setKpiBar("wfKpiDev",Math.min(1,d2),d2<=0.15?"good":d2<=0.3?"warn":"bad"); }
   renderTreemap(W);
   renderImpactMatrix();
+  renderSkillCoverage();
   renderValidation();
   renderInternalRoster();
 }
@@ -4906,8 +5143,18 @@ function renderMatrix(){
           ub.addEventListener("click",e=>{ e.stopPropagation(); revertCell(ds,tm); });
           td.querySelector(".v").appendChild(ub);
         }
-        const stateLbl=short?t("stateUnder"):(over?t("stateOver"):t("stateBalanced"));
-        td.title=`${stateLbl} | ${t("tipVolume")}: ${row.rec.volume} | ${t("tipAht")}: ${fmtSec(row.rec.aht)} | ${t("tipSched")}: ${row.sched} | ${t("tipReq")}: ${row.reqEff}`;
+        // plain-language tooltip: the % is SERVICE (measured on history, forecast ahead);
+        // the dot/square is a BODY-count vs the model's requirement for the target — two
+        // different questions that can legitimately diverge, esp. on measured days.
+        const tgt=state.settings.target;
+        const meets=v*100>=tgt;
+        const measured=c&&!c.forecast;
+        const mName=state.metric==="tsf"?("TSF "+state.settings.tsfT):t("metricAr");
+        const verd=over?(meets?t("mxVerdOverOk"):t("mxVerdOverLow"))
+          :short?(meets?t("mxVerdShortOk"):t("mxVerdShortLow"))
+          :t("mxVerdBalanced");
+        td.title=t("mxTipHead",{m:mName,v:pct(v),src:t(measured?"mxSrcMeas":"mxSrcFc")})+"\n"
+          +t("mxTipBody",{t:tgt,s:row.sched,r:row.reqEff})+"\n"+verd;
         td.addEventListener("click",e=>openEditor(e,ds,tm,di));
       }
       tr.appendChild(td);
@@ -5764,6 +6011,7 @@ function loadState(){
     // migration: single-skill recruit filter became a combination array
     if(!Array.isArray(state.settings.recruitSkills))
       state.settings.recruitSkills=state.settings.recruitSkill?[state.settings.recruitSkill]:[];
+    if(!Array.isArray(state.settings.skillReqs)) state.settings.skillReqs=[];
     // migration: an early build seeded Av|9=work as an override — it is now the
     // table default, so drop it (otherwise it shows a permanent "changed" tag)
     if(state.settings.holOverride["Av|9"]==="work") delete state.settings.holOverride["Av|9"];
