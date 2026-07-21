@@ -153,6 +153,14 @@ table,.kpi .n,.num,.sub{font-variant-numeric:tabular-nums}
 /* micro target-bar under a KPI: fill = level, color = threshold status */
 .kpibar{height:4px;border-radius:2px;background:var(--sky-soft);margin:5px 0 1px;position:relative;direction:ltr;overflow:hidden}
 .kpibar>i{position:absolute;top:0;bottom:0;left:0;border-radius:2px;transition:width .3s}
+/* range sliders adopt the brand color everywhere (consistent with the app) */
+input[type=range]{accent-color:var(--navy);cursor:pointer}
+#whatIfCard .num{font-weight:700;color:var(--navy);text-align:end}
+/* Recruitment flow: KPI snapshot → What-If simulator (the hero) → supporting detail.
+   CSS order (not a DOM move) keeps the markup untouched; only the recruit page turns flex. */
+#page-recruit.active{display:flex;flex-direction:column}
+#page-recruit>.kpis:first-of-type{order:-2}
+#whatIfCard{order:-1}
 /* coverage rule rows: clean flex summary with an expand chevron affordance */
 #wfCovList summary::-webkit-details-marker{display:none}
 #wfCovList summary::after{content:"▾";margin-inline-start:4px;color:var(--muted);font-size:.7rem;transition:transform .2s;flex:none}
@@ -423,6 +431,28 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
     <div class="card">
       <h2 data-i18n="trajTitle">Trajectory Insights</h2>
       <ul class="plain" id="trajList"></ul>
+    </div>
+    <!-- Improvement simulator: drag the levers, watch the projected service level and
+         the DATE you reach the target move live. Non-destructive — never touches real settings. -->
+    <div class="card" id="whatIfCard">
+      <h2><span data-i18n="wiTitle">Improvement Simulator (What-If)</span> <span class="info" data-tipkey="tipWi" tabindex="0">i</span></h2>
+      <div class="grid2" style="align-items:center">
+        <div>
+          <!-- every slider is an IMPROVEMENT: right = better. 0 = today's baseline. -->
+          <div style="display:grid;grid-template-columns:auto 1fr auto;gap:9px 12px;align-items:center;max-width:480px">
+            <label class="mini" data-i18n="wiAht">Shorter handle time</label><input type="range" id="wiAht" min="0" max="30" step="1" value="0"><span class="num" id="wiAhtV"></span>
+            <label class="mini" data-i18n="wiAttr">Less attrition</label><input type="range" id="wiAttr" min="0" max="100" step="5" value="0"><span class="num" id="wiAttrV"></span>
+            <label class="mini" data-i18n="wiShrink">Less unavailable time</label><input type="range" id="wiShrink" min="0" max="100" step="5" value="0"><span class="num" id="wiShrinkV"></span>
+            <label class="mini" data-i18n="wiAbsence">Fewer no-shows</label><input type="range" id="wiAbsence" min="0" max="100" step="5" value="0"><span class="num" id="wiAbsenceV"></span>
+          </div>
+          <p class="mini" data-i18n="wiAgentsNote" style="margin-top:6px">➕ Extra agents come from your Courses &amp; What-If profiles below.</p>
+          <button class="linklike" id="wiReset" style="margin-top:4px" data-i18n="wiReset">↺ Back to current</button>
+        </div>
+        <div>
+          <div id="wiHero" style="text-align:center;margin-bottom:6px;direction:ltr"></div>
+          <div id="wiChart"></div>
+        </div>
+      </div>
     </div>
     <div class="grid2">
       <div class="card">
@@ -1057,7 +1087,16 @@ en:{
   qaNote:"Opens your email app — the page and app context are attached automatically. Nothing is ever sent without you.",
   qaSubject:"WFM Simulator — QA feedback", qaEmpty:"Write something first 🙂", qaCopied:"Copied — paste it anywhere.",
   trajNoData:"Load a forecast and set headcount to unlock predictive trajectory insights.",
-  injTitle:"Recruitment Simulation (What-If)", injProfile:"Shift profile",
+  wiTitle:"Improvement Simulator (What-If)",
+  tipWi:"Drag any mix of levers — they move the whole curve up or down immediately, so you see where service lands and WHEN you'd hit the target. Headcount still evolves over time: courses graduate on their dates, attrition erodes, and What-If profiles add capacity (that's the only source of extra agents — no phantom number). Notes: handle time drives productivity — cutting it is the productivity lever; 'unavailable time' is shrinkage; 'absence' is no-shows. It's a sandbox — never changes your real settings.",
+  cohEditTip:"Click to edit this course",
+  wiZeroBase:"This is 0 in Advanced Settings — nothing to reduce. Set a value there to model reducing it.",
+  wiAht:"Shorter handle time", wiAttr:"Less attrition", wiShrink:"Less unavailable time", wiAbsence:"Fewer no-shows",
+  wiAgentsNote:"➕ Extra agents come from your Courses & Staffing profiles below.",
+  wiReset:"↺ Back to current",
+  wiTargetN:"target {t}", wiTargetTick:"target {t}", wiWk:"w",
+  wiAlready:"already at target", wiUnreach:"not reached within 6 months", wiBy:"reached by {d}",
+  injTitle:"Staffing Profiles — feeds the simulator", injProfile:"Shift profile",
   profStudent:"Student Afternoon — 12:00–17:00, Sun–Thu",
   profMorning:"Full-Time Morning — 08:00–13:00, Sun–Fri",
   profFull:"Full-Time — 08:00–17:00, Sun–Thu", profCustom:"Custom per-day profile…",
@@ -1414,7 +1453,16 @@ he:{
   qaNote:"נפתחת אפליקציית המייל שלכם — ההקשר (עמוד, נתונים) מצורף אוטומטית. שום דבר לא נשלח בלעדיכם.",
   qaSubject:"סימולטור WFM — משוב QA", qaEmpty:"כתבו משהו קודם 🙂", qaCopied:"הועתק — הדביקו בכל מקום.",
   trajNoData:"טענו תחזית והגדירו מצבה כדי לקבל תובנות מגמה חזויות.",
-  injTitle:"סימולציית גיוס עובדים (What-If)", injProfile:"פרופיל משמרת",
+  wiTitle:"סימולטור שיפורים (What-If)",
+  tipWi:"הזיזו כל שילוב של מנופים — הם מזיזים את כל העקומה מעלה או מטה מיד, כך שתראו לאן מגיעה רמת השירות ומתי תעמדו ביעד. המצבה עדיין מתפתחת עם הזמן: קורסים מסיימים במועדם, נטישה שוחקת, ופרופילי ה-What-If מוסיפים כוח אדם (זה המקור היחיד לתוספת נציגים — לא מספר מדומה). הבהרות: משך השיחה קובע את הפריון — קיצורו הוא מנוף הפריון; 'זמן לא-זמין' הוא שחיקה; 'היעדרות' היא הברזות. זו סביבת ניסוי בלבד — אינה משנה את ההגדרות האמיתיות שלכם.",
+  cohEditTip:"לחצו לעריכת הקורס",
+  wiZeroBase:"הערך 0 בהגדרות מתקדמות — אין מה להפחית. הגדירו ערך שם כדי לדמות הפחתה.",
+  wiAht:"קיצור משך שיחה", wiAttr:"הפחתת נטישה", wiShrink:"הפחתת זמן לא-זמין", wiAbsence:"הפחתת הברזות",
+  wiAgentsNote:"➕ תוספת נציגים מגיעה מהקורסים ומפרופילי האיוש שמתחת.",
+  wiReset:"↺ חזרה למצב הנוכחי",
+  wiTargetN:"יעד {t}", wiTargetTick:"יעד {t}", wiWk:"שב'",
+  wiAlready:"כבר עומדים ביעד", wiUnreach:"לא יושג בחצי השנה הקרובה", wiBy:"יושג עד {d}",
+  injTitle:"פרופילי איוש — מזינים את הסימולטור", injProfile:"פרופיל משמרת",
   profStudent:"סטודנטים אחה\"צ — 12:00–17:00, א'–ה'",
   profMorning:"משרה מלאה בוקר — 08:00–13:00, א'–ו'",
   profFull:"משרה מלאה — 08:00–17:00, א'–ה'", profCustom:"פרופיל מותאם לפי יום…",
@@ -5572,6 +5620,136 @@ function weightedTSF(scale){
   }
   return vol?acc/vol:null;
 }
+/* ============================================================
+   WHAT-IF IMPROVEMENT SIMULATOR — drag the levers, see the projected
+   service level and the DATE the target is reached. Reuses the exact
+   matrix math (evalInterval) with parametrized effective-agent share +
+   an AHT multiplier. Non-destructive: never mutates state.settings.
+   ============================================================ */
+const WI_WEEKS=26; // horizon
+let _wiTouched=false; // once the user drags a slider, stop auto-syncing to real settings
+function projMetric(scale,ahtMul,effShare){
+  if(!state.maxDate) return null;
+  const sun=sundayOf(state.maxDate);
+  let vol=0,acc=0;
+  for(const ds of weekDates(sun)){
+    const sd=state.days.get(ds); if(!sd) continue;
+    const dayIdx=fromISO(ds).getDay();
+    for(const [tm,rec] of sd){
+      const agents=Math.round((capacityFor(ds,dayIdx,tm,rec)+injectionAgents(dayIdx,tm))*scale*effShare);
+      const p=evalInterval(rec.volume,Math.max(1,rec.aht*ahtMul),agents,state.settings,rec.mpt);
+      vol+=rec.volume; acc+=primVal(p)*rec.volume;
+    }
+  }
+  return vol?acc/vol:null;
+}
+function whatIfCurve(wi){
+  // wi holds IMPROVEMENT percentages (0 = no change). Attrition/shrinkage/absence are
+  // reductions OF the current setting; handle time is a % cut. Agents come only from the
+  // real pipeline (courses graduate; what-if profiles add per-interval in projMetric).
+  const S=state.settings, base=Math.max(1,S.headcount||1), calib=state.calib||1;
+  const tgt=S.target/100, today=iso(new Date());
+  const curve=[]; let meetWeek=null;
+  // improvements apply IMMEDIATELY (they move the whole curve up/down as you drag);
+  // only headcount evolves over time — courses graduate on their dates, attrition erodes.
+  const shrink=S.shrinkage*(1-wi.shrinkCut/100);
+  const absence=S.absence*(1-wi.absCut/100);
+  const attr=S.attrition*(1-wi.attrCut/100);
+  const effShare=Math.max(0.05,(1-shrink/100)*(1-absence/100)*calib);
+  const ahtMul=1-wi.ahtCut/100;
+  for(let w=0;w<=WI_WEEKS;w++){
+    const day=w*7;
+    const grads=state.cohorts.filter(c=>cohortFloorDate(c)<=addDays(today,day)).reduce((a,c)=>a+cohortEffective(c),0);
+    const hc=base*(1-attr/100*(day/30))+grads;   // courses + reduced attrition; profiles handled in projMetric
+    const m=projMetric(hc/base,ahtMul,effShare);
+    curve.push({w,m,date:addDays(today,day)});
+    if(meetWeek==null&&m!=null&&m>=tgt) meetWeek=w;
+  }
+  // "now" is the curve's own week-0 point — the hero and the chart start can never disagree
+  return {curve,now:curve[0].m,end:curve[WI_WEEKS].m,meetWeek,tgt,today};
+}
+function whatIfSyncSliders(){
+  ["wiAht","wiAttr","wiShrink","wiAbsence"].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=0; });
+}
+let _wiRaf=0;
+function whatIfRun(){
+  const card=document.getElementById("whatIfCard"); if(!card) return;
+  if(!state.days.size||!state.maxDate){ card.style.display="none"; return; }
+  card.style.display="block";
+  const val=id=>+(document.getElementById(id)||{}).value||0;
+  const wi={ahtCut:val("wiAht"),attrCut:val("wiAttr"),shrinkCut:val("wiShrink"),absCut:val("wiAbsence")};
+  // current volume-weighted AHT so the handle-time lever can show its resulting value
+  let vw=0,va=0; { const sun=sundayOf(state.maxDate);
+    for(const ds of weekDates(sun)){ const sd=state.days.get(ds); if(!sd) continue;
+      for(const [,rec] of sd){ vw+=rec.volume; va+=rec.aht*rec.volume; } } }
+  const avgAht=vw?va/vw:0;
+  const S=state.settings;
+  const trim=n=>(Math.round(n*10)/10).toString().replace(/\.0$/,"");
+  // each lever shows the RESULTING absolute value (bold) + the improvement delta (muted)
+  const rows=[
+    ["wiAht",wi.ahtCut,fmtSec(avgAht*(1-wi.ahtCut/100))],
+    ["wiAttr",wi.attrCut,trim(S.attrition*(1-wi.attrCut/100))+"%"],
+    ["wiShrink",wi.shrinkCut,trim(S.shrinkage*(1-wi.shrinkCut/100))+"%"],
+    ["wiAbsence",wi.absCut,trim(S.absence*(1-wi.absCut/100))+"%"]];
+  rows.forEach(([id,delta,abs])=>{ const el=document.getElementById(id+"V");
+    if(el) el.innerHTML=`<b>${abs}</b>${delta?` <span style="opacity:.55;font-size:.85em">−${delta}%</span>`:""}`; });
+  // a "reduce X" slider is meaningless when X is already 0 — disable it so a dead
+  // control never reads as a broken one, and point to where to set the value
+  [["wiAttr",S.attrition],["wiShrink",S.shrinkage],["wiAbsence",S.absence]].forEach(([id,base])=>{
+    const el=document.getElementById(id); if(!el) return;
+    const dead=!(base>0);
+    el.disabled=dead; el.title=dead?t("wiZeroBase"):"";
+    const lab=document.querySelector(`[data-i18n=${id}]`); if(lab) lab.style.opacity=dead?".5":"1";
+  });
+  const res=whatIfCurve(wi);
+  renderWhatIfOut(res);
+}
+function whatIfRunDebounced(){ cancelAnimationFrame(_wiRaf); _wiRaf=requestAnimationFrame(whatIfRun); }
+function renderWhatIfOut(res){
+  const hero=document.getElementById("wiHero"), chart=document.getElementById("wiChart");
+  if(!hero||!res) return;
+  const nowP=res.now==null?null:res.now*100, endP=res.end==null?null:res.end*100, tgtP=res.tgt*100;
+  const col=v=>v>=tgtP?"#0f6a3f":v>=tgtP-5?"#c58a1a":"#b3271e";
+  // WHEN — the headline a manager acts on
+  let when,whenCol;
+  if(res.meetWeek===0){ when=t("wiAlready"); whenCol="#0f6a3f"; }
+  else if(res.meetWeek==null){ when=t("wiUnreach"); whenCol="#b3271e"; }
+  else{ when=t("wiBy",{d:fmtD(addDays(res.today,res.meetWeek*7))}); whenCol="#0f6a3f"; }
+  // the metric NAME is the unit — show the value in it, not as a bare percent sign
+  const nn=nowP==null?"—":Math.round(nowP), en=endP==null?"—":Math.round(endP);
+  hero.innerHTML=
+    `<div class="mini" style="font-weight:700;letter-spacing:.02em">${primName()}</div>
+     <div style="font-size:1.3rem;font-weight:800">
+       <span style="color:${col(nowP)}">${nn}</span>
+       <span style="color:var(--muted);margin:0 8px;font-size:1rem">→</span>
+       <span style="color:${col(endP)}">${en}</span></div>
+     <div style="font-size:.86rem;font-weight:600;color:${whenCol};margin-top:3px">🎯 ${t("wiTargetN",{t:Math.round(tgtP)})} · ${when}</div>`;
+  // curve: weeks → metric, gradient area, dashed target line, crossing marker
+  if(chart){
+    // generous margins so nothing clips: room for the target label (top-right) and the
+    // date ticks (bottom). ticks span the WHOLE lifetime, not just the crossing week.
+    // top band reserved for the target caption; side/bottom margins keep every label clear
+    const w=460,h=124,pl=16,pr=16,pt=22,pb=22;
+    const vals=res.curve.map(c=>c.m==null?null:c.m*100).filter(v=>v!=null);
+    const lo=Math.max(0,Math.min(tgtP,...vals)-6), hi=Math.min(100,Math.max(tgtP,...vals)+4), span=(hi-lo)||1;
+    const X=i=>pl+i*(w-pl-pr)/WI_WEEKS, Y=v=>pt+(h-pt-pb)*(1-(v-lo)/span);
+    const pts=res.curve.map((c,i)=>c.m==null?null:[X(i),Y(c.m*100)]).filter(Boolean);
+    const line=pts.map(q=>q[0].toFixed(1)+","+q[1].toFixed(1)).join(" ");
+    const cross=res.meetWeek!=null&&res.meetWeek>0?X(res.meetWeek):null;
+    const ticks=[0,7,13,20,26].map(wk=>({x:X(wk),lab:fmtD(addDays(res.today,wk*7)).slice(0,5)}));
+    chart.innerHTML=`<svg viewBox="0 0 ${w} ${h}" width="100%" role="img">
+      <defs><linearGradient id="wiGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#2c7fb8" stop-opacity=".26"></stop><stop offset="1" stop-color="#2c7fb8" stop-opacity="0"></stop></linearGradient></defs>
+      <text x="${w-pr}" y="11" text-anchor="end" font-size="9" font-weight="600" fill="#0f6a3f">— ${t("wiTargetTick",{t:Math.round(tgtP)})}</text>
+      <line x1="${pl}" y1="${Y(tgtP)}" x2="${w-pr}" y2="${Y(tgtP)}" stroke="#0f6a3f" stroke-width="1" stroke-dasharray="4,3"></line>
+      <polygon points="${pl},${h-pb} ${line} ${w-pr},${h-pb}" fill="url(#wiGrad)"></polygon>
+      <polyline points="${line}" fill="none" stroke="#2c7fb8" stroke-width="2" stroke-linejoin="round"></polyline>
+      ${cross!=null?`<line x1="${cross.toFixed(1)}" y1="${pt}" x2="${cross.toFixed(1)}" y2="${h-pb}" stroke="#0f6a3f" stroke-width="1" stroke-dasharray="3,3"></line>
+        <circle cx="${cross.toFixed(1)}" cy="${Y(res.tgt*100).toFixed(1)}" r="3.5" fill="#0f6a3f"></circle>`:""}
+      ${ticks.map((tk,i)=>`<text x="${tk.x.toFixed(1)}" y="${h-6}" text-anchor="${i===0?"start":i===ticks.length-1?"end":"middle"}" font-size="8" fill="#6b7c90">${tk.lab}</text>`).join("")}
+    </svg>`;
+  }
+}
 function computeTrajectory(base,skillF){
   const S=state.settings;
   const hc=(base>0)?base:S.headcount;
@@ -5868,6 +6046,9 @@ function renderRecruit(){
   }else{ g3v.textContent="—"; g3.innerHTML=""; document.getElementById("spark3c").innerHTML=""; }
 
   renderOutlook(plan);
+  // What-If: keep sliders synced to real settings until the user takes over, then recompute
+  if(!_wiTouched) whatIfSyncSliders();
+  whatIfRun();
 
   const il=document.getElementById("injList"); il.innerHTML="";
   if(!state.injections.length){ const li=document.createElement("li"); li.textContent=t("injNone"); il.appendChild(li); }
@@ -5893,11 +6074,23 @@ function renderRecruit(){
     [...state.cohorts.entries()].sort((x,y)=>cohortFloorDate(x[1])<cohortFloorDate(y[1])?-1:1)
       .forEach(([i,c])=>{
       const tr=document.createElement("tr");
+      // click a course row to edit it — same gesture as clicking a cell on Date Trends
+      tr.style.cursor="pointer"; tr.title=t("cohEditTip");
+      tr.addEventListener("click",()=>{
+        document.getElementById("cohName").value=c.name;
+        document.getElementById("cohCount").value=c.count;
+        document.getElementById("cohDate").value=c.start;
+        document.getElementById("cohDur").value=c.duration;
+        document.getElementById("cohYield").value=c.yield;
+        const cs=document.getElementById("cohSkill"); if(cs&&c.skill!=null) cs.value=c.skill;
+        state.cohorts.splice(i,1); state.fcCache.clear(); renderAll();
+        document.getElementById("cohName").focus();
+      });
       [c.name,c.count,c.yield+"%",fmtD(cohortFloorDate(c)),Math.round(cohortEffective(c))].forEach(v=>{
         const td=document.createElement("td"); td.textContent=v; tr.appendChild(td); });
       const tdx=document.createElement("td");
       const x=document.createElement("button"); x.className="xbtn"; x.textContent="✕";
-      x.addEventListener("click",()=>{ state.cohorts.splice(i,1); state.fcCache.clear(); renderAll(); }); // course change scales forecast agents
+      x.addEventListener("click",e=>{ e.stopPropagation(); state.cohorts.splice(i,1); state.fcCache.clear(); renderAll(); });
       tdx.appendChild(x); tr.appendChild(tdx);
       b.appendChild(tr);
     });
@@ -6675,6 +6868,13 @@ document.getElementById("injGo").addEventListener("click",()=>{
   state.injections.push({profile:p,count,windows:windows.map(w=>({...w}))});
   renderAll();
 });
+
+/* What-If simulator wiring — sliders drive a live, non-destructive projection */
+["wiHires","wiAht","wiAttr","wiShrink","wiAbsence"].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el) el.addEventListener("input",()=>{ _wiTouched=true; whatIfRunDebounced(); });
+});
+document.getElementById("wiReset").addEventListener("click",()=>{ _wiTouched=false; whatIfSyncSliders(); whatIfRun(); });
 
 /* Course Gantt ingestion — deliberately forgiving: fuzzy headers (HE/EN), any date
    format via normDateAny, duration from end-date or days column, sane defaults */
