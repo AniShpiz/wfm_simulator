@@ -485,6 +485,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
       <div class="card">
         <h2><span data-i18n="wfTreeTitle">Iron Hours Allocation (Treemap)</span> <span class="info" data-tipkey="tipWfTree" tabindex="0">i</span></h2>
         <div id="wfTreemap" style="direction:ltr"></div>
+        <p class="mini" id="wfTreeTotal" style="text-align:center;margin-top:4px"></p>
         <div class="legend" id="wfTreeLegend"></div>
       </div>
       <div class="card" id="wfImpactCard">
@@ -1043,6 +1044,7 @@ en:{
   covGaps:"{n} gaps", covFull:"fully covered", covWait:"waiting for data",
   covWaitNote:"No scheduled intervals match this rule's window yet — coverage will appear once that queue's agents are in the roster.",
   covNoSkill:"Pick a skill first.", covBadWin:"End time must be after start.", covAdded:"Coverage rule added for {s}.",
+  wfTreeTotal:"Total shown: {n} h",
   qaTitle:"QA & Feedback", qaPh:"Found a bug? Numbers look off? Missing something? Write it here…",
   qaSend:"📧 Send by email", qaCopy:"📋 Copy",
   qaNote:"Opens your email app — the page and app context are attached automatically. Nothing is ever sent without you.",
@@ -1390,6 +1392,7 @@ he:{
   covGaps:"{n} פערים", covFull:"מכוסה במלואו", covWait:"ממתין לנתונים",
   covWaitNote:"אין עדיין אינטרוולים משובצים שתואמים את חלון הכלל — הכיסוי יופיע ברגע שנציגי התור יופיעו בסידור.",
   covNoSkill:"בחרו מיומנות קודם.", covBadWin:"שעת הסיום חייבת להיות אחרי שעת ההתחלה.", covAdded:"נוסף כלל כיסוי עבור {s}.",
+  wfTreeTotal:"סה\"כ מוצג: {n} שעות",
   qaTitle:"משוב ודיווח תקלות (QA)", qaPh:"מצאתם באג? מספר נראה מוזר? חסר משהו? כתבו כאן…",
   qaSend:"📧 שליחה במייל", qaCopy:"📋 העתקה",
   qaNote:"נפתחת אפליקציית המייל שלכם — ההקשר (עמוד, נתונים) מצורף אוטומטית. שום דבר לא נשלח בלעדיכם.",
@@ -2805,6 +2808,10 @@ function renderTreemap(W){
     x+=tw;
   }
   host.innerHTML=`<svg viewBox="0 0 ${w} ${h}" width="100%" role="img">${parts.join("")}</svg>`;
+  // the sum of every square = the pool the tiles are drawn against (iron base, or the
+  // accounted hours when absences+unallocated exceed it). One honest total, no clutter.
+  const totEl=document.getElementById("wfTreeTotal");
+  if(totEl) totEl.textContent=t("wfTreeTotal",{n:Math.round(total).toLocaleString()});
   leg.innerHTML=[
     `<span><i style="background:${WF_COLORS.prod}"></i>${t("wf_prod")}</span>`,
     ...Object.keys(W.absByType).map(k=>`<span><i style="background:${WF_COLORS[k]||"#999"}"></i>${t("wf_"+k)}</span>`),
@@ -3048,21 +3055,35 @@ function covRuleText(r){
   return "≥"+r.min+(r.pref>r.min?" · "+t("covTarget",{n:r.pref}):"")
     +" · "+((r.from&&r.to)?r.from+"–"+r.to:t("covAllDay"));
 }
-function computeCoverage(r){
+/* the roster's ACTUAL interval times per date in the week — NOT the fixed 8–18
+   planning grid. This is what lets an evening rule (18:00–20:00) see the evening
+   shifts the sidur really has; any window the user sets is honored against real data. */
+function weekRosterIntervals(){
   const wk=wfWeek(); if(!wk) return null;
   const dates=weekDates(wk);
+  const map={}; dates.forEach(ds=>map[ds]=new Set());
+  for(const k of state.rosterCap.keys()){
+    const ds=k.slice(0,10), tm=k.slice(11);
+    if(map[ds]&&tm) map[ds].add(tm);
+  }
+  for(const k of state.rosterCapWeekly.keys()){
+    const i=k.indexOf("|"), d=k.slice(0,i), tm=k.slice(i+1);
+    const ds=dates[+d]; if(ds!=null&&tm) map[ds].add(tm);
+  }
+  return {dates,map};
+}
+function computeCoverage(r,wri){
+  wri=wri||weekRosterIntervals(); if(!wri) return null;
+  const {dates,map}=wri;
   const inWin=tm=>(!r.from||tm>=r.from)&&(!r.to||tm<r.to);
   const cells=[]; let met=0,pref=0,breaches=0,worst=0,dataCells=0;
   dates.forEach((ds,di)=>{
-    for(const tm of TIMES){
-      if(di===5&&tm>=friLimit()) continue;
-      if(!inWin(tm)) continue;
-      const c=skillCountAt(ds,di,tm,r.skill);
+    for(const tm of [...map[ds]].filter(inWin).sort()){
+      const c=skillCountAt(ds,di,tm,r.skill); // interval exists in the roster → a number (≥0)
+      dataCells++;
       let status;
-      if(c===null) status="nodata";
-      else{ dataCells++;
-        if(c>=r.min){ met++; if(!r.pref||r.pref<=r.min||c>=r.pref){ pref++; status="good"; } else status="warn"; }
-        else{ breaches++; worst=Math.max(worst,r.min-c); status="bad"; } }
+      if(c>=r.min){ met++; if(!r.pref||r.pref<=r.min||c>=r.pref){ pref++; status="good"; } else status="warn"; }
+      else{ breaches++; worst=Math.max(worst,r.min-c); status="bad"; }
       cells.push({ds,di,tm,count:c,status});
     }
   });
@@ -3091,7 +3112,8 @@ function renderSkillCoverage(){
     return;
   }
   // compute once; sort worst-first so exposure floats to the top (3-second read)
-  const rows=reqs.map((r,i)=>({r,i,cov:computeCoverage(r)}))
+  const wri=weekRosterIntervals();
+  const rows=reqs.map((r,i)=>({r,i,cov:computeCoverage(r,wri)}))
     .sort((a,b)=>(b.cov?b.cov.breaches:0)-(a.cov?a.cov.breaches:0));
   const totalBreaches=rows.reduce((s,x)=>s+(x.cov?x.cov.breaches:0),0);
   const rulesWithGaps=rows.filter(x=>x.cov&&x.cov.breaches>0).length;
