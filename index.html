@@ -348,14 +348,12 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
       <div class="banner good" id="decayBanner"></div>
       <div class="tablewrap"><table id="matrixTable"></table></div>
       <div class="legend">
-        <span><i style="background:var(--emerald-bg)"></i><span data-i18n="legGood">≥ 90% — meets target</span></span>
-        <span><i style="background:var(--amber-bg)"></i><span data-i18n="legWarn">80–89.9% — warning</span></span>
-        <span><i style="background:var(--crimson-bg)"></i><span data-i18n="legBad">&lt; 80% — breach</span> <span class="info" data-tipkey="tipBreach" tabindex="0">i</span></span>
-        <span><i style="background:#c22;border-radius:50%"></i><span data-i18n="legShort">understaffed (scheduled &lt; required)</span></span>
         <span style="display:inline-flex;align-items:center;gap:2px">
           <i style="background:#bfe9cf"></i><i style="background:var(--emerald-bg)"></i><i style="background:#eef3c6"></i><i style="background:var(--amber-bg)"></i><i style="background:#fbe1c8"></i><i style="background:var(--crimson-bg)"></i><i style="background:#f3c1c1"></i>
-          <span data-i18n="legScale" style="margin-inline-start:4px">above target → critical (7 bands around your target)</span></span>
-        <span><i style="background:#8a63d2"></i><span data-i18n="legOver">overstaffed (scheduled &gt; required)</span></span>
+          <span data-i18n="legScale" style="margin-inline-start:4px">service level vs your target: above → critical</span>
+          <span class="info" data-tipkey="tipBreach" tabindex="0">i</span></span>
+        <span><i style="background:#c22;border-radius:50%"></i><span data-i18n="legShort">understaffed — fewer scheduled than the target needs</span></span>
+        <span><i style="background:#8a63d2"></i><span data-i18n="legOver">overstaffed — more than the target needs (answer rate won't be 100% — that's normal)</span></span>
         <!-- legDecay belongs to the hidden Policy Optimizer (see #polSection) -->
         <span style="display:none"><i style="background:var(--magenta)"></i><span data-i18n="legDecay">flex-policy dip applied</span></span>
         <span data-i18n="legEdit">Click any cell to edit values.</span>
@@ -834,8 +832,17 @@ en:{
   tipBreach:"Breach/Critical is triggered when the interval's calculated performance falls below your custom safety target. This threshold is managed globally under Advanced Settings (e.g., when cumulative TSF drops below 80% or Answer Rate falls below 85% for the day).",
   applyRec:"Apply", appliedRec:"Applied ✓",
   editsBadge:"{n} manual edit(s) · Ctrl+Z undoes",
-  legOver:"overstaffed (scheduled > required)",
+  legScale:"service level vs your target: above → critical",
+  legShort:"understaffed — fewer scheduled than the target needs",
+  legOver:"overstaffed — more than the target needs (answer rate won't be 100% — that's normal)",
   stateUnder:"Understaffing", stateOver:"Overstaffing", stateBalanced:"Balanced",
+  mxTipHead:"{m}: {v} — {src}", mxSrcMeas:"measured", mxSrcFc:"forecast",
+  mxTipBody:"target {t}% · scheduled {s} · needed for target {r}",
+  mxVerdOverOk:"More agents than the target needs — service is above target (100% is neither realistic nor economical).",
+  mxVerdOverLow:"More agents than the model needs, yet measured service came in below target — check real abandonment / absences that day.",
+  mxVerdShortOk:"Fewer agents than the model wants, yet measured service still met the target that day.",
+  mxVerdShortLow:"Short of the agents the target needs — service is below target here.",
+  mxVerdBalanced:"Staffing matches what the target needs.",
   setPrimary:"Primary Target Metric",
   tipPrimary:"Sets the metric every requirement, KPI card, attainment status and trajectory alert is measured against — speed of answer (TSF) or captured-call share (Answer Rate).",
   optTsf:"TSF — speed of answer", optAr:"Answer Rate — capture every call",
@@ -911,10 +918,10 @@ en:{
   wfKpiDev:"Contractual Deviation Index",
   tipWfDev:"WHEN: % of existing shifts whose start/end differ from their Iron times — measures shape, not volume. Independent of Utilization: 100% utilization with every shift moved = high deviation; 60% utilization at exact contract times = 0 deviation.",
   wfTreeTitle:"Iron Hours Allocation (Treemap)",
-  tipWfTree:"Total contractual capacity split into productive scheduled hours, absence types, and unallocated remainder. Filter by team / skill / site above.",
+  tipWfTree:"The iron base split into: scheduled hours, absence types, per-employee statuses from the sidur (incl. 'empty shift' — a rep left blank on purpose), and 'unused iron base' — contracted hours not covered by any of those (the leftover of the pool, not tied to specific people). Filter by team / skill / site above.",
   wf_prod:"Scheduled (actual)", wf_vacation:"Vacation", wf_miluim:"Reserve duty", wf_medical:"Medical",
-  wf_training:"Training", wf_exam:"Exams", wf_other:"Other absence", wf_unalloc:"Unallocated",
-  wfNoStatus:"No status (empty)",
+  wf_training:"Training", wf_exam:"Exams", wf_other:"Other absence", wf_unalloc:"Unused iron base",
+  wfNoStatus:"Empty shift (no status)",
   wfImpactTitle:"Daily Vacation & SLA Impact Matrix",
   tipWfImpact:"Background Erlang A simulation per skill × day: the answer-rate before → after removing one productive agent from that slice. Green = low-risk vacation approval; red = critical.",
   wfImpactNone:"Needs a forecast + roster with a skill column (מיומנות) to simulate.",
@@ -1182,8 +1189,17 @@ he:{
   tipBreach:"מצב חריג/קריטי מופעל כאשר הביצועים המחושבים של האינטרוול יורדים מתחת ליעד הבטיחות המותאם שלכם. הסף מנוהל גלובלית בהגדרות המתקדמות (למשל, כאשר TSF מצטבר יורד מתחת ל־80% או אחוז המענה יורד מתחת ל־85% ביום).",
   applyRec:"החלה", appliedRec:"הוחל ✓",
   editsBadge:"{n} עריכות ידניות · Ctrl+Z לביטול",
-  legOver:"איוש יתר (משובצים > נדרשים)",
+  legScale:"רמת השירות מול היעד שלכם: מעל ← קריטי",
+  legShort:"תת-איוש — פחות משובצים מהנדרש ליעד",
+  legOver:"איוש יתר — יותר מהנדרש ליעד (אחוז המענה לא יהיה 100% — וזה תקין)",
   stateUnder:"תת-איוש", stateOver:"איוש יתר", stateBalanced:"מאוזן",
+  mxTipHead:"{m}: {v} — {src}", mxSrcMeas:"נמדד", mxSrcFc:"חזוי",
+  mxTipBody:"יעד {t}% · משובצים {s} · נדרשים ליעד {r}",
+  mxVerdOverOk:"יותר נציגים מהנדרש ליעד — השירות מעל היעד (100% אינו מציאותי ולא כלכלי).",
+  mxVerdOverLow:"יותר נציגים מהנדרש לפי המודל, אך השירות שנמדד היה מתחת ליעד — בדקו נטישה/היעדרויות בפועל באותו יום.",
+  mxVerdShortOk:"פחות נציגים ממה שהמודל דורש, אך השירות שנמדד עמד ביעד באותו יום.",
+  mxVerdShortLow:"חסרים נציגים ליעד — השירות כאן מתחת ליעד.",
+  mxVerdBalanced:"האיוש תואם את הנדרש ליעד.",
   setPrimary:"מדד יעד מוביל",
   tipPrimary:"קובע את המדד שמולו נמדדים כל הדרישות, כרטיסי ה־KPI, סטטוס העמידה ביעד והתראות המגמה — מהירות מענה (TSF) או שיעור שיחות נענות (אחוז מענה).",
   optTsf:"TSF — מהירות מענה", optAr:"אחוז מענה — קליטת כל שיחה",
@@ -1259,10 +1275,10 @@ he:{
   wfKpiDev:"מדד סטייה חוזית",
   tipWfDev:"מתי: אחוז המשמרות הקיימות ששעת ההתחלה/סיום שלהן שונה משעות הברזל — מודד צורה, לא כמות. בלתי תלוי בניצול: ניצול 100% עם כל המשמרות מוזזות = סטייה גבוהה; ניצול 60% בשעות החוזה המדויקות = סטייה 0.",
   wfTreeTitle:"הקצאת שעות ברזל (Treemap)",
-  tipWfTree:"סך הקיבולת החוזית מפוצל לשעות פרודוקטיביות, סוגי היעדרות ויתרה לא מוקצית. סינון לפי צוות / מיומנות / מוקד למעלה.",
+  tipWfTree:"בסיס הברזל מפוצל ל: שעות משובצות, סוגי היעדרות, סטטוסים לפי נציג מהסידור (כולל 'משמרת ריקה' — נציג שהושאר ריק בכוונה), ו'יתרת ברזל לא-מנוצלת' — שעות חוזיות שאינן מכוסות באף אחד מאלה (יתרת המאגר, לא קשורה לנציגים ספציפיים). סינון לפי צוות / מיומנות / מוקד למעלה.",
   wf_prod:"משובץ בפועל", wf_vacation:"חופשה", wf_miluim:"מילואים", wf_medical:"רפואי",
-  wf_training:"הדרכה", wf_exam:"מבחנים", wf_other:"היעדרות אחרת", wf_unalloc:"לא מוקצה",
-  wfNoStatus:"ללא סטטוס (ריק)",
+  wf_training:"הדרכה", wf_exam:"מבחנים", wf_other:"היעדרות אחרת", wf_unalloc:"יתרת ברזל לא-מנוצלת",
+  wfNoStatus:"משמרת ריקה (ללא סטטוס)",
   wfImpactTitle:"מטריצת חופשות יומית והשפעת SLA",
   tipWfImpact:"סימולציית Erlang A ברקע לכל מיומנות × יום: אחוז המענה לפני ← אחרי הסרת נציג פרודוקטיבי אחד מהפלח. ירוק = אישור חופשה בסיכון נמוך; אדום = קריטי.",
   wfImpactNone:"נדרשים תחזית + סידור עם עמודת מיומנות כדי לסמלץ.",
@@ -3195,6 +3211,9 @@ document.getElementById("covAdd").addEventListener("click",()=>{
   if(from&&to&&to<=from){ showToast("⚠ "+t("covBadWin"),false); return; }
   (state.settings.skillReqs=state.settings.skillReqs||[]).push({skill,min,pref,from,to});
   saveState(); renderSkillCoverage();
+  // clear the rule-specific fields so the next rule can't silently inherit a window
+  document.getElementById("covFrom").value=""; document.getElementById("covTo").value="";
+  document.getElementById("covPref").value="0";
   showToast("✅ "+t("covAdded",{s:skill}),true);
 });
 function renderWorkforce(){
@@ -5124,8 +5143,18 @@ function renderMatrix(){
           ub.addEventListener("click",e=>{ e.stopPropagation(); revertCell(ds,tm); });
           td.querySelector(".v").appendChild(ub);
         }
-        const stateLbl=short?t("stateUnder"):(over?t("stateOver"):t("stateBalanced"));
-        td.title=`${stateLbl} | ${t("tipVolume")}: ${row.rec.volume} | ${t("tipAht")}: ${fmtSec(row.rec.aht)} | ${t("tipSched")}: ${row.sched} | ${t("tipReq")}: ${row.reqEff}`;
+        // plain-language tooltip: the % is SERVICE (measured on history, forecast ahead);
+        // the dot/square is a BODY-count vs the model's requirement for the target — two
+        // different questions that can legitimately diverge, esp. on measured days.
+        const tgt=state.settings.target;
+        const meets=v*100>=tgt;
+        const measured=c&&!c.forecast;
+        const mName=state.metric==="tsf"?("TSF "+state.settings.tsfT):t("metricAr");
+        const verd=over?(meets?t("mxVerdOverOk"):t("mxVerdOverLow"))
+          :short?(meets?t("mxVerdShortOk"):t("mxVerdShortLow"))
+          :t("mxVerdBalanced");
+        td.title=t("mxTipHead",{m:mName,v:pct(v),src:t(measured?"mxSrcMeas":"mxSrcFc")})+"\n"
+          +t("mxTipBody",{t:tgt,s:row.sched,r:row.reqEff})+"\n"+verd;
         td.addEventListener("click",e=>openEditor(e,ds,tm,di));
       }
       tr.appendChild(td);
