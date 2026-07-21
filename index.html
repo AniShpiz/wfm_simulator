@@ -1039,7 +1039,8 @@ en:{
   qaSubject:"WFM Simulator — QA feedback", qaEmpty:"Write something first 🙂", qaCopied:"Copied — paste it anywhere.",
   trajNoData:"Load a forecast and set headcount to unlock predictive trajectory insights.",
   wiTitle:"Improvement Simulator (What-If)",
-  tipWi:"Drag any mix of levers to see where your service level lands and WHEN you'd hit the target. New hires ramp up over ~4 weeks, courses graduate on their dates, attrition erodes headcount. Notes: handle time drives productivity (calls/hour) — cutting it is the productivity lever; 'unavailable time' is shrinkage (breaks/meetings/training during a shift); 'absence' is scheduled no-shows. This is a sandbox — it never changes your real settings.",
+  tipWi:"Drag any mix of levers to see where your service level lands and WHEN you'd hit the target. The curve starts at today; improvements phase in over ~4 weeks; courses graduate on their dates and profiles add capacity. Extra agents come only from your Courses & What-If profiles (below), never a phantom number. Notes: handle time drives productivity — cutting it is the productivity lever; 'unavailable time' is shrinkage; 'absence' is no-shows. It's a sandbox — never changes your real settings.",
+  cohEditTip:"Click to edit this course",
   wiAht:"Shorter handle time", wiAttr:"Less attrition", wiShrink:"Less unavailable time", wiAbsence:"Fewer no-shows",
   wiAgentsNote:"➕ Extra agents come from your Courses & What-If profiles below.",
   wiReset:"↺ Back to current",
@@ -1382,7 +1383,8 @@ he:{
   qaSubject:"סימולטור WFM — משוב QA", qaEmpty:"כתבו משהו קודם 🙂", qaCopied:"הועתק — הדביקו בכל מקום.",
   trajNoData:"טענו תחזית והגדירו מצבה כדי לקבל תובנות מגמה חזויות.",
   wiTitle:"סימולטור שיפורים (What-If)",
-  tipWi:"הזיזו כל שילוב של מנופים וראו לאן מגיעה רמת השירות ומתי תעמדו ביעד. נציגים חדשים נכנסים לתפוקה מלאה תוך כ-4 שבועות, קורסים מסיימים במועדם, ונטישה שוחקת את המצבה עם הזמן. הבהרות: משך השיחה קובע את הפריון (שיחות לשעה) — קיצורו הוא מנוף הפריון; 'זמן לא-זמין' הוא שחיקה (הפסקות/ישיבות/הדרכה במהלך המשמרת); 'היעדרות' היא הברזות מהשיבוץ. זו סביבת ניסוי בלבד — אינה משנה את ההגדרות האמיתיות שלכם.",
+  tipWi:"הזיזו כל שילוב של מנופים וראו לאן מגיעה רמת השירות ומתי תעמדו ביעד. הגרף מתחיל מהיום; השיפורים נכנסים לתוקף בהדרגה תוך כ-4 שבועות; קורסים מסיימים במועדם ופרופילים מוסיפים כוח אדם. תוספת נציגים מגיעה רק מהקורסים ומפרופילי ה-What-If (למטה), לא ממספר מדומה. הבהרות: משך השיחה קובע את הפריון — קיצורו הוא מנוף הפריון; 'זמן לא-זמין' הוא שחיקה; 'היעדרות' היא הברזות. זו סביבת ניסוי בלבד — אינה משנה את ההגדרות האמיתיות שלכם.",
+  cohEditTip:"לחצו לעריכת הקורס",
   wiAht:"קיצור משך שיחה", wiAttr:"הפחתת נטישה", wiShrink:"הפחתת זמן לא-זמין", wiAbsence:"הפחתת הברזות",
   wiAgentsNote:"➕ תוספת נציגים מגיעה מהקורסים ומפרופילי ה-What-If שמתחת.",
   wiReset:"↺ חזרה למצב הנוכחי",
@@ -5370,7 +5372,7 @@ function weightedTSF(scale){
    matrix math (evalInterval) with parametrized effective-agent share +
    an AHT multiplier. Non-destructive: never mutates state.settings.
    ============================================================ */
-const WI_WEEKS=26, WI_HIRE_RAMP=4; // hires onboard (ramp to full) over ~4 weeks
+const WI_WEEKS=26, WI_RAMP=4; // improvements phase in over ~4 weeks (training/policy take-up)
 let _wiTouched=false; // once the user drags a slider, stop auto-syncing to real settings
 function projMetric(scale,ahtMul,effShare){
   if(!state.maxDate) return null;
@@ -5392,23 +5394,24 @@ function whatIfCurve(wi){
   // reductions OF the current setting; handle time is a % cut. Agents come only from the
   // real pipeline (courses graduate; what-if profiles add per-interval in projMetric).
   const S=state.settings, base=Math.max(1,S.headcount||1), calib=state.calib||1;
-  const attr=S.attrition*(1-wi.attrCut/100);
-  const shrink=S.shrinkage*(1-wi.shrinkCut/100);
-  const absence=S.absence*(1-wi.absCut/100);
-  const effWI=Math.max(0.05,(1-shrink/100)*(1-absence/100)*calib);
-  const effNow=Math.max(0.05,availShare(S)*calib);
-  const ahtMul=1-Math.min(90,Math.max(0,wi.ahtCut))/100;
   const tgt=S.target/100, today=iso(new Date());
   const curve=[]; let meetWeek=null;
   for(let w=0;w<=WI_WEEKS;w++){
-    const day=w*7;
+    // improvements phase in over WI_RAMP weeks → week 0 IS today's reality (curve starts at "now")
+    const day=w*7, frac=Math.min(1,w/WI_RAMP);
+    const shrink=S.shrinkage*(1-wi.shrinkCut/100*frac);
+    const absence=S.absence*(1-wi.absCut/100*frac);
+    const attr=S.attrition*(1-wi.attrCut/100*frac);
+    const effShare=Math.max(0.05,(1-shrink/100)*(1-absence/100)*calib);
+    const ahtMul=1-(wi.ahtCut/100)*frac;
     const grads=state.cohorts.filter(c=>cohortFloorDate(c)<=addDays(today,day)).reduce((a,c)=>a+cohortEffective(c),0);
     const hc=base*(1-attr/100*(day/30))+grads;   // courses + reduced attrition; profiles handled in projMetric
-    const m=projMetric(hc/base,ahtMul,effWI);
+    const m=projMetric(hc/base,ahtMul,effShare);
     curve.push({w,m,date:addDays(today,day)});
     if(meetWeek==null&&m!=null&&m>=tgt) meetWeek=w;
   }
-  return {curve,now:projMetric(1,1,effNow),end:curve[WI_WEEKS].m,meetWeek,tgt,today};
+  // "now" is the curve's own week-0 point — the hero and the chart start can never disagree
+  return {curve,now:curve[0].m,end:curve[WI_WEEKS].m,meetWeek,tgt,today};
 }
 function whatIfSyncSliders(){
   ["wiAht","wiAttr","wiShrink","wiAbsence"].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=0; });
@@ -5462,20 +5465,20 @@ function renderWhatIfOut(res){
   if(chart){
     // generous margins so nothing clips: room for the target label (top-right) and the
     // date ticks (bottom). ticks span the WHOLE lifetime, not just the crossing week.
-    const w=460,h=116,pl=10,pr=42,pt=14,pb=22;
+    // top band reserved for the target caption; side/bottom margins keep every label clear
+    const w=460,h=124,pl=16,pr=16,pt=22,pb=22;
     const vals=res.curve.map(c=>c.m==null?null:c.m*100).filter(v=>v!=null);
     const lo=Math.max(0,Math.min(tgtP,...vals)-6), hi=Math.min(100,Math.max(tgtP,...vals)+4), span=(hi-lo)||1;
     const X=i=>pl+i*(w-pl-pr)/WI_WEEKS, Y=v=>pt+(h-pt-pb)*(1-(v-lo)/span);
     const pts=res.curve.map((c,i)=>c.m==null?null:[X(i),Y(c.m*100)]).filter(Boolean);
     const line=pts.map(q=>q[0].toFixed(1)+","+q[1].toFixed(1)).join(" ");
     const cross=res.meetWeek!=null&&res.meetWeek>0?X(res.meetWeek):null;
-    // ~5 evenly-spaced date ticks across the 26-week horizon
     const ticks=[0,7,13,20,26].map(wk=>({x:X(wk),lab:fmtD(addDays(res.today,wk*7)).slice(0,5)}));
     chart.innerHTML=`<svg viewBox="0 0 ${w} ${h}" width="100%" role="img">
       <defs><linearGradient id="wiGrad" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0" stop-color="#2c7fb8" stop-opacity=".26"></stop><stop offset="1" stop-color="#2c7fb8" stop-opacity="0"></stop></linearGradient></defs>
+      <text x="${w-pr}" y="11" text-anchor="end" font-size="9" font-weight="600" fill="#0f6a3f">— ${t("wiTargetTick",{t:Math.round(tgtP)})}</text>
       <line x1="${pl}" y1="${Y(tgtP)}" x2="${w-pr}" y2="${Y(tgtP)}" stroke="#0f6a3f" stroke-width="1" stroke-dasharray="4,3"></line>
-      <text x="${w-pr+3}" y="${Y(tgtP)+3}" font-size="8.5" fill="#0f6a3f">${t("wiTargetTick",{t:Math.round(tgtP)})}</text>
       <polygon points="${pl},${h-pb} ${line} ${w-pr},${h-pb}" fill="url(#wiGrad)"></polygon>
       <polyline points="${line}" fill="none" stroke="#2c7fb8" stroke-width="2" stroke-linejoin="round"></polyline>
       ${cross!=null?`<line x1="${cross.toFixed(1)}" y1="${pt}" x2="${cross.toFixed(1)}" y2="${h-pb}" stroke="#0f6a3f" stroke-width="1" stroke-dasharray="3,3"></line>
@@ -5808,12 +5811,9 @@ function renderRecruit(){
     [...state.cohorts.entries()].sort((x,y)=>cohortFloorDate(x[1])<cohortFloorDate(y[1])?-1:1)
       .forEach(([i,c])=>{
       const tr=document.createElement("tr");
-      [c.name,c.count,c.yield+"%",fmtD(cohortFloorDate(c)),Math.round(cohortEffective(c))].forEach(v=>{
-        const td=document.createElement("td"); td.textContent=v; tr.appendChild(td); });
-      const tdx=document.createElement("td"); tdx.style.whiteSpace="nowrap";
-      // edit: load the course back into the add-form (name/count/yield/start/duration→end) and remove it
-      const ed=document.createElement("button"); ed.className="linklike"; ed.textContent="✎"; ed.title=t("cmEdit");
-      ed.addEventListener("click",()=>{
+      // click a course row to edit it — same gesture as clicking a cell on Date Trends
+      tr.style.cursor="pointer"; tr.title=t("cohEditTip");
+      tr.addEventListener("click",()=>{
         document.getElementById("cohName").value=c.name;
         document.getElementById("cohCount").value=c.count;
         document.getElementById("cohDate").value=c.start;
@@ -5823,9 +5823,12 @@ function renderRecruit(){
         state.cohorts.splice(i,1); state.fcCache.clear(); renderAll();
         document.getElementById("cohName").focus();
       });
+      [c.name,c.count,c.yield+"%",fmtD(cohortFloorDate(c)),Math.round(cohortEffective(c))].forEach(v=>{
+        const td=document.createElement("td"); td.textContent=v; tr.appendChild(td); });
+      const tdx=document.createElement("td");
       const x=document.createElement("button"); x.className="xbtn"; x.textContent="✕";
-      x.addEventListener("click",()=>{ state.cohorts.splice(i,1); state.fcCache.clear(); renderAll(); }); // course change scales forecast agents
-      tdx.appendChild(ed); tdx.appendChild(x); tr.appendChild(tdx);
+      x.addEventListener("click",e=>{ e.stopPropagation(); state.cohorts.splice(i,1); state.fcCache.clear(); renderAll(); });
+      tdx.appendChild(x); tr.appendChild(tdx);
       b.appendChild(tr);
     });
     tblc.appendChild(b);
