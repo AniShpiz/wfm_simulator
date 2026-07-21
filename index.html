@@ -1039,8 +1039,9 @@ en:{
   qaSubject:"WFM Simulator — QA feedback", qaEmpty:"Write something first 🙂", qaCopied:"Copied — paste it anywhere.",
   trajNoData:"Load a forecast and set headcount to unlock predictive trajectory insights.",
   wiTitle:"Improvement Simulator (What-If)",
-  tipWi:"Drag any mix of levers to see where your service level lands and WHEN you'd hit the target. The curve starts at today; improvements phase in over ~4 weeks; courses graduate on their dates and profiles add capacity. Extra agents come only from your Courses & What-If profiles (below), never a phantom number. Notes: handle time drives productivity — cutting it is the productivity lever; 'unavailable time' is shrinkage; 'absence' is no-shows. It's a sandbox — never changes your real settings.",
+  tipWi:"Drag any mix of levers — they move the whole curve up or down immediately, so you see where service lands and WHEN you'd hit the target. Headcount still evolves over time: courses graduate on their dates, attrition erodes, and What-If profiles add capacity (that's the only source of extra agents — no phantom number). Notes: handle time drives productivity — cutting it is the productivity lever; 'unavailable time' is shrinkage; 'absence' is no-shows. It's a sandbox — never changes your real settings.",
   cohEditTip:"Click to edit this course",
+  wiZeroBase:"This is 0 in Advanced Settings — nothing to reduce. Set a value there to model reducing it.",
   wiAht:"Shorter handle time", wiAttr:"Less attrition", wiShrink:"Less unavailable time", wiAbsence:"Fewer no-shows",
   wiAgentsNote:"➕ Extra agents come from your Courses & What-If profiles below.",
   wiReset:"↺ Back to current",
@@ -1383,8 +1384,9 @@ he:{
   qaSubject:"סימולטור WFM — משוב QA", qaEmpty:"כתבו משהו קודם 🙂", qaCopied:"הועתק — הדביקו בכל מקום.",
   trajNoData:"טענו תחזית והגדירו מצבה כדי לקבל תובנות מגמה חזויות.",
   wiTitle:"סימולטור שיפורים (What-If)",
-  tipWi:"הזיזו כל שילוב של מנופים וראו לאן מגיעה רמת השירות ומתי תעמדו ביעד. הגרף מתחיל מהיום; השיפורים נכנסים לתוקף בהדרגה תוך כ-4 שבועות; קורסים מסיימים במועדם ופרופילים מוסיפים כוח אדם. תוספת נציגים מגיעה רק מהקורסים ומפרופילי ה-What-If (למטה), לא ממספר מדומה. הבהרות: משך השיחה קובע את הפריון — קיצורו הוא מנוף הפריון; 'זמן לא-זמין' הוא שחיקה; 'היעדרות' היא הברזות. זו סביבת ניסוי בלבד — אינה משנה את ההגדרות האמיתיות שלכם.",
+  tipWi:"הזיזו כל שילוב של מנופים — הם מזיזים את כל העקומה מעלה או מטה מיד, כך שתראו לאן מגיעה רמת השירות ומתי תעמדו ביעד. המצבה עדיין מתפתחת עם הזמן: קורסים מסיימים במועדם, נטישה שוחקת, ופרופילי ה-What-If מוסיפים כוח אדם (זה המקור היחיד לתוספת נציגים — לא מספר מדומה). הבהרות: משך השיחה קובע את הפריון — קיצורו הוא מנוף הפריון; 'זמן לא-זמין' הוא שחיקה; 'היעדרות' היא הברזות. זו סביבת ניסוי בלבד — אינה משנה את ההגדרות האמיתיות שלכם.",
   cohEditTip:"לחצו לעריכת הקורס",
+  wiZeroBase:"הערך 0 בהגדרות מתקדמות — אין מה להפחית. הגדירו ערך שם כדי לדמות הפחתה.",
   wiAht:"קיצור משך שיחה", wiAttr:"הפחתת נטישה", wiShrink:"הפחתת זמן לא-זמין", wiAbsence:"הפחתת הברזות",
   wiAgentsNote:"➕ תוספת נציגים מגיעה מהקורסים ומפרופילי ה-What-If שמתחת.",
   wiReset:"↺ חזרה למצב הנוכחי",
@@ -5372,7 +5374,7 @@ function weightedTSF(scale){
    matrix math (evalInterval) with parametrized effective-agent share +
    an AHT multiplier. Non-destructive: never mutates state.settings.
    ============================================================ */
-const WI_WEEKS=26, WI_RAMP=4; // improvements phase in over ~4 weeks (training/policy take-up)
+const WI_WEEKS=26; // horizon
 let _wiTouched=false; // once the user drags a slider, stop auto-syncing to real settings
 function projMetric(scale,ahtMul,effShare){
   if(!state.maxDate) return null;
@@ -5396,14 +5398,15 @@ function whatIfCurve(wi){
   const S=state.settings, base=Math.max(1,S.headcount||1), calib=state.calib||1;
   const tgt=S.target/100, today=iso(new Date());
   const curve=[]; let meetWeek=null;
+  // improvements apply IMMEDIATELY (they move the whole curve up/down as you drag);
+  // only headcount evolves over time — courses graduate on their dates, attrition erodes.
+  const shrink=S.shrinkage*(1-wi.shrinkCut/100);
+  const absence=S.absence*(1-wi.absCut/100);
+  const attr=S.attrition*(1-wi.attrCut/100);
+  const effShare=Math.max(0.05,(1-shrink/100)*(1-absence/100)*calib);
+  const ahtMul=1-wi.ahtCut/100;
   for(let w=0;w<=WI_WEEKS;w++){
-    // improvements phase in over WI_RAMP weeks → week 0 IS today's reality (curve starts at "now")
-    const day=w*7, frac=Math.min(1,w/WI_RAMP);
-    const shrink=S.shrinkage*(1-wi.shrinkCut/100*frac);
-    const absence=S.absence*(1-wi.absCut/100*frac);
-    const attr=S.attrition*(1-wi.attrCut/100*frac);
-    const effShare=Math.max(0.05,(1-shrink/100)*(1-absence/100)*calib);
-    const ahtMul=1-(wi.ahtCut/100)*frac;
+    const day=w*7;
     const grads=state.cohorts.filter(c=>cohortFloorDate(c)<=addDays(today,day)).reduce((a,c)=>a+cohortEffective(c),0);
     const hc=base*(1-attr/100*(day/30))+grads;   // courses + reduced attrition; profiles handled in projMetric
     const m=projMetric(hc/base,ahtMul,effShare);
@@ -5438,6 +5441,14 @@ function whatIfRun(){
     ["wiAbsence",wi.absCut,trim(S.absence*(1-wi.absCut/100))+"%"]];
   rows.forEach(([id,delta,abs])=>{ const el=document.getElementById(id+"V");
     if(el) el.innerHTML=`<b>${abs}</b>${delta?` <span style="opacity:.55;font-size:.85em">−${delta}%</span>`:""}`; });
+  // a "reduce X" slider is meaningless when X is already 0 — disable it so a dead
+  // control never reads as a broken one, and point to where to set the value
+  [["wiAttr",S.attrition],["wiShrink",S.shrinkage],["wiAbsence",S.absence]].forEach(([id,base])=>{
+    const el=document.getElementById(id); if(!el) return;
+    const dead=!(base>0);
+    el.disabled=dead; el.title=dead?t("wiZeroBase"):"";
+    const lab=document.querySelector(`[data-i18n=${id}]`); if(lab) lab.style.opacity=dead?".5":"1";
+  });
   const res=whatIfCurve(wi);
   renderWhatIfOut(res);
 }
