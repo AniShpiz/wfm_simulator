@@ -413,20 +413,16 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
 
   <!-- ============ RECRUITMENT & TRAINING ============ -->
   <section class="page" id="page-recruit">
+    <!-- three KPIs, one row, always at the very top: who we have, the worst gap,
+         and pipeline health. Redundant curves (30-day outlook, hiring gap) and the
+         interval-count KPI were removed — the What-If chart below owns the trajectory. -->
     <div class="kpis">
       <div class="kpi"><div class="n" id="kpiHc">—</div><div class="l" data-i18n="kpiHc">Current headcount (reps)</div>
         <!-- skill split: the total stays the hero, the queues read at a glance -->
         <div id="kpiHcSkills" style="display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-top:6px"></div></div>
       <div class="kpi"><div class="n" id="kpiMaxDef">—</div><div class="l"><span data-i18n="kpiMaxDef">Max Daily Representative Deficit</span> <span class="info" data-tipkey="tipMaxDef" tabindex="0">i</span></div></div>
-      <div class="kpi"><div class="n" id="kpiShort">—</div><div class="l"><span id="kpiShortL"></span> <span class="info" data-tipkey="tipShort" tabindex="0">i</span></div></div>
-    </div>
-    <div class="kpis">
-      <div class="kpi"><div class="l"><span data-i18n="spark1">Projected Staffing Curve (30-Day Outlook)</span> <span class="info" data-tipkey="tipSpark1" tabindex="0">i</span></div>
-        <div class="n" id="spark1v">—</div><div class="spark" id="spark1"></div><div class="cap" id="spark1c"></div></div>
       <div class="kpi"><div class="l"><span data-i18n="spark2">Cohort Yield Rate Trend</span> <span class="info" data-tipkey="tipSpark2" tabindex="0">i</span></div>
         <div class="n" id="spark2v">—</div><div class="spark" id="spark2"></div><div class="cap" id="spark2c"></div></div>
-      <div class="kpi"><div class="l"><span data-i18n="spark3">Hiring Gap — Target vs. Actual</span> <span class="info" data-tipkey="tipSpark3" tabindex="0">i</span></div>
-        <div class="n" id="spark3v">—</div><div class="spark" id="spark3"></div><div class="cap" id="spark3c"></div></div>
     </div>
     <div class="card">
       <h2 data-i18n="trajTitle">Trajectory Insights</h2>
@@ -6102,27 +6098,33 @@ function renderWhatIfOut(res){
      <div style="font-size:.86rem;font-weight:600;color:${whenCol};margin-top:3px">🎯 ${t("wiTargetN",{t:Math.round(tgtP)})} · ${when}</div>`;
   // curve: weeks → metric, gradient area, dashed target line, crossing marker
   if(chart){
-    // generous margins so nothing clips: room for the target label (top-right) and the
-    // date ticks (bottom). ticks span the WHOLE lifetime, not just the crossing week.
-    // top band reserved for the target caption; side/bottom margins keep every label clear
-    const w=460,h=124,pl=16,pr=16,pt=22,pb=22;
+    // taller plot fills the column (no floating gap to the sliders). Reserved top
+    // band = the target label, once (the hero owns the numbers); bottom band = the
+    // date axis on a baseline. Ticks span the WHOLE lifetime, edge to edge.
+    const w=480,h=170,pl=12,pr=14,pt=26,pb=28;
     const vals=res.curve.map(c=>c.m==null?null:c.m*100).filter(v=>v!=null);
     const lo=Math.max(0,Math.min(tgtP,...vals)-6), hi=Math.min(100,Math.max(tgtP,...vals)+4), span=(hi-lo)||1;
     const X=i=>pl+i*(w-pl-pr)/WI_WEEKS, Y=v=>pt+(h-pt-pb)*(1-(v-lo)/span);
     const pts=res.curve.map((c,i)=>c.m==null?null:[X(i),Y(c.m*100)]).filter(Boolean);
     const line=pts.map(q=>q[0].toFixed(1)+","+q[1].toFixed(1)).join(" ");
     const cross=res.meetWeek!=null&&res.meetWeek>0?X(res.meetWeek):null;
+    const baseY=h-pb, yTgt=Y(tgtP), p0=pts[0], pN=pts[pts.length-1];
     const ticks=[0,7,13,20,26].map(wk=>({x:X(wk),lab:fmtD(addDays(res.today,wk*7)).slice(0,5)}));
-    chart.innerHTML=`<svg viewBox="0 0 ${w} ${h}" width="100%" role="img">
+    // the plot is LTR (dates run left→right); force LTR text so RTL page context
+    // doesn't flip anchors and run the target/date labels off the edges
+    chart.innerHTML=`<svg viewBox="0 0 ${w} ${h}" width="100%" role="img" style="direction:ltr">
       <defs><linearGradient id="wiGrad" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0" stop-color="#2c7fb8" stop-opacity=".26"></stop><stop offset="1" stop-color="#2c7fb8" stop-opacity="0"></stop></linearGradient></defs>
-      <text x="${w-pr}" y="11" text-anchor="end" font-size="9" font-weight="600" fill="#0f6a3f">— ${t("wiTargetTick",{t:Math.round(tgtP)})}</text>
-      <line x1="${pl}" y1="${Y(tgtP)}" x2="${w-pr}" y2="${Y(tgtP)}" stroke="#0f6a3f" stroke-width="1" stroke-dasharray="4,3"></line>
-      <polygon points="${pl},${h-pb} ${line} ${w-pr},${h-pb}" fill="url(#wiGrad)"></polygon>
-      <polyline points="${line}" fill="none" stroke="#2c7fb8" stroke-width="2" stroke-linejoin="round"></polyline>
-      ${cross!=null?`<line x1="${cross.toFixed(1)}" y1="${pt}" x2="${cross.toFixed(1)}" y2="${h-pb}" stroke="#0f6a3f" stroke-width="1" stroke-dasharray="3,3"></line>
-        <circle cx="${cross.toFixed(1)}" cy="${Y(res.tgt*100).toFixed(1)}" r="3.5" fill="#0f6a3f"></circle>`:""}
-      ${ticks.map((tk,i)=>`<text x="${tk.x.toFixed(1)}" y="${h-6}" text-anchor="${i===0?"start":i===ticks.length-1?"end":"middle"}" font-size="8" fill="#6b7c90">${tk.lab}</text>`).join("")}
+      <line x1="${pl}" y1="${yTgt.toFixed(1)}" x2="${w-pr}" y2="${yTgt.toFixed(1)}" stroke="#0f6a3f" stroke-width="1" stroke-dasharray="4,3"></line>
+      <text x="${pl}" y="15" text-anchor="start" font-size="10.5" font-weight="700" fill="#0f6a3f">🎯 ${t("wiTargetTick",{t:Math.round(tgtP)})}</text>
+      <polygon points="${pl},${baseY} ${line} ${w-pr},${baseY}" fill="url(#wiGrad)"></polygon>
+      <polyline points="${line}" fill="none" stroke="#2c7fb8" stroke-width="2.4" stroke-linejoin="round"></polyline>
+      ${cross!=null?`<line x1="${cross.toFixed(1)}" y1="${pt}" x2="${cross.toFixed(1)}" y2="${baseY}" stroke="#0f6a3f" stroke-width="1" stroke-dasharray="3,3"></line>
+        <circle cx="${cross.toFixed(1)}" cy="${yTgt.toFixed(1)}" r="4" fill="#0f6a3f"></circle>`:""}
+      ${p0?`<circle cx="${p0[0].toFixed(1)}" cy="${p0[1].toFixed(1)}" r="3.2" fill="#fff" stroke="#2c7fb8" stroke-width="2"></circle>`:""}
+      ${pN?`<circle cx="${pN[0].toFixed(1)}" cy="${pN[1].toFixed(1)}" r="3.4" fill="#2c7fb8"></circle>`:""}
+      <line x1="${pl}" y1="${baseY}" x2="${w-pr}" y2="${baseY}" stroke="#d3dbe4" stroke-width="1"></line>
+      ${ticks.map((tk,i)=>`<text x="${tk.x.toFixed(1)}" y="${h-9}" text-anchor="${i===0?"start":i===ticks.length-1?"end":"middle"}" font-size="10" fill="#6b7c90">${tk.lab}</text>`).join("")}
     </svg>`;
   }
 }
@@ -6184,7 +6186,7 @@ function renderOutlook(plan){
   const ticks=[min,(min+max)/2,max];
   const today=iso(new Date());
   const xlabs=[[0,t("capToday")],[30,fmtD(addDays(today,30)).slice(0,5)],[60,fmtD(addDays(today,60)).slice(0,5)]];
-  el.innerHTML=`<svg id="coSvg" viewBox="0 0 ${w} ${h}" width="100%" style="display:block" role="img">
+  el.innerHTML=`<svg id="coSvg" viewBox="0 0 ${w} ${h}" width="100%" style="display:block;direction:ltr" role="img">
     <defs><linearGradient id="coGrad" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#3fa9f5" stop-opacity=".28"></stop>
       <stop offset="1" stop-color="#3fa9f5" stop-opacity="0"></stop>
@@ -6284,26 +6286,23 @@ function renderRecruit(){
     if(hcLbl){ hcLbl.dataset.i18n=key;
       hcLbl.textContent=t(key)+(plan.sel.length?" — "+plan.sel.map(s=>s.replace(/^נציג /,"")).join(" + "):""); }
   }
-  // shortage KPIs must not depend on the matrix page having been opened —
-  // compute them here from the same computeDay results (memoized, cheap)
+  // max daily deficit — computed here from computeDay so it never depends on the
+  // matrix page having been opened first (memoized, cheap)
   {
-    const mdEl=document.getElementById("kpiMaxDef"), shEl=document.getElementById("kpiShort");
-    let maxDef=0,shortCount=0,any=false;
+    const mdEl=document.getElementById("kpiMaxDef");
+    let maxDef=0,any=false;
     if(state.week&&state.days.size){
       for(const ds of weekDates(state.week)){
         const c=computeDay(ds); if(!c) continue;
         any=true;
         for(const row of c.rows){
           if(!row.rec||row.closed||row.exc||row.nodata) continue;
-          if(row.sched<row.reqEff){ shortCount++; maxDef=Math.max(maxDef,row.reqEff-row.sched); }
+          if(row.sched<row.reqEff) maxDef=Math.max(maxDef,row.reqEff-row.sched);
         }
       }
     }
-    if(any){
-      mdEl.innerHTML=`<span class="num">${maxDef>0?"+"+maxDef:"0"}</span>`;
-      shEl.textContent=shortCount;
-    }else{ mdEl.textContent=t("noData"); shEl.textContent=t("noData"); }
-    document.getElementById("kpiShortL").textContent=t("kpiShortW",{w:state.week?isoWeek(state.week):"—"});
+    if(any) mdEl.innerHTML=`<span class="num">${maxDef>0?"+"+maxDef:"0"}</span>`;
+    else mdEl.textContent=t("noData");
   }
   // headcount split by skill (מיומנות): the total stays the hero number, the small
   // chips answer the manager's NEXT question — "of whom?" — without a single click.
@@ -6403,23 +6402,14 @@ function renderRecruit(){
     det.appendChild(dd); ul.appendChild(det);
   }
 
-  const curve=[]; for(let d=0;d<=30;d+=2) curve.push(hcAtDay(d,false,plan.hc,plan.skillF));
-  sparkline(document.getElementById("spark1"),document.getElementById("spark1c"),curve,"#3fa9f5",t("capToday"),t("capEnd"));
-  document.getElementById("spark1v").textContent=Math.round(hcAtDay(30,false,plan.hc,plan.skillF));
+  // pipeline health: the cohort-yield trend (the one trend KPI worth keeping —
+  // the staffing-curve and hiring-gap sparks were redundant with the What-If chart)
   const yields=state.cohorts.slice().sort((a,b)=>cohortFloorDate(a)<cohortFloorDate(b)?-1:1).map(c=>c.yield);
   const yv=document.getElementById("spark2v");
   if(yields.length){ yv.textContent=Math.round(yields.reduce((a,b)=>a+b,0)/yields.length)+"%";
     sparkline(document.getElementById("spark2"),document.getElementById("spark2c"),
       yields.length>1?yields:[yields[0],yields[0]],"#18b39a",t("capCourse1"),t("capCourseN"));
   }else{ yv.textContent="—"; document.getElementById("spark2").innerHTML=""; document.getElementById("spark2c").innerHTML=""; }
-  const g3=document.getElementById("spark3"), g3v=document.getElementById("spark3v");
-  if(traj){
-    const target=plan.hc+(traj.need>0?traj.need:0);
-    const gaps=curve.map(v=>Math.max(0,target-v));
-    const gapNow=Math.max(0,Math.round(target-hcAtDay(30,false,plan.hc,plan.skillF)));
-    g3v.innerHTML=`<span class="num">${gapNow>0?"+"+gapNow:"0"}</span>`;
-    sparkline(g3,document.getElementById("spark3c"),gaps,gaps.some(x=>x>0)?"#a11a1a":"#0f6a3f",t("capToday"),t("capEnd"));
-  }else{ g3v.textContent="—"; g3.innerHTML=""; document.getElementById("spark3c").innerHTML=""; }
 
   renderOutlook(plan);
   // What-If: keep sliders synced to real settings until the user takes over, then recompute
