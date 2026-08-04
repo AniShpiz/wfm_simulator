@@ -6000,7 +6000,8 @@ function weightedTSF(scale){
    matrix math (evalInterval) with parametrized effective-agent share +
    an AHT multiplier. Non-destructive: never mutates state.settings.
    ============================================================ */
-const WI_WEEKS=26; // horizon
+const HORIZON_DAYS=90;                      // shared 90-day horizon for both recruit charts
+const WI_WEEKS=Math.ceil(HORIZON_DAYS/7);   // 13 weekly points spanning ~90 days
 let _wiTouched=false; // once the user drags a slider, stop auto-syncing to real settings
 function projMetric(scale,ahtMul,effShare){
   if(!state.maxDate) return null;
@@ -6111,7 +6112,8 @@ function renderWhatIfOut(res){
     const line=pts.map(q=>q[0].toFixed(1)+","+q[1].toFixed(1)).join(" ");
     const cross=res.meetWeek!=null&&res.meetWeek>0?X(res.meetWeek):null;
     const baseY=h-pb, yTgt=Y(tgtP), p0=pts[0], pN=pts[pts.length-1];
-    const ticks=[0,7,13,20,26].map(wk=>({x:X(wk),lab:fmtD(addDays(res.today,wk*7)).slice(0,5)}));
+    // day-based ticks [0,30,60,90] so the axis matches the capacity-outlook chart exactly
+    const ticks=[0,30,60,90].map(d=>({x:X(d/7),lab:fmtD(addDays(res.today,d)).slice(0,5)}));
     // the plot is LTR (dates run left→right); force LTR text so RTL page context
     // doesn't flip anchors and run the target/date labels off the edges
     chart.innerHTML=`<svg viewBox="0 0 ${w} ${h}" width="100%" role="img" style="direction:ltr">
@@ -6177,7 +6179,7 @@ function renderOutlook(plan){
   const base=(plan&&plan.hc>0)?plan.hc:state.settings.headcount;
   const skillF=plan?plan.skillF:null;
   if(base<=0){ coData=null; return; }
-  const days=60;
+  const days=HORIZON_DAYS; // same 90-day span as the What-If chart
   const vals=[]; for(let d=0;d<=days;d++) vals.push(hcAtDay(d,true,base,skillF));
   const w=520,h=130,pl=34,pr=10,pt=8,pb=20;
   const min=Math.floor(Math.min(...vals)*0.98), max=Math.ceil(Math.max(...vals)*1.02);
@@ -6187,7 +6189,7 @@ function renderOutlook(plan){
   const line=pts.map(q=>q[0].toFixed(1)+","+q[1].toFixed(1)).join(" ");
   const ticks=[min,(min+max)/2,max];
   const today=iso(new Date());
-  const xlabs=[[0,t("capToday")],[30,fmtD(addDays(today,30)).slice(0,5)],[60,fmtD(addDays(today,60)).slice(0,5)]];
+  const xlabs=[[0,t("capToday")],[30,fmtD(addDays(today,30)).slice(0,5)],[60,fmtD(addDays(today,60)).slice(0,5)],[90,fmtD(addDays(today,90)).slice(0,5)]];
   el.innerHTML=`<svg id="coSvg" viewBox="0 0 ${w} ${h}" width="100%" style="display:block;direction:ltr" role="img">
     <defs><linearGradient id="coGrad" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#3fa9f5" stop-opacity=".28"></stop>
