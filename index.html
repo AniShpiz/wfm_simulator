@@ -523,25 +523,6 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <p class="mini" id="wfImpactStars" style="display:none"></p>
       </div>
     </div>
-    <!-- Mandatory skill coverage: minimum agents of a skill required per interval.
-         Reads from the roster's per-interval skill counts — modular, so a future
-         queue (digital/clinics) starts tracking the moment its agents appear. -->
-    <div class="card" id="wfCovCard">
-      <h2><span id="wfCovHead" data-i18n="covTitle">Mandatory Skill Coverage</span> <span class="info" data-tipkey="tipCov" tabindex="0">i</span></h2>
-      <div id="wfCovList"></div>
-      <details id="wfCovAdd" style="margin-top:8px">
-        <summary class="mini" style="cursor:pointer" data-i18n="covAddT">+ Add a coverage rule</summary>
-        <div class="covform" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px">
-          <select id="covSkill" style="min-width:130px"></select>
-          <label class="mini"><span>≥</span> <input id="covMin" type="number" min="1" max="20" value="1" style="width:52px"></label>
-          <label class="mini"><span data-i18n="covPrefL">target</span> <input id="covPref" type="number" min="0" max="20" value="0" style="width:52px"></label>
-          <label class="mini"><span data-i18n="covFromL">from</span> <input id="covFrom" type="time" style="width:96px"></label>
-          <label class="mini"><span data-i18n="covToL">to</span> <input id="covTo" type="time" style="width:96px"></label>
-          <button class="btn ghost" id="covAdd" data-i18n="covAdd">+ Add</button>
-        </div>
-        <p class="mini" data-i18n="covHint">Set the minimum agents of a skill required in each interval (leave the time window empty for all day). A gap = an interval that has agents scheduled but too few of this skill.</p>
-      </details>
-    </div>
     <div class="card" id="wfValCard">
       <h2><span data-i18n="wfValTitle">Iron Base Validation Matrix</span> <span class="info" data-tipkey="tipWfVal" tabindex="0">i</span></h2>
       <div class="toolbar">
@@ -598,6 +579,31 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <div id="cmList" style="margin-top:6px"></div>
       </details>
       <div class="banner good" id="schBanner"></div>
+    </div>
+    <!-- STEP 1b — coverage rules live WHERE they are enforced: rules feed the audit
+         that runs on every generated schedule (migrated from the Workforce page) -->
+    <div class="card" id="wfCovCard">
+      <h2><span id="wfCovHead" data-i18n="covTitle">Mandatory Skill Coverage</span> <span class="info" data-tipkey="tipCov" tabindex="0">i</span></h2>
+      <div id="wfCovList"></div>
+      <details id="wfCovAdd" style="margin-top:8px">
+        <summary class="mini" style="cursor:pointer" data-i18n="covAddT">+ Add a coverage rule</summary>
+        <div class="covform" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px">
+          <select id="covSkill" style="min-width:130px"></select>
+          <label class="mini"><span>≥</span> <input id="covMin" type="number" min="1" max="20" value="1" style="width:52px"></label>
+          <label class="mini"><span data-i18n="covPrefL">target</span> <input id="covPref" type="number" min="0" max="20" value="0" style="width:52px"></label>
+          <label class="mini"><span data-i18n="covFromL">from</span> <input id="covFrom" type="time" style="width:96px"></label>
+          <label class="mini"><span data-i18n="covToL">to</span> <input id="covTo" type="time" style="width:96px"></label>
+          <button class="btn ghost" id="covAdd" data-i18n="covAdd">+ Add</button>
+        </div>
+        <p class="mini" data-i18n="covHint">Set the minimum agents of a skill required in each interval (leave the time window empty for all day). A gap = an interval that has agents scheduled but too few of this skill.</p>
+      </details>
+    </div>
+    <!-- STEP 3 — compliance & delta: rendered after every run -->
+    <div class="card" id="schAuditCard" style="display:none">
+      <h2><span data-i18n="schAuditTitle">Compliance &amp; Changes vs. the Original Sidur</span> <span class="info" data-tipkey="tipSchAudit" tabindex="0">i</span></h2>
+      <div class="kpis" id="schKpis" style="margin-bottom:8px"></div>
+      <div id="schCovAudit"></div>
+      <div id="schDeltaWrap" style="margin-top:8px"></div>
     </div>
     <div class="grid2">
       <div class="card">
@@ -1081,6 +1087,25 @@ en:{
   covGaps:"{n} gaps", covFull:"fully covered", covWait:"waiting for data",
   covWaitNote:"No scheduled intervals match this rule's window yet — coverage will appear once that queue's agents are in the roster.",
   covNoSkill:"Pick a skill first.", covBadWin:"End time must be after start.", covAdded:"Coverage rule added for {s}.",
+  covPrioTip:"Raise priority — the first rule is the most critical",
+  schAuditTitle:"Compliance & Changes vs. the Original Sidur",
+  tipSchAudit:"Runs on every generated schedule: each coverage rule is re-audited on the OPTIMIZED schedule (sidur breaches → optimized breaches), and every shift that moved, was added, or was cut vs. the original sidur is listed — grouped by team leader with a ready-to-send message.",
+  saKpiBreach:"rule breaches (optimized)", saKpiShifts:"changed shifts", saKpiHours:"hours moved",
+  saKpiMetric:"projected {m} change",
+  saNoRules:"No coverage rules defined — add them above to audit every run.",
+  saNoDiffs:"The optimized schedule matches the original sidur — no changes.",
+  saDeltaHead:"{n} changes vs. the original sidur",
+  saOrig:"original", saOpt:"optimized",
+  saTypeShift:"shifted", saTypeAdd:"added", saTypeCut:"cut",
+  saTlBtn:"📱 Team-leader messages ({n})",
+  saTlHead:"Hi {team}, schedule changes to hold coverage rules & answer rates:",
+  saTlBreachHead:"⚠ Remaining coverage gaps:",
+  saTlBreach:"• Missing {s}: {cells}",
+  saTlChanges:"🔄 Changes in your team:",
+  saTl_shift:"• {name} — {day} {date}: {orig} → {opt}",
+  saTl_add:"• {name} — {day} {date}: added shift {opt}",
+  saTl_cut:"• {name} — {day} {date}: shift {orig} removed (surplus)",
+  saTlFoot:"Please confirm with the employees as soon as possible. 🙏",
   wfTreeTotal:"Total shown: {n} h",
   qaTitle:"QA & Feedback", qaPh:"Found a bug? Numbers look off? Missing something? Write it here…",
   qaSend:"📧 Send by email", qaCopy:"📋 Copy",
@@ -1447,6 +1472,25 @@ he:{
   covGaps:"{n} פערים", covFull:"מכוסה במלואו", covWait:"ממתין לנתונים",
   covWaitNote:"אין עדיין אינטרוולים משובצים שתואמים את חלון הכלל — הכיסוי יופיע ברגע שנציגי התור יופיעו בסידור.",
   covNoSkill:"בחרו מיומנות קודם.", covBadWin:"שעת הסיום חייבת להיות אחרי שעת ההתחלה.", covAdded:"נוסף כלל כיסוי עבור {s}.",
+  covPrioTip:"העלאת עדיפות — הכלל הראשון הוא הקריטי ביותר",
+  schAuditTitle:"עמידה בחוקים ושינויים מול הסידור המקורי",
+  tipSchAudit:"רץ על כל סידור שנוצר: כל כלל כיסוי נבדק מחדש על הסידור המיטבי (פערים בסידור ← פערים במיטבי), וכל משמרת שהוזזה, נוספה או קוצצה מול הסידור המקורי מוצגת — מקובץ לפי מנהל צוות עם הודעה מוכנה לשליחה.",
+  saKpiBreach:"הפרות חוקים (במיטבי)", saKpiShifts:"משמרות ששונו", saKpiHours:"שעות שהוזזו",
+  saKpiMetric:"שינוי {m} צפוי",
+  saNoRules:"לא הוגדרו חוקי כיסוי — הוסיפו למעלה כדי שכל הרצה תיבדק.",
+  saNoDiffs:"הסידור המיטבי זהה לסידור המקורי — אין שינויים.",
+  saDeltaHead:"{n} שינויים מול הסידור המקורי",
+  saOrig:"מקורי", saOpt:"מיטבי",
+  saTypeShift:"הוזז", saTypeAdd:"נוסף", saTypeCut:"קוצץ",
+  saTlBtn:"📱 הודעות למנהלי צוות ({n})",
+  saTlHead:"היי {team}, שינויים בסידור לשמירה על חוקי הכיסוי ואחוזי המענה:",
+  saTlBreachHead:"⚠ פערי כיסוי שנותרו:",
+  saTlBreach:"• חסר {s}: {cells}",
+  saTlChanges:"🔄 שינויים בצוות שלך:",
+  saTl_shift:"• {name} — יום {day} {date}: {orig} ← {opt}",
+  saTl_add:"• {name} — יום {day} {date}: נוספה משמרת {opt}",
+  saTl_cut:"• {name} — יום {day} {date}: המשמרת {orig} ירדה (עודף)",
+  saTlFoot:"נא לתקף מול העובדים בהקדם. 🙏",
   wfTreeTotal:"סה\"כ מוצג: {n} שעות",
   qaTitle:"משוב ודיווח תקלות (QA)", qaPh:"מצאתם באג? מספר נראה מוזר? חסר משהו? כתבו כאן…",
   qaSend:"📧 שליחה במייל", qaCopy:"📋 העתקה",
@@ -3175,10 +3219,10 @@ function renderSkillCoverage(){
     if(head) head.textContent=t("covTitle");
     return;
   }
-  // compute once; sort worst-first so exposure floats to the top (3-second read)
+  // list order = PRIORITY (the scheduler audit reports critical rules first);
+  // ▲ raises a rule — one visible order instead of a hidden re-sort
   const wri=weekRosterIntervals();
-  const rows=reqs.map((r,i)=>({r,i,cov:computeCoverage(r,wri)}))
-    .sort((a,b)=>(b.cov?b.cov.breaches:0)-(a.cov?a.cov.breaches:0));
+  const rows=reqs.map((r,i)=>({r,i,cov:computeCoverage(r,wri)}));
   const totalBreaches=rows.reduce((s,x)=>s+(x.cov?x.cov.breaches:0),0);
   const rulesWithGaps=rows.filter(x=>x.cov&&x.cov.breaches>0).length;
   if(head) head.textContent=t("covTitle")+" — "+(totalBreaches
@@ -3203,6 +3247,15 @@ function renderSkillCoverage(){
        <span style="min-width:92px;font-weight:600;color:${tcol}">${statusLabel}</span>`;
     const acts=document.createElement("span");
     acts.style.cssText="display:inline-flex;gap:4px;margin-inline-start:auto";
+    if(i>0){ // priority: first rule = most critical; ▲ promotes
+      const up=document.createElement("button"); up.className="linklike"; up.textContent="▲"; up.title=t("covPrioTip");
+      up.addEventListener("click",e=>{ e.preventDefault(); e.stopPropagation();
+        const a=state.settings.skillReqs;
+        [a[i-1],a[i]]=[a[i],a[i-1]];
+        saveState(); renderSkillCoverage();
+      });
+      acts.appendChild(up);
+    }
     const ed=document.createElement("button"); ed.className="linklike"; ed.textContent="✎"; ed.title=t("cmEdit");
     ed.addEventListener("click",e=>{ e.preventDefault(); e.stopPropagation();
       document.getElementById("covSkill").value=r.skill;
@@ -3298,7 +3351,6 @@ function renderWorkforce(){
   if(W.tot>0){ const d2=W.dev/W.tot; setKpiBar("wfKpiDev",Math.min(1,d2),d2<=0.15?"good":d2<=0.3?"warn":"bad"); }
   renderTreemap(W);
   renderImpactMatrix();
-  renderSkillCoverage();
   renderValidation();
   renderInternalRoster();
 }
@@ -3442,6 +3494,182 @@ async function runScheduler(){
   b.classList.add("show");
   renderSchedulerResults(out);
 }
+/* ============================================================
+   STEP 3 — COMPLIANCE & DELTA ENGINE
+   Everything is derived per-run from out.asg (transient, lives on
+   state._schedOut) — persistent config stays in settings.skillReqs.
+   ============================================================ */
+/* per-interval per-skill DISTINCT-agent counts of the optimized schedule */
+function asgSkillCounts(out){
+  const sets={};
+  const skillOf=n=>{ const m=state.rosterMeta.get(n)||(state.iron&&state.iron.emps.get(n))||{}; return (m.skill||"").trim(); };
+  out.asg.forEach(a=>{
+    const sk=skillOf(a.name);
+    for(const tm of halfHoursBetween(a.s,a.e)){
+      const k=a.ds+"|"+tm;
+      ((sets[k]=sets[k]||{})[sk]=sets[k][sk]||new Set()).add(a.name);
+    }
+  });
+  const counts={};
+  for(const k in sets){ counts[k]={}; for(const sk in sets[k]) counts[k][sk]=sets[k][sk].size; }
+  return counts;
+}
+/* same rule semantics as the sidur audit, but counting the OPTIMIZED schedule.
+   Denominator = the sidur's own intervals (wri) so before/after compare 1:1. */
+function computeCoverageOnCounts(r,wri,counts){
+  if(!wri) return null;
+  const {dates,map}=wri;
+  const inWin=tm=>(!r.from||tm>=r.from)&&(!r.to||tm<r.to);
+  let met=0,breaches=0,dataCells=0; const breachCells=[];
+  dates.forEach((ds,di)=>{
+    for(const tm of [...map[ds]].filter(inWin).sort()){
+      const c=(counts[ds+"|"+tm]||{})[r.skill]||0;
+      dataCells++;
+      if(c>=r.min) met++; else{ breaches++; breachCells.push({ds,di,tm,count:c}); }
+    }
+  });
+  return {met,breaches,dataCells,breachCells,hasData:dataCells>0};
+}
+/* diff the ORIGINAL sidur week vs the optimized schedule: shifted / added / cut */
+function calcRosterDelta(out){
+  const wkSet=new Set(state.week?weekDates(state.week):[]);
+  const mins=t2=>{ const[a,b]=String(t2).split(":").map(Number); return a*60+b; };
+  const orig=new Map(), opt=new Map();
+  for(const r of state.schedRows) if(wkSet.has(r.ds)&&r.s&&r.e) orig.set(r.name+"|"+r.ds,{s:r.s,e:r.e});
+  out.asg.forEach(a=>{ if(wkSet.has(a.ds)) opt.set(a.name+"|"+a.ds,{s:a.s,e:a.e}); });
+  const hoursChanged=(o,n)=>{ // symmetric difference of the two shift intervals, in hours
+    const s1=mins(o.s),e1=mins(o.e),s2=mins(n.s),e2=mins(n.e);
+    const inter=Math.max(0,Math.min(e1,e2)-Math.max(s1,s2));
+    return ((e1-s1)+(e2-s2)-2*inter)/60;
+  };
+  const diffs=[];
+  for(const k of new Set([...orig.keys(),...opt.keys()])){
+    const i=k.indexOf("|"), name=k.slice(0,i), ds=k.slice(i+1);
+    const o=orig.get(k), n=opt.get(k);
+    if(o&&n){ if(o.s!==n.s||o.e!==n.e)
+      diffs.push({name,ds,type:"shift",orig:o.s+"–"+o.e,opt:n.s+"–"+n.e,dh:hoursChanged(o,n)}); }
+    else if(!o&&n) diffs.push({name,ds,type:"add",orig:"—",opt:n.s+"–"+n.e,dh:(mins(n.e)-mins(n.s))/60});
+    else if(o&&!n) diffs.push({name,ds,type:"cut",orig:o.s+"–"+o.e,opt:"—",dh:(mins(o.e)-mins(o.s))/60});
+  }
+  diffs.forEach(d=>{ d.team=extMetaOf(d.name).team||t("wfAll"); d.di=fromISO(d.ds).getDay(); });
+  diffs.sort((a,b)=>a.team.localeCompare(b.team,"he")||a.ds.localeCompare(b.ds));
+  return diffs;
+}
+/* the same demand, staffed by the original sidur vs the optimized schedule */
+function projectedMetricDelta(out){
+  if(!state.week||!state.days.size) return null;
+  const S=state.settings, effShare=Math.max(0.05,availShare(S)*(state.calib||1));
+  const optCounts={};
+  out.asg.forEach(a=>{ for(const tm of halfHoursBetween(a.s,a.e)){
+    const k=a.ds+"|"+tm; optCounts[k]=(optCounts[k]||0)+1; } });
+  let vol=0,accO=0,accN=0;
+  for(const ds of weekDates(state.week)){
+    const c=computeDay(ds); if(!c) continue;
+    for(const row of c.rows){
+      if(!row.rec||row.closed||row.exc||row.nodata||!(row.rec.volume>0)) continue;
+      const pN=evalInterval(row.rec.volume,row.rec.aht,Math.round((optCounts[ds+"|"+row.tm]||0)*effShare),S,row.rec.mpt);
+      vol+=row.rec.volume; accO+=primVal(row.perf)*row.rec.volume; accN+=primVal(pN)*row.rec.volume;
+    }
+  }
+  return vol?{before:accO/vol,after:accN/vol}:null;
+}
+const SA_TYPE={shift:{c:"#8a5fd0",k:"saTypeShift"},add:{c:"#0f6a3f",k:"saTypeAdd"},cut:{c:"#b3271e",k:"saTypeCut"}};
+function renderSchedAudit(out){
+  const card=document.getElementById("schAuditCard"); if(!card) return;
+  card.style.display="block";
+  const dayNames=t("days");
+  const reqs=state.settings.skillReqs||[];
+  const wri=weekRosterIntervals();
+  const counts=asgSkillCounts(out);
+  const audits=reqs.map(r=>({r,base:computeCoverage(r,wri),opt:computeCoverageOnCounts(r,wri,counts)}));
+  const totB=audits.reduce((s,a)=>s+(a.opt?a.opt.breaches:0),0);
+  const diffs=calcRosterDelta(out);
+  const hours=Math.round(diffs.reduce((s,d)=>s+d.dh,0)*10)/10;
+  const pd=projectedMetricDelta(out);
+  // ---- KPI banner: the whole run in four numbers ----
+  const kp=document.getElementById("schKpis"); kp.innerHTML="";
+  const mk=(val,label,color)=>{ const d=document.createElement("div"); d.className="kpi";
+    d.innerHTML=`<div class="n"${color?` style="color:${color}"`:""}>${val}</div><div class="l">${label}</div>`;
+    kp.appendChild(d); };
+  mk(reqs.length?totB:"—",t("saKpiBreach"),totB?"var(--crimson)":"var(--emerald)");
+  mk(diffs.length,t("saKpiShifts"));
+  mk(hours,t("saKpiHours"));
+  if(pd){ const d2=(pd.after-pd.before)*100;
+    mk((d2>=0?"+":"")+d2.toFixed(1),t("saKpiMetric",{m:primName()}),d2>=0?"var(--emerald)":"var(--crimson)"); }
+  // ---- coverage audit: rule → sidur breaches → optimized breaches ----
+  const cw=document.getElementById("schCovAudit"); cw.innerHTML="";
+  if(!reqs.length) cw.innerHTML=`<p class="mini">${t("saNoRules")}</p>`;
+  audits.forEach(({r,base,opt})=>{
+    const det=document.createElement("details");
+    det.style.cssText="border:1px solid var(--border);border-radius:8px;padding:4px 10px;margin:4px 0";
+    const ok=opt&&opt.breaches===0;
+    const sum=document.createElement("summary");
+    sum.style.cssText="cursor:pointer;display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:.82rem;list-style:none";
+    sum.innerHTML=`<i style="width:10px;height:10px;border-radius:50%;background:${skillColor(r.skill)};flex:none"></i>
+      <b>${r.skill.replace(/^נציג /,"")}</b><span class="mini">${covRuleText(r)}</span>
+      <span style="margin-inline-start:auto;font-weight:700;color:${ok?"#0f6a3f":"#b3271e"}">${base?base.breaches:0} → ${opt?opt.breaches:0} ${ok?"✓":"⚠"}</span>`;
+    det.appendChild(sum);
+    if(opt&&opt.breachCells.length){
+      const p2=document.createElement("p"); p2.className="mini";
+      p2.textContent=opt.breachCells.slice(0,12)
+        .map(b2=>dayNames[b2.di]+" "+b2.tm+" ("+b2.count+"/"+r.min+")").join(" · ")
+        +(opt.breachCells.length>12?" +"+(opt.breachCells.length-12):"");
+      det.appendChild(p2);
+    }
+    cw.appendChild(det);
+  });
+  // ---- delta list grouped by team + TL messages ----
+  const dw=document.getElementById("schDeltaWrap"); dw.innerHTML="";
+  if(!diffs.length){ const p2=document.createElement("p"); p2.className="mini";
+    p2.textContent=t("saNoDiffs"); dw.appendChild(p2); return; }
+  const byTeam={}; diffs.forEach(d=>(byTeam[d.team]=byTeam[d.team]||[]).push(d));
+  const bar=document.createElement("div"); bar.className="toolbar"; bar.style.margin="0 0 4px";
+  const head=document.createElement("b"); head.style.fontSize=".85rem";
+  head.textContent=t("saDeltaHead",{n:diffs.length});
+  bar.appendChild(head);
+  const grow=document.createElement("span"); grow.className="grow"; bar.appendChild(grow);
+  // one ready-to-send message per team leader: breaches + their team's changes
+  const tlWrap=document.createElement("div"); tlWrap.className="splitbtn";
+  const tlBtn=document.createElement("button"); tlBtn.className="btn ghost applymini";
+  tlBtn.textContent=t("saTlBtn",{n:Object.keys(byTeam).length});
+  tlWrap.appendChild(tlBtn);
+  const menu=document.createElement("div"); menu.className="menu pad"; menu.style.minWidth="250px";
+  const breachLines=audits.filter(a=>a.opt&&a.opt.breaches>0).map(a=>
+    t("saTlBreach",{s:a.r.skill,cells:a.opt.breachCells.slice(0,4)
+      .map(b2=>dayNames[b2.di]+" "+b2.tm).join(", ")+(a.opt.breachCells.length>4?"…":"")}));
+  for(const tl in byTeam){
+    const b2=document.createElement("button");
+    b2.textContent="📱 "+tl+" ("+byTeam[tl].length+")";
+    b2.addEventListener("click",()=>{
+      const lines=byTeam[tl].map(d=>t("saTl_"+d.type,{name:d.name,day:dayNames[d.di],date:fmtD(d.ds),orig:d.orig,opt:d.opt}));
+      const msg=[t("saTlHead",{team:tl}),...(breachLines.length?[t("saTlBreachHead"),...breachLines]:[]),
+        t("saTlChanges"),...lines,t("saTlFoot")].join("\n");
+      navigator.clipboard&&navigator.clipboard.writeText(msg);
+      showToast("📋 "+t("waCopied",{team:tl}),true);
+    });
+    menu.appendChild(b2);
+  }
+  tlWrap.appendChild(menu); bar.appendChild(tlWrap);
+  dw.appendChild(bar);
+  const wrap=document.createElement("div"); wrap.className="tablewrap"; wrap.style.maxHeight="260px"; wrap.style.overflowY="auto";
+  const tbl=document.createElement("table");
+  const hr2=document.createElement("tr");
+  [t("rthName"),t("wfTeamL"),t("fldDay"),t("saOrig"),t("saOpt"),""].forEach(h=>hr2.appendChild(th(h)));
+  const thd=document.createElement("thead"); thd.appendChild(hr2); tbl.appendChild(thd);
+  const tb=document.createElement("tbody");
+  diffs.forEach(d=>{
+    const tr=document.createElement("tr");
+    const tt=SA_TYPE[d.type];
+    [d.name,d.team,dayNames[d.di]+" "+fmtD(d.ds).slice(0,5),d.orig,d.opt].forEach(v=>{
+      const td=document.createElement("td"); td.textContent=v; td.style.direction="ltr"; tr.appendChild(td); });
+    tr.firstChild.style.direction=""; tr.children[1].style.direction="";
+    const td=document.createElement("td");
+    td.innerHTML=`<span style="background:${tt.c}22;color:${tt.c};border:1px solid ${tt.c}55;border-radius:9px;padding:1px 8px;font-size:.7rem;font-weight:700;white-space:nowrap">${t(tt.k)}</span>`;
+    tr.appendChild(td);
+    tb.appendChild(tr);
+  });
+  tbl.appendChild(tb); wrap.appendChild(tbl); dw.appendChild(wrap);
+}
 function renderSchedulerResults(out){
   const dayNames=t("days");
   const mk=(rows,cols)=>{
@@ -3460,6 +3688,7 @@ function renderSchedulerResults(out){
   state._schedRows=out.asg.map(a=>tikshuvRow(a).slice(0,8));
   state._schedFilter={}; state._schedSort=null;
   renderSchedTable();
+  renderSchedAudit(out); // step 3: compliance + delta recompute on every render (incl. manual swaps)
   document.getElementById("schCsv").style.display=out.asg.length?"inline-block":"none";
   state._poolFilter={}; state._poolSort=null;
   renderPoolTable();
@@ -3629,6 +3858,7 @@ function tikshuvRow(a){
 function renderScheduler(){
   if(!document.getElementById("schChipFc")) return;
   ensureEmptyState("scheduler");
+  renderSkillCoverage(); // step 1: rules + current-sidur standing, where they're enforced
   renderSchedSkills();
   // manual-entry autocomplete from the real agent list + name reconciliation panel
   const dl=document.getElementById("knownNames");
