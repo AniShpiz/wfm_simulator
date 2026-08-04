@@ -552,7 +552,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         </div>
         <button class="btn navy" id="schRun" data-i18n="schRun">Generate Optimized Schedule</button>
       </div>
-      <p class="gateNote" id="schGate" style="display:none" data-i18n="schNeedIron">The auto-scheduler builds shifts from the סידור ברזל base. Load a Tikshuv workbook with an Iron sheet to enable it.</p>
+      <p class="gateNote" id="schGate" style="display:none" data-i18n="schNeedSidur">The optimizer MOVES shifts in the current sidur — load a sidur (with shifts in the selected week) and a forecast to enable it.</p>
       <div class="dropzone" id="dzSchCon" style="margin-top:8px">
         <h3 data-i18n="schConL">Weekly constraints file (optional):</h3>
         <p class="mini" data-i18n="schConHint">Employee | Date | Start | End | Type (Unavailable / Partial / Vacation)</p>
@@ -967,6 +967,10 @@ en:{
   wfImpactTip2:"{m} at Iron base staffing → at actual roster staffing",
   wfImpactUnval:"{n} roster agents have no validated Iron base and are EXCLUDED from this matrix:",
   schNeedIron:"The auto-scheduler builds shifts from the סידור ברזל base. Load a Tikshuv workbook with an Iron sheet to enable it.",
+  schNeedSidur:"The optimizer MOVES shifts in the current sidur — load a sidur (with shifts in the selected week) and a forecast to enable it.",
+  schDoneMove:"✅ Sidur optimized: {a} shifts, {m} moved. Still uncovered: {h} agent-hours — close them in the Uncovered-Demand card below.",
+  schChipSidur:"🧩 {n} shifts in the selected week",
+  schSrc_moved:"Moved",
   schNoGaps:"No uncovered demand — the Iron base covers the full forecast. 🎯",
   crsTitle:"Course Gantt Upload", crsHint:"Drop a course plan file — columns (any order, Hebrew or English): course name (קורס), start date (תאריך התחלה), duration in days or end date (סיום), trainees (כמות), yield % (הסמכה). Dates accept dd/mm/yyyy, ISO or Excel serials; missing yield defaults to 85%.",
   crsOk:"{n} courses loaded into the training pipeline.", crsErr:"No course rows recognized — need at least a name/date column.",
@@ -1033,7 +1037,7 @@ en:{
   waCopied:"WhatsApp alert for {team} copied.",
   wbOk:"Tikshuv workbook recognized — {e} representatives, {i} Iron records, {v} validation issues.",
   schTitle:"Demand-Driven Auto-Scheduler",
-  tipSch:"Two sequential iterations: (1) greedy max-coverage matches Iron windows to the interval demand curve; (2) weekly constraints override the baseline and local swaps pull from the overstaffing pool.",
+  tipSch:"Moves the CURRENT sidur's shifts (slide up to ±2h, duration preserved — assignment-style optimization) to best cover the demand curve and your coverage rules by priority. Never adds hours: closing the remaining gaps happens in the Uncovered-Demand card below, from which you send extension requests to team leaders.",
   schRun:"🤖 Generate Optimized Schedule",
   schChipFc:"📈 {n} forecast days", schChipIron:"⛓ Iron: {n} reps",
   schChipIronFb:"⛓ Fallback: {n} reps × {h}h manual", schChipCon:"📋 {n} constraints",
@@ -1352,6 +1356,10 @@ he:{
   wfImpactTip2:"{m} באיוש בסיס הברזל ← באיוש הסידור בפועל",
   wfImpactUnval:"{n} נציגים בסידור ללא בסיס ברזל מתוקף ואינם נכללים במטריצה:",
   schNeedIron:"השיבוץ האוטומטי בונה משמרות מבסיס סידור הברזל. טענו קובץ תקשוב עם גיליון ברזל כדי להפעיל.",
+  schNeedSidur:"המייעל מזיז משמרות בסידור הנוכחי — טענו סידור עבודה (עם משמרות בשבוע הנבחר) ותחזית כדי להפעיל.",
+  schDoneMove:"✅ הסידור מוטב: {a} משמרות, {m} הוזזו. עדיין חסר כיסוי של {h} שעות-נציג — סוגרים בכרטיס הביקוש הלא מכוסה למטה.",
+  schChipSidur:"🧩 {n} משמרות בשבוע הנבחר",
+  schSrc_moved:"הוזז",
   schNoGaps:"אין ביקוש לא מכוסה — בסיס הברזל מכסה את כל התחזית. 🎯",
   crsTitle:"העלאת גאנט קורסים", crsHint:"גררו קובץ תוכנית קורסים — עמודות (בכל סדר, עברית או אנגלית): שם קורס, תאריך התחלה, משך בימים או תאריך סיום, כמות חניכים, אחוז הסמכה. תאריכים בכל פורמט (dd/mm/yyyy, ISO, סריאלי של אקסל); אחוז הסמכה חסר יקבל 85%.",
   crsOk:"{n} קורסים נטענו לצנרת ההכשרה.", crsErr:"לא זוהו שורות קורס — נדרשת לפחות עמודת שם/תאריך.",
@@ -1418,7 +1426,7 @@ he:{
   waCopied:"התראת וואטסאפ עבור {team} הועתקה.",
   wbOk:"קובץ תקשוב זוהה — {e} נציגים, {i} רשומות ברזל, {v} בעיות תיקוף.",
   schTitle:"שיבוץ אוטומטי מונחה-ביקוש",
-  tipSch:"שתי איטרציות עוקבות: (1) התאמה חמדנית של חלונות הברזל לעקומת הביקוש; (2) אילוצים שבועיים דורסים את הבסיס והחלפות מקומיות נמשכות ממאגר עודפי האיוש.",
+  tipSch:"מזיז את משמרות הסידור הנוכחי (החלקה של עד ±2 שעות, אורך המשמרת נשמר — מיטוב בסגנון בעיית השיבוץ) לכיסוי מיטבי של עקומת הביקוש וחוקי הכיסוי לפי עדיפות. לא מוסיף שעות: סגירת הפערים שנותרו נעשית בכרטיס הביקוש הלא מכוסה למטה, שממנו שולחים בקשות הרחבה למנהלי הצוות.",
   schRun:"🤖 יצירת סידור מיטבי",
   schChipFc:"📈 {n} ימי תחזית", schChipIron:"⛓ ברזל: {n} נציגים",
   schChipIronFb:"⛓ ברירת מחדל: {n} נציגים × {h} שעות ידני", schChipCon:"📋 {n} אילוצים",
@@ -3460,36 +3468,107 @@ function renderSchedSkills(){
     menu.appendChild(lb);
   });
 }
-async function runScheduler(){
-  if(!state.iron){ showToast("⚠ "+t("schNeedIron"),false); return; }
-  if(!state.week||!state.days.size){ showToast("⚠ "+t("schNeedData"),false); return; }
-  const emps=schedulerEmps();
-  if(!emps.length){ showToast("⚠ "+t("schNeedData"),false); return; }
-  const days=[];
-  for(const ds of weekDates(state.week)){
+/* ============================================================
+   MOVE-ONLY SIDUR OPTIMIZER
+   Source = the CURRENT sidur (not the ברזל). Each scheduled shift may
+   SLIDE up to ±2h in 30-min steps — duration preserved, nothing added,
+   nothing invented. Objective (assignment-style, iterated best-move):
+   demand shortage + priority-weighted coverage-rule breaches. Missing
+   capacity is NOT created here — it surfaces in the Uncovered-Demand
+   card below, where the manager sends extension requests to TLs.
+   (Exact Hungarian doesn't apply — interval-coverage costs are joint,
+   not pairwise-independent — so we iterate best single moves, which
+   converges on the same managerial outcome: moved shifts only.)
+   ============================================================ */
+function optimizeSidur(){
+  const wk=weekDates(state.week);
+  const reqs=state.settings.skillReqs||[];
+  const skillOf=n=>{ const m=state.rosterMeta.get(n)||{}; return (m.skill||"").trim(); };
+  const mins=t2=>{ const[a,b]=String(t2).split(":").map(Number); return a*60+b; };
+  const toTm=m=>pad(Math.floor(m/60))+":"+pad(m%60);
+  const asg=[],gaps=[]; let movedN=0;
+  for(const ds of wk){
+    const di=fromISO(ds).getDay();
     const c=computeDay(ds); if(!c) continue;
-    const req=c.rows.filter(r=>r.rec).map(r=>({tm:r.tm,need:r.reqEff}));
-    if(req.length) days.push({ds,di:fromISO(ds).getDay(),req});
-  }
-  const payload={days,emps,cons:state.weeklyConstraints};
-  let out;
-  if(emps.length>250&&typeof Worker!=="undefined"&&typeof Blob!=="undefined"){
-    // PRD guardrail: big rosters run off the main thread
-    out=await new Promise((resolve,reject)=>{
-      try{
-        const url=URL.createObjectURL(new Blob(
-          [`onmessage=e=>postMessage((${schedulerCore})(e.data))`],{type:"text/javascript"}));
-        const wk=new Worker(url);
-        wk.onmessage=e=>{ resolve(e.data); wk.terminate(); URL.revokeObjectURL(url); };
-        wk.onerror=()=>{ resolve(schedulerCore(payload)); wk.terminate(); URL.revokeObjectURL(url); };
-        wk.postMessage(payload);
-      }catch(err){ resolve(schedulerCore(payload)); }
+    const req={};
+    c.rows.forEach(r=>{ if(r.rec&&!r.closed&&!r.exc&&!r.nodata) req[r.tm]=r.reqEff; });
+    const tms=Object.keys(req).sort();
+    if(!tms.length) continue;
+    const dayStartM=mins(tms[0]), dayEndM=mins(tms[tms.length-1])+30;
+    // this day's ACTUAL sidur shifts
+    let shifts=state.schedRows.filter(r=>r.ds===ds&&r.s&&r.e)
+      .map(r=>({name:r.name,s:r.s,e:r.e,skill:skillOf(r.name),src:"base"}));
+    // constraints: vacation / full-unavailability cut the shift (the ONLY cuts);
+    // partial windows trim it — same semantics the constraints file promises
+    const consToday=state.weeklyConstraints.filter(x=>x.ds===ds);
+    shifts=shifts.filter(sh=>{
+      const con=consToday.find(x=>x.name===sh.name);
+      if(!con) return true;
+      if(con.type==="vacation"||(con.type==="unavailable"&&(!con.s||!con.e))) return false;
+      if(con.type==="partial"&&con.s&&con.e){
+        const ns=sh.s>con.s?sh.s:con.s, ne=sh.e<con.e?sh.e:con.e;
+        if(mins(ne)-mins(ns)>=60){ sh.s=ns; sh.e=ne; sh.src="adj"; return true; } return false; }
+      if(con.type==="unavailable"){
+        const L=[sh.s,con.s],R=[con.e,sh.e], len=w2=>Math.max(0,mins(w2[1])-mins(w2[0]));
+        const keep=len(L)>=len(R)?L:R;
+        if(len(keep)>=60){ sh.s=keep[0]; sh.e=keep[1]; sh.src="adj"; return true; } return false; }
+      return true;
     });
-  }else out=schedulerCore(payload);
+    // interval staffing + per-skill counts, kept incrementally for cheap cost deltas
+    const staff={},skl={};
+    tms.forEach(tm=>{ staff[tm]=0; skl[tm]={}; });
+    const addShift=(sh,sign)=>{ for(let m=mins(sh.s);m<mins(sh.e);m+=30){
+      const tm=toTm(m); if(staff[tm]==null) continue;
+      staff[tm]+=sign; if(sh.skill) skl[tm][sh.skill]=(skl[tm][sh.skill]||0)+sign; } };
+    shifts.forEach(sh=>addShift(sh,1));
+    const ruleW=reqs.map((r,i)=>({r,w:2*(reqs.length-i)})); // priority order = weight
+    const cost=()=>{
+      let cst=0;
+      for(const tm of tms){
+        cst+=Math.max(0,req[tm]-staff[tm]);
+        for(const {r,w} of ruleW) if((!r.from||tm>=r.from)&&(!r.to||tm<r.to))
+          cst+=w*Math.max(0,r.min-((skl[tm]||{})[r.skill]||0));
+      }
+      return cst;
+    };
+    const STEP=30, MAXOFF=120; // slide window: up to ±2 hours
+    for(let pass=0;pass<3;pass++){
+      let improved=false;
+      for(const sh of shifts){
+        const dur=mins(sh.e)-mins(sh.s), o0=mins(sh.s);
+        let best=cost(), bestS=o0;
+        for(let off=-MAXOFF;off<=MAXOFF;off+=STEP){
+          if(off===0) continue;
+          const ns=o0+off;
+          if(ns<dayStartM||ns+dur>dayEndM) continue;
+          addShift(sh,-1); const os=sh.s,oe=sh.e;
+          sh.s=toTm(ns); sh.e=toTm(ns+dur); addShift(sh,1);
+          const cN=cost();
+          addShift(sh,-1); sh.s=os; sh.e=oe; addShift(sh,1);
+          if(cN<best){ best=cN; bestS=ns; }
+        }
+        if(bestS!==o0){
+          addShift(sh,-1); sh.s=toTm(bestS); sh.e=toTm(bestS+(dur)); addShift(sh,1);
+          if(!sh.movedFlag){ sh.movedFlag=true; movedN++; }
+          sh.src="moved"; improved=true;
+        }
+      }
+      if(!improved) break;
+    }
+    shifts.forEach(sh=>asg.push({name:sh.name,ds,di,s:sh.s,e:sh.e,src:sh.src}));
+    for(const tm of tms){ const gap=Math.round(req[tm]-staff[tm]); if(gap>0) gaps.push({ds,tm,n:gap}); }
+  }
+  return {asg,pool:[],gaps,moved:movedN};
+}
+async function runScheduler(){
+  if(!state.week||!state.days.size){ showToast("⚠ "+t("schNeedData"),false); return; }
+  const wkSet=new Set(weekDates(state.week));
+  if(!state.schedRows.some(r=>wkSet.has(r.ds)&&r.s&&r.e)){ showToast("⚠ "+t("schNeedSidur"),false); return; }
+  const out=optimizeSidur();
   state.optimizedOutput=out.asg;
-  state._schedOut=out; // live result — manual pool insertions mutate this
+  state._schedOut=out; // live result — manual edits mutate this
   const b=document.getElementById("schBanner");
-  b.textContent=t("schDone",{a:out.asg.length,p:out.pool.length,
+  b.textContent=t("schDoneMove",{a:out.asg.length,m:out.moved,
     h:Math.round(out.gaps.reduce((s,g)=>s+g.n,0)/2)}); // half-hour blocks → agent-hours
   b.classList.add("show");
   renderSchedulerResults(out);
@@ -3692,6 +3771,9 @@ function renderSchedulerResults(out){
   document.getElementById("schCsv").style.display=out.asg.length?"inline-block":"none";
   state._poolFilter={}; state._poolSort=null;
   renderPoolTable();
+  // the move-only optimizer never pools anyone — hide the empty card entirely
+  { const pc=document.getElementById("schPoolWrap");
+    if(pc) pc.closest(".card").style.display=(out.pool&&out.pool.length)?"block":"none"; }
   // ביקוש לא מכוסה — classic sidur matrix: intervals down, days across
   const gw=document.getElementById("schGapWrap"); gw.innerHTML="";
   if(!out.gaps.length){ gw.innerHTML=`<p class="mini">${t("schNoGaps")}</p>`; renderExtensionOffers(out); return; }
@@ -3896,14 +3978,16 @@ function renderScheduler(){
     });
   }
   document.getElementById("schChipFc").textContent=t("schChipFc",{n:state.days.size});
-  document.getElementById("schChipIron").textContent=state.iron
-    ? t("schChipIron",{n:schedulerEmps().length})
-    : t("schChipIronFb",{n:0,h:fullTimeWeeklyHours()});
+  // the optimizer's raw material is the CURRENT sidur week
+  const wkSet=new Set(state.week?weekDates(state.week):[]);
+  const weekShifts=state.schedRows.filter(r=>wkSet.has(r.ds)&&r.s&&r.e).length;
+  document.getElementById("schChipIron").textContent=t("schChipSidur",{n:weekShifts});
   document.getElementById("schChipCon").textContent=t("schChipCon",{n:state.weeklyConstraints.length});
-  // no ברזל → the scheduler has no base to build from; the button stays gated
+  // no sidur shifts in the selected week → nothing to move; the button stays gated
   const run=document.getElementById("schRun"), gate=document.getElementById("schGate");
-  if(run) run.disabled=!state.iron;
-  if(gate) gate.style.display=state.iron?"none":"block";
+  const ready=weekShifts>0&&state.days.size>0;
+  if(run) run.disabled=!ready;
+  if(gate) gate.style.display=ready?"none":"block";
 }
 function parseConstraintsGrid(grid){
   const hd=findHeader(grid);
