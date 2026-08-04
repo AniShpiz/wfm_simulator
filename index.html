@@ -987,7 +987,7 @@ en:{
   skillScopeAllBtn:"Count every skill",
   legScale:"above target → critical (7 bands around your target)",
   cellUndoTip:"Restore this cell to its original value",
-  schSkillHint:"Which skills join the scheduling pool? Demand is usually the קו-1 queue only — add בכיר on collection days, מרפאות when they answer קו 1. Untagged reps always schedule.",
+  schSkillHint:"Which skills does the optimizer treat as frontline — the only ones it moves or cuts against demand? Usually the קו-1 queue only; add בכיר on collection days, מרפאות when they answer קו 1. Unticked skills stay put and are just checked against the coverage rules. Untagged reps always schedule.",
   schInsert:"Insert into sidur", schSwapTitle:"Insert {n} on {d} — switch with:",
   schAddNoSwap:"Insert without switching anyone", schSwapDone:"{n} inserted into the schedule.",
   schSrc_manual:"Manual",
@@ -1097,8 +1097,12 @@ en:{
   covPrioTip:"Raise priority — the first rule is the most critical",
   schAuditTitle:"Compliance & Changes vs. the Original Sidur",
   tipSchAudit:"Runs on every generated schedule: each coverage rule is re-audited on the OPTIMIZED schedule (sidur breaches → optimized breaches), and every shift that moved, was added, or was cut vs. the original sidur is listed — grouped by team leader with a ready-to-send message.",
-  saKpiBreach:"rule breaches (optimized)", saKpiShifts:"changed shifts", saKpiHours:"hours moved",
+  saKpiBreach:"half-hours still short", saKpiShifts:"changed shifts", saKpiHours:"hours moved",
   saKpiMetric:"projected {m} change",
+  saCovLegend:"An interval = one 30-min slot. ✓ = rule met every interval · ⚠ = short in some.",
+  saCovOk:"Covered", saCovGap:"short in {n} intervals", saCovImp:"(improved from {n})",
+  saCovOutScope:"This skill isn't in the scheduling scope — tick it in the 🎧 menu above to let the optimizer move its reps, or send an extension request.",
+  saCovNoMove:"No spare reps to move — needs an extension request (see the Uncovered-Demand card).",
   saNoRules:"No coverage rules defined — add them above to audit every run.",
   saNoDiffs:"The optimized schedule matches the original sidur — no changes.",
   saDeltaHead:"{n} changes vs. the original sidur",
@@ -1379,7 +1383,7 @@ he:{
   skillScopeAllBtn:"ספרו את כל המיומנויות",
   legScale:"מעל היעד ← קריטי (7 מדרגות סביב היעד שלכם)",
   cellUndoTip:"החזרת התא לערך המקורי",
-  schSkillHint:"אילו מיומנויות נכנסות למאגר השיבוץ? הביקוש הוא בדרך כלל תור קו 1 בלבד — הוסיפו בכיר בימי גבייה, מרפאות כשהן עונות קו 1. נציגים ללא תיוג תמיד משתבצים.",
+  schSkillHint:"אילו מיומנויות המייעל מתייחס אליהן כחזית — היחידות שהוא מזיז או מקצץ מול הביקוש? בדרך כלל תור קו 1 בלבד; הוסיפו בכיר בימי גבייה, מרפאות כשהן עונות קו 1. מיומנויות שלא סומנו נשארות במקומן ורק נבדקות מול חוקי הכיסוי. נציגים ללא תיוג תמיד משתבצים.",
   schInsert:"הכנס לסידור", schSwapTitle:"שיבוץ {n} בתאריך {d} — להחליף עם:",
   schAddNoSwap:"הוספה בלי להחליף אף אחד", schSwapDone:"{n} שובץ לסידור.",
   schSrc_manual:"ידני",
@@ -1489,8 +1493,12 @@ he:{
   covPrioTip:"העלאת עדיפות — הכלל הראשון הוא הקריטי ביותר",
   schAuditTitle:"עמידה בחוקים ושינויים מול הסידור המקורי",
   tipSchAudit:"רץ על כל סידור שנוצר: כל כלל כיסוי נבדק מחדש על הסידור המיטבי (פערים בסידור ← פערים במיטבי), וכל משמרת שהוזזה, נוספה או קוצצה מול הסידור המקורי מוצגת — מקובץ לפי מנהל צוות עם הודעה מוכנה לשליחה.",
-  saKpiBreach:"הפרות חוקים (במיטבי)", saKpiShifts:"משמרות ששונו", saKpiHours:"שעות שהוזזו",
+  saKpiBreach:"חצאי-שעה עדיין חסרים", saKpiShifts:"משמרות ששונו", saKpiHours:"שעות שהוזזו",
   saKpiMetric:"שינוי {m} צפוי",
+  saCovLegend:"מרווח = חלון של חצי שעה. ✓ = החוק מתקיים בכל מרווח · ⚠ = חסר כיסוי בחלקם.",
+  saCovOk:"מכוסה", saCovGap:"חסר ב-{n} מרווחים", saCovImp:"(שופר מ-{n})",
+  saCovOutScope:"המיומנות אינה בתחום השיבוץ — סמנו אותה בתפריט 🎧 למעלה כדי לאפשר למייעל להזיז את נציגיה, או שלחו בקשת הרחבה.",
+  saCovNoMove:"אין עודף נציגים להזזה — נדרשת בקשת הרחבה (ראו כרטיס הביקוש הלא מכוסה).",
   saNoRules:"לא הוגדרו חוקי כיסוי — הוסיפו למעלה כדי שכל הרצה תיבדק.",
   saNoDiffs:"הסידור המיטבי זהה לסידור המקורי — אין שינויים.",
   saDeltaHead:"{n} שינויים מול הסידור המקורי",
@@ -3490,6 +3498,11 @@ function optimizeSidur(){
   const wk=weekDates(state.week);
   const reqs=state.settings.skillReqs||[];
   const skillOf=n=>{ const m=state.rosterMeta.get(n)||{}; return (m.skill||"").trim(); };
+  // SCOPE: the checkbox menu picks which skills answer the frontline demand and
+  // may be moved/cut. Everyone else stays put — measured against the coverage
+  // rules only, never repositioned. Untagged reps are always in scope.
+  const sc=state.schedSkills;
+  const inScope=sk=>!sc||!sc.length||!sk||sc.includes(sk);
   const mins=t2=>{ const[a,b]=String(t2).split(":").map(Number); return a*60+b; };
   const toTm=m=>pad(Math.floor(m/60))+":"+pad(m%60);
   const asg=[],gaps=[],pool=[],cuts=[]; let movedN=0;
@@ -3502,12 +3515,12 @@ function optimizeSidur(){
     if(!tms.length) continue;
     const dayStartM=mins(tms[0]), dayEndM=mins(tms[tms.length-1])+30;
     // this day's ACTUAL sidur shifts
-    let shifts=state.schedRows.filter(r=>r.ds===ds&&r.s&&r.e)
+    let allShifts=state.schedRows.filter(r=>r.ds===ds&&r.s&&r.e)
       .map(r=>({name:r.name,s:r.s,e:r.e,skill:skillOf(r.name),src:"base"}));
     // constraints: vacation / full-unavailability cut the shift (the ONLY cuts);
-    // partial windows trim it — same semantics the constraints file promises
+    // partial windows trim it — applies to EVERY skill, in scope or not
     const consToday=state.weeklyConstraints.filter(x=>x.ds===ds);
-    shifts=shifts.filter(sh=>{
+    allShifts=allShifts.filter(sh=>{
       const con=consToday.find(x=>x.name===sh.name);
       if(!con) return true;
       const cut=()=>{ cuts.push({name:sh.name,ds,di,s:sh.s,e:sh.e}); return false; };
@@ -3521,13 +3534,19 @@ function optimizeSidur(){
         if(len(keep)>=60){ sh.s=keep[0]; sh.e=keep[1]; sh.src="adj"; return true; } return cut(); }
       return true;
     });
-    // interval staffing + per-skill counts, kept incrementally for cheap cost deltas
+    // in-scope shifts answer the demand and may move/cut; the rest stay put
+    const shifts=allShifts.filter(sh=>inScope(sh.skill));
+    const fixed =allShifts.filter(sh=>!inScope(sh.skill));
+    // staff = frontline capacity (in-scope only); skl = per-skill counts (EVERYONE,
+    // so a rule for an out-of-scope skill still sees its reps — just can't move them)
     const staff={},skl={};
     tms.forEach(tm=>{ staff[tm]=0; skl[tm]={}; });
+    const addSkl=(sh,sign)=>{ if(!sh.skill) return; for(let m=mins(sh.s);m<mins(sh.e);m+=30){
+      const tm=toTm(m); if(skl[tm]) skl[tm][sh.skill]=(skl[tm][sh.skill]||0)+sign; } };
     const addShift=(sh,sign)=>{ for(let m=mins(sh.s);m<mins(sh.e);m+=30){
-      const tm=toTm(m); if(staff[tm]==null) continue;
-      staff[tm]+=sign; if(sh.skill) skl[tm][sh.skill]=(skl[tm][sh.skill]||0)+sign; } };
+      const tm=toTm(m); if(staff[tm]!=null) staff[tm]+=sign; } addSkl(sh,sign); };
     shifts.forEach(sh=>addShift(sh,1));
+    fixed.forEach(sh=>addSkl(sh,1)); // counted for the rules, never repositioned
     const ruleW=reqs.map((r,i)=>({r,w:2*(reqs.length-i)})); // priority order = weight
     const cost=()=>{
       let cst=0;
@@ -3563,6 +3582,7 @@ function optimizeSidur(){
       if(!improved) break;
     }
     shifts.forEach(sh=>asg.push({name:sh.name,ds,di,s:sh.s,e:sh.e,src:sh.src}));
+    fixed.forEach(sh=>asg.push({name:sh.name,ds,di,s:sh.s,e:sh.e,src:sh.src})); // unchanged rows
     for(const tm of tms){ const gap=Math.round(req[tm]-staff[tm]); if(gap>0) gaps.push({ds,tm,n:gap}); }
     // surplus → SAFE cut candidates for the manager: sequentially removing
     // them never creates a shortage and never breaks a skill rule. The
@@ -3699,19 +3719,32 @@ function renderSchedAudit(out){
   mk(hours,t("saKpiHours"));
   if(pd){ const d2=(pd.after-pd.before)*100;
     mk((d2>=0?"+":"")+d2.toFixed(1),t("saKpiMetric",{m:primName()}),d2>=0?"var(--emerald)":"var(--crimson)"); }
-  // ---- coverage audit: rule → sidur breaches → optimized breaches ----
+  // ---- coverage audit: each rule, plainly — is it covered, and if not, why ----
+  const sc=state.schedSkills, inScope=sk=>!sc||!sc.length||sc.includes(sk);
   const cw=document.getElementById("schCovAudit"); cw.innerHTML="";
   if(!reqs.length) cw.innerHTML=`<p class="mini">${t("saNoRules")}</p>`;
+  else{ const lg=document.createElement("p"); lg.className="mini"; lg.style.margin="0 0 4px";
+    lg.textContent=t("saCovLegend"); cw.appendChild(lg); }
   audits.forEach(({r,base,opt})=>{
+    const brO=opt?opt.breaches:0, brB=base?base.breaches:0, ok=brO===0;
     const det=document.createElement("details");
     det.style.cssText="border:1px solid var(--border);border-radius:8px;padding:4px 10px;margin:4px 0";
-    const ok=opt&&opt.breaches===0;
     const sum=document.createElement("summary");
     sum.style.cssText="cursor:pointer;display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:.82rem;list-style:none";
+    // status in words: covered, or short in N half-hour slots (and whether we improved it)
+    const c=ok?"#0f6a3f":"#b3271e";
+    const imp=(!ok&&brB>brO)?" "+t("saCovImp",{n:brB}):"";
+    const status=ok?("✓ "+t("saCovOk")):("⚠ "+t("saCovGap",{n:brO})+imp);
     sum.innerHTML=`<i style="width:10px;height:10px;border-radius:50%;background:${skillColor(r.skill)};flex:none"></i>
       <b>${r.skill.replace(/^נציג /,"")}</b><span class="mini">${covRuleText(r)}</span>
-      <span style="margin-inline-start:auto;font-weight:700;color:${ok?"#0f6a3f":"#b3271e"}">${base?base.breaches:0} → ${opt?opt.breaches:0} ${ok?"✓":"⚠"}</span>`;
+      <span style="margin-inline-start:auto;font-weight:700;color:${c}">${status}</span>`;
     det.appendChild(sum);
+    // when it's still short, say WHY the optimizer couldn't close it → what to do
+    if(!ok){
+      const why=!inScope(r.skill)?t("saCovOutScope"):(brB===brO?t("saCovNoMove"):"");
+      if(why){ const pn=document.createElement("p"); pn.className="mini"; pn.style.color="#b45309"; pn.style.margin="2px 0 0";
+        pn.textContent="↳ "+why; det.appendChild(pn); }
+    }
     if(opt&&opt.breachCells.length){
       const p2=document.createElement("p"); p2.className="mini";
       p2.textContent=opt.breachCells.slice(0,12)
