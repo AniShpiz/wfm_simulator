@@ -425,13 +425,15 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <div class="n" id="spark2v">—</div><div class="spark" id="spark2"></div><div class="cap" id="spark2c"></div></div>
     </div>
     <div class="card">
-      <h2 data-i18n="trajTitle">Trajectory Insights</h2>
+      <!-- scope badge makes the division of labour visible: these recs follow the
+           queue filter above; the What-If card below is whole-center -->
+      <h2><span data-i18n="trajTitle">Trajectory Insights</span> <span class="pill" id="trajScope" style="font-weight:600"></span></h2>
       <ul class="plain" id="trajList"></ul>
     </div>
     <!-- Improvement simulator: drag the levers, watch the projected service level and
          the DATE you reach the target move live. Non-destructive — never touches real settings. -->
     <div class="card" id="whatIfCard">
-      <h2><span data-i18n="wiTitle">Improvement Simulator (What-If)</span> <span class="info" data-tipkey="tipWi" tabindex="0">i</span></h2>
+      <h2><span data-i18n="wiTitle">Improvement Simulator (What-If)</span> <span class="pill" data-i18n="wiScopeAll" style="font-weight:600">Whole center</span> <span class="info" data-tipkey="tipWi" tabindex="0">i</span></h2>
       <div class="grid2" style="align-items:center">
         <div>
           <!-- every slider is an IMPROVEMENT: right = better. 0 = today's baseline. -->
@@ -1066,7 +1068,7 @@ en:{
   capToday:"Today", capEnd:"+30 days", capCourse1:"Course 1", capCourseN:"Latest",
   outlookTitle:"Capacity Outlook — projected cumulative headcount",
   tipOutlook:"Projected cumulative headcount over the coming 60 days: base headcount + training-pipeline onboarding (yield-adjusted) − monthly attrition + active what-if staffing simulations (converted to full-time equivalents).",
-  trajTitle:"Trajectory Insights",
+  trajTitle:"Trajectory Insights", trajAllQueues:"All queues", wiScopeAll:"Whole center",
   trajShift:"{m} trajectory: expected {x}% shift within 30 days under the current hiring rate.",
   trajHire:"Optimal hiring: Add {n} Full-Time Roles to sustain your {t}% {m} target through the forecast period (until {d}).",
   trajHireBig:"You're projected at {p}% {m}; the {t}% target is {n} full-time roles away ({pct}% of the workforce) if hired UNIFORMLY — the most expensive path. Peak-hour gaps are usually the real culprit: try the shift-extension offers on the scheduler page, or revisit the target.",
@@ -1120,7 +1122,7 @@ en:{
   qaSubject:"WFM Simulator — QA feedback", qaEmpty:"Write something first 🙂", qaCopied:"Copied — paste it anywhere.",
   trajNoData:"Load a forecast and set headcount to unlock predictive trajectory insights.",
   wiTitle:"Improvement Simulator (What-If)",
-  tipWi:"Drag any mix of levers — they move the whole curve up or down immediately, so you see where service lands and WHEN you'd hit the target. Headcount still evolves over time: courses graduate on their dates, attrition erodes, and What-If profiles add capacity (that's the only source of extra agents — no phantom number). Notes: handle time drives productivity — cutting it is the productivity lever; 'unavailable time' is shrinkage; 'absence' is no-shows. It's a sandbox — never changes your real settings.",
+  tipWi:"Drag any mix of levers — they move the whole curve up or down immediately, so you see where service lands and WHEN you'd hit the target. Headcount still evolves over time: courses graduate on their dates, attrition erodes, and What-If profiles add capacity (that's the only source of extra agents — no phantom number). Notes: handle time drives productivity — cutting it is the productivity lever; 'unavailable time' is shrinkage; 'absence' is no-shows. It's a sandbox — never changes your real settings, the KPIs, or the insights. Scope: it models the WHOLE center, so the queue filter on the headcount KPI does not apply here (per-queue demand isn't split yet). The Trajectory Insights above are the queue-scoped counterpart — they follow that filter and read your real settings, not these sliders.",
   cohEditTip:"Click to edit this course",
   wiZeroBase:"This is 0 in Advanced Settings — nothing to reduce. Set a value there to model reducing it.",
   wiAht:"Shorter handle time", wiAttr:"Less attrition", wiShrink:"Less unavailable time", wiAbsence:"Fewer no-shows",
@@ -1462,7 +1464,7 @@ he:{
   capToday:"היום", capEnd:"+30 יום", capCourse1:"קורס 1", capCourseN:"אחרון",
   outlookTitle:"תחזית קיבולת — מצבה מצטברת חזויה",
   tipOutlook:"מצבה מצטברת חזויה ל־60 הימים הקרובים: מצבת בסיס + קליטה מצנרת ההכשרות (מותאם הסמכה) − נטישה חודשית + סימולציות What-If פעילות (מומרות למשרות מלאות).",
-  trajTitle:"תובנות מגמה",
+  trajTitle:"תובנות מגמה", trajAllQueues:"כל התורים", wiScopeAll:"כל המוקד",
   trajShift:"מגמת {m}: צפוי שינוי של ‎{x}%‎ בתוך 30 יום בקצב הגיוס הנוכחי.",
   trajHire:"גיוס מומלץ: עוד ‎{n}‎ משרות מלאות יחזיקו {m} של ‎{t}%‎ עד סוף תקופת התחזית ({d}).",
   trajHireBig:"אתם צפויים ל-{m} של ‎{p}%‎; היעד ‎{t}%‎ רחוק ‎{n}‎ משרות (‎{pct}%‎ מהמצבה) — אבל רק אם מגייסים אחיד, וזו הדרך היקרה. לרוב הבעיה היא שעות שיא: נסו קודם את הצעות הרחבת המשמרות בעמוד השיבוץ, או בחנו מחדש את היעד.",
@@ -1516,7 +1518,7 @@ he:{
   qaSubject:"סימולטור WFM — משוב QA", qaEmpty:"כתבו משהו קודם 🙂", qaCopied:"הועתק — הדביקו בכל מקום.",
   trajNoData:"טענו תחזית והגדירו מצבה כדי לקבל תובנות מגמה חזויות.",
   wiTitle:"סימולטור שיפורים (What-If)",
-  tipWi:"הזיזו כל שילוב של מנופים — הם מזיזים את כל העקומה מעלה או מטה מיד, כך שתראו לאן מגיעה רמת השירות ומתי תעמדו ביעד. המצבה עדיין מתפתחת עם הזמן: קורסים מסיימים במועדם, נטישה שוחקת, ופרופילי ה-What-If מוסיפים כוח אדם (זה המקור היחיד לתוספת נציגים — לא מספר מדומה). הבהרות: משך השיחה קובע את הפריון — קיצורו הוא מנוף הפריון; 'זמן לא-זמין' הוא שחיקה; 'היעדרות' היא הברזות. זו סביבת ניסוי בלבד — אינה משנה את ההגדרות האמיתיות שלכם.",
+  tipWi:"הזיזו כל שילוב של מנופים — הם מזיזים את כל העקומה מעלה או מטה מיד, כך שתראו לאן מגיעה רמת השירות ומתי תעמדו ביעד. המצבה עדיין מתפתחת עם הזמן: קורסים מסיימים במועדם, נטישה שוחקת, ופרופילי ה-What-If מוסיפים כוח אדם (זה המקור היחיד לתוספת נציגים — לא מספר מדומה). הבהרות: משך השיחה קובע את הפריון — קיצורו הוא מנוף הפריון; 'זמן לא-זמין' הוא שחיקה; 'היעדרות' היא הברזות. זו סביבת ניסוי בלבד — אינה משנה את ההגדרות האמיתיות, את ה-KPI או את התובנות. תחום: המודל הוא לכל המוקד, ולכן סינון התור שב-KPI של המצבה אינו חל כאן (הביקוש עדיין לא מפוצל לפי תור). תובנות המגמה למעלה הן המקבילה לפי-תור — הן עוקבות אחר הסינון וקוראות את ההגדרות האמיתיות, לא את המחוונים האלה.",
   cohEditTip:"לחצו לעריכת הקורס",
   wiZeroBase:"הערך 0 בהגדרות מתקדמות — אין מה להפחית. הגדירו ערך שם כדי לדמות הפחתה.",
   wiAht:"קיצור משך שיחה", wiAttr:"הפחתת נטישה", wiShrink:"הפחתת זמן לא-זמין", wiAbsence:"הפחתת הברזות",
@@ -6366,6 +6368,10 @@ function renderRecruit(){
   }
 
   syncCohSkillUI(); // course-form queue options track the loaded skill list
+  // scope badge: these insights follow the queue filter above (contrast with the
+  // whole-center What-If simulator) — the division of labour, shown not told
+  { const sb=document.getElementById("trajScope");
+    if(sb) sb.textContent=plan.sel.length?plan.sel.map(s=>s.replace(/^נציג /,"")).join(" + "):t("trajAllQueues"); }
   const traj=computeTrajectory(plan.hc,plan.skillF);
   const ul=document.getElementById("trajList"); ul.innerHTML="";
   const add=(txt,cls)=>{ const li=document.createElement("li"); li.className=cls||"insight"; li.textContent=txt; ul.appendChild(li); };
