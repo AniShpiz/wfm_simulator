@@ -970,7 +970,10 @@ en:{
   schNeedSidur:"The optimizer MOVES shifts in the current sidur — load a sidur (with shifts in the selected week) and a forecast to enable it.",
   schDoneMove:"✅ Sidur optimized: {a} shifts, {m} moved. Still uncovered: {h} agent-hours — close them in the Uncovered-Demand card below.",
   schChipSidur:"🧩 {n} shifts in the selected week",
-  schSrc_moved:"Moved",
+  schSrc_moved:"Moved", schSrc_cut:"Cut",
+  schCutBtn:"✂ Cut", schCutDone:"{name}'s shift cut — now shown as 'Cut' in the table",
+  saDeltaHint:"row-level detail: the table above, Status column",
+  saTlSend:"Send",
   schNoGaps:"No uncovered demand — the Iron base covers the full forecast. 🎯",
   crsTitle:"Course Gantt Upload", crsHint:"Drop a course plan file — columns (any order, Hebrew or English): course name (קורס), start date (תאריך התחלה), duration in days or end date (סיום), trainees (כמות), yield % (הסמכה). Dates accept dd/mm/yyyy, ISO or Excel serials; missing yield defaults to 85%.",
   crsOk:"{n} courses loaded into the training pipeline.", crsErr:"No course rows recognized — need at least a name/date column.",
@@ -1046,7 +1049,7 @@ en:{
   schConOk:"{n} weekly constraints loaded.",
   schOutTitle:"Optimized Schedule",
   schPoolTitle:"Overstaffing Pool (manager review)",
-  tipSchPool:"Contracted representatives the demand curve did not require — left unscheduled by design, listed for manager review instead of arbitrary placement.",
+  tipSchPool:"Shifts whose entire span sits in OVERSTAFFED intervals — cutting them creates no shortage and breaks no coverage rule. The optimizer never cuts on its own; the ✂ decision is the manager's. This card appears only when such surplus exists.",
   schGapTitle:"Uncovered Demand — and how to close it",
   schCsv:"⬇ Download Optimized Schedule (CSV)",
   schNeedData:"Load a forecast and a roster / Iron workbook first.",
@@ -1359,7 +1362,10 @@ he:{
   schNeedSidur:"המייעל מזיז משמרות בסידור הנוכחי — טענו סידור עבודה (עם משמרות בשבוע הנבחר) ותחזית כדי להפעיל.",
   schDoneMove:"✅ הסידור מוטב: {a} משמרות, {m} הוזזו. עדיין חסר כיסוי של {h} שעות-נציג — סוגרים בכרטיס הביקוש הלא מכוסה למטה.",
   schChipSidur:"🧩 {n} משמרות בשבוע הנבחר",
-  schSrc_moved:"הוזז",
+  schSrc_moved:"הוזז", schSrc_cut:"קוצץ",
+  schCutBtn:"✂ קצץ", schCutDone:"המשמרת של {name} קוצצה — מסומנת ׳קוצץ׳ בטבלה",
+  saDeltaHint:"פירוט ברמת משמרת: בטבלה למעלה, עמודת סטאטוס",
+  saTlSend:"שלח",
   schNoGaps:"אין ביקוש לא מכוסה — בסיס הברזל מכסה את כל התחזית. 🎯",
   crsTitle:"העלאת גאנט קורסים", crsHint:"גררו קובץ תוכנית קורסים — עמודות (בכל סדר, עברית או אנגלית): שם קורס, תאריך התחלה, משך בימים או תאריך סיום, כמות חניכים, אחוז הסמכה. תאריכים בכל פורמט (dd/mm/yyyy, ISO, סריאלי של אקסל); אחוז הסמכה חסר יקבל 85%.",
   crsOk:"{n} קורסים נטענו לצנרת ההכשרה.", crsErr:"לא זוהו שורות קורס — נדרשת לפחות עמודת שם/תאריך.",
@@ -1435,7 +1441,7 @@ he:{
   schConOk:"נטענו {n} אילוצים שבועיים.",
   schOutTitle:"סידור מיטבי",
   schPoolTitle:"מאגר עודפי איוש (לבחינת מנהל)",
-  tipSchPool:"נציגים חוזיים שעקומת הביקוש לא דרשה — נשארים ללא שיבוץ בכוונה ומוצגים לבחינת המנהל במקום שיבוץ שרירותי.",
+  tipSchPool:"משמרות שכל טווחן נמצא במרווחים עם עודף איוש — קיצוצן לא יוצר חוסר ולא שובר חוק כיסוי. המייעל לעולם לא מקצץ לבד; החלטת ה-✂ היא של המנהל. הכרטיס מופיע רק כשקיים עודף כזה.",
   schGapTitle:"ביקוש לא מכוסה — ואיך סוגרים אותו",
   schCsv:"⬇ הורדת הסידור המיטבי (CSV)",
   schNeedData:"טענו תחילה תחזית וסידור / קובץ ברזל.",
@@ -3486,7 +3492,7 @@ function optimizeSidur(){
   const skillOf=n=>{ const m=state.rosterMeta.get(n)||{}; return (m.skill||"").trim(); };
   const mins=t2=>{ const[a,b]=String(t2).split(":").map(Number); return a*60+b; };
   const toTm=m=>pad(Math.floor(m/60))+":"+pad(m%60);
-  const asg=[],gaps=[]; let movedN=0;
+  const asg=[],gaps=[],pool=[],cuts=[]; let movedN=0;
   for(const ds of wk){
     const di=fromISO(ds).getDay();
     const c=computeDay(ds); if(!c) continue;
@@ -3504,14 +3510,15 @@ function optimizeSidur(){
     shifts=shifts.filter(sh=>{
       const con=consToday.find(x=>x.name===sh.name);
       if(!con) return true;
-      if(con.type==="vacation"||(con.type==="unavailable"&&(!con.s||!con.e))) return false;
+      const cut=()=>{ cuts.push({name:sh.name,ds,di,s:sh.s,e:sh.e}); return false; };
+      if(con.type==="vacation"||(con.type==="unavailable"&&(!con.s||!con.e))) return cut();
       if(con.type==="partial"&&con.s&&con.e){
         const ns=sh.s>con.s?sh.s:con.s, ne=sh.e<con.e?sh.e:con.e;
-        if(mins(ne)-mins(ns)>=60){ sh.s=ns; sh.e=ne; sh.src="adj"; return true; } return false; }
+        if(mins(ne)-mins(ns)>=60){ sh.s=ns; sh.e=ne; sh.src="adj"; return true; } return cut(); }
       if(con.type==="unavailable"){
         const L=[sh.s,con.s],R=[con.e,sh.e], len=w2=>Math.max(0,mins(w2[1])-mins(w2[0]));
         const keep=len(L)>=len(R)?L:R;
-        if(len(keep)>=60){ sh.s=keep[0]; sh.e=keep[1]; sh.src="adj"; return true; } return false; }
+        if(len(keep)>=60){ sh.s=keep[0]; sh.e=keep[1]; sh.src="adj"; return true; } return cut(); }
       return true;
     });
     // interval staffing + per-skill counts, kept incrementally for cheap cost deltas
@@ -3557,8 +3564,25 @@ function optimizeSidur(){
     }
     shifts.forEach(sh=>asg.push({name:sh.name,ds,di,s:sh.s,e:sh.e,src:sh.src}));
     for(const tm of tms){ const gap=Math.round(req[tm]-staff[tm]); if(gap>0) gaps.push({ds,tm,n:gap}); }
+    // surplus → SAFE cut candidates for the manager: sequentially removing
+    // them never creates a shortage and never breaks a skill rule. The
+    // engine itself never cuts — the ✂ decision stays human.
+    const sur={}; tms.forEach(tm=>{ sur[tm]=staff[tm]-req[tm]; });
+    const ruleMinAt=(sk,tm)=>{ let m2=0;
+      for(const {r} of ruleW) if(r.skill===sk&&(!r.from||tm>=r.from)&&(!r.to||tm<r.to)) m2=Math.max(m2,r.min);
+      return m2; };
+    for(const sh of shifts.slice().sort((a,b)=>(mins(a.e)-mins(a.s))-(mins(b.e)-mins(b.s)))){
+      let ok=true;
+      for(let m=mins(sh.s);m<mins(sh.e)&&ok;m+=30){ const tm=toTm(m);
+        if(!(sur[tm]>=1)) ok=false;
+        else if(sh.skill&&((skl[tm]||{})[sh.skill]||0)-1<ruleMinAt(sh.skill,tm)) ok=false; }
+      if(ok){
+        for(let m=mins(sh.s);m<mins(sh.e);m+=30){ const tm=toTm(m); sur[tm]--; if(sh.skill) skl[tm][sh.skill]--; }
+        pool.push({name:sh.name,ds,di,s:sh.s,e:sh.e});
+      }
+    }
   }
-  return {asg,pool:[],gaps,moved:movedN};
+  return {asg,pool,cuts,gaps,moved:movedN};
 }
 async function runScheduler(){
   if(!state.week||!state.days.size){ showToast("⚠ "+t("schNeedData"),false); return; }
@@ -3697,28 +3721,32 @@ function renderSchedAudit(out){
     }
     cw.appendChild(det);
   });
-  // ---- delta list grouped by team + TL messages ----
+  // ---- per-team change summary + TL messages ----
+  // one line per team, 📱 inline (one click, not two). The full row-level
+  // detail lives ONCE — in the optimized-sidur table via its status chips —
+  // so no second table repeats it here.
   const dw=document.getElementById("schDeltaWrap"); dw.innerHTML="";
   if(!diffs.length){ const p2=document.createElement("p"); p2.className="mini";
     p2.textContent=t("saNoDiffs"); dw.appendChild(p2); return; }
   const byTeam={}; diffs.forEach(d=>(byTeam[d.team]=byTeam[d.team]||[]).push(d));
-  const bar=document.createElement("div"); bar.className="toolbar"; bar.style.margin="0 0 4px";
-  const head=document.createElement("b"); head.style.fontSize=".85rem";
-  head.textContent=t("saDeltaHead",{n:diffs.length});
-  bar.appendChild(head);
-  const grow=document.createElement("span"); grow.className="grow"; bar.appendChild(grow);
-  // one ready-to-send message per team leader: breaches + their team's changes
-  const tlWrap=document.createElement("div"); tlWrap.className="splitbtn";
-  const tlBtn=document.createElement("button"); tlBtn.className="btn ghost applymini";
-  tlBtn.textContent=t("saTlBtn",{n:Object.keys(byTeam).length});
-  tlWrap.appendChild(tlBtn);
-  const menu=document.createElement("div"); menu.className="menu pad"; menu.style.minWidth="250px";
+  const head=document.createElement("p"); head.className="mini"; head.style.margin="0 0 4px";
+  head.innerHTML=`<b>${t("saDeltaHead",{n:diffs.length})}</b> · ${t("saDeltaHint")}`;
+  dw.appendChild(head);
   const breachLines=audits.filter(a=>a.opt&&a.opt.breaches>0).map(a=>
     t("saTlBreach",{s:a.r.skill,cells:a.opt.breachCells.slice(0,4)
       .map(b2=>dayNames[b2.di]+" "+b2.tm).join(", ")+(a.opt.breachCells.length>4?"…":"")}));
+  const chip=(n,tt)=>`<span style="background:${tt.c}22;color:${tt.c};border:1px solid ${tt.c}55;border-radius:9px;padding:1px 8px;font-size:.7rem;font-weight:700;white-space:nowrap">${n} ${t(tt.k)}</span>`;
   for(const tl in byTeam){
-    const b2=document.createElement("button");
-    b2.textContent="📱 "+tl+" ("+byTeam[tl].length+")";
+    const row=document.createElement("div");
+    row.style.cssText="display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-top:1px solid var(--border);padding:5px 2px;font-size:.82rem";
+    const nm=document.createElement("b"); nm.textContent=tl; row.appendChild(nm);
+    const cnt={}; byTeam[tl].forEach(d=>cnt[d.type]=(cnt[d.type]||0)+1);
+    const chips=document.createElement("span");
+    chips.innerHTML=["shift","add","cut"].filter(k=>cnt[k]).map(k=>chip(cnt[k],SA_TYPE[k])).join(" ");
+    row.appendChild(chips);
+    const grow=document.createElement("span"); grow.className="grow"; row.appendChild(grow);
+    const b2=document.createElement("button"); b2.className="btn ghost applymini";
+    b2.textContent="📱 "+t("saTlSend");
     b2.addEventListener("click",()=>{
       const lines=byTeam[tl].map(d=>t("saTl_"+d.type,{name:d.name,day:dayNames[d.di],date:fmtD(d.ds),orig:d.orig,opt:d.opt}));
       const msg=[t("saTlHead",{team:tl}),...(breachLines.length?[t("saTlBreachHead"),...breachLines]:[]),
@@ -3726,28 +3754,9 @@ function renderSchedAudit(out){
       navigator.clipboard&&navigator.clipboard.writeText(msg);
       showToast("📋 "+t("waCopied",{team:tl}),true);
     });
-    menu.appendChild(b2);
+    row.appendChild(b2);
+    dw.appendChild(row);
   }
-  tlWrap.appendChild(menu); bar.appendChild(tlWrap);
-  dw.appendChild(bar);
-  const wrap=document.createElement("div"); wrap.className="tablewrap"; wrap.style.maxHeight="260px"; wrap.style.overflowY="auto";
-  const tbl=document.createElement("table");
-  const hr2=document.createElement("tr");
-  [t("rthName"),t("wfTeamL"),t("fldDay"),t("saOrig"),t("saOpt"),""].forEach(h=>hr2.appendChild(th(h)));
-  const thd=document.createElement("thead"); thd.appendChild(hr2); tbl.appendChild(thd);
-  const tb=document.createElement("tbody");
-  diffs.forEach(d=>{
-    const tr=document.createElement("tr");
-    const tt=SA_TYPE[d.type];
-    [d.name,d.team,dayNames[d.di]+" "+fmtD(d.ds).slice(0,5),d.orig,d.opt].forEach(v=>{
-      const td=document.createElement("td"); td.textContent=v; td.style.direction="ltr"; tr.appendChild(td); });
-    tr.firstChild.style.direction=""; tr.children[1].style.direction="";
-    const td=document.createElement("td");
-    td.innerHTML=`<span style="background:${tt.c}22;color:${tt.c};border:1px solid ${tt.c}55;border-radius:9px;padding:1px 8px;font-size:.7rem;font-weight:700;white-space:nowrap">${t(tt.k)}</span>`;
-    tr.appendChild(td);
-    tb.appendChild(tr);
-  });
-  tbl.appendChild(tb); wrap.appendChild(tbl); dw.appendChild(wrap);
 }
 function renderSchedulerResults(out){
   const dayNames=t("days");
@@ -3764,7 +3773,9 @@ function renderSchedulerResults(out){
   // on-screen schedule mirrors the Tikshuv סידור עבודה column structure exactly,
   // so the output can round-trip back into the same pipeline as the input file.
   // Excel-like header sort + per-column filters (this table only).
-  state._schedRows=out.asg.map(a=>tikshuvRow(a).slice(0,8));
+  // ONE table tells the whole story: kept + moved + cut rows, status chips.
+  state._schedRows=out.asg.map(a=>tikshuvRow(a).slice(0,8))
+    .concat((out.cuts||[]).map(cu=>tikshuvRow({...cu,src:"cut"}).slice(0,8)));
   state._schedFilter={}; state._schedSort=null;
   renderSchedTable();
   renderSchedAudit(out); // step 3: compliance + delta recompute on every render (incl. manual swaps)
@@ -3855,8 +3866,18 @@ function renderPoolTable(){
     it.cells.forEach(v=>{ const td=document.createElement("td"); td.textContent=v; tr.appendChild(td); });
     const td=document.createElement("td");
     const bt=document.createElement("button"); bt.className="btn ghost applymini";
-    bt.textContent=t("schInsert");
-    bt.addEventListener("click",e=>{ e.stopPropagation(); openSwapPop(e,it.p); });
+    bt.textContent=t("schCutBtn");
+    bt.addEventListener("click",e=>{ e.stopPropagation();
+      const o=state._schedOut; if(!o) return;
+      // manager-approved cut: leaves asg, joins the cut rows; every KPI,
+      // audit and TL message recomputes from the same _schedOut
+      o.asg=o.asg.filter(a=>!(a.name===it.p.name&&a.ds===it.p.ds));
+      o.pool=o.pool.filter(p2=>p2!==it.p);
+      (o.cuts=o.cuts||[]).push({name:it.p.name,ds:it.p.ds,di:it.p.di,s:it.p.s,e:it.p.e});
+      state.optimizedOutput=o.asg;
+      renderSchedulerResults(o);
+      showToast("✂ "+t("schCutDone",{name:it.p.name}),true);
+    });
     td.appendChild(bt); tr.appendChild(td);
     tb.appendChild(tr);
   });
@@ -3916,8 +3937,15 @@ function renderSchedTable(){
   thead.appendChild(fr);
   tbl.appendChild(thead);
   const tb=document.createElement("tbody");
+  const stColor={[t("schSrc_moved")]:"#8a5fd0",[t("schSrc_cut")]:"#b3271e",
+    [t("schSrc_adj")]:"#b45309",[t("schSrc_manual")]:"#0f6a3f",[t("schSrc_swap")]:"#0f6a3f"};
   view.forEach(r=>{ const tr=document.createElement("tr");
-    r.forEach(v=>{ const td=document.createElement("td"); td.textContent=v; tr.appendChild(td); });
+    if(r[7]===t("schSrc_cut")) tr.style.opacity=".55";
+    r.forEach((v,c)=>{ const td=document.createElement("td");
+      if(c===7&&v&&stColor[v])
+        td.innerHTML=`<span style="background:${stColor[v]}22;color:${stColor[v]};border:1px solid ${stColor[v]}55;border-radius:9px;padding:1px 8px;font-size:.7rem;font-weight:700;white-space:nowrap">${v}</span>`;
+      else td.textContent=v;
+      tr.appendChild(td); });
     tb.appendChild(tr); });
   tbl.appendChild(tb); ow.appendChild(tbl);
   if(view.length!==rows.length){
@@ -3934,8 +3962,9 @@ function tikshuvRow(a){
   const mins=toMinW(a.e)-toMinW(a.s);
   // שעות exactly as the sidur displays it — H:MM, not a decimal
   const hhmm=Math.floor(mins/60)+":"+pad(mins%60);
+  // unchanged rows show NO status — ink only where something happened
   return [m.site||"",a.s,a.e,fmtD(a.ds),HE_DAY[a.di]||"",a.name,
-    hhmm,t("schSrc_"+(a.src||"base")),m.team||"",m.skill||""];
+    hhmm,(a.src&&a.src!=="base")?t("schSrc_"+a.src):"",m.team||"",m.skill||""];
 }
 function renderScheduler(){
   if(!document.getElementById("schChipFc")) return;
