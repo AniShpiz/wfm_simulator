@@ -435,7 +435,15 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
     <!-- Improvement simulator: drag the levers, watch the projected service level and
          the DATE you reach the target move live. Non-destructive — never touches real settings. -->
     <div class="card" id="whatIfCard">
-      <h2><span data-i18n="wiTitle">Improvement Simulator (What-If)</span> <span class="info" data-tipkey="tipWi" tabindex="0">i</span></h2>
+      <h2 style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span data-i18n="wiTitle">Improvement Simulator (What-If)</span> <span class="info" data-tipkey="tipWi" tabindex="0">i</span>
+        <!-- 🎧 answering scope = state.capSkills, the SAME control as the matrix toolbar.
+             It is what actually feeds the simulator's capacity, so it lives here too. -->
+        <div class="splitbtn" id="rcScopeWrap" style="display:none;margin-inline-start:auto;font-size:.8rem;font-weight:400">
+          <button class="btn ghost" id="rcScopeBtn"></button>
+          <div class="menu pad" id="rcScopeMenu" style="min-width:240px"></div>
+        </div>
+      </h2>
       <div class="grid2" style="align-items:center">
         <div>
           <!-- every slider is an IMPROVEMENT: right = better. 0 = today's baseline. -->
@@ -985,6 +993,8 @@ en:{
   skillScopeAll:"All skills answer", skillScopeN:"{n} answering skills",
   skillScopeHint:"Which skills count as ANSWERING capacity for this queue's AR/TSF? (HR & workforce pages always include everyone.) On billing days check בכיר; מרפאות usually answer קו 1 too.",
   skillScopeAllBtn:"Count every skill",
+  rcScopeAll:"Answering: whole center", rcScopePfx:"Answering: ",
+  rcScopeHint:"Who answers the frontline — this is the capacity that feeds the simulator, the answer-rate KPIs and the target date below. It's the same 🎧 scope as the matrix page. (HR & workforce pages always include everyone.)",
   legScale:"above target → critical (7 bands around your target)",
   cellUndoTip:"Restore this cell to its original value",
   schSkillHint:"Which skills does the optimizer treat as frontline — the only ones it moves or cuts against demand? Usually the קו-1 queue only; add בכיר on collection days, מרפאות when they answer קו 1. Unticked skills stay put and are just checked against the coverage rules. Untagged reps always schedule.",
@@ -1381,6 +1391,8 @@ he:{
   skillScopeAll:"כל המיומנויות עונות", skillScopeN:"{n} מיומנויות עונות",
   skillScopeHint:"אילו מיומנויות נספרות כקיבולת מענה (AR/TSF) של התור? (דפי כוח אדם תמיד כוללים את כולם.) בימי גבייה סמנו גם בכיר; מרפאות לרוב עונות גם קו 1.",
   skillScopeAllBtn:"ספרו את כל המיומנויות",
+  rcScopeAll:"מענה: כל המוקד", rcScopePfx:"מענה: ",
+  rcScopeHint:"מי עונה לחזית — זו הקיבולת שמזינה את הסימולטור, מדדי אחוז המענה ותאריך היעד למטה. זהו אותו היקף 🎧 של דף המטריצה. (דפי כוח אדם תמיד כוללים את כולם.)",
   legScale:"מעל היעד ← קריטי (7 מדרגות סביב היעד שלכם)",
   cellUndoTip:"החזרת התא לערך המקורי",
   schSkillHint:"אילו מיומנויות המייעל מתייחס אליהן כחזית — היחידות שהוא מזיז או מקצץ מול הביקוש? בדרך כלל תור קו 1 בלבד; הוסיפו בכיר בימי גבייה, מרפאות כשהן עונות קו 1. מיומנויות שלא סומנו נשארות במקומן ורק נבדקות מול חוקי הכיסוי. נציגים ללא תיוג תמיד משתבצים.",
@@ -4717,6 +4729,11 @@ function holidayLevel(dateObj){
   const lvl=ov||(tbl&&tbl[day])||null;
   return lvl&&lvl!=="work"?lvl:null;
 }
+/* display name of the holiday on a given ISO date (matches the holidays table) */
+function holidayName(ds){
+  const d=fromISO(ds), mn=hebMonthName(d), p=hebParts(d); if(!p) return "";
+  return (HOL_NAMES[mn]&&HOL_NAMES[mn][+p.day])||"";
+}
 /* scan the loaded date range once, cache the set of holiday ISO dates */
 function computeHolidayDates(){
   const out=new Map(); // iso -> level
@@ -5076,7 +5093,10 @@ function forecastDay(ds){
   /* if the TARGET date is itself a partial holiday (eve/Chol HaMoed), damp the day
      total by the learned factor so a future holiday isn't forecast as a normal day */
   const tgtLvl=state.holidayDates.get(ds);
-  const hf=(tgtLvl&&state.holidayFactor&&state.holidayFactor[tgtLvl])||1;
+  // CLOSED → the office is shut, so the whole day's demand is zero (a normal-day
+  // projection here would wrongly staff a holiday). EVE / Chol-HaMoed → damp by the
+  // learned partial factor (the model already handles these half days).
+  const hf=(tgtLvl==="closed")?0:((tgtLvl&&state.holidayFactor&&state.holidayFactor[tgtLvl])||1);
   // volCal: day-level pace calibration measured by the daily backtest (100±1% goal)
   const dayForecast=Math.max(0,dailyNorm*cf*hf*(state.settings.volCal||1));
 
@@ -5454,8 +5474,49 @@ function renderSkillScope(){
 }
 function capScopeChanged(){
   memo.clear(); state.fcCache.clear(); saveData();
-  renderMatrix();
-  dirtyPages.add("recruit"); dirtyPages.add("scheduler"); renderDirty();
+  renderMatrix(); // syncs the matrix 🎧 button + AR
+  dirtyPages.add("recruit"); dirtyPages.add("scheduler"); renderDirty(); // re-renders the recruit 🎧 + What-If
+}
+/* 🎧 answering-scope control on the recruit/What-If card — the SAME state.capSkills the
+   matrix uses, surfaced here because it is what actually drives the simulator's capacity.
+   Parallel to renderSkillScope (matrix) and renderSchedSkills (scheduler); the honest
+   label reads the live scope ("מענה: קו 1", "מענה: כל המוקד") instead of a fixed guess. */
+function renderRecruitScope(){
+  const wrap=document.getElementById("rcScopeWrap"); if(!wrap) return;
+  const skills=state.skillList||[];
+  // no skill data → capacity is whole-center by definition; nothing to scope, hide it
+  wrap.style.display=skills.length?"inline-block":"none";
+  if(!skills.length) return;
+  const sc=state.capSkills;
+  document.getElementById("rcScopeBtn").textContent="🎧 "+
+    (!sc||!sc.length?t("rcScopeAll"):t("rcScopePfx")+(sc.length===1?sc[0]:t("skillScopeN",{n:sc.length})));
+  const menu=document.getElementById("rcScopeMenu");
+  if(menu._skills===skills.join("|")){ // stable menu: just sync checkboxes so the popover survives a toggle
+    menu.querySelectorAll("input").forEach(cb=>{ cb.checked=!sc||sc.includes(cb._skill); });
+    return;
+  }
+  menu._skills=skills.join("|");
+  menu.innerHTML="";
+  const hint=document.createElement("div"); hint.className="mini"; hint.style.marginBottom="6px";
+  hint.textContent=t("rcScopeHint"); menu.appendChild(hint);
+  skills.forEach(s=>{
+    const lb=document.createElement("label");
+    lb.style.cssText="display:flex;gap:6px;align-items:center;font-size:.8rem;margin:3px 0;cursor:pointer";
+    const cb=document.createElement("input"); cb.type="checkbox";
+    cb.checked=!sc||sc.includes(s);
+    cb.addEventListener("change",()=>{
+      const on=[...menu.querySelectorAll("input:checked")].map(x=>x._skill);
+      state.capSkills=on.length===skills.length?null:on;
+      capScopeChanged();
+    });
+    cb._skill=s;
+    lb.appendChild(cb); lb.appendChild(skillDot(s)); lb.appendChild(document.createTextNode(" "+s));
+    menu.appendChild(lb);
+  });
+  const all=document.createElement("button"); all.className="linklike"; all.style.marginTop="6px";
+  all.textContent=t("skillScopeAllBtn");
+  all.addEventListener("click",()=>{ state.capSkills=null; capScopeChanged(); });
+  menu.appendChild(all);
 }
 function renderMatrix(){
   renderSkillScope();
@@ -5710,6 +5771,7 @@ function renderTrends(){
     if(state.exceptions.has(ds)) continue;
     const dayIdx=fromISO(ds).getDay();
     const fc=sd.forecast;
+    const holLvl=state.holidayDates.get(ds)||null; // 🕎 from the holidays table (settings)
     let vol=0,arW=0,tsfW=0,tsf30W=0,tsf60W=0,ahtW=0,work=0,cap=0,schedHrs=0,loginHrs=0,answered=0,handledWork=0,occFileW=0,occFileVol=0;
     for(const [tm,rec] of sd.src){
       if(state.exceptions.has(ds+"|"+tm)) continue;
@@ -5749,8 +5811,9 @@ function renderTrends(){
       if(!fc&&rec.occup>0){ occFileW+=rec.occup*rec.volume; occFileVol+=rec.volume; }
     }
     if(!vol){
-      // a forecast day the user zeroed out: show it flat-empty, exclude from everything
-      if(fc&&state.simDays.has(ds)) rowsData.push({ds,dayIdx,zero:true});
+      // show a zero-volume day when it's a user-edited forecast OR a holiday (so a
+      // CLOSED holiday reads explicitly as 0 demand + a 🕎 badge, not a silent gap)
+      if((fc&&state.simDays.has(ds))||holLvl) rowsData.push({ds,dayIdx,forecast:fc,zero:true,holLvl});
       continue;
     }
     // actual answer rate from the file (שיחות נענות ÷ נכנסות) beats the model on history
@@ -5776,20 +5839,36 @@ function renderTrends(){
     T.prodNum+=(answered>0?answered:vol); T.prodDen+=netHrs;
     T.occNum+=occWork; T.occDen+=occDen;
     const met=(S.primaryMetric==="ar"?ar:tsf)>=S.target/100;   // attainment on the Primary Target Metric
-    rowsData.push({ds,dayIdx,forecast:fc,vol,aht,ar,netProd,occ,tsf30,tsf60,met});
+    rowsData.push({ds,dayIdx,forecast:fc,vol,aht,ar,netProd,occ,tsf30,tsf60,met,holLvl});
   }
   /* PASS 2 — DOM row factory */
   const plain=v=>{ const td=document.createElement("td"); td.innerHTML=`<span class="v">${v}</span>`; return td; };
   const tinted=(v,cls)=>{ const td=document.createElement("td"); td.className=cls;
     td.innerHTML=`<span class="v">${pct(v)}</span>`; return td; };
+  // 🕎 holiday pill — red for CLOSED (demand zeroed), amber for eve/Chol-HaMoed
+  const HOL_COL={closed:"#b3271e",eve:"#b45309",chm:"#b45309"};
+  const holPill=(ds,lvl)=>{
+    const c=HOL_COL[lvl]||"#6b7c90", nm=holidayName(ds);
+    // named holiday → append the level for CLOSED ("יום כיפור · סגור"); the eve/chm
+    // names already say it. No name (rare) → the generic level label, no double-up.
+    // pill sits snug beside the date; the row (holFlex) is right-aligned as a group
+    const s=document.createElement("span");
+    s.style.cssText=`background:${c}18;color:${c};border:1px solid ${c}55;border-radius:9px;padding:0 7px;font-size:.66rem;font-weight:700;white-space:nowrap`;
+    s.textContent="🕎 "+(nm?nm+(lvl==="closed"?" · "+t("holLvlClosed"):""):(t("hol_"+lvl)||lvl));
+    return s;
+  };
+  const holFlex=dth=>{ dth.style.display="flex"; dth.style.alignItems="center"; dth.style.justifyContent="flex-end"; dth.style.gap="4px"; };
   const buildRow=d=>{
     const {ds,dayIdx}=d;
     if(d.zero){
       const tr=document.createElement("tr"); tr.className="fcast";
-      const dth=document.createElement("th"); dth.textContent=fmtD(ds)+t("forecastTag")+" ✎"; tr.appendChild(dth);
+      const dth=document.createElement("th");
+      dth.textContent=fmtD(ds)+(d.forecast?t("forecastTag"):"")+(state.simDays.has(ds)?" ✎":"");
+      if(d.holLvl){ holFlex(dth); dth.appendChild(holPill(ds,d.holLvl)); }
+      tr.appendChild(dth);
       const dtd=document.createElement("td"); dtd.textContent=dayNames[dayIdx]??""; tr.appendChild(dtd);
       const z=document.createElement("td"); z.innerHTML='<span class="v">0</span>';
-      z.style.cursor="pointer"; z.addEventListener("click",e=>openTrendEditor(e,ds,0,0)); tr.appendChild(z);
+      if(d.forecast){ z.style.cursor="pointer"; z.addEventListener("click",e=>openTrendEditor(e,ds,0,0)); } tr.appendChild(z);
       for(let i=0;i<7;i++){ const td=document.createElement("td"); td.textContent=t("noData"); tr.appendChild(td); }
       return tr;
     }
@@ -5811,6 +5890,7 @@ function renderTrends(){
       ib.addEventListener("click",e=>{ e.stopPropagation(); openIntraday(ds); });
       dth.appendChild(document.createTextNode(" ")); dth.appendChild(ib);
     }
+    if(d.holLvl){ holFlex(dth); dth.appendChild(holPill(ds,d.holLvl)); } // 🕎 right-aligned, connect to the holidays table
     tr.appendChild(dth);
     const dayTd=document.createElement("td"); dayTd.textContent=dayNames[dayIdx]??""; tr.appendChild(dayTd);
     const volTd=plain(Math.round(d.vol).toLocaleString());
@@ -6422,6 +6502,7 @@ function renderRecruit(){
   }else{ g3v.textContent="—"; g3.innerHTML=""; document.getElementById("spark3c").innerHTML=""; }
 
   renderOutlook(plan);
+  renderRecruitScope(); // 🎧 answering scope that feeds the simulator (state.capSkills)
   // What-If: keep sliders synced to real settings until the user takes over, then recompute
   if(!_wiTouched) whatIfSyncSliders();
   whatIfRun();
