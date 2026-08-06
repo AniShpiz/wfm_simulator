@@ -1152,6 +1152,8 @@ en:{
   saTl_add:"• {name} — {day} {date}: added shift {opt}",
   saTl_cut:"• {name} — {day} {date}: shift {orig} removed (surplus)",
   saTlFoot:"Please confirm with the employees as soon as possible. 🙏",
+  saTlSendAll:"📱 Message all team leaders", saAllHead:"🗓️ Schedule update — changes by team",
+  waCopiedAll:"Copied — one summary for every team leader.", schMovedFrom:"moved from {w}",
   wfTreeTotal:"Total shown: {n} h",
   qaTitle:"QA & Feedback", qaPh:"Found a bug? Numbers look off? Missing something? Write it here…",
   qaSend:"📧 Send by email", qaCopy:"📋 Copy",
@@ -1332,7 +1334,7 @@ he:{
   tipShrink:"חוסר זמינות בתוך המשמרת של נציגים שכן הגיעו: הפסקות, חניכה, ישיבות, זמן אוקס (טיפוסי: 10–20%). קיבולת אפקטיבית = נוכחים × (1 − שחיקה). היעדרויות הן שדה נפרד למעלה — לא לספור אותן פעמיים כאן.",
   resetWs:"↺ איפוס סביבת עבודה",
   resetNote:"מוחק הגדרות, מדיניות, קורסים, סימולציות ומערכי נתונים שנשמרו בדפדפן זה.",
-  weekLabel:"שבוע:", thInterval:"אינטרוול",
+  weekLabel:"שבוע:", thInterval:"אינטרוואל",
   weekOpt:"שבוע {w} | {a} – {b}", forecastTag:" (תחזית)",
   horizonTip:"אופק חיזוי: עם {d} ימי היסטוריה שהועלו ניתן לדמות עד {m} מעבר לתאריך הנתונים האחרון. העלאת שנתיים ומעלה של היסטוריה פותחת אופק של 12 חודשים.",
   m3:"3 חודשים", m12:"12 חודשים",
@@ -1491,7 +1493,7 @@ he:{
   schConOk:"נטענו {n} אילוצים שבועיים.",
   schOutTitle:"סידור מיטבי",
   schPoolTitle:"מאגר עודפי איוש (לבחינת מנהל)",
-  tipSchPool:"משמרות שכל טווחן נמצא במרווחים עם עודף איוש — קיצוצן לא יוצר חוסר ולא שובר חוק כיסוי. המייעל לעולם לא מקצץ לבד; החלטת ה-✂ היא של המנהל. הכרטיס מופיע רק כשקיים עודף כזה.",
+  tipSchPool:"משמרות שכל טווחן נמצא באינטרוואלים עם עודף איוש — קיצוצן לא יוצר חוסר ולא שובר חוק כיסוי. המייעל לעולם לא מקצץ לבד; החלטת ה-✂ היא של המנהל. הכרטיס מופיע רק כשקיים עודף כזה.",
   schGapTitle:"ביקוש לא מכוסה — ואיך סוגרים אותו",
   schCsv:"⬇ הורדת הסידור המיטבי (CSV)",
   schNeedData:"טענו תחילה תחזית וסידור / קובץ ברזל.",
@@ -1541,8 +1543,8 @@ he:{
   tipSchAudit:"רץ על כל סידור שנוצר: כל כלל כיסוי נבדק מחדש על הסידור המיטבי (פערים בסידור ← פערים במיטבי), וכל משמרת שהוזזה, נוספה או קוצצה מול הסידור המקורי מוצגת — מקובץ לפי מנהל צוות עם הודעה מוכנה לשליחה.",
   saKpiBreach:"חצאי-שעה עדיין חסרים", saKpiShifts:"משמרות ששונו", saKpiHours:"שעות שהוזזו",
   saKpiMetric:"שינוי {m} צפוי",
-  saCovLegend:"מרווח = חלון של חצי שעה. ✓ = החוק מתקיים בכל מרווח · ⚠ = חסר כיסוי בחלקם.",
-  saCovOk:"מכוסה", saCovGap:"חסר ב-{n} מרווחים", saCovImp:"(שופר מ-{n})",
+  saCovLegend:"אינטרוואל = חלון של חצי שעה. ✓ = החוק מתקיים בכל אינטרוואל · ⚠ = חסר כיסוי בחלקם.",
+  saCovOk:"מכוסה", saCovGap:"חסר ב-{n} אינטרוואלים", saCovImp:"(שופר מ-{n})",
   saCovOutScope:"המיומנות אינה בתחום השיבוץ — סמנו אותה בתפריט 🎧 למעלה כדי לאפשר למייעל להזיז את נציגיה, או שלחו בקשת הרחבה.",
   saCovNoMove:"אין עודף נציגים להזזה — נדרשת בקשת הרחבה (ראו כרטיס הביקוש הלא מכוסה).",
   saNoRules:"לא הוגדרו חוקי כיסוי — הוסיפו למעלה כדי שכל הרצה תיבדק.",
@@ -1559,6 +1561,8 @@ he:{
   saTl_add:"• {name} — יום {day} {date}: נוספה משמרת {opt}",
   saTl_cut:"• {name} — יום {day} {date}: המשמרת {orig} ירדה (עודף)",
   saTlFoot:"נא לתקף מול העובדים בהקדם. 🙏",
+  saTlSendAll:"📱 הודעה לכל מנהלי הצוות", saAllHead:"🗓️ עדכון סידור — שינויים לפי צוות",
+  waCopiedAll:"הועתק — סיכום אחד לכל מנהלי הצוות.", schMovedFrom:"הוזז מ־{w}",
   wfTreeTotal:"סה\"כ מוצג: {n} שעות",
   qaTitle:"משוב ודיווח תקלות (QA)", qaPh:"מצאתם באג? מספר נראה מוזר? חסר משהו? כתבו כאן…",
   qaSend:"📧 שליחה במייל", qaCopy:"📋 העתקה",
@@ -3927,12 +3931,32 @@ function renderSchedAudit(out){
   if(!diffs.length){ const p2=document.createElement("p"); p2.className="mini";
     p2.textContent=t("saNoDiffs"); dw.appendChild(p2); return; }
   const byTeam={}; diffs.forEach(d=>(byTeam[d.team]=byTeam[d.team]||[]).push(d));
-  const head=document.createElement("p"); head.className="mini"; head.style.margin="0 0 4px";
-  head.innerHTML=`<b>${t("saDeltaHead",{n:diffs.length})}</b> · ${t("saDeltaHint")}`;
-  dw.appendChild(head);
   const breachLines=audits.filter(a=>a.opt&&a.opt.breaches>0).map(a=>
     t("saTlBreach",{s:a.r.skill,cells:a.opt.breachCells.slice(0,4)
       .map(b2=>dayNames[b2.di]+" "+b2.tm).join(", ")+(a.opt.breachCells.length>4?"…":"")}));
+  const lineFor=d=>t("saTl_"+d.type,{name:d.name,day:dayNames[d.di],date:fmtD(d.ds),orig:d.orig,opt:d.opt});
+  // ONE combined WhatsApp summary for EVERY team leader: *bold* team headers, changes
+  // bulleted per team, remaining gaps once at the end — organized, paste-and-send.
+  const buildAllMsg=()=>{
+    const parts=[t("saAllHead")];
+    for(const tl in byTeam){ parts.push("","*"+tl+"*  ("+byTeam[tl].length+")");
+      byTeam[tl].forEach(d=>parts.push(lineFor(d))); }
+    if(breachLines.length){ parts.push("",t("saTlBreachHead"),...breachLines); }
+    parts.push("",t("saTlFoot"));
+    return parts.join("\n");
+  };
+  // header row: the summary line + the single "message ALL team leaders" action
+  const headRow=document.createElement("div");
+  headRow.style.cssText="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 4px";
+  const head=document.createElement("p"); head.className="mini"; head.style.margin="0";
+  head.innerHTML=`<b>${t("saDeltaHead",{n:diffs.length})}</b> · ${t("saDeltaHint")}`;
+  headRow.appendChild(head);
+  const hgrow=document.createElement("span"); hgrow.className="grow"; headRow.appendChild(hgrow);
+  const allBtn=document.createElement("button"); allBtn.className="btn navy applymini"; allBtn.textContent=t("saTlSendAll");
+  allBtn.addEventListener("click",()=>{ navigator.clipboard&&navigator.clipboard.writeText(buildAllMsg());
+    showToast("📋 "+t("waCopiedAll"),true); });
+  headRow.appendChild(allBtn);
+  dw.appendChild(headRow);
   const chip=(n,tt)=>`<span style="background:${tt.c}22;color:${tt.c};border:1px solid ${tt.c}55;border-radius:9px;padding:1px 8px;font-size:.7rem;font-weight:700;white-space:nowrap">${n} ${t(tt.k)}</span>`;
   for(const tl in byTeam){
     const row=document.createElement("div");
@@ -3946,9 +3970,8 @@ function renderSchedAudit(out){
     const b2=document.createElement("button"); b2.className="btn ghost applymini";
     b2.textContent="📱 "+t("saTlSend");
     b2.addEventListener("click",()=>{
-      const lines=byTeam[tl].map(d=>t("saTl_"+d.type,{name:d.name,day:dayNames[d.di],date:fmtD(d.ds),orig:d.orig,opt:d.opt}));
       const msg=[t("saTlHead",{team:tl}),...(breachLines.length?[t("saTlBreachHead"),...breachLines]:[]),
-        t("saTlChanges"),...lines,t("saTlFoot")].join("\n");
+        t("saTlChanges"),...byTeam[tl].map(lineFor),t("saTlFoot")].join("\n");
       navigator.clipboard&&navigator.clipboard.writeText(msg);
       showToast("📋 "+t("waCopied",{team:tl}),true);
     });
@@ -3972,7 +3995,14 @@ function renderSchedulerResults(out){
   // so the output can round-trip back into the same pipeline as the input file.
   // Excel-like header sort + per-column filters (this table only).
   // ONE table tells the whole story: kept + moved + cut rows, status chips.
-  state._schedRows=out.asg.map(a=>tikshuvRow(a).slice(0,8))
+  // original windows (before optimization) so moved rows can show where they came from
+  const wkSet=new Set(state.week?weekDates(state.week):[]);
+  const origWin=new Map();
+  for(const rr of state.schedRows) if(wkSet.has(rr.ds)&&rr.s&&rr.e) origWin.set(rr.name+"|"+rr.ds,rr.s+"–"+rr.e);
+  const rowFor=a=>{ const row=tikshuvRow(a).slice(0,8);
+    if(a.src==="moved"){ const o=origWin.get(a.name+"|"+a.ds), cur=a.s+"–"+a.e; if(o&&o!==cur) row[8]=o; }
+    return row; };
+  state._schedRows=out.asg.map(rowFor)
     .concat((out.cuts||[]).map(cu=>tikshuvRow({...cu,src:"cut"}).slice(0,8)));
   state._schedFilter={}; state._schedSort=null;
   renderSchedTable();
@@ -4094,7 +4124,10 @@ function renderSchedTable(){
   ow.innerHTML="";
   const rows=state._schedRows||[];
   if(!rows.length) return;
-  const heads=TIKSHUV_HEADS.slice(0,8);
+  // Mode 2 (fresh baseline) has no status — every shift is newly placed — so drop that column
+  const gen=state.settings.schedMode==="generateIron";
+  const ncol=gen?7:8;
+  const heads=TIKSHUV_HEADS.slice(0,ncol);
   const f=state._schedFilter||{}, srt=state._schedSort;
   const keyFn=(v,c)=>{
     if(c===3){ const m=String(v).split("/"); return m.length===3?m[2]+m[1]+m[0]:String(v); } // dd/mm/yyyy
@@ -4141,10 +4174,13 @@ function renderSchedTable(){
     [t("schSrc_adj")]:"#b45309",[t("schSrc_manual")]:"#0f6a3f",[t("schSrc_swap")]:"#0f6a3f"};
   view.forEach(r=>{ const tr=document.createElement("tr");
     if(r[7]===t("schSrc_cut")) tr.style.opacity=".55";
-    r.forEach((v,c)=>{ const td=document.createElement("td");
-      if(c===7&&v&&stColor[v])
-        td.innerHTML=`<span style="background:${stColor[v]}22;color:${stColor[v]};border:1px solid ${stColor[v]}55;border-radius:9px;padding:1px 8px;font-size:.7rem;font-weight:700;white-space:nowrap">${v}</span>`;
-      else td.textContent=v;
+    r.slice(0,ncol).forEach((v,c)=>{ const td=document.createElement("td");
+      if(c===7&&v&&stColor[v]){
+        let html=`<span style="background:${stColor[v]}22;color:${stColor[v]};border:1px solid ${stColor[v]}55;border-radius:9px;padding:1px 8px;font-size:.7rem;font-weight:700;white-space:nowrap">${v}</span>`;
+        // moved rows carry their previous window in r[8] → show it compactly beside the status (new time is already in the columns)
+        if(r[8]) html+=` <span style="color:var(--muted);font-size:.66rem;white-space:nowrap" title="${t("schMovedFrom",{w:r[8]})}">↤ ${r[8]}</span>`;
+        td.innerHTML=html;
+      }else td.textContent=v;
       tr.appendChild(td); });
     tb.appendChild(tr); });
   tbl.appendChild(tb); ow.appendChild(tbl);
