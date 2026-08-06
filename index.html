@@ -5650,8 +5650,8 @@ function renderMatrix(){
   const b=document.getElementById("decayBanner");
   if(state.policy.enabled&&totDrops>0){ b.textContent=t("decaySaved",{n:totDrops,h:totSaved.toFixed(1)}); b.classList.add("show"); }
   else b.classList.remove("show");
-  document.getElementById("kpiShort").textContent=shortCount;
-  document.getElementById("kpiShortL").textContent=t("kpiShortW",{w:isoWeek(state.week)});
+  // kpiShort / kpiShortL were removed with the recruit-page declutter (renderRecruit
+  // now owns the deficit KPI); don't write to elements that no longer exist.
   const eb=document.getElementById("editBadge");
   if(state.edits.size){ eb.textContent=t("editsBadge",{n:state.edits.size}); eb.style.display="inline-block"; }
   else eb.style.display="none";
