@@ -6,6 +6,17 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+- Matrix cell editor showed and edited the forecast file's staffing baseline even when
+  a loaded sidur drives the cell, so agent edits silently did nothing. Sidur-driven
+  cells now edit a separate what-if count (see Added).
+- Matrix: an understaffed dot next to an on-target % read as a contradiction. Now a
+  hollow ring = "fewer than the model sizes for, yet service is on target" (solid dot =
+  real shortfall); the tooltip says why (measured vs forecast, primary-metric mismatch).
+- Home portals: loaded forecast/sidur status now says WHAT was loaded (forecast date
+  range · days · intervals; sidur week + dates · reps · iron). Problem rows collapse to
+  one amber line (hover = full reasons, click = skipped rows); first-use help hides once loaded.
+- Date Trends in Hebrew: dates now line up on one edge (holiday rows were flexed to
+  the opposite side), digits stay LTR, and the 🕎 badge trails the date in reading order.
 - Legacy `.xls` reader: formula cells with string results (STRING records) are
   now read — Workforce filter lists (site/team/skill from cols A/J/N) populate
   from real Tikshuv workbooks.
@@ -16,6 +27,45 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- Auto-Scheduler shows its week at the top: Mode 1 (fine-tune) is pinned to the loaded
+  sidur's week; Mode 2 (generate from iron) gets a week picker for any forecast week.
+- Matrix what-if staffing on sidur cells: change the rep count to see the day/interval
+  effect (sidur file and scheduler untouched, persisted); ✎ + ↺ per cell, one-line
+  notice on the scheduler page, "⬇ What-if changes" CSV (sidur → what-if, service before → after).
+- Date Trends: "Hours to schedule (gross)" column — the matrix's target-sized "needed"
+  (incl. shrinkage + absence) × ½h per day; dates centered.
+- Workforce: team/skill/site filters are multi-select checkbox menus; treemap labels
+  are sized to fit their tile; drill-down rows expand to the reps behind each group;
+  🏖 vacation headroom per weekday under the impact matrix; Internal Roster
+  Optimization follows the filters, expands to all reps, shows iron-vs-sidur per day,
+  and copies grouped by team.
+- One toggle language app-wide: pill segmented controls (.seg) and switches (.sw) for on/off.
+
+### Changed
+
+- 📣 Planned demand events take one number (extra calls) — the customers × % helper was removed.
+
+### Fixed (this batch)
+
+- Trends/forecast: `requiredAgents` memoized for range sums (`requiredAgentsMemo`).
+
+- Weekly matrix: a week-vs-today chip (📍 this week / ⏮ N weeks ago / ⏭ in N weeks,
+  plus "actual through <day>, forecast after"); click it to jump back to the current
+  week. Each day header is tagged actual / forecast / ● today, and today's column is framed.
+- Date Trends: header and the סיכום row stay pinned while the rows scroll.
+- Matrix cell editor: source chip (actual/forecast), a live "scheduled · needed · metric"
+  mirror that previews the effect before Apply, and a one-line hint per field.
+- 📣 Planned demand events (Settings → Forecasting Models): size a known one-off surge
+  once (total extra calls, or customers × % who'll call), spread over N working days
+  (front-loaded or even). It's added to the forecast, badged in Trends and the matrix,
+  and those days are kept out of model learning once they become history. A one-line
+  hint on Date Trends points to it.
+- 📊 Intraday call weights (Settings → next to the interval-profile window): the
+  weekday × half-hour share matrix, a window switch with a one-line insight on what
+  changing it moves, a "change vs other window" view, and click-to-pin shares (the
+  rest of the day rebalances to 100%; forecasts only).
+- `data-i18n-ph` / `data-i18n-title` are now applied by `setLang`.
+- TESTING.md documents the automated unit + headless-browser checks.
 - Browser-tab icon (embedded data-URI favicon from `images.jpg`); same logo in the footer.
 - Iron gating: SLA impact matrix, validation matrix and the auto-scheduler are
   visibly disabled (grayed + explanation) until a סידור ברזל is loaded.

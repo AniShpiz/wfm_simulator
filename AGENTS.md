@@ -5,7 +5,7 @@ Guidance for AI agents working in this repository.
 ## What this repository is
 
 This is a zero-dependency, single-file WFM simulator for an Israeli call center.
-The full app lives in `index.html` (about 4.8k lines). It is pure client-side
+The full app lives in `index.html` (about 8k lines). It is pure client-side
 HTML + CSS + vanilla JS, no build step, no framework, no server.
 
 Open `index.html` directly in a browser to run.
@@ -31,7 +31,7 @@ Companion docs (read the one matching your task before editing):
 
 - `ARCHITECTURE.md`: runtime model, main state, rendering flow
 - `INGESTION_SPEC.md`: supported input types and detection order
-- `TESTING.md`: manual smoke-test procedure (no automated tests exist)
+- `TESTING.md`: automated checks (node unit tests + headless-browser scripts) and manual smoke steps
 - `TROUBLESHOOTING.md`: known failure modes (stale localStorage, header errors)
 - `DATA_PRIVACY.md`: local-processing guarantees
 - `CONTRIBUTING.md`: constraints and branching
@@ -116,7 +116,10 @@ workforce filter lists legitimately show only "(all)" for this file.
   - `renderImpactMatrix`
   - `renderValidation`
 - Scheduler:
-  - `schedulerCore` (2-pass greedy + constraints)
+  - Mode 1 `optimizeSidur` (move-only: slides existing shifts ±2h) and Mode 2
+    `generateIronBaseline` (greedy build from the iron base); toggle via `applySchedMode`
+  - `schedulerCore` is legacy — no longer called by the app, only by
+    `tests/unit/scheduler.test.js` (the live engines have no unit tests yet)
   - `runScheduler` and `renderSchedulerResults`
   - Optional constraints ingestion via `parseConstraintsGrid`
 
@@ -151,7 +154,12 @@ After changing ingestion, workforce, or scheduler logic:
 
 ## Notes for future agents
 
-- There is no formal test suite or build tooling in this repo.
+- No build tooling. Tests: `node --test tests/unit/*.test.js` (use the glob — a bare
+  dir arg fails on Windows) and `node tests/browser/smoke.js` / `forecast-logic.js`
+  (need `puppeteer-core` via `NODE_PATH` + Edge). See `TESTING.md`.
+- Claude Code on this machine: the Bash tool's sandbox blocks launching Edge — run
+  the browser scripts through the PowerShell tool. Write test scripts with the Write
+  tool, not PowerShell `Set-Content` (it mangles the Hebrew repo path).
 - Manual browser verification is the source of truth.
 - For ingestion changes, a fast pre-check: extract the relevant functions from
   `index.html` (brace-matching on the source text) and run them in Node against
