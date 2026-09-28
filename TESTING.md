@@ -1,11 +1,42 @@
 # TESTING.md
 
-Manual testing checklist for this repository.
+Automated checks plus a manual checklist for this repository.
 
-## Why Manual
+## Automated Checks (run before every merge)
 
-There is no automated test framework in this project.
-Validation is done by browser-based manual checks.
+Zero-dependency unit tests — they extract functions straight out of `index.html`
+(`tests/extract.js`), so they exercise the shipped code:
+
+```
+node --test tests/unit/*.test.js
+```
+
+Use the glob: passing the bare `tests/unit` directory fails on Windows.
+
+Headless-browser scripts (load the real page, drive it, report `ok`/`not ok`):
+
+```
+node tests/browser/smoke.js
+node tests/browser/forecast-logic.js
+```
+
+They need `puppeteer-core` (kept **outside** the repo — the app stays
+zero-dependency) and Edge at `C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe`:
+
+```
+cd <any scratch folder> && npm i puppeteer-core@23
+set NODE_PATH=<scratch folder>\node_modules      (PowerShell: $env:NODE_PATH="...")
+```
+
+Run them from a normal terminal (PowerShell/cmd). Sandboxed shells may be blocked
+from launching the browser.
+
+Automated checks do not replace the manual pass below for UI changes.
+
+## Why Manual Too
+
+Layout, RTL/LTR, and "does this make sense to a manager" can only be judged in a
+real browser, in both languages.
 
 ## Test Environment
 

@@ -43,9 +43,24 @@ main{padding:12px 16px}
 .toolbar label{font-size:.82rem;color:var(--muted)}
 select,input[type=number],input[type=text],input[type=date],input[type=time]{padding:5px 8px;border:1px solid var(--border);border-radius:7px;font-size:.85rem;background:#fff;color:var(--ink)}
 select:focus,input:focus,button:focus-visible{outline:2px solid var(--magenta);outline-offset:1px}
-.seg{display:inline-flex;border:1px solid var(--border);border-radius:7px;overflow:hidden}
-.seg button{background:#fff;border:none;padding:6px 13px;cursor:pointer;font-size:.83rem;color:var(--muted)}
-.seg button.active{background:var(--navy);color:#fff;font-weight:600}
+/* ONE toggle language app-wide. Pick-one-of-N = .seg: a recessed pill track with a raised
+   navy thumb on the chosen option. On/off = .sw: a switch (input.sw or button.sw + .on). */
+.seg{display:inline-flex;flex-wrap:wrap;gap:2px;padding:3px;background:#e7edf4;border:1px solid var(--border);border-radius:999px;box-shadow:inset 0 1px 2px rgba(13,42,77,.08)}
+.seg button{background:transparent;border:none;border-radius:999px;padding:5px 12px;cursor:pointer;font-size:.83rem;color:var(--muted);transition:background .15s,color .15s,box-shadow .15s}
+.seg button:not(.active):hover{background:rgba(255,255,255,.75);color:var(--navy)}
+.seg button.active{background:var(--navy);color:#fff;font-weight:600;box-shadow:0 1px 3px rgba(13,42,77,.3)}
+input.sw{-webkit-appearance:none;appearance:none;flex:none;width:34px;height:20px;margin:0;border-radius:999px;cursor:pointer;vertical-align:middle;
+  background:radial-gradient(circle at 10px 50%,#fff 7px,transparent 7.5px),#c3cddb;transition:background .15s}
+input.sw:checked{background:radial-gradient(circle at calc(100% - 10px) 50%,#fff 7px,transparent 7.5px),var(--navy)}
+[dir=rtl] input.sw{background:radial-gradient(circle at calc(100% - 10px) 50%,#fff 7px,transparent 7.5px),#c3cddb}
+[dir=rtl] input.sw:checked{background:radial-gradient(circle at 10px 50%,#fff 7px,transparent 7.5px),var(--navy)}
+input.sw:disabled{opacity:.45;cursor:default}
+/* a mode BUTTON that toggles (e.g. holiday paint mode) carries the same switch glyph */
+.btn.sw{display:inline-flex;align-items:center;gap:8px}
+.btn.sw::after{content:"";flex:none;width:28px;height:16px;border-radius:999px;background:radial-gradient(circle at 8px 50%,#fff 5.5px,transparent 6px),#c3cddb}
+[dir=rtl] .btn.sw::after{background:radial-gradient(circle at calc(100% - 8px) 50%,#fff 5.5px,transparent 6px),#c3cddb}
+.btn.sw.on::after{background:radial-gradient(circle at calc(100% - 8px) 50%,#fff 5.5px,transparent 6px),rgba(255,255,255,.45)}
+[dir=rtl] .btn.sw.on::after{background:radial-gradient(circle at 8px 50%,#fff 5.5px,transparent 6px),rgba(255,255,255,.45)}
 .btn{background:var(--sky);color:#06233f;border:none;padding:8px 15px;border-radius:7px;font-weight:600;font-size:.86rem;cursor:pointer}
 .btn:hover{filter:brightness(1.07)}
 .btn.navy{background:var(--navy);color:#fff}
@@ -103,6 +118,8 @@ td.closed{background:repeating-linear-gradient(45deg,#eef1f5 0 8px,#e5eaf1 8px 1
 td.nodata{color:#b6c2cf;cursor:default}
 td .decay{display:inline-block;background:var(--magenta);color:#fff;border-radius:3px;font-size:.55rem;padding:0 3px;margin-inline-start:3px;vertical-align:middle}
 td .short{display:inline-block;width:6px;height:6px;border-radius:50%;background:#c22;margin-inline-start:3px}
+/* soft short: fewer bodies than the model sizes for, yet the shown service is on target */
+td .short.soft{background:transparent;box-shadow:inset 0 0 0 1.5px #c22}
 .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:.7rem;color:var(--muted);margin-top:7px;padding-bottom:2px}
 .legend span i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-inline-end:4px;vertical-align:-1px}
 
@@ -115,7 +132,13 @@ td .short{display:inline-block;width:6px;height:6px;border-radius:50%;background
 .polrow .grow{flex:1}
 
 /* ---------- Popover editor / modal ---------- */
-#cellEditor{position:absolute;z-index:50;background:#fff;border:1px solid var(--navy);border-radius:9px;box-shadow:0 8px 24px rgba(13,42,77,.25);padding:12px;display:none;width:240px}
+#cellEditor{position:absolute;z-index:50;background:#fff;border:1px solid var(--navy);border-radius:9px;box-shadow:0 8px 24px rgba(13,42,77,.25);padding:12px;display:none;width:280px}
+#cellEditor .ceSrc{font-size:.62rem;font-weight:700;border-radius:9px;padding:1px 7px;vertical-align:1px}
+#cellEditor .ceSrc.fc{background:#efe8fb;color:#6b46c1}#cellEditor .ceSrc.act{background:#e3f5ea;color:#0f6a3f}
+#cellEditor .ceLive{background:var(--sky-soft);border-radius:7px;padding:5px 8px;font-size:.72rem;margin-bottom:8px;line-height:1.5}
+#cellEditor .ceLive b{font-size:.8rem}#cellEditor .ceLive .arrow{color:var(--muted)}
+#cellEditor .ceHint{font-size:.64rem;color:var(--muted);margin:-4px 0 7px;line-height:1.35}
+#cellEditor #ceAgRO{font-size:.85rem;color:var(--navy);min-width:86px;text-align:center}
 #cellEditor h4{font-size:.82rem;color:var(--navy);margin-bottom:8px}
 #cellEditor .row{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;gap:8px}
 #cellEditor .row label{font-size:.75rem;color:var(--muted)}
@@ -145,6 +168,14 @@ li.alert{border-inline-start:4px solid var(--amber);background:var(--amber-bg)}
 li.ok{border-inline-start:4px solid var(--emerald);background:var(--emerald-bg)}
 li.insight{border-inline-start:4px solid var(--sky);background:var(--sky-soft)}
 .pill{font-size:.68rem;border-radius:999px;padding:2px 9px;background:var(--sky-soft);color:var(--navy);white-space:nowrap;unicode-bidi:plaintext}
+/* week-vs-today chip: one glance tells past / current / future; clickable when not "now" */
+.wkctx{font-size:.74rem;padding:3px 10px;font-weight:600}
+.wkctx.now{background:var(--navy);color:#fff}.wkctx.past{background:#eef1f5;color:#4a5a6e}.wkctx.fut{background:#efe8fb;color:#6b46c1}
+.wkctx.jump{cursor:pointer}.wkctx.jump:hover{filter:brightness(.95)}.wkctx .sub2{font-weight:400;opacity:.85}
+/* per-day source tag under each matrix day header (actual / forecast / today) */
+.dtag{display:block;font-size:.6rem;font-weight:600;letter-spacing:.2px;margin-top:1px;opacity:.9}
+.dtag.act{color:#a8e6c3}.dtag.fc{color:#d6c6ff}.dtag.today{color:#7cc8ff}
+th.todayHd{box-shadow:inset 0 -3px 0 var(--sky)} td.todayCol{box-shadow:inset 2px 0 0 var(--sky),inset -2px 0 0 var(--sky)}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-bottom:12px}
 .kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px}
 .kpi .n{font-size:1.25rem;font-weight:700;color:var(--navy);direction:ltr;unicode-bidi:isolate}
@@ -186,6 +217,33 @@ td .overm{display:inline-block;width:6px;height:6px;background:#8a63d2;border-ra
 /* holiday/exception override cells */
 td.exc{background:repeating-linear-gradient(-45deg,#efe9fb 0 8px,#e4dbf7 8px 16px);color:#6b5a92;cursor:pointer}
 tr.sumrow td,tr.sumrow th{font-weight:700;background:var(--sky-soft);border-bottom:2px solid var(--navy)}
+/* Trends: header + סיכום stay pinned while the rows scroll inside the card */
+#trendsWrap{max-height:calc(100vh - 210px);min-height:320px;overflow:auto}
+#trendsTable thead th{position:sticky;top:0;z-index:3}
+/* sticky + collapsed borders leaks a sliver of scrolled rows above the header →
+   separate borders at 0 spacing, each line drawn once (bottom + inline-end) */
+#trendsTable{border-collapse:separate;border-spacing:0}
+#trendsTable th,#trendsTable td{border-width:0 0 1px 0;border-inline-end-width:1px}
+#trendsTable tr>*:first-child{border-inline-start-width:1px}
+#trendsTable thead th{border-top-width:1px}
+#trendsTable tr.sumrow>*{position:sticky;top:var(--trHeadH,30px);z-index:2;box-shadow:0 2px 0 var(--navy)}
+#trendsTable thead .info:hover::after,#trendsTable thead .info:focus-visible::after{bottom:auto;top:135%} /* open downward: the pinned top edge would clip it */
+/* dates line up on the reading-start edge (right in HE); digits stay LTR; 🕎 trails the date */
+#trendsTable tbody th{direction:inherit;text-align:center}
+#trendsTable .trDate{direction:ltr;unicode-bidi:isolate}
+#trendsTable .holPill{margin-inline-start:6px;vertical-align:1px;unicode-bidi:isolate}
+/* 📣 planned demand events: panel in the shared modal + purple badges */
+.evrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:.78rem;padding:5px 8px;margin:6px 0;border:1px solid #d9ccf5;background:#f7f3fe;border-radius:8px}
+.evrow b{color:#6b46c1}.evrow .grow{flex:1}
+.evPill{background:#6b46c118;color:#6b46c1;border:1px solid #6b46c155;border-radius:9px;padding:0 7px;font-size:.66rem;font-weight:700;white-space:nowrap;margin-inline-start:6px;vertical-align:1px;unicode-bidi:isolate}
+#trHint{margin:0 0 6px}
+/* 📊 intraday profile matrix (modal): heat = share of the day; purple = user-pinned */
+#profTable{font-size:.72rem}
+#profTable td{padding:3px 4px;min-width:62px;cursor:pointer;direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums}
+#profTable td.pinned{box-shadow:inset 0 0 0 2px #8a5fd0;font-weight:700}
+#profTable td input{width:54px;font-size:.72rem;padding:1px 3px;text-align:center}
+#profTable.diff td{cursor:default}
+#profInsight{background:var(--sky-soft);border-radius:7px;padding:6px 9px;color:var(--navy);margin-bottom:6px}
 /* matrix daily-summary strip: same family as sumrow, but thin and quiet */
 tr.msum td,tr.msum th{background:var(--sky-soft);border-bottom:2px solid var(--navy);padding:2px 4px;font-size:.62rem;line-height:1.2;text-align:center;white-space:nowrap}
 tr.msum .v{font-weight:700}
@@ -233,6 +291,28 @@ tr.r-ok td{background:var(--emerald-bg)}
 .spinner{width:22px;height:22px;border:3px solid var(--sky-soft);border-top-color:var(--sky);border-radius:50%;animation:spin .7s linear infinite;flex:none}
 @keyframes spin{to{transform:rotate(360deg)}}
 .dropzone.busy{opacity:.6;pointer-events:none}
+.dropzone.loaded .pre{display:none}
+.rrDays{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin:4px 0 0;padding-inline-start:16px}
+.rrd{border-radius:6px;padding:3px 2px;text-align:center;font-size:.7rem;background:#f2f5f9;color:var(--muted)}
+.rrd b{display:block;font-size:.78rem;direction:ltr}
+.hrChips{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:6px}
+.hrc{border-radius:8px;padding:6px 4px;text-align:center;font-size:.74rem;cursor:default;border:1px solid transparent}
+.hrc b{display:block;font-size:1.05rem;line-height:1.2}
+.hrc.pick{border-color:var(--sky);box-shadow:0 0 0 1px var(--sky)}
+/* treemap drill: each dimension bar expands to the reps behind it */
+.drlRow,details.drl>summary{display:flex;align-items:center;gap:6px;font-size:.78rem;margin:2px 0}
+details.drl>summary{list-style:none;cursor:pointer;border-radius:5px;padding:1px 2px}
+details.drl>summary::-webkit-details-marker{display:none}
+details.drl>summary::before{content:"▸";color:var(--muted);font-size:.7rem;width:10px;flex:none;transition:transform .15s}
+[dir=rtl] details.drl>summary::before{content:"◂"}
+details.drl[open]>summary::before{transform:rotate(90deg)}
+[dir=rtl] details.drl[open]>summary::before{transform:rotate(-90deg)}
+details.drl>summary:hover{background:var(--sky-soft)}
+.drlRow::before{content:"";width:10px;flex:none}
+.drlN{font-size:.7rem;color:var(--muted);white-space:nowrap}
+.drlWho{display:flex;flex-wrap:wrap;gap:4px 10px;margin:2px 0 8px;padding-inline-start:16px;font-size:.74rem;color:var(--ink)}
+.drlWho b{color:var(--muted);font-weight:600}
+.dropzone .status .iss{display:block;margin-top:3px;color:#9a5b00;font-weight:600;font-size:.76rem} /* first-use help steps aside once the portal holds data */
 #toast{position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--emerald);color:#fff;padding:10px 22px;border-radius:999px;font-size:.85rem;font-weight:600;z-index:210;transition:.25s;box-shadow:0 8px 24px rgba(0,0,0,.25);max-width:90%;text-align:center;pointer-events:auto;cursor:pointer}
 #toast.show{transform:translateX(-50%) translateY(0)}
 details.danger{border:1.5px solid var(--crimson);border-radius:8px;padding:8px 12px;margin-top:12px}
@@ -296,18 +376,18 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <div class="status" id="fcStatus" style="display:none"></div>
         <div class="err-card" id="fcErr" style="display:none"></div>
         <div class="err-card" id="fcAudit" style="display:none"></div>
-        <p><span data-i18n="dropHint">All processing stays in your browser — nothing is uploaded.</span>
+        <p class="pre"><span data-i18n="dropHint">All processing stays in your browser — nothing is uploaded.</span>
            <button class="linklike" id="btnSample" data-i18n="loadSample">Load sample data</button></p>
-        <p class="mini" data-i18n="fcFormats">Any Excel (.xlsx / .xls), CSV, TSV or JSON export works — columns are auto-detected in English or Hebrew, in any order. Extra rows and titles are handled automatically.</p>
+        <p class="mini pre" data-i18n="fcFormats">Any Excel (.xlsx / .xls), CSV, TSV or JSON export works — columns are auto-detected in English or Hebrew, in any order. Extra rows and titles are handled automatically.</p>
         <input type="file" id="fcInput" accept=".csv,.tsv,.txt,.json,.xlsx,.xlsm,.xls" style="display:none">
       </div>
       <div class="dropzone" id="dzRoster">
         <h3><span data-i18n="roTitle">Roster &amp; Hard Constraints Ingestion</span> <span class="info" data-tipkey="tipRoster" tabindex="0">i</span></h3>
         <div class="status" id="roStatus" style="display:none"></div>
         <div class="err-card" id="roErr" style="display:none"></div>
-        <p data-i18n="roHint">Drop the actual schedule — named shifts, dated intervals, a weekly aggregate grid, or a sidur matrix (days × intervals). It overrides headcount as the ground-truth capacity.</p>
-        <p class="mini" data-i18n="roFormats">Named shift lists, dated interval sheets, weekly grids or pivot matrices — Excel (.xlsx / .xls), CSV, TSV or JSON. Day names work in Hebrew or English; hourly rows expand automatically.</p>
-        <p class="mini" style="margin-top:4px" data-i18n="proTip">💡 Pro Tip: Upload a roster with representative names to unlock personalized shift optimization recommendations for your team.</p>
+        <p class="pre" data-i18n="roHint">Drop the actual schedule — named shifts, dated intervals, a weekly aggregate grid, or a sidur matrix (days × intervals). It overrides headcount as the ground-truth capacity.</p>
+        <p class="mini pre" data-i18n="roFormats">Named shift lists, dated interval sheets, weekly grids or pivot matrices — Excel (.xlsx / .xls), CSV, TSV or JSON. Day names work in Hebrew or English; hourly rows expand automatically.</p>
+        <p class="mini pre" style="margin-top:4px" data-i18n="proTip">💡 Pro Tip: Upload a roster with representative names to unlock personalized shift optimization recommendations for your team.</p>
         <input type="file" id="roInput" accept=".csv,.tsv,.txt,.json,.xlsx,.xlsm,.xls" style="display:none">
       </div>
     </div>
@@ -321,8 +401,11 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <button class="btn ghost wknav" id="wkPrev" title="◀">‹</button>
         <select id="weekSelect" style="min-width:238px"></select>
         <button class="btn ghost wknav" id="wkNext" title="▶">›</button>
+        <!-- where is this week vs TODAY (past / current / future) + where actual ends -->
+        <span class="pill wkctx" id="wkCtx" style="display:none"></span>
         <span class="info" id="horizonInfo" data-tip="" tabindex="0">i</span>
         <span class="pill" id="editBadge" style="display:none"></span>
+        <button class="linklike" id="wiExport" style="display:none" data-i18n="wiExport">⬇ What-if changes</button>
         <button class="linklike" id="resetEdits" style="display:none" data-i18n="resetEdits">↺ Reset to Original Forecast</button>
         <div class="splitbtn" id="skillScopeWrap" style="display:none">
           <button class="btn ghost" id="skillScopeBtn"></button>
@@ -367,6 +450,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
           <span data-i18n="legScale" style="margin-inline-start:4px">service level vs your target: above → critical</span>
           <span class="info" data-tipkey="tipBreach" tabindex="0">i</span></span>
         <span><i style="background:#c22;border-radius:50%"></i><span data-i18n="legShort">understaffed — fewer scheduled than the target needs</span></span>
+        <span><i style="background:transparent;border-radius:50%;box-shadow:inset 0 0 0 1.5px #c22"></i><span data-i18n="legShortSoft">fewer than the model sizes for — yet service is on target</span></span>
         <span><i style="background:#8a63d2"></i><span data-i18n="legOver">overstaffed — more than the target needs (answer rate won't be 100% — that's normal)</span></span>
         <!-- legDecay belongs to the hidden Policy Optimizer (see #polSection) -->
         <span style="display:none"><i style="background:var(--magenta)"></i><span data-i18n="legDecay">flex-policy dip applied</span></span>
@@ -383,7 +467,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
              remove display:none from #polSection and the legDecay legend item. -->
         <div id="polSection" style="display:none">
           <h2 style="margin:0"><span data-i18n="policyTitle">Operational Policy Optimizer</span> <span class="info" data-tipkey="tipPolicy" tabindex="0">i</span></h2>
-          <label class="chk"><input type="checkbox" id="polEnable"> <span data-i18n="polEnable">Enable Operational Policy Optimizer</span></label>
+          <label class="chk"><input type="checkbox" class="sw" id="polEnable"> <span data-i18n="polEnable">Enable Operational Policy Optimizer</span></label>
           <fieldset id="polFields" disabled>
             <span class="pfi"><span data-i18n="polMaxDrops">Max dips per day</span> <span class="info" data-tipkey="tipMaxDrops" tabindex="0">i</span>
               <input type="number" id="polMaxDrops" min="0" max="10" step="1"></span>
@@ -394,7 +478,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
           </fieldset>
         </div>
         <span class="grow"></span>
-        <button class="btn ghost" id="excModeBtn" data-i18n="excBtn">🗓 Holiday / Exception Control</button>
+        <button class="btn ghost sw" id="excModeBtn" aria-pressed="false" data-i18n="excBtn">🗓 Holiday / Exception Control</button>
         <span class="info" data-tipkey="tipExc" tabindex="0">i</span>
         <!-- Schedule Optimizer hidden 2026-07-19 alongside the Policy Optimizer (its
              engine) — kept wired for future development; remove display:none to revive -->
@@ -413,7 +497,9 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <button class="linklike" id="resetTrends" style="display:none" data-i18n="resetEdits">↺ Reset to Original Forecast</button>
         <button class="btn ghost" id="exportTrends" style="margin-inline-start:auto" data-i18n="exportCsv">⬇ Download CSV</button>
       </div>
-      <div class="tablewrap"><table id="trendsTable"></table></div>
+      <!-- one quiet line of guidance: how to adjust a forecast day, and where known events belong -->
+      <p class="mini" id="trHint" style="display:none"></p>
+      <div class="tablewrap" id="trendsWrap"><table id="trendsTable"></table></div>
     </div>
   </section>
 
@@ -512,9 +598,10 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
   <section class="page" id="page-workforce">
     <div class="banner tip" id="wfNoIron" style="display:none" data-i18n="wfNoIron">No Iron sheet loaded — drop a multi-sheet Tikshuv workbook (סידור עבודה + סידור ברזל). Falling back to manual contracted hours.</div>
     <div class="toolbar">
-      <label data-i18n="wfTeamL">Team</label><select id="wfTeam" style="min-width:130px"></select>
-      <label data-i18n="wfSkillL">Skill</label><select id="wfSkill" style="min-width:130px"></select>
-      <label data-i18n="wfSiteL">Site</label><select id="wfSite" style="min-width:130px"></select>
+      <!-- multi-select: none checked = all; check any mix to narrow (populateWfFilters) -->
+      <label data-i18n="wfTeamL">Team</label><div class="splitbtn"><button class="btn ghost" id="wfTeamBtn" style="min-width:130px"></button><div class="menu pad" id="wfTeamMenu"></div></div>
+      <label data-i18n="wfSkillL">Skill</label><div class="splitbtn"><button class="btn ghost" id="wfSkillBtn" style="min-width:130px"></button><div class="menu pad" id="wfSkillMenu"></div></div>
+      <label data-i18n="wfSiteL">Site</label><div class="splitbtn"><button class="btn ghost" id="wfSiteBtn" style="min-width:130px"></button><div class="menu pad" id="wfSiteMenu"></div></div>
       <!-- day filter: 1-click zoom from the weekly summary to a single day (data is
            already per-weekday, so this only re-scopes the aggregation) -->
       <label data-i18n="wfDayL">Day</label><div class="seg" id="wfDaySeg" style="max-width:100%"></div>
@@ -537,6 +624,8 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <p class="mini" id="wfImpactMetric"></p>
         <div class="tablewrap"><table id="wfImpact"></table></div>
         <p class="mini" id="wfImpactStars" style="display:none"></p>
+        <!-- the question after "what hurts": how many MORE can be off each day (renderHeadroom) -->
+        <div id="wfHeadroom" style="display:none;margin-top:14px"></div>
       </div>
     </div>
     <div class="card" id="wfValCard">
@@ -559,9 +648,16 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
       <h2><span data-i18n="schTitle">Auto-Scheduling</span> <span class="info" data-tipkey="tipSch" tabindex="0">i</span></h2>
       <!-- TWO jobs, one page: Mode 1 REPAIRS the current sidur; Mode 2 CONSTRUCTS a fresh
            baseline from the iron base. Only the input row + a couple of blocks differ. -->
-      <div class="seg" id="schModeSeg" style="margin-bottom:8px">
-        <button data-mode="optimizeCurrent" class="active" data-i18n="schMode1">⚡ Fine-tune current schedule</button>
-        <button data-mode="generateIron" data-i18n="schMode2">🏗️ Generate baseline from iron</button>
+      <div class="toolbar" style="margin:0 0 8px">
+        <div class="seg" id="schModeSeg">
+          <button data-mode="optimizeCurrent" class="active" data-i18n="schMode1">⚡ Fine-tune current schedule</button>
+          <button data-mode="generateIron" data-i18n="schMode2">🏗️ Generate baseline from iron</button>
+        </div>
+        <!-- WHICH week the run works on: Mode 1 = the loaded sidur's week (fixed — there is
+             nothing to move anywhere else); Mode 2 = any forecast week, picked here -->
+        <span class="pill" id="schWkFix"></span>
+        <select id="schWkSel" style="display:none;min-width:238px"></select>
+        <button class="linklike" id="schWkHint" type="button" data-i18n="schWkHint">Another week? Generate from iron →</button>
       </div>
       <div class="toolbar">
         <span class="pill" id="schChipFc"></span>
@@ -577,6 +673,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <button class="btn navy" id="schRun" data-i18n="schRun">Generate Optimized Schedule</button>
         <button class="btn navy" id="schGenRun" style="display:none" data-i18n="schGenRun">🏗️ Generate baseline</button>
       </div>
+      <p class="mini" id="schWiNote" style="display:none;margin:0 0 6px"></p>
       <p class="gateNote" id="schGate" style="display:none" data-i18n="schNeedSidur">The optimizer MOVES shifts in the current sidur — load a sidur (with shifts in the selected week) and a forecast to enable it.</p>
       <!-- Mode 2 input surface: one line of intent + its own gate (needs forecast + iron) -->
       <div id="schGenPanel" style="display:none;margin-top:8px">
@@ -717,10 +814,35 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <div class="frow"><label data-i18n="fmVol">Call volume model</label><select id="setModelVol" style="width:210px"></select></div>
         <div class="frow"><label data-i18n="fmAht">AHT model</label><select id="setModelAht" style="width:210px"></select></div>
         <div class="frow"><label data-i18n="fmMpt">MPT model</label><select id="setModelMpt" style="width:210px"></select></div>
-        <div class="frow"><label for="setAutoHol" data-i18n="fmAutoHol">Auto Israeli-holiday calendar</label><input type="checkbox" id="setAutoHol"></div>
-        <div class="frow"><label for="setAutoAnom" data-i18n="fmAutoAnom">Auto war/outage detection</label><input type="checkbox" id="setAutoAnom"></div>
-        <div class="frow"><label data-i18n="fmProfile">Interval profile window</label><select id="setProfile" style="width:210px"><option value="adaptive" data-i18n="fmProfAdapt">Adaptive (8w, fallback all)</option><option value="w12" data-i18n="fmProf12">12 weeks</option></select></div>
-        <div class="frow" style="border:none;gap:8px;flex-wrap:wrap"><button class="btn ghost" id="backtestBtn" data-i18n="backtestBtn">🧪 Backtest models</button><button class="btn ghost" id="reviewExclBtn" data-i18n="reviewExclBtn">📅 Review excluded days</button><button class="btn ghost" id="holTableBtn" data-i18n="holTableBtn">🕎 Holidays table</button></div>
+        <div class="frow"><label for="setAutoHol" data-i18n="fmAutoHol">Auto Israeli-holiday calendar</label><input type="checkbox" class="sw" id="setAutoHol"></div>
+        <div class="frow"><label for="setAutoAnom" data-i18n="fmAutoAnom">Auto war/outage detection</label><input type="checkbox" class="sw" id="setAutoAnom"></div>
+        <div class="frow"><label><span data-i18n="fmProfile">Interval profile window</span> <button class="linklike" id="profBtn" type="button" data-i18n-title="profBtnTip" title="See and edit the intraday call weights">📊</button></label><select id="setProfile" style="width:210px"><option value="adaptive" data-i18n="fmProfAdapt">Adaptive (8w, fallback all)</option><option value="w12" data-i18n="fmProf12">12 weeks</option></select></div>
+        <div class="frow" style="border:none;gap:8px;flex-wrap:wrap"><button class="btn ghost" id="backtestBtn" data-i18n="backtestBtn">🧪 Backtest models</button><button class="btn ghost" id="reviewExclBtn" data-i18n="reviewExclBtn">📅 Review excluded days</button><button class="btn ghost" id="holTableBtn" data-i18n="holTableBtn">🕎 Holidays table</button><button class="btn ghost" id="evBtn"><span data-i18n="evTitle">📣 Planned demand events</span> <span class="pill" id="evCount" style="display:none"></span></button></div>
+        <!-- planned one-off surges the history can't know (vendor change, campaign): sized once,
+             added to the forecast, and kept OUT of learning once the days become history.
+             Lives in the shared modal (like the holidays table) so this card never grows. -->
+        <!-- intraday call weights (חלוקת משקלי שיחות ביום): weekday × half-hour matrix in the
+             shared modal — switch window, see what changes, pin a share -->
+        <div id="profPanel" class="mpanel" data-tkey="profTitle" hidden>
+          <div class="toolbar" style="margin:0 0 6px;gap:8px">
+            <div class="seg" id="profWin"><button type="button" data-mode="adaptive" data-i18n="fmProfAdapt">Adaptive (8w, fallback all)</button><button type="button" data-mode="w12" data-i18n="fmProf12">12 weeks</button></div>
+            <div class="seg" id="profView"><button type="button" data-view="share" class="active" data-i18n="profViewShare">Weights</button><button type="button" data-view="diff" data-i18n="profViewDiff">Change vs other window</button></div>
+          </div>
+          <p class="mini" id="profInsight"></p>
+          <div class="tablewrap" style="max-height:52vh;overflow:auto"><table id="profTable"></table></div>
+          <p class="mini" id="profFoot"></p>
+        </div>
+        <div id="evPanel" class="mpanel" data-tkey="evTitle" hidden>
+          <div id="evList"></div>
+          <div class="frow"><label data-i18n="evName">Event</label><input type="text" id="evName" style="width:190px" data-i18n-ph="evNamePh" placeholder="e.g. Vendor change"></div>
+          <div class="frow"><label data-i18n="evStart">First day</label><input type="date" id="evStart" style="width:150px"></div>
+          <div class="frow"><label data-i18n="evDays">Working days</label><input type="number" id="evDays" min="1" max="30" value="5" style="width:70px"></div>
+          <div class="frow"><label><span data-i18n="evTotal">Extra calls (total)</span></label><input type="number" id="evTotal" min="0" step="100" style="width:110px"></div>
+          <div class="frow"><label><span data-i18n="evShape">Spread</span> <span class="info" data-tipkey="tipEv" tabindex="0">i</span></label>
+            <div class="seg" id="evShape"><button type="button" data-shape="front" class="active" data-i18n="evFront">Front-loaded</button><button type="button" data-shape="even" data-i18n="evEven">Even</button></div></div>
+          <p class="mini" id="evPreview"></p>
+          <div class="frow" style="border:none"><button class="btn navy" id="evAdd" type="button" data-i18n="evAdd">+ Add event</button></div>
+        </div>
       </div>
       <!-- QA / feedback in its own card — nothing is sent automatically -->
       <div class="card">
@@ -738,11 +860,15 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
 </main>
 
 <div id="cellEditor">
-  <h4 id="ceTitle"></h4>
+  <h4><span id="ceTitle"></span> <span class="ceSrc" id="ceSrc"></span></h4>
+  <!-- live mirror of the cell (scheduled · needed · metric) — shows the effect BEFORE applying -->
+  <div class="ceLive" id="ceLive"></div>
   <div class="row"><label id="ceVolL"></label><input type="number" id="ceVol" min="0" step="1"></div>
+  <div class="ceHint" id="ceVolH"></div>
   <div class="row"><label id="ceAhtL"></label><input type="text" id="ceAht" inputmode="numeric" placeholder="mm:ss" style="direction:ltr"></div>
-  <div class="row" id="ceAgRow"><label id="ceAgL"></label><input type="number" id="ceAg" min="0" step="0.5"></div>
-  <div class="row" id="ceFutRow" style="display:none"><label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox" id="ceFut" checked style="margin:0"><span id="ceFutL"></span></label></div>
+  <div class="row" id="ceAgRow"><label id="ceAgL"></label><input type="number" id="ceAg" min="0" step="0.5"><b id="ceAgRO" style="display:none"></b></div>
+  <div class="ceHint" id="ceAgH"></div>
+  <div class="row" id="ceFutRow" style="display:none"><label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox" class="sw" id="ceFut" checked><span id="ceFutL"></span></label></div>
   <div class="acts">
     <button class="btn ghost" id="ceCancel" data-i18n="ceCancel">Cancel</button>
     <button class="btn" id="ceApply" data-i18n="ceApply">Apply</button>
@@ -832,6 +958,8 @@ en:{
   dropHint:"Nothing leaves your browser.",
   loadSample:"Load sample data",
   fcLoaded:"Loaded {n} interval records across {d} days.",
+  fcRange:"Forecast data: {a} → {b} · {d} days · {n} intervals", issSkip:"{k} rows skipped", issImp:"{n} AR>100%", issAht:"{n} odd AHT", issFar:"{n} far dates", issView:"view", roWeek:"Sidur: week {w} · {a}–{b}", roWeeks:"Sidur: weeks {w}–{x} · {a}–{b}",
+  roReps:"{e} reps", roTemplate:"Weekly sidur template (no dates) · {n} blocks", roReplace:"Drop another file to replace",
   roTitle:"Roster & Hard Constraints Ingestion",
   roHint:"Drop one Tikshuv workbook (סידור עבודה + סידור ברזל) to load roster AND iron together — or named shifts, dated intervals, weekly grids, a sidur matrix.",
   proTip:"💡 Named rosters unlock personal shift recommendations.",
@@ -907,6 +1035,9 @@ en:{
   mxVerdOverOk:"More agents than the target needs — service is above target (100% is neither realistic nor economical).",
   mxVerdOverLow:"More agents than the model needs, yet measured service came in below target — check real abandonment / absences that day.",
   mxVerdShortOk:"Fewer agents than the model wants, yet measured service still met the target that day.",
+  mxVerdShortOkMeas:"Fewer in the sidur than the model sizes for, yet measured service met the target. Usual reasons: people outside the sidur/queue scope also answered (other skills, overtime), or a low-volume slot where the model is cautious.",
+  mxVerdShortOkFc:"Fewer than the model sizes for, yet the forecast is on target — this slot has historically done better than the raw model, and the % includes that. Treat the ring as a caution, not a gap.",
+  mxVerdMetric:"Note: 'needed' is sized for your primary metric ({p}), not the metric shown here.",
   mxVerdShortLow:"Short of the agents the target needs — service is below target here.",
   mxVerdBalanced:"Staffing matches what the target needs.",
   setPrimary:"Primary Target Metric",
@@ -933,6 +1064,9 @@ en:{
   resetNote:"Clears saved settings, policies, courses, simulations and cached datasets from this browser.",
   weekLabel:"Week:", thInterval:"Interval",
   weekOpt:"Week {w} | {a} – {b}", forecastTag:" (forecast)",
+  wkNow:"📍 This week", wkPast1:"⏮ Last week", wkPast:"⏮ Past · {n} weeks ago", wkFut1:"⏭ Next week", wkFut:"⏭ Future · in {n} weeks",
+  wkActUntil:"actual through {d}, forecast after", wkNoAct:"no actual data yet — forecast", wkJump:"Jump to the current week",
+  dTagAct:"actual", dTagFc:"forecast", dTagToday:"today",
   horizonTip:"Forecast horizon: with {d} days of uploaded history you can simulate up to {m} beyond your last data date. Uploading 2+ years of history unlocks a 12-month horizon.",
   m3:"3 months", m12:"12 months",
   metricAr:"Answer Rate %", metricTsfDyn:"TSF {s}",
@@ -945,7 +1079,7 @@ en:{
   polFloor:"SLA floor target (%)", tipFloor:"The absolute safety limit, as defined here in Settings: even inside a permitted dip, the optimizer will never allow staffing to fall below the level that achieves this score.",
   decaySaved:"Flex policy active: {n} interval(s) allowed to dip — approx. {h} rep-hours saved this week. Daily cumulative score protected.",
   legGood:"≥ 90% — meets target", legWarn:"80–89.9% — warning", legBad:"< 80% — breach",
-  legShort:"understaffed (scheduled < required)", legDecay:"flex-policy dip applied",
+  legShort:"understaffed (scheduled < required)", legShortSoft:"fewer than the model sizes for — yet service is on target", legDecay:"flex-policy dip applied",
   legEdit:"Click any cell to edit values.",
   closed:"Closed", noData:"—",
   trendsTitle:"Date Trends — history & forward projection",
@@ -953,7 +1087,7 @@ en:{
   trFcNote:"Rows beyond your last data date are forward projections (Holt volume forecast + 4-week AHT average).",
   sumRow:"Total",
   thDate:"Date", thAr:"Answer Rate %", thUtil:"Projected Occupancy Rate %",
-  thAht:"AHT (mm:ss)", thNetProd:"Net Productivity (calls / net hr)",
+  thAht:"AHT (mm:ss)", thWork:"Hours to schedule (gross)", fTipWork:"GROSS agent-hours to put in the sidur so the day hits your target: for every interval, the 'needed' count from the weekly matrix (sized by the queue model for {m} ≥ {t}%, then grossed up for shrinkage and absences) × ½ hour. Already includes the idle buffer that makes on-time answering possible, unavailable time and no-shows. Net handling time alone (calls × AHT) would be {n}% of it on average.", thNetProd:"Net Productivity (calls / net hr)",
   fTipVol:"Total inbound calls received across the day's intervals.",
   fTipAr:"On historical days: the ACTUAL rate from your file — answered calls ÷ inbound calls. On forecast rows: the Erlang A model's prediction.",
   fTipAht:"Volume-weighted average handling time: Σ(AHT × calls) ÷ Σ calls, shown as mm:ss.",
@@ -976,7 +1110,7 @@ en:{
   /* ===== WFM 2.0 ===== */
   tabWorkforce:"Workforce & Iron", tabScheduler:"Auto-Scheduler",
   wfNoIron:"No Iron sheet loaded — drop one multi-sheet Tikshuv workbook (סידור עבודה + סידור ברזל). Falling back to manual contracted hours per rep.",
-  wfTeamL:"Team", wfSkillL:"Skill", wfSiteL:"Site", wfAll:"(all)",
+  wfTeamL:"Team", wfSkillL:"Skill", wfSiteL:"Site", wfAll:"(all)", wfNSel:"{n} selected", wfShowAll:"↺ Show all", wfNoVals:"This file has no values in this column.",
   wfDayL:"Day", wfDayAll:"All", daysShort:["Su","Mo","Tu","We","Th","Fr"],
   wfKpiUtil:"Roster-to-Iron Utilization",
   tipWfUtil:"HOW MUCH: Σ scheduled hours ÷ Σ Iron hours — what share of the contracted volume became real shifts. Measures quantity only. NOT the mirror of the Deviation Index: hours can be 100% used yet every shift moved to different times.",
@@ -990,6 +1124,10 @@ en:{
   wf_training:"Training", wf_exam:"Exams", wf_other:"Other absence", wf_unalloc:"Unused iron base",
   wfNoStatus:"Empty shift (no status)",
   wfImpactTitle:"Daily Vacation & SLA Impact Matrix",
+  hrTitle:"🏖 Vacation headroom — how many more can be off",
+  hrTip:"Per weekday: how many MORE reps (of the current filter, at their average shift) the whole center can release before {m} drops below target. Typical demand for that weekday, the current sidur's hours, the same queue model as the matrix above. A guide, not a guarantee.",
+  hrChipTip:"{d}: up to {k} more can be off (≈{h}h shift each) and {m} stays ≥ {t}% — now {v}",
+  hrBelow:"{d}: already below target with the current sidur ({v}) — no room for more absences",
   tipWfImpact:"Background Erlang A simulation per skill × day: the answer-rate before → after removing one productive agent from that slice. Green = low-risk vacation approval; red = critical.",
   wfImpactNone:"Needs a forecast + roster with a skill column (מיומנות) to simulate.",
   wfImpactTip1:"Answer rate",
@@ -1008,11 +1146,13 @@ en:{
   schNoGaps:"No uncovered demand — the Iron base covers the full forecast. 🎯",
   crsTitle:"Course Gantt Upload", crsHint:"Drop a course plan file — columns (any order, Hebrew or English): course name (קורס), start date (תאריך התחלה), duration in days or end date (סיום), trainees (כמות), yield % (הסמכה). Dates accept dd/mm/yyyy, ISO or Excel serials; missing yield defaults to 85%.",
   crsOk:"{n} courses loaded into the training pipeline.", crsErr:"No course rows recognized — need at least a name/date column.",
-  wfDrillTitle:"Drill-down: {seg} by {dim}", wfDrillBy:"Drill by", wfDrillHint:"Click a treemap tile to break it down.", wfDrillBack:"✕ Close drill-down",
+  wfDrillTitle:"Drill-down: {seg} by {dim}", wfDrillBy:"Drill by", wfDrillHint:"Click a treemap tile to break it down.", wfDrillBack:"✕ Close drill-down", wfDrillWho:"{n} reps — click to list them",
   roIronNote:"Iron base: {n} employees",
   rosterRecov:"extendable across {n} reps ≈ {f} FTE — recover these hours before hiring externally",
   rosterAllOk:"✅ Everyone is at (or above) their contracted baseline — no internal hours to recover.",
   rosterCopyBtn:"Copy list",
+  rosterAll:"Show all {n} ▾", rosterLess:"Show fewer ▴", rosterRowTip:"Click to see which days", rosterDayTip:"{s}h in the sidur / {i}h in the iron base",
+  rosterMissing:"Iron days missing from the sidur: {d} — the natural place to give the hours back", rosterSpread:"No whole iron day is missing — the gap is shorter shifts; extend on the amber days.", rosterNoIron:"No iron day breakdown for this rep.",
   skillScopeAll:"All skills answer", skillScopeN:"{n} answering skills",
   skillScopeHint:"Which skills count as ANSWERING capacity for this queue's AR/TSF? (HR & workforce pages always include everyone.) On billing days check בכיר; מרפאות usually answer קו 1 too.",
   skillScopeAllBtn:"Count every skill",
@@ -1080,6 +1220,8 @@ en:{
   tipSch:"Two jobs, one page. Mode 1 (Fine-tune current) MOVES the current sidur's shifts (slide ±2h, duration preserved) to best cover demand and your coverage rules, then offers team-leader extension requests for what's left. Mode 2 (Generate baseline) BUILDS a fresh schedule from the contractual iron base, placing each contracted window where it covers demand best.",
   schMode1:"⚡ Fine-tune current schedule", schMode2:"🏗️ Generate baseline from iron",
   schMode2Hint:"Builds a baseline by placing each contracted iron window where it best covers demand — surplus goes to the pool for you to allocate.",
+  schWkFix:"📅 Sidur week {w} · {a}–{b}", schWkGen:"📅 Week to build:",
+  schWkHint:"Another week? Generate from iron →",
   schGenRun:"🏗️ Generate baseline", schGenNeed:"Load a demand forecast and an iron base (סידור ברזל) to generate a baseline.",
   schChipGenIron:"🏗️ Iron {n}", schChipGenCov:"📐 Rules · {n}",
   schDoneGen:"✅ Baseline generated: {a} shifts placed, {p} in the surplus pool. Still uncovered: {h} agent-hours (structural — hire/allocate there).",
@@ -1224,6 +1366,33 @@ en:{
   setMptHint:"Don't know your MPT? Pull the 'average delay of abandoned calls' from your telephony/ACD abandoned-calls report — that value in seconds is your MPT. Typical service queues: 60–240s.",
   ceTitle:"Edit {day} {time}", ceCancel:"Cancel", ceApply:"Apply",
   ceFutL:"Apply to this and all future weeks (same weekday & interval)",
+  ceSched:"scheduled", ceNeed:"needed", ceAfter:"after the change", ceDayTotal:"· daily total",
+  ceHintVolFc:"Model forecast for this half-hour — change it if you know something the model doesn't.",
+  ceHintVolAct:"Measured in your file — edit only to correct bad data.",
+  ceHintAgRoster:"From your loaded sidur — to change it, move shifts in Auto-Scheduling.",
+  ceHintAgWhatIf:"The sidur has {n} here. Type another number to see the effect — a what-if only: the sidur file and the Auto-Scheduler don't change.",
+  wiBadge:"{n} what-if staffing", wiExport:"⬇ What-if changes", schWiNote:"{n} what-if staffing changes from the matrix are not in the sidur — the scheduler works on the real sidur and the demand.",
+  wiCsvTm:"Interval", wiCsvSid:"Sidur", wiCsvWi:"What-if", wiCsvBefore:"before", wiCsvAfter:"after",
+  ceHintAgFile:"Baseline from your file (no sidur for this day) — try a what-if here.",
+  ceHintDay:"Total calls for the day — spread across its half-hours by the day's usual profile.",
+  profTitle:"📊 Intraday call weights", profBtnTip:"See and edit the intraday call weights",
+  profIntro:"What share of each weekday's calls lands in every half-hour. Forecast days spread their daily total by these weights. History is never changed.",
+  profViewShare:"Weights", profViewDiff:"Change vs other window", profNone:"Load a forecast file with history to see the weights.",
+  profInsSame:"Switching to {o} would barely change anything (under 0.3 points anywhere)",
+  profInsDiff:"Switching to {o} would move {day} {tm} by {p} points — the biggest change",
+  profPeak:"most days peak at {tm}", profPinnedTip:"Pinned by you — click to change; clear the box to unpin",
+  profEditNote:"Click a weight to pin a different share — the rest of that day rebalances to 100%.",
+  profDiffNote:"Points of the day's calls this window adds (+) or removes (−) vs {o}.", profReset:"↺ Unpin all ({n})",
+  evTitle:"📣 Planned demand events", evIntro:"A known one-off surge your history can't predict (vendor change, campaign, price update). The calls are added to the forecast — and once those days happen, they're kept out of the model's learning.",
+  evName:"Event", evNamePh:"e.g. Vendor change", evDefName:"Planned event", evStart:"First day", evDays:"Working days",
+  evTotal:"Extra calls (total)",
+  evShape:"Spread", evFront:"Front-loaded", evEven:"Even", evAdd:"+ Add event",
+  evPrev:"{d}: +{n}", evNeed:"Set a first day and the extra calls to see the daily spread.",
+  evRowCalls:"+{n} calls · {d} working days", evPeak:"first day +{p}% vs normal", evPast:"happened — kept out of learning",
+  evDel:"Remove event", evAdded:"Planned event added: {n}", evPillTip:"+{n} extra calls planned this day",
+  exclEvNote:"planned event — held out of learning", trHintLink:"📣 Plan a known event",
+  trHint:"Forecast rows: click the calls number to adjust a single day. Know of an upcoming surge (campaign, vendor change)?",
+  tipEv:"Use this for demand you can SIZE but history can't know. Enter the total extra calls you expect and how many working days it lasts. Front-loaded = most calls come first and fade (typical after an announcement). Saturdays and closed holidays are skipped; Friday counts half.",
   cleanNote:"🧹 {k} outlier points auto-clipped (billing peaks kept)",
   trShowMore:"Show {k} more days ({r} remaining) ▼",
   mxSum:"Daily",
@@ -1245,6 +1414,8 @@ he:{
   dropHint:"שום נתון לא יוצא מהדפדפן.",
   loadSample:"טעינת נתוני דוגמה",
   fcLoaded:"נטענו {n} רשומות אינטרוול על פני {d} ימים.",
+  fcRange:"נתוני תחזית: {a} ← {b} · {d} ימים · {n} אינטרוולים", issSkip:"{k} שורות דולגו", issImp:"{n} מענה>100%", issAht:"{n} משך שיחה חריג", issFar:"{n} תאריכים רחוקים", issView:"הצגה", roWeek:"סידור: שבוע {w} · {a}–{b}", roWeeks:"סידור: שבועות {w}–{x} · {a}–{b}",
+  roReps:"{e} נציגים", roTemplate:"תבנית סידור שבועית (ללא תאריכים) · {n} בלוקים", roReplace:"גררו קובץ אחר כדי להחליף",
   roTitle:"קליטת סידור עבודה ואילוצים קשיחים",
   roHint:"גררו קובץ תקשוב אחד (סידור עבודה + סידור ברזל) לטעינת הסידור והברזל יחד — או משמרות בשמות, אינטרוולים מתוארכים, רשת שבועית ומטריצת סידור.",
   proTip:"💡 סידור עם שמות פותח המלצות שיבוץ אישיות.",
@@ -1320,6 +1491,9 @@ he:{
   mxVerdOverOk:"יותר נציגים מהנדרש ליעד — השירות מעל היעד (100% אינו מציאותי ולא כלכלי).",
   mxVerdOverLow:"יותר נציגים מהנדרש לפי המודל, אך השירות שנמדד היה מתחת ליעד — בדקו נטישה/היעדרויות בפועל באותו יום.",
   mxVerdShortOk:"פחות נציגים ממה שהמודל דורש, אך השירות שנמדד עמד ביעד באותו יום.",
+  mxVerdShortOkMeas:"בסידור פחות ממה שהמודל מחשב, אך השירות שנמדד עמד ביעד. סיבות נפוצות: ענו גם נציגים מחוץ לסידור/לתחום התור (מיומנויות אחרות, שעות נוספות), או אינטרוול דל-שיחות שבו המודל שמרני.",
+  mxVerdShortOkFc:"פחות ממה שהמודל מחשב, אך התחזית ביעד — היסטורית האינטרוול הזה ביצע טוב מהמודל הגולמי, והאחוז כולל זאת. הטבעת היא אזהרה, לא פער.",
+  mxVerdMetric:"שימו לב: 'נדרשים' מחושב למדד היעד הראשי ({p}), לא למדד המוצג כאן.",
   mxVerdShortLow:"חסרים נציגים ליעד — השירות כאן מתחת ליעד.",
   mxVerdBalanced:"האיוש תואם את הנדרש ליעד.",
   setPrimary:"מדד יעד מוביל",
@@ -1346,6 +1520,9 @@ he:{
   resetNote:"מוחק הגדרות, מדיניות, קורסים, סימולציות ומערכי נתונים שנשמרו בדפדפן זה.",
   weekLabel:"שבוע:", thInterval:"אינטרוואל",
   weekOpt:"שבוע {w} | {a} – {b}", forecastTag:" (תחזית)",
+  wkNow:"📍 השבוע הנוכחי", wkPast1:"⏮ שבוע שעבר", wkPast:"⏮ עבר · לפני {n} שבועות", wkFut1:"⏭ שבוע הבא", wkFut:"⏭ עתיד · בעוד {n} שבועות",
+  wkActUntil:"בפועל עד יום {d}, משם תחזית", wkNoAct:"אין עדיין נתוני אמת — תחזית", wkJump:"מעבר לשבוע הנוכחי",
+  dTagAct:"בפועל", dTagFc:"תחזית", dTagToday:"היום",
   horizonTip:"אופק חיזוי: עם {d} ימי היסטוריה שהועלו ניתן לדמות עד {m} מעבר לתאריך הנתונים האחרון. העלאת שנתיים ומעלה של היסטוריה פותחת אופק של 12 חודשים.",
   m3:"3 חודשים", m12:"12 חודשים",
   metricAr:"אחוז מענה", metricTsfDyn:"TSF {s}",
@@ -1358,7 +1535,7 @@ he:{
   polFloor:"רצפת SLA (%)", tipFloor:"גבול הבטיחות המוחלט, כפי שמוגדר כאן בהגדרות: גם בתוך ירידה מותרת, המייעל לעולם לא יאפשר לאיוש לרדת מתחת לרמה שמשיגה ציון רצפה זה.",
   decaySaved:"מדיניות גמישות פעילה: {n} אינטרוולים הורשו לרדת — נחסכו כ־{h} שעות נציג השבוע. הציון היומי המצטבר נשמר.",
   legGood:"‏90% ומעלה — עומד ביעד", legWarn:"‏80–89.9% — אזור אזהרה", legBad:"מתחת ל־80% — חריגה",
-  legShort:"תת־איוש (משובצים < נדרשים)", legDecay:"הופעלה ירידת מדיניות",
+  legShort:"תת־איוש (משובצים < נדרשים)", legShortSoft:"פחות ממה שהמודל מחשב — אך השירות ביעד", legDecay:"הופעלה ירידת מדיניות",
   legEdit:"לחצו על תא לעריכת ערכים.",
   closed:"סגור", noData:"—",
   trendsTitle:"מגמות תאריכים — היסטוריה ותחזית קדימה",
@@ -1366,7 +1543,7 @@ he:{
   trFcNote:"שורות מעבר לתאריך הנתונים האחרון הן תחזיות קדימה (חיזוי נפח Holt + ממוצע AHT של 4 שבועות).",
   sumRow:"סיכום",
   thDate:"תאריך", thAr:"אחוז מענה", thUtil:"אחוז תעסוקה משוער",
-  thAht:"משך שיחה (mm:ss)", thNetProd:"פריון (שיחות לשעה נטו)",
+  thAht:"משך שיחה (mm:ss)", thWork:"שעות לשיבוץ (ברוטו)", fTipWork:"שעות נציג ברוטו שצריך להכניס לסידור כדי שהיום יעמוד ביעד: לכל אינטרוול — מספר ה'נדרשים' מהמטריצה השבועית (מחושב במודל התור ל{m} ≥ {t}%, ומוגדל לזמן לא-זמין ולהיעדרויות) × חצי שעה. כבר כולל את מרווח הזמינות שמאפשר מענה בזמן, זמן לא-זמין והיעדרויות. זמן הטיפול נטו לבדו (שיחות × משך) הוא בממוצע {n}% מזה.", thNetProd:"פריון (שיחות לשעה נטו)",
   fTipVol:"סך השיחות הנכנסות בכל האינטרוולים של היום.",
   fTipAr:"בימים היסטוריים: השיעור בפועל מהקובץ שלכם — שיחות נענות ÷ נכנסות. בשורות תחזית: חיזוי מודל Erlang A.",
   fTipAht:"משך שיחה ממוצע (AHT) משוקלל נפח: ‏Σ(משך × שיחות) ÷ Σ שיחות, מוצג כ־mm:ss. בימי תחזית — משך השיחה החזוי.",
@@ -1389,7 +1566,7 @@ he:{
   /* ===== WFM 2.0 ===== */
   tabWorkforce:"כוח אדם וברזל", tabScheduler:"שיבוץ אוטומטי",
   wfNoIron:"לא נטען גיליון ברזל — גררו קובץ תקשוב רב-גיליוני אחד (סידור עבודה + סידור ברזל). בינתיים חישוב לפי שעות חוזיות ידניות לנציג.",
-  wfTeamL:"מנהל צוות", wfSkillL:"מיומנות", wfSiteL:"מוקד", wfAll:"(הכול)",
+  wfTeamL:"מנהל צוות", wfSkillL:"מיומנות", wfSiteL:"מוקד", wfAll:"(הכול)", wfNSel:"{n} נבחרו", wfShowAll:"↺ הצג הכול", wfNoVals:"אין ערכים בעמודה הזו בקובץ.",
   wfDayL:"יום", wfDayAll:"הכל", daysShort:["א׳","ב׳","ג׳","ד׳","ה׳","ו׳"],
   wfKpiUtil:"ניצול סידור מול ברזל",
   tipWfUtil:"כמה: ‏Σ שעות משובצות ÷ ‏Σ שעות ברזל — איזה חלק מנפח השעות החוזי הפך למשמרות בפועל. מודד כמות בלבד. זה לא ההופכי של מדד הסטייה: אפשר לנצל 100% מהשעות כשכל משמרת הוזזה לשעה אחרת.",
@@ -1403,6 +1580,10 @@ he:{
   wf_training:"הדרכה", wf_exam:"מבחנים", wf_other:"היעדרות אחרת", wf_unalloc:"יתרת ברזל לא-מנוצלת",
   wfNoStatus:"משמרת ריקה (ללא סטטוס)",
   wfImpactTitle:"מטריצת חופשות יומית והשפעת SLA",
+  hrTitle:"🏖 מרווח חופשות — כמה עוד אפשר לשחרר",
+  hrTip:"לכל יום בשבוע: כמה נציגים נוספים (מהסינון הנוכחי, במשמרת הממוצעת שלהם) המוקד כולו יכול לשחרר לפני ש{m} יורד מתחת ליעד. ביקוש טיפוסי לאותו יום, שעות הסידור הנוכחי, אותו מודל תור כמו במטריצה מעל. הכוונה, לא התחייבות.",
+  hrChipTip:"{d}: אפשר לשחרר עוד עד {k} (משמרת ≈{h} ש' כל אחד) ו{m} נשאר ≥ {t}% — כעת {v}",
+  hrBelow:"{d}: כבר מתחת ליעד עם הסידור הנוכחי ({v}) — אין מקום להיעדרויות נוספות",
   tipWfImpact:"סימולציית Erlang A ברקע לכל מיומנות × יום: אחוז המענה לפני ← אחרי הסרת נציג פרודוקטיבי אחד מהפלח. ירוק = אישור חופשה בסיכון נמוך; אדום = קריטי.",
   wfImpactNone:"נדרשים תחזית + סידור עם עמודת מיומנות כדי לסמלץ.",
   wfImpactTip1:"אחוז מענה",
@@ -1421,11 +1602,13 @@ he:{
   schNoGaps:"אין ביקוש לא מכוסה — בסיס הברזל מכסה את כל התחזית. 🎯",
   crsTitle:"העלאת גאנט קורסים", crsHint:"גררו קובץ תוכנית קורסים — עמודות (בכל סדר, עברית או אנגלית): שם קורס, תאריך התחלה, משך בימים או תאריך סיום, כמות חניכים, אחוז הסמכה. תאריכים בכל פורמט (dd/mm/yyyy, ISO, סריאלי של אקסל); אחוז הסמכה חסר יקבל 85%.",
   crsOk:"{n} קורסים נטענו לצנרת ההכשרה.", crsErr:"לא זוהו שורות קורס — נדרשת לפחות עמודת שם/תאריך.",
-  wfDrillTitle:"פילוח: {seg} לפי {dim}", wfDrillBy:"פילוח לפי", wfDrillHint:"לחצו על אריח במפת החום לפילוח.", wfDrillBack:"✕ סגירת פילוח",
+  wfDrillTitle:"פילוח: {seg} לפי {dim}", wfDrillBy:"פילוח לפי", wfDrillHint:"לחצו על אריח במפת החום לפילוח.", wfDrillBack:"✕ סגירת פילוח", wfDrillWho:"{n} נציגים — לחצו להצגה",
   roIronNote:"בסיס ברזל: {n} עובדים",
   rosterRecov:"ניתנות להרחבה אצל {n} נציגים ≈ {f} משרות — לאתר את השעות האלה לפני גיוס חיצוני",
   rosterAllOk:"✅ כולם בבסיס החוזי שלהם (או מעליו) — אין שעות פנימיות לאיתור.",
   rosterCopyBtn:"העתקת רשימה",
+  rosterAll:"הצג את כל {n} ▾", rosterLess:"הצג פחות ▴", rosterRowTip:"לחצו כדי לראות באילו ימים", rosterDayTip:"{s} ש׳ בסידור / {i} ש׳ בברזל",
+  rosterMissing:"ימי ברזל שחסרים בסידור: {d} — המקום הטבעי להחזיר את השעות", rosterSpread:"אין יום ברזל שלם שחסר — הפער הוא משמרות קצרות; הארכה בימים הכתומים.", rosterNoIron:"אין פירוט ימי ברזל לנציג זה.",
   skillScopeAll:"כל המיומנויות עונות", skillScopeN:"{n} מיומנויות עונות",
   skillScopeHint:"אילו מיומנויות נספרות כקיבולת מענה (AR/TSF) של התור? (דפי כוח אדם תמיד כוללים את כולם.) בימי גבייה סמנו גם בכיר; מרפאות לרוב עונות גם קו 1.",
   skillScopeAllBtn:"ספרו את כל המיומנויות",
@@ -1493,6 +1676,8 @@ he:{
   tipSch:"שתי משימות, עמוד אחד. מצב 1 (כוונון הנוכחי) מזיז את משמרות הסידור הקיים (החלקה של ±2 שעות, אורך נשמר) לכיסוי מיטבי של הביקוש וחוקי הכיסוי, ואז מציע בקשות הרחבה למנהלי צוות למה שנותר. מצב 2 (יצירת בסיס) בונה סידור חדש מבסיס הברזל החוזי, וממקם כל חלון חוזי היכן שהוא מכסה ביקוש בצורה הטובה ביותר.",
   schMode1:"⚡ כוונון הסידור הנוכחי", schMode2:"🏗️ יצירת בסיס מהברזל",
   schMode2Hint:"בונה בסיס ע\"י מיקום כל חלון ברזל חוזי היכן שהוא מכסה ביקוש בצורה הטובה ביותר — עודף עובר למאגר להקצאה שלכם.",
+  schWkFix:"📅 שבוע הסידור {w} · {a}–{b}", schWkGen:"📅 שבוע לבנייה:",
+  schWkHint:"שבוע אחר? יצירה מהברזל ←",
   schGenRun:"🏗️ צור בסיס סידור", schGenNeed:"טענו תחזית ביקוש ובסיס ברזל (סידור ברזל) כדי ליצור בסיס.",
   schChipGenIron:"🏗️ ברזל {n}", schChipGenCov:"📐 כללי כיסוי · {n}",
   schDoneGen:"✅ נוצר בסיס: {a} משמרות שובצו, {p} במאגר העודף. עדיין חסר כיסוי: {h} שעות-נציג (מבני — גייסו/הקצו שם).",
@@ -1637,6 +1822,33 @@ he:{
   setMptHint:"לא יודעים את ה־MPT? שלפו את 'זמן ההמתנה הממוצע של שיחות נטושות' מדוח השיחות הנטושות במערכת הטלפוניה/ACD — הערך בשניות הוא ה־MPT שלכם. תורי שירות טיפוסיים: 60–240 שניות.",
   ceTitle:"עריכת {day} {time}", ceCancel:"ביטול", ceApply:"החלה",
   ceFutL:"החל על שורה זו ועל כל השבועות הבאים (אותו יום ואותו אינטרוול)",
+  ceSched:"משובצים", ceNeed:"נדרשים", ceAfter:"אחרי השינוי", ceDayTotal:"· סה״כ יומי",
+  ceHintVolFc:"תחזית המודל לחצי השעה הזו — שנו אם אתם יודעים משהו שהמודל לא יודע.",
+  ceHintVolAct:"נמדד בקובץ שלכם — ערכו רק כדי לתקן נתון שגוי.",
+  ceHintAgRoster:"מהסידור שנטען — לשינוי, הזיזו משמרות בשיבוץ אוטומטי.",
+  ceHintAgWhatIf:"בסידור יש כאן {n}. הקלידו מספר אחר כדי לראות את ההשפעה — What-if בלבד: קובץ הסידור והשיבוץ האוטומטי לא משתנים.",
+  wiBadge:"{n} שינויי איוש What-if", wiExport:"⬇ שינויי What-if", schWiNote:"{n} שינויי איוש What-if מהמטריצה אינם בסידור — השיבוץ עובד על הסידור האמיתי ועל הביקוש.",
+  wiCsvTm:"אינטרוול", wiCsvSid:"סידור", wiCsvWi:"What-if", wiCsvBefore:"לפני", wiCsvAfter:"אחרי",
+  ceHintAgFile:"בסיס מהקובץ (אין סידור ליום הזה) — אפשר לנסות כאן מה־אם.",
+  ceHintDay:"סה״כ שיחות ליום — מתפזרות על חצאי השעה לפי הפרופיל הרגיל של היום.",
+  profTitle:"📊 חלוקת משקלי שיחות ביום", profBtnTip:"הצגה ועריכה של משקלי השיחות לאורך היום",
+  profIntro:"איזה חלק מהשיחות של כל יום בשבוע נופל בכל חצי שעה. ימי התחזית מפזרים את הסה״כ היומי לפי המשקלים האלה. ההיסטוריה לא משתנה.",
+  profViewShare:"משקלים", profViewDiff:"שינוי מול החלון השני", profNone:"טענו קובץ תחזית עם היסטוריה כדי לראות את המשקלים.",
+  profInsSame:"מעבר ל{o} כמעט לא ישנה דבר (פחות מ־0.3 נק׳ בכל אינטרוואל)",
+  profInsDiff:"מעבר ל{o} יזיז את {day} {tm} ב־{p} נק׳ — השינוי הגדול ביותר",
+  profPeak:"ברוב הימים השיא ב־{tm}", profPinnedTip:"נקבע ידנית — לחיצה לשינוי; ריקון התא מבטל",
+  profEditNote:"לחיצה על משקל קובעת ערך אחר — שאר היום מתאזן חזרה ל־100%.",
+  profDiffNote:"נקודות אחוז מהשיחות היומיות שהחלון הזה מוסיף (+) או מוריד (−) מול {o}.", profReset:"↺ ביטול כל הקביעות ({n})",
+  evTitle:"📣 אירועי ביקוש מתוכננים", evIntro:"גל חד־פעמי ידוע מראש שההיסטוריה לא יכולה לחזות (החלפת ספק, קמפיין, עדכון מחיר). השיחות מתווספות לתחזית — וכשהימים האלה יחלפו, הם יוחרגו מהלמידה של המודל.",
+  evName:"אירוע", evNamePh:"לדוגמה: החלפת ספק", evDefName:"אירוע מתוכנן", evStart:"יום ראשון לאירוע", evDays:"ימי עבודה",
+  evTotal:"שיחות נוספות (סה״כ)",
+  evShape:"פיזור", evFront:"מרוכז בהתחלה", evEven:"אחיד", evAdd:"+ הוספת אירוע",
+  evPrev:"{d}: +{n}", evNeed:"הזינו יום ראשון ומספר שיחות נוספות כדי לראות את הפיזור היומי.",
+  evRowCalls:"+{n} שיחות · {d} ימי עבודה", evPeak:"יום ראשון +{p}% מהרגיל", evPast:"התרחש — מוחרג מהלמידה",
+  evDel:"הסרת האירוע", evAdded:"נוסף אירוע מתוכנן: {n}", evPillTip:"+{n} שיחות נוספות מתוכננות ביום הזה",
+  exclEvNote:"אירוע מתוכנן — מוחרג מהלמידה", trHintLink:"📣 תכנון אירוע ידוע",
+  trHint:"בשורות התחזית: לחיצה על מספר השיחות מתקנת יום בודד. יודעים על גל צפוי (קמפיין, החלפת ספק)?",
+  tipEv:"לביקוש שאפשר להעריך בגודלו אך ההיסטוריה לא מכירה. הזינו את סה״כ השיחות הנוספות הצפויות ולכמה ימי עבודה זה נמשך. מרוכז בהתחלה = רוב השיחות מגיעות ראשונות ודועכות (אופייני אחרי הודעה ללקוחות). שבתות וחגים סגורים מדולגים; שישי נספר כחצי.",
   cleanNote:"🧹 {k} נקודות חריגות נוקו אוטומטית (שיאי ימי חיוב נשמרו)",
   trShowMore:"הצג עוד {k} ימים (נותרו {r}) ▼",
   mxSum:"יומי",
@@ -1652,6 +1864,8 @@ function setLang(l){
   document.documentElement.lang=l;
   document.documentElement.dir=(l==="he")?"rtl":"ltr";
   document.querySelectorAll("[data-i18n]").forEach(el=>{ const v=t(el.dataset.i18n); if(typeof v==="string") el.textContent=v; });
+  document.querySelectorAll("[data-i18n-ph]").forEach(el=>{ const v=t(el.dataset.i18nPh); if(typeof v==="string") el.placeholder=v; });
+  document.querySelectorAll("[data-i18n-title]").forEach(el=>{ const v=t(el.dataset.i18nTitle); if(typeof v==="string") el.title=v; });
   document.querySelectorAll("[data-tipkey]").forEach(el=>{ el.dataset.tip=t(el.dataset.tipkey); });
   document.getElementById("langSelect").value=l;
   refreshDynamicLabels();
@@ -1778,6 +1992,15 @@ function evalInterval(volume,ahtSec,agents,S,mptIv){
 function availShare(S){
   return Math.max(0.05,(1-Math.min(90,Math.max(0,S.absence||0))/100)
                      *(1-Math.min(90,Math.max(0,S.shrinkage||0))/100));
+}
+/* requiredAgents is a search; the trends table asks it for every interval of the range →
+   cache by every input it reads (volume rounded to 0.1 call) */
+const reqMemo=new Map();
+function requiredAgentsMemo(volume,ahtSec,targetPct,S,mptIv){
+  const k=[Math.round(volume*10),Math.round(ahtSec),targetPct,S.primaryMetric,S.tsfT,S.mode,S.mpt,S.mptOverride?1:0,mptIv==null?"":Math.round(mptIv)].join("|");
+  let r=reqMemo.get(k);
+  if(r==null){ r=requiredAgents(Math.round(volume*10)/10,ahtSec,targetPct,S,mptIv); if(reqMemo.size>=30000) reqMemo.clear(); reqMemo.set(k,r); }
+  return r;
 }
 /* Staffing search against the Primary Target Metric (TSF or Answer Rate) */
 function requiredAgents(volume,ahtSec,targetPct,S,mptIv){
@@ -2002,7 +2225,10 @@ const state={
             modelVolume:"ensemble5",modelAht:"ma4",modelMpt:"ma4",mptOverride:false,hcOverride:false,modelUserSet:false,
             autoHolidays:true,autoAnomaly:true,profileMode:"adaptive",
             holOverride:{},volCal:1,recruitBasis:"all",recruitSkills:[],skillReqs:[],
-            schedMode:"optimizeCurrent"}, // scheduler page: optimizeCurrent | generateIron
+            schedMode:"optimizeCurrent", // scheduler page: optimizeCurrent | generateIron
+            schGenWeek:null, // Mode 2 only: the week (Sunday ISO) to build from iron; null = sidur week
+            demandEvents:[], // planned one-off demand surges: {id,name,start,days,total,shape}
+            profileEdits:{}}, // user-pinned intraday shares: {weekday:{"HH:MM":share}}
   edits:new Set(), undoStack:[], pristine:new Map(),
   volAdj:[],                     // forward-propagated volume edits: {ds,di,tm,factor}
   domFactor:null, cleanClipped:0, // calendar uplift factors + outlier-guard audit count
@@ -2033,13 +2259,14 @@ const state={
   appliedExtensions:[],  // accepted shift-extension offers folded into the sidur (loop-closer)
   matrixView:"original", // weekly-matrix view: "original" (loaded sidur) | "optimized" (preview)
   optimizedCapSkill:null,// per-interval per-skill counts of the optimized schedule (matrix preview source)
-  wfFilter:{team:"",skill:"",site:"",day:""}, // day:"" = whole week; "0".."5" = Sun..Fri
+  wfFilter:{team:[],skill:[],site:[],day:""}, // team/skill/site: [] = all, else any-of; day:"" = whole week; "0".."5" = Sun..Fri
   capSkills:null,        // answering-queue scope: null = every skill counts
   rosterCapSkill:{},     // block key -> {skill: distinct reps}
   skillList:[],          // all skills seen in the roster (modular queue list)
   unallocRows:[],        // sidur rows without shift/absence — bucketed by raw status
   schedSkills:null,      // auto-scheduler pool scope: null = every skill schedules
-  cellOrig:new Map()     // per-cell restore points for the in-cell undo button
+  cellOrig:new Map(),    // per-cell restore points for the in-cell undo button
+  agWhatIf:new Map()     // matrix what-if on SIDUR cells: "ds|tm" → rep count to simulate (sidur file untouched)
 };
 /* modular shift window (default 08:00–18:00 inclusive) — rebuilt when settings change */
 let TIMES=[];
@@ -2932,7 +3159,8 @@ function parseTikshuvWorkbook(sheets){
 /* ---------- Workforce dashboard computation & rendering ---------- */
 function wfPass(rec){
   const f=state.wfFilter;
-  return (!f.team||rec.team===f.team)&&(!f.skill||rec.skill===f.skill)&&(!f.site||rec.site===f.site);
+  const ok=(sel,v)=>!sel||!sel.length||sel.includes(v);
+  return ok(f.team,rec.team)&&ok(f.skill,rec.skill)&&ok(f.site,rec.site);
 }
 /* day-scope helpers — every Workforce aggregation zooms identically to the picked day.
    day:"" = whole week; "0".."5" = a single weekday (data already carries r.di / e.days[di]) */
@@ -2946,6 +3174,13 @@ function wfWeek(){
   if(w&&state.schedRows.some(r=>{const set=new Set(weekDates(w));return set.has(r.ds);})) return w;
   const ds=state.schedRows.map(r=>r.ds).filter(Boolean).sort()[0];
   return ds?sundayOf(ds):w;
+}
+/* the scheduler's working week. Mode 1 fine-tunes the LOADED sidur, so it is pinned to the
+   sidur's own week; Mode 2 builds from iron for any forecast week the user picks (schGenWeek). */
+function schWeek(){
+  const w=state.settings.schGenWeek;
+  if(state.settings.schedMode==="generateIron"&&w&&state.minDate&&w>=sundayOf(state.minDate)&&w<=state.horizonISO) return w;
+  return wfWeek()||state.week;
 }
 function computeWorkforce(){
   const week=wfWeek()?new Set(weekDates(wfWeek())):new Set();
@@ -2995,7 +3230,19 @@ function renderTreemap(W){
     const p=val/total;
     // data-seg is URI-encoded: raw statuses may contain quotes (חו"ל) that break markup
     parts.push(`<rect data-seg="${encodeURIComponent(key)}" style="cursor:pointer" x="${x0.toFixed(1)}" y="${y0.toFixed(1)}" width="${Math.max(0,tw-2).toFixed(1)}" height="${Math.max(0,thh-2).toFixed(1)}" fill="${color}" rx="3"><title>${esc(label)}: ${val.toFixed(1)}h (${(p*100).toFixed(1)}%)</title></rect>`+
-      (tw>56&&thh>18?`<text x="${(x0+6).toFixed(1)}" y="${(y0+14).toFixed(1)}" font-size="10" fill="${key==="unalloc"?"#44546a":"#fff"}" font-weight="600" pointer-events="none">${esc(label)} ${(p*100).toFixed(0)}%</text>`:""));
+      tileLabel(x0,y0,tw,thh,label,p,key==="unalloc"?"#44546a":"#fff"));
+  };
+  /* a label is SIZED to its tile, never clipped: full "status 12%" shrinks to fit (down to 6.5px),
+     then wraps to two lines on a tall-narrow tile, then just the %; below that the tooltip + legend carry it */
+  const tileLabel=(x0,y0,tw,thh,label,p,fill)=>{
+    const pc=(p*100).toFixed(0)+"%", full=label+" "+pc, cw=0.6, pad=8, MAX=11, MIN=6.5;
+    const fit=(s,lines)=>Math.min(MAX,(tw-pad)/(Math.max(1,s.length)*cw),(thh-4)/(lines*1.15));
+    const txt=(lines,fs)=>`<text x="${(x0+4).toFixed(1)}" y="${(y0+fs+2).toFixed(1)}" font-size="${fs.toFixed(1)}" fill="${fill}" font-weight="600" pointer-events="none">`
+      +lines.map((l,i)=>`<tspan x="${(x0+4).toFixed(1)}" dy="${i?(fs*1.15).toFixed(1):0}">${esc(l)}</tspan>`).join("")+`</text>`;
+    let fs=fit(full,1); if(fs>=MIN) return txt([full],fs);
+    fs=Math.min(fit(label,2),fit(pc,2)); if(fs>=MIN) return txt([label,pc],fs);
+    fs=fit(pc,1); if(fs>=MIN) return txt([pc],fs);
+    return "";
   };
   for(const [key,val] of cols){
     const tw=w*val/total;
@@ -3065,36 +3312,35 @@ function renderTreeDrill(){
   const rows=segHoursBy(seg,dim);
   const tot=rows.reduce((s,r)=>s+r[1],0)||1;
   const segLabel=seg.startsWith("st:")?statusLabel(seg.slice(3)):t("wf_"+seg);
+  // WHO is behind each bar: the tile's rows grouped by the chosen dimension (status,
+  // absence and productive tiles carry names; the iron residual "unallocated" does not)
+  const week=wfWeek()?new Set(weekDates(wfWeek())):new Set();
+  const inWeek=r=>(week.has(r.ds)||(!r.ds&&r.di!=null))&&wfDayOK(r);
+  let src=null;
+  if(seg.startsWith("st:")){ const st=seg.slice(3);
+    src=(state.unallocRows||[]).filter(u=>u.status===st&&inWeek(u)&&wfPass(u)).map(u=>({...u,h:u.hours})); }
+  else if(seg==="prod") src=state.schedRows.filter(r=>inWeek(r)&&wfPass(r));
+  else if(seg!=="unalloc") src=state.vacations.filter(v=>v.type===seg&&inWeek(v)&&wfPass(v)).map(v=>({...v,h:v.hours}));
+  const who={}; // dim value → name → hours
+  if(src) for(const r of src){ const k=r[dim]||"—", g=who[k]=who[k]||{}; g[r.name]=(g[r.name]||0)+(r.h||0); }
+  const esc=x=>String(x).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+  const bar=(k,v)=>`<span style="min-width:140px">${esc(k)}</span>
+      <div style="flex:1;background:var(--sky-soft);border-radius:4px;height:14px;direction:ltr"><div style="width:${(v/tot*100).toFixed(1)}%;background:${WF_COLORS[seg]||(seg.startsWith("st:")?"#6b7c90":"#999")};height:14px;border-radius:4px"></div></div>
+      <span style="min-width:76px;direction:ltr">${v.toFixed(1)}h (${(v/tot*100).toFixed(0)}%)</span>`;
+  const people=k=>{ const g=who[k]; if(!g) return "";
+    const list=Object.entries(g).sort((x,y)=>y[1]-x[1]);
+    return `<div class="drlWho">${list.map(([n,h])=>`<span>${esc(n)} <b>${h.toFixed(1)}h</b></span>`).join("")}</div>`; };
   box.innerHTML=`<div class="toolbar" style="margin:0 0 4px">
       <b style="font-size:.82rem">${t("wfDrillTitle",{seg:segLabel,dim:dimName[dim]})}</b>
       <label class="mini">${t("wfDrillBy")}</label>
       <select id="wfDrillDim" style="font-size:.78rem">${["team","skill","site"].map(d=>`<option value="${d}"${d===dim?" selected":""}>${dimName[d]}</option>`).join("")}</select>
       <button class="linklike" id="wfDrillClose">${t("wfDrillBack")}</button>
     </div>`+
-    (rows.length?rows.map(([k,v])=>`<div style="display:flex;align-items:center;gap:6px;font-size:.78rem;margin:2px 0">
-      <span style="min-width:140px">${k}</span>
-      <div style="flex:1;background:var(--sky-soft);border-radius:4px;height:14px;direction:ltr"><div style="width:${(v/tot*100).toFixed(1)}%;background:${WF_COLORS[seg]||"#999"};height:14px;border-radius:4px"></div></div>
-      <span style="min-width:76px;direction:ltr">${v.toFixed(1)}h (${(v/tot*100).toFixed(0)}%)</span></div>`).join("")
+    (rows.length?rows.map(([k,v])=>who[k]
+      // one group → open by default (nothing to choose between); several → collapsed, one click each
+      ? `<details class="drl"${rows.length===1?" open":""}><summary title="${t("wfDrillWho",{n:Object.keys(who[k]).length})}">${bar(k,v)}<span class="drlN">👤 ${Object.keys(who[k]).length}</span></summary>${people(k)}</details>`
+      : `<div class="drlRow">${bar(k,v)}</div>`).join("")
     :`<p class="mini">${t("noData")}</p>`);
-  // absence & status segments name the employees — a tile is only actionable
-  // when the manager can see WHO is behind it
-  {
-    const week=wfWeek()?new Set(weekDates(wfWeek())):new Set();
-    const inWeek=r=>(week.has(r.ds)||(!r.ds&&r.di!=null))&&wfDayOK(r);
-    let src=null;
-    if(seg.startsWith("st:")){ const st=seg.slice(3);
-      src=(state.unallocRows||[]).filter(u=>u.status===st&&inWeek(u)&&wfPass(u)); }
-    else if(seg!=="prod"&&seg!=="unalloc")
-      src=state.vacations.filter(v=>v.type===seg&&inWeek(v)&&wfPass(v));
-    if(src){
-      const names=[...new Set(src.map(r=>r.name))];
-      const nm=document.createElement("p"); nm.className="mini"; nm.style.marginTop="6px";
-      nm.textContent=names.length
-        ? "👤 "+names.slice(0,40).join(", ")+(names.length>40?" (+"+(names.length-40)+")":"")
-        : t("noData");
-      box.appendChild(nm);
-    }
-  }
   box.querySelector("#wfDrillDim").addEventListener("change",e=>{ state.wfDrillDim=e.target.value; renderTreeDrill(); });
   box.querySelector("#wfDrillClose").addEventListener("click",()=>{ state.wfDrillSeg=null; renderTreeDrill(); });
 }
@@ -3190,6 +3436,45 @@ function renderImpactMatrix(){
     starsEl.style.display="block";
     starsEl.textContent="* "+t("wfImpactUnval",{n:unval.size})+" "+[...unval].slice(0,15).join(", ")+(unval.size>15?" …":"");
   }
+  renderHeadroom();
+}
+/* vacation approval headroom: per weekday, how many MORE full-shift absences (reps of the
+   current filter, their average shift) the WHOLE center absorbs before the primary metric
+   drops below target. Typical weekday demand + the sidur's actual hours, with the same
+   bodies→effective-agents conversion as the impact matrix above. A guide, not a promise. */
+function renderHeadroom(){
+  const box=document.getElementById("wfHeadroom"); if(!box) return;
+  box.style.display="none";
+  const wk=wfWeek(); if(!wk||!state.series) return;
+  const week=new Set(weekDates(wk)), S=state.settings, tgt=S.target/100;
+  const effShare=Math.max(0.05,availShare(S)*(state.calib||1));
+  const mean=a=>a.reduce((x,y)=>x+y,0)/(a.length||1);
+  const out=[];
+  for(let di=0;di<6;di++){
+    const ser=state.series[di]; if(!ser) continue;
+    const rows=state.schedRows.filter(r=>week.has(r.ds)&&r.di===di&&r.h>0); if(!rows.length) continue;
+    const slice=rows.filter(r=>wfPass(r)); if(!slice.length) continue;
+    const allH=rows.reduce((s,r)=>s+r.h,0), avgH=slice.reduce((s,r)=>s+r.h,0)/slice.length;
+    const winH=defaultDayHours(di)||1;
+    const dem=Object.values(ser).map(s=>({v:mean(s.vols),a:mean(s.ahts)})).filter(d=>d.v>0);
+    const vol=dem.reduce((s,d)=>s+d.v,0); if(!vol) continue;
+    const metricAt=h=>{ const conc=Math.max(0,Math.round(h/winH*effShare));
+      return dem.reduce((s,d)=>s+primVal(evalInterval(d.v,d.a,conc,S))*d.v,0)/vol; };
+    const m0=metricAt(allH);
+    let k=0;
+    if(m0>=tgt) while(k<slice.length&&metricAt(allH-(k+1)*avgH)>=tgt) k++;
+    out.push({di,k,m0,avgH});
+  }
+  if(!out.length) return;
+  const full=t("days"), short=t("daysShort"), pick=state.wfFilter.day;
+  box.innerHTML=`<div class="mini" style="font-weight:700;color:var(--navy)">${t("hrTitle")} <span class="info" data-tip="${t("hrTip",{m:primName()}).replace(/"/g,"&quot;")}" tabindex="0">i</span></div>`
+    +`<div class="hrChips">`+out.map(o=>{
+      const below=o.m0<tgt, cls=below?"tier-bad":(o.k===0?"tier-warn":"tier-good");
+      const tip=below?t("hrBelow",{d:full[o.di],v:pct(o.m0)})
+        :t("hrChipTip",{d:full[o.di],k:o.k,h:o.avgH.toFixed(1),m:primName(),t:S.target,v:pct(o.m0)});
+      return `<span class="hrc ${cls}${pick!==""&&+pick===o.di?" pick":""}" title="${tip.replace(/"/g,"&quot;")}">${short[o.di]}<b>${below?"⚠":"+"+o.k}</b></span>`;
+    }).join("")+`</div>`;
+  box.style.display="block";
 }
 function renderValidation(){
   const wrap=document.getElementById("wfValWrap"); wrap.innerHTML="";
@@ -3235,10 +3520,35 @@ function wfFilterValues(key){
 }
 function populateWfFilters(){
   WF_FILTER_KEYS.forEach(([id,key])=>{
-    const sel=document.getElementById(id); if(!sel) return;
-    const cur=state.wfFilter[key];
-    sel.innerHTML=`<option value="">${t("wfAll")}</option>`
-      +wfFilterValues(key).map(v=>`<option${v===cur?" selected":""}>${v}</option>`).join("");
+    const btn=document.getElementById(id+"Btn"), menu=document.getElementById(id+"Menu"); if(!btn||!menu) return;
+    const vals=wfFilterValues(key);
+    const cur=(state.wfFilter[key]||[]).filter(v=>vals.includes(v)); // picks absent from the data drop out
+    state.wfFilter[key]=cur;
+    btn.textContent=(!cur.length?t("wfAll"):cur.length===1?cur[0]:t("wfNSel",{n:cur.length}))+" ▾";
+    btn.style.borderColor=cur.length?"var(--navy)":"";
+    // stable menu: rebuild only when the value list changes, so the open popover survives a toggle
+    const sig=vals.join("|")+"@"+lang;
+    if(menu._sig!==sig){
+      menu._sig=sig; menu.innerHTML="";
+      if(!vals.length){ menu.innerHTML=`<div class="mini">${t("wfNoVals")}</div>`; }
+      vals.forEach(v=>{
+        const lb=document.createElement("label");
+        lb.style.cssText="display:flex;gap:6px;align-items:center;font-size:.8rem;margin:3px 0;cursor:pointer";
+        const cb=document.createElement("input"); cb.type="checkbox"; cb._v=v;
+        cb.addEventListener("change",()=>{
+          state.wfFilter[key]=[...menu.querySelectorAll("input:checked")].map(x=>x._v);
+          renderWorkforce(); saveData();
+        });
+        lb.appendChild(cb); lb.appendChild(document.createTextNode(v)); menu.appendChild(lb);
+      });
+      if(vals.length){
+        const all=document.createElement("button"); all.className="linklike"; all.style.marginTop="6px";
+        all.textContent=t("wfShowAll");
+        all.addEventListener("click",()=>{ state.wfFilter[key]=[]; renderWorkforce(); saveData(); });
+        menu.appendChild(all);
+      }
+    }
+    menu.querySelectorAll("input").forEach(cb=>{ cb.checked=cur.includes(cb._v); });
   });
 }
 /* day segmented strip: הכל + one button per working weekday (Sun–Fri). One click zooms
@@ -3294,6 +3604,12 @@ function weekRosterIntervals(){
     const i=k.indexOf("|"), d=k.slice(0,i), tm=k.slice(i+1);
     const ds=dates[+d]; if(ds!=null&&tm) map[ds].add(tm);
   }
+  return {dates,map};
+}
+function demandIntervals(wk){
+  const dates=weekDates(wk), map={};
+  dates.forEach(ds=>{ map[ds]=new Set(); const c=computeDay(ds);
+    if(c) c.rows.forEach(r=>{ if(r.rec&&!r.closed&&!r.exc&&!r.nodata) map[ds].add(r.tm); }); });
   return {dates,map};
 }
 function computeCoverage(r,wri){
@@ -3592,7 +3908,7 @@ function renderSchedSkills(){
    converges on the same managerial outcome: moved shifts only.)
    ============================================================ */
 function optimizeSidur(){
-  const wk=weekDates(state.week);
+  const wk=weekDates(schWeek());
   const reqs=state.settings.skillReqs||[];
   const skillOf=n=>{ const m=state.rosterMeta.get(n)||{}; return (m.skill||"").trim(); };
   // SCOPE: the checkbox menu picks which skills answer the frontline demand and
@@ -3712,8 +4028,8 @@ function optimizeSidur(){
   return {asg,pool,cuts,gaps,moved:movedN};
 }
 async function runScheduler(){
-  if(!state.week||!state.days.size){ showToast("⚠ "+t("schNeedData"),false); return; }
-  const wkSet=new Set(weekDates(state.week));
+  if(!schWeek()||!state.days.size){ showToast("⚠ "+t("schNeedData"),false); return; }
+  const wkSet=new Set(weekDates(schWeek()));
   if(!state.schedRows.some(r=>wkSet.has(r.ds)&&r.s&&r.e)){ showToast("⚠ "+t("schNeedSidur"),false); return; }
   const out=optimizeSidur();
   state.optimizedOutput=out.asg;
@@ -3736,7 +4052,7 @@ async function runScheduler(){
    the Mode-1 optimizer; differs only in the SEARCH (build vs move).
    ============================================================ */
 function generateIronBaseline(){
-  const wk=weekDates(state.week);
+  const wk=weekDates(schWeek());
   const reqs=state.settings.skillReqs||[];
   const iron=validatedIron(); // iron emps whose sheet defines base days
   const metaOf=n=>state.rosterMeta.get(n)||iron.get(n)||{};
@@ -3798,7 +4114,7 @@ function generateIronBaseline(){
   return {asg,pool,cuts:[],gaps,moved:0};
 }
 async function runGenerator(){
-  if(!state.week||!state.days.size){ showToast("⚠ "+t("schNeedData"),false); return; }
+  if(!schWeek()||!state.days.size){ showToast("⚠ "+t("schNeedData"),false); return; }
   if(!state.iron){ showToast("⚠ "+t("schGenNeed"),false); return; }
   const out=generateIronBaseline();
   state.optimizedOutput=out.asg;
@@ -3848,7 +4164,7 @@ function computeCoverageOnCounts(r,wri,counts){
 }
 /* diff the ORIGINAL sidur week vs the optimized schedule: shifted / added / cut */
 function calcRosterDelta(out){
-  const wkSet=new Set(state.week?weekDates(state.week):[]);
+  const wkSet=new Set(schWeek()?weekDates(schWeek()):[]);
   const mins=t2=>{ const[a,b]=String(t2).split(":").map(Number); return a*60+b; };
   const orig=new Map(), opt=new Map();
   for(const r of state.schedRows) if(wkSet.has(r.ds)&&r.s&&r.e) orig.set(r.name+"|"+r.ds,{s:r.s,e:r.e});
@@ -3873,13 +4189,13 @@ function calcRosterDelta(out){
 }
 /* the same demand, staffed by the original sidur vs the optimized schedule */
 function projectedMetricDelta(out){
-  if(!state.week||!state.days.size) return null;
+  if(!schWeek()||!state.days.size) return null;
   const S=state.settings, effShare=Math.max(0.05,availShare(S)*(state.calib||1));
   const optCounts={};
   out.asg.forEach(a=>{ for(const tm of halfHoursBetween(a.s,a.e)){
     const k=a.ds+"|"+tm; optCounts[k]=(optCounts[k]||0)+1; } });
   let vol=0,accO=0,accN=0;
-  for(const ds of weekDates(state.week)){
+  for(const ds of weekDates(schWeek())){
     const c=computeDay(ds); if(!c) continue;
     for(const row of c.rows){
       if(!row.rec||row.closed||row.exc||row.nodata||!(row.rec.volume>0)) continue;
@@ -3895,7 +4211,8 @@ function renderSchedAudit(out){
   card.style.display="block";
   const dayNames=t("days");
   const reqs=state.settings.skillReqs||[];
-  const wri=weekRosterIntervals();
+  // a generated week with no sidur of its own → audit against its open demand intervals
+  const wri=schWeek()!==wfWeek()?demandIntervals(schWeek()):weekRosterIntervals();
   const counts=asgSkillCounts(out);
   const audits=reqs.map(r=>({r,base:computeCoverage(r,wri),opt:computeCoverageOnCounts(r,wri,counts)}));
   const totB=audits.reduce((s,a)=>s+(a.opt?a.opt.breaches:0),0);
@@ -4040,7 +4357,7 @@ function renderSchedulerResults(out){
   // Excel-like header sort + per-column filters (this table only).
   // ONE table tells the whole story: kept + moved + cut rows, status chips.
   // original windows (before optimization) so moved rows can show where they came from
-  const wkSet=new Set(state.week?weekDates(state.week):[]);
+  const wkSet=new Set(schWeek()?weekDates(schWeek()):[]);
   const origWin=new Map();
   for(const rr of state.schedRows) if(wkSet.has(rr.ds)&&rr.s&&rr.e) origWin.set(rr.name+"|"+rr.ds,rr.s+"–"+rr.e);
   const rowFor=a=>{ const row=tikshuvRow(a).slice(0,8);
@@ -4288,7 +4605,7 @@ function renderScheduler(){
   }
   document.getElementById("schChipFc").textContent=t("schChipFc",{n:state.days.size});
   // the optimizer's raw material is the CURRENT sidur week
-  const wkSet=new Set(state.week?weekDates(state.week):[]);
+  const wkSet=new Set(schWeek()?weekDates(schWeek()):[]);
   const weekShifts=state.schedRows.filter(r=>wkSet.has(r.ds)&&r.s&&r.e).length;
   document.getElementById("schChipIron").textContent=t("schChipSidur",{n:weekShifts});
   document.getElementById("schChipCon").textContent=t("schChipCon",{n:state.weeklyConstraints.length});
@@ -4306,6 +4623,12 @@ function renderScheduler(){
   const gr=document.getElementById("schGenRun"), gg=document.getElementById("schGenGate");
   if(gr) gr.disabled=!genReady;
   if(gg) gg.style.display=genReady?"none":"block";
+  renderSchWeek();
+  { // matrix what-ifs are a sandbox: say so where someone might expect the scheduler to obey them
+    const wn=document.getElementById("schWiNote"), n=whatIfRows(schWeek()).length;
+    if(wn){ wn.style.display=n?"":"none";
+      if(n){ wn.innerHTML="ℹ️ "+t("schWiNote",{n})+" "; const b=document.createElement("button"); b.className="linklike";
+        b.textContent=t("wiExport"); b.addEventListener("click",()=>exportWhatIf(schWeek())); wn.appendChild(b); } } }
   applySchedMode(); // show/hide the mode-specific blocks + relabel shared titles
   // paint a persisted result once, so a refresh keeps the optimized sidur visible
   if(state._schedRestore&&state._schedOut){ state._schedRestore=false; renderSchedulerResults(state._schedOut); }
@@ -4349,11 +4672,6 @@ function parseConstraintsGrid(grid){
   return {type:"constraints",rows:out.length};
 }
 /* ---------- WFM 2.0 wiring ---------- */
-[["wfTeam","team"],["wfSkill","skill"],["wfSite","site"]].forEach(([id,key])=>{
-  document.getElementById(id).addEventListener("change",e=>{
-    state.wfFilter[key]=e.target.value; renderWorkforce(); saveData();
-  });
-});
 document.getElementById("wfValCsv").addEventListener("click",()=>{
   if(!state.validationErrors.length) return;
   const rows=[[t("rthName"),t("wfTeamL")].map(csvQuote).join(",")]
@@ -4407,6 +4725,38 @@ document.querySelectorAll("#schModeSeg button").forEach(btn=>btn.addEventListene
   }
 }));
 document.getElementById("schGenRun").addEventListener("click",()=>{ runGenerator(); });
+/* week line: a fixed chip in Mode 1, a picker in Mode 2 (the matrix's week list, same labels) */
+function renderSchWeek(){
+  const gen=state.settings.schedMode==="generateIron", wk=schWeek();
+  const fix=document.getElementById("schWkFix"), sel=document.getElementById("schWkSel"), hint=document.getElementById("schWkHint");
+  if(!fix) return;
+  fix.style.display=!gen&&wk?"":"none";
+  if(wk) fix.textContent=t("schWkFix",{w:isoWeek(wk),a:fmtD(wk).slice(0,5),b:fmtD(addDays(wk,5)).slice(0,5)});
+  hint.style.display=!gen&&state.iron&&state.days.size?"":"none";
+  sel.style.display=gen&&wk?"":"none";
+  if(gen&&wk){
+    const src=document.getElementById("weekSelect");
+    sel.innerHTML=`<option disabled>${t("schWkGen")}</option>`+[...src.options].map(o=>`<option value="${o.value}">${o.textContent}</option>`).join("");
+    sel.value=wk;
+  }
+}
+document.getElementById("schWkSel").addEventListener("change",e=>{
+  state.settings.schGenWeek=e.target.value; saveState();
+  // a baseline built for another week no longer matches → clean slate, like a mode switch
+  const prev=(state._schedOutBy||{}).generateIron;
+  if(prev&&prev.asg.length&&sundayOf(prev.asg[0].ds)!==e.target.value){
+    delete state._schedOutBy.generateIron; state.optimizedOutput=[]; state._schedOut=null;
+    ["schOutWrap","schPoolWrap","schGapWrap","schExtWrap"].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML=""; });
+    const ac=document.getElementById("schAuditCard"); if(ac) ac.style.display="none";
+    const csv=document.getElementById("schCsv"); if(csv) csv.style.display="none";
+    const b=document.getElementById("schBanner"); if(b){ b.classList.remove("show"); b.textContent=""; }
+  }
+  renderScheduler();
+});
+document.getElementById("schWkHint").addEventListener("click",()=>{
+  const b=document.querySelector('#schModeSeg button[data-mode="generateIron"]'); if(b) b.click();
+  const sel=document.getElementById("schWkSel"); if(sel) sel.focus();
+});
 function ingestConstraintsFile(f){
   beginBusy(t("processingName",{n:f.name}));
   const r=new FileReader();
@@ -4506,7 +4856,7 @@ function offerMetricGain(out,o){
   const cnt={}; out.asg.forEach(a=>{ for(const tm of halfHoursBetween(a.s,a.e)){ const k=a.ds+"|"+tm; cnt[k]=(cnt[k]||0)+1; } });
   const covered=new Set(halfHoursBetween(o.from,o.to).map(tm=>o.ds+"|"+tm));
   let vol=0,accB=0,accN=0;
-  for(const ds of weekDates(state.week)){
+  for(const ds of weekDates(schWeek())){
     const c=computeDay(ds); if(!c) continue;
     for(const row of c.rows){
       if(!row.rec||row.closed||row.exc||row.nodata||!(row.rec.volume>0)) continue;
@@ -4547,7 +4897,7 @@ function renderExtensionOffers(out){
   if(!wrap) return;
   wrap.innerHTML="";
   // already-accepted extensions for this week (shown even when no gaps remain), with an undo
-  const wkSet=new Set(state.week?weekDates(state.week):[]);
+  const wkSet=new Set(schWeek()?weekDates(schWeek()):[]);
   const appliedN=(state.appliedExtensions||[]).filter(e=>wkSet.has(e.ds)).length;
   if(appliedN){
     const ai=document.createElement("div"); ai.className="mini"; ai.style.cssText="margin:0 0 6px;color:#0f6a3f;font-weight:600";
@@ -4906,15 +5256,9 @@ function ingestSuccess(stats,hint){
     : (stats.named?t("roOkNamed",{e:stats.reps,n:stats.blocks}):t("roOk",{n:stats.blocks}));
   // the rich per-upload message goes to the TOAST; the portal shows the canonical
   // persistent status (updatePortalStatus) so a refresh never rewords it
+  // skipped rows ride on the portal's own issue line (updatePortalStatus) — one place, not a second banner
+  state[stats.type==="forecast"?"fcSkipped":"roSkipped"]={n:stats.skipped||0,rows:stats.skippedRows||[]};
   updatePortalStatus(); p.st.style.display="block";
-  // item 13: skipped-rows audit link under the success banner
-  if(stats.skipped&&stats.skippedRows&&stats.skippedRows.length){
-    const a=document.createElement("button");
-    a.className="linklike"; a.textContent=t("auditLink");
-    a.addEventListener("click",e=>{ e.stopPropagation(); showAuditPop(p.zone,stats.skippedRows); });
-    p.st.appendChild(document.createElement("br"));
-    p.st.appendChild(a);
-  }
   showToast("✅ "+msg+skip,true);
 }
 /* item 13: unified skipped-rows audit popover (forecast + roster) */
@@ -4997,8 +5341,7 @@ function auditForecast(){
     if(audit.imp) msgs.push(t("auditImp",{n:audit.imp}));
     if(audit.aht) msgs.push(t("auditAht",{n:audit.aht}));
     if(audit.far) msgs.push(t("auditFar",{n:audit.far}));
-    el.style.display=msgs.length?"block":"none";
-    el.textContent=msgs.length?("⚠ "+t("fcAuditWarn")+" "+msgs.join(" · ")):"";
+    el.style.display="none"; // shown on the portal's status issue line instead (updatePortalStatus)
     if(msgs.length) showToast("⚠ "+t("fcAuditWarn")+" "+msgs.join(" · "),false);
   }
 }
@@ -5199,7 +5542,8 @@ function rebuildLearningSeries(){
   const isHolidayExcluded=ds=>{ if(kept(ds)) return false; const l=holLvl(ds); return l&&HOLIDAY_EXCLUDE(l); };
   const isFactored=ds=>{ if(kept(ds)) return false; const l=holLvl(ds); return l&&HOLIDAY_FACTORED(l); };
   // fully excluded from ALL learning: painted, closed-holidays, detected anomalies
-  const isExcluded=ds=>state.exceptions.has(ds)||isHolidayExcluded(ds)||(state.anomalyDates.has(ds)&&!kept(ds));
+  const isExcluded=ds=>state.exceptions.has(ds)||isHolidayExcluded(ds)||(state.anomalyDates.has(ds)&&!kept(ds))
+    ||(evMap().has(ds)&&!kept(ds)); // a planned event's surge must not teach the normal baseline
   // days that teach the NORMAL baseline/series: everything except excluded AND factored
   const teachesNormal=ds=>!isExcluded(ds)&&!isFactored(ds);
   const dayTot=new Map();
@@ -5378,25 +5722,55 @@ function calibrateModel(){
   for(let i=0;i<24;i++){ const mid=(lo+hi)/2; if(meanBias(mid)<0) lo=mid; else hi=mid; }
   state.calib=Math.round((lo+hi)/2*1000)/1000;
 }
+/* portal issue line: skipped rows (this session) + audit counts; nothing when all is clean */
+function issueLine(st,skip,short,full,zoneId){
+  const parts=short.slice();
+  if(skip&&skip.n) parts.unshift(t("issSkip",{k:skip.n}));
+  if(!parts.length) return;
+  const d=document.createElement("span"); d.className="iss"; d.textContent="⚠ "+parts.join(" · ");
+  if(full.length) d.title=full.join("\n");
+  if(skip&&skip.rows&&skip.rows.length){
+    const a=document.createElement("button"); a.className="linklike"; a.textContent=" · "+t("issView");
+    a.addEventListener("click",e=>{ e.stopPropagation(); showAuditPop(document.getElementById(zoneId),skip.rows); });
+    d.appendChild(a);
+  }
+  st.appendChild(d);
+}
 function updatePortalStatus(){
   // SINGLE source of the portal status text — the same words in-session and after
-  // a refresh, so reloading never *looks* like the data changed
+  // a refresh, so reloading never *looks* like the data changed. Says WHAT was loaded
+  // (dates), not how many records: the forecast data range, the sidur week.
   const fs=document.getElementById("fcStatus");
   if(state.days.size){
-    const n=[...state.days.values()].reduce((a,m)=>a+m.size,0);
-    fs.textContent="✅ "+t("fcLoaded",{n,d:state.days.size})
+    fs.textContent="✅ "+t("fcRange",{a:fmtD(state.minDate),b:fmtD(state.maxDate),d:state.days.size,
+      n:[...state.days.values()].reduce((a,m)=>a+m.size,0).toLocaleString()})
       +(state.cleanClipped?" · "+t("cleanNote",{k:state.cleanClipped}):"");
+    // the not-good lines, minimal: one amber line of counts, full wording on hover, rows on click
+    const au=state.fcAudit||{}, full=[], short=[];
+    [["imp","auditImp","issImp"],["aht","auditAht","issAht"],["far","auditFar","issFar"]].forEach(([k,lk,sk])=>{
+      if(au[k]){ full.push(t(lk,{n:au[k]})); short.push(t(sk,{n:au[k]})); } });
+    issueLine(fs,state.fcSkipped,short,full,"dzForecast");
     fs.style.display="block";
   }
+  document.getElementById("dzForecast").classList.toggle("loaded",!!state.days.size);
   const rs=document.getElementById("roStatus");
-  if(state.rosterCap.size||state.rosterCapWeekly.size){
-    rs.textContent="✅ "+(state._rosterWeekly&&!state.rosterCap.size
-      ? t("roLoadedWeekly",{n:state.rosterCapWeekly.size})
-      : (state.rosterNamed
-          ? t("roLoadedNamed",{n:state.rosterCap.size||state.rosterCapWeekly.size,e:state.roster.length})
-          : t("roLoadedAnon",{n:state.rosterCap.size||state.rosterCapWeekly.size})))
-      +(state.iron?" · "+t("roIronNote",{n:state.iron.emps.size}):"");
+  const hasRo=!!(state.rosterCap.size||state.rosterCapWeekly.size);
+  document.getElementById("dzRoster").classList.toggle("loaded",hasRo);
+  if(hasRo){
+    // the sidur's own dates → its week(s)
+    const ds=new Set();
+    for(const k of state.rosterCap.keys()){ const d=k.slice(0,10); if(/^\d{4}-/.test(d)) ds.add(d); }
+    for(const r of state.schedRows||[]) if(r.ds) ds.add(r.ds);
+    const all=[...ds].sort(), parts=[];
+    if(all.length){
+      const w0=sundayOf(all[0]), w1=sundayOf(all[all.length-1]), a=fmtD(all[0]).slice(0,5), b=fmtD(all[all.length-1]);
+      parts.push(w0===w1?t("roWeek",{w:isoWeek(w0),a,b}):t("roWeeks",{w:isoWeek(w0),x:isoWeek(w1),a,b}));
+    }else parts.push(t("roTemplate",{n:state.rosterCapWeekly.size}));
+    if(state.rosterNamed&&state.roster.length) parts.push(t("roReps",{e:state.roster.length}));
+    if(state.iron) parts.push(t("roIronNote",{n:state.iron.emps.size}));
+    rs.textContent="✅ "+parts.join(" · ");
     rs.style.color="";
+    issueLine(rs,state.roSkipped,[],[],"dzRoster");
     if(state.rosterCap.size&&state.minDate){ // dated roster with zero overlap = silent no-op; warn instead
       let overlap=false;
       for(const k of state.rosterCap.keys()){
@@ -5410,6 +5784,57 @@ function updatePortalStatus(){
 }
 
 /* ---------------- Forward forecasting ---------------- */
+/* ============ INTRADAY PROFILE (חלוקת משקלי שיחות ביום) ============
+   Share of a weekday's calls landing in each half-hour. Forecast days spread their daily
+   total by it. Learned from the last W clean weeks per interval (adaptive: a thin slot
+   widens to all history); W = 8 (adaptive) or 12. */
+function profileShares(di,mode){
+  const s=state.series&&state.series[di]; if(!s) return null;
+  const W=mode==="w12"?12:8, raw={}; let sum=0;
+  for(const tm of Object.keys(s)){
+    const arr=s[tm].vols.filter(v=>v!=null&&isFinite(v)), recent=arr.slice(-W);
+    const use=recent.length>=Math.min(4,arr.length)?recent:arr; // adaptive: need support, else widen
+    raw[tm]=use.length?use.reduce((a,b)=>a+b,0)/use.length:0; sum+=raw[tm];
+  }
+  for(const tm in raw) raw[tm]=sum>0?raw[tm]/sum:0;
+  return raw;
+}
+/* user-pinned intervals keep their share; the rest of the day rebalances so it stays 100% */
+function applyProfileEdits(di,shares){
+  const ov=(state.settings.profileEdits||{})[di]; if(!ov||!shares) return shares;
+  let fixed=0,free=0; for(const tm in shares){ if(ov[tm]!=null) fixed+=ov[tm]; else free+=shares[tm]; }
+  const k=free>0?Math.max(0,1-fixed)/free:0, out={};
+  for(const tm in shares) out[tm]=ov[tm]!=null?ov[tm]:shares[tm]*k;
+  return out;
+}
+/* ============ PLANNED DEMAND EVENTS ============
+   A known one-off surge (vendor change, campaign) sized once as TOTAL extra calls and
+   spread over N working days — Saturdays and closed holidays skipped, Friday weighs half
+   (short day), front-loaded = each day 60% of the previous. forecastDay adds a day's share
+   to its daily total, so the day's normal intraday profile spreads it; once those days are
+   HISTORY, rebuildLearningSeries keeps them out of learning (no false trend). */
+function eventDays(ev){
+  const out=[]; let d=ev.start, guard=0;
+  while(out.length<Math.max(1,+ev.days||1)&&guard++<120){
+    const di=fromISO(d).getDay();
+    if(di!==6&&!(state.holidayDates&&state.holidayDates.get(d)==="closed"))
+      out.push({ds:d,w:(ev.shape==="even"?1:Math.pow(0.6,out.length))*(di===5?0.5:1)});
+    d=addDays(d,1);
+  }
+  const sum=out.reduce((s,x)=>s+x.w,0)||1;
+  out.forEach(x=>{ x.extra=(+ev.total||0)*x.w/sum; });
+  return out;
+}
+/* date → {extra calls, event names}; memoized on the events + holiday calendar */
+function evMap(){
+  const evs=state.settings.demandEvents||[];
+  const key=JSON.stringify(evs)+"|"+(state.holidayDates?state.holidayDates.size:0);
+  if(state._evKey===key&&state._evMap) return state._evMap;
+  const m=new Map();
+  for(const ev of evs){ if(!ev.start) continue;
+    for(const x of eventDays(ev)){ const o=m.get(x.ds)||{extra:0,names:[]}; o.extra+=x.extra; o.names.push(ev.name||"📣"); m.set(x.ds,o); } }
+  state._evKey=key; state._evMap=m; return m;
+}
 function forecastDay(ds){
   if(state.fcCache.has(ds)) return state.fcCache.get(ds);
   const di=fromISO(ds).getDay();
@@ -5467,7 +5892,9 @@ function forecastDay(ds){
   // learned partial factor (the model already handles these half days).
   const hf=(tgtLvl==="closed")?0:((tgtLvl&&state.holidayFactor&&state.holidayFactor[tgtLvl])||1);
   // volCal: day-level pace calibration measured by the daily backtest (100±1% goal)
-  const dayForecast=Math.max(0,dailyNorm*cf*hf*(state.settings.volCal||1));
+  // 📣 planned event: this day's share of the known extra calls (never on a closed day)
+  const evX=hf>0?((evMap().get(ds)||{}).extra||0):0;
+  const dayForecast=Math.max(0,dailyNorm*cf*hf*(state.settings.volCal||1))+evX;
 
   /* HOLIDAY-EVE = FRIDAY: a holiday eve is a short, morning-heavy day just like a
      Friday. So for eve targets we borrow FRIDAY's interval-share profile (and its
@@ -5477,18 +5904,9 @@ function forecastDay(ds){
   const useFriProfile=(tgtLvl==="eve")&&state.series[5]&&Object.keys(state.series[5]).length>=3;
   const profDi=useFriProfile?5:di;
   const profSlots=Object.keys(state.series[profDi]);
-  /* adaptive interval-share profile: last W clean weeks per interval,
-     falling back to the full series when a slot is thin */
-  const W=(state.settings.profileMode==="w12")?12:8;
-  const shareRaw={};
-  for(const tm of profSlots){
-    const arr=state.series[profDi][tm].vols.filter(v=>v!=null&&isFinite(v));
-    const recent=arr.slice(-W);
-    // adaptive: need enough support, else widen to all history for this slot
-    const use=recent.length>=Math.min(4,arr.length)?recent:arr;
-    shareRaw[tm]=use.length?use.reduce((a,b)=>a+b,0)/use.length:0;
-  }
-  let shareSum=0; for(const tm of profSlots) shareSum+=shareRaw[tm];
+  // intraday profile = learned shares for the chosen window, with any user-pinned intervals applied
+  const shareRaw=applyProfileEdits(profDi,profileShares(profDi,state.settings.profileMode))||{};
+  let shareSum=0; for(const tm of profSlots) shareSum+=shareRaw[tm]||0;
   /* projected-headcount scale: grow/shrink the whole shift curve for this future date
      by (projected headcount at that date ÷ current headcount) — same hcAtDay() the
      Recruitment outlook uses, so the two pages never diverge. Course graduates raise it,
@@ -5561,6 +5979,32 @@ function sourceDay(ds){
   return null;
 }
 
+/* week-vs-today chip: past / current / future at a glance, plus where measured data
+   ends inside the week. Not on "now"? The chip becomes a one-click jump to this week. */
+function renderWeekContext(dates){
+  const el=document.getElementById("wkCtx"); if(!el) return;
+  if(!state.week){ el.style.display="none"; return; }
+  const nowWk=sundayOf(iso(new Date()));
+  const n=Math.round((fromISO(state.week)-fromISO(nowWk))/(7*86400000));
+  let cls,txt;
+  if(n===0){ cls="now"; txt=t("wkNow"); }
+  else if(n<0){ cls="past"; txt=n===-1?t("wkPast1"):t("wkPast",{n:-n}); }
+  else { cls="fut"; txt=n===1?t("wkFut1"):t("wkFut",{n}); }
+  // actual vs forecast inside this week
+  let lastAct=-1,hasFc=false;
+  dates.forEach((ds,i)=>{ const s=sourceDay(ds); if(!s) return; if(s.forecast) hasFc=true; else lastAct=i; });
+  let sub="";
+  if(lastAct>=0&&hasFc) sub=t("wkActUntil",{d:t("daysShort")[lastAct]});
+  else if(lastAct<0&&hasFc&&n<=0) sub=t("wkNoAct");
+  el.className="pill wkctx "+cls;
+  el.innerHTML=txt+(sub?` <span class="sub2">· ${sub}</span>`:"");
+  const sel=document.getElementById("weekSelect");
+  const canJump=n!==0&&sel&&[...sel.options].some(o=>o.value===nowWk);
+  el.classList.toggle("jump",canJump);
+  el.title=canJump?t("wkJump"):"";
+  el.onclick=canJump?()=>{ sel.value=nowWk; sel.dispatchEvent(new Event("change")); }:null;
+  el.style.display="inline-block";
+}
 /* ---------------- Week selector ---------------- */
 function buildWeekSelect(keepValue){
   const sel=document.getElementById("weekSelect");
@@ -5627,7 +6071,7 @@ function buildDayWins(){
   for(let d=0;d<6;d++){
     const endDef=d===5?friLimit():pad(S.dayEnd)+":00";
     const row=document.createElement("div"); row.className="daywin";
-    row.innerHTML=`<label class="chk"><input type="checkbox" data-dw-on="${d}" ${d<5?"checked":""}></label>
+    row.innerHTML=`<label class="chk"><input type="checkbox" class="sw" data-dw-on="${d}" ${d<5?"checked":""}></label>
       <span class="dl" data-day="${d}"></span>
       <select data-dw-s="${d}" style="direction:ltr">${optsHtml(pad(S.dayStart)+":00",d===5?friLimit():null)}</select>–
       <select data-dw-e="${d}" style="direction:ltr">${optsHtml(endDef,d===5?friLimit():null)}</select>`;
@@ -5685,6 +6129,7 @@ function capacityFor(ds,dayIdx,tm,rec){
     if(by) return capCountedFrom(by);
     if(state.optimizedWeekSet&&state.optimizedWeekSet.has(ds)) return 0; // in the optimized week, no shift here → nobody
   }
+  if(!state._optView&&state.agWhatIf.has(dk)) return state.agWhatIf.get(dk);
   if(state.rosterCap.has(dk)) return capCounted(dk,state.rosterCap.get(dk));
   // a roster that covers this date/weekday is the FULL ground truth:
   // blocks it doesn't mention mean nobody is scheduled — never fall back to baseline
@@ -5697,7 +6142,8 @@ function capacityFor(ds,dayIdx,tm,rec){
 function rebuildRosterCoverage(){
   state.rosterDates=new Set([...state.rosterCap.keys()].map(k=>k.slice(0,10)));
   state.rosterDays=new Set([...state.rosterCapWeekly.keys()].map(k=>k.split("|")[0]));
-  // a changed roster invalidates any prior optimized preview
+  // a changed roster invalidates any prior optimized preview — and what-ifs made against the old sidur
+  state.agWhatIf.clear();
   state.optimizedCapSkill=null; state.optimizedWeek=null; state.matrixView="original";
 }
 function computeDay(ds){
@@ -5940,12 +6386,23 @@ function renderMatrixBody(){
   let maxDef=0;
   const thead=document.createElement("thead"); const hr=document.createElement("tr");
   hr.appendChild(th(t("thInterval")));
+  const todayDs=iso(new Date()), todayIdx=dates.indexOf(todayDs);
   dates.forEach((ds,i)=>{
     const hth=th(dayNames[i]+" "+fmtD(ds).slice(0,5));
+    // one tiny tag per day: is this column measured history or a forecast? (+ today)
+    const sdd=sourceDay(ds);
+    if(sdd){ const tg=document.createElement("span");
+      tg.className="dtag "+(i===todayIdx?"today":sdd.forecast?"fc":"act");
+      tg.textContent=i===todayIdx?"● "+t("dTagToday")+" · "+t(sdd.forecast?"dTagFc":"dTagAct"):t(sdd.forecast?"dTagFc":"dTagAct");
+      const ev=evMap().get(ds); // 📣 planned event this day — name on hover
+      if(ev){ tg.textContent+=" · 📣"; hth.title=ev.names.join(" + ")+(sdd.forecast?" · "+t("evPillTip",{n:Math.round(ev.extra).toLocaleString()}):""); }
+      hth.appendChild(tg); }
+    if(i===todayIdx) hth.classList.add("todayHd");
     if(state.excMode){ hth.style.cursor="pointer"; hth.title=t("excBtn");
       hth.addEventListener("click",()=>{ toggleException(ds); }); }
     hr.appendChild(hth);
   });
+  renderWeekContext(dates);
   thead.appendChild(hr); tbl.appendChild(thead);
   const comp=dates.map(ds=>computeDay(ds));
   comp.forEach(c=>{ if(c){ totSaved+=c.saved; totDrops+=c.drops; } });
@@ -6016,14 +6473,19 @@ function renderMatrixBody(){
         // standardized capacity states: scheduled vs required (item 2)
         const short=row.sched<row.reqEff, over=row.sched>row.reqEff;
         if(short){ shortCount++; maxDef=Math.max(maxDef,row.reqEff-row.sched); }
-        const edited=state.edits.has(ds+"|"+tm);
-        td.innerHTML=`<div class="v">${pct(v)}${row.dropped?'<span class="decay">▼</span>':''}${short?'<span class="short"></span>':''}${over?'<span class="overm"></span>':''}${edited?'<span class="edmark">✎</span>':''}</div>
+        const wiOn=state.agWhatIf.has(ds+"|"+tm);
+        const edited=state.edits.has(ds+"|"+tm)||wiOn;
+        // body-count short, but the SHOWN service is on target → hollow ring, not a red alarm
+        const soft=short&&v*100>=state.settings.target;
+        td.innerHTML=`<div class="v">${pct(v)}${row.dropped?'<span class="decay">▼</span>':''}${short?`<span class="short${soft?" soft":""}"></span>`:''}${over?'<span class="overm"></span>':''}${edited?'<span class="edmark">✎</span>':''}</div>
           <div class="sub">${row.sched}/${row.reqEff} • ${Math.round(row.rec.volume)}</div>`;
         // edited cells carry their own tiny undo — one click back to the original value
-        if(edited&&state.cellOrig.has(ds+"|"+tm)){
+        if(edited&&(state.cellOrig.has(ds+"|"+tm)||wiOn)){
           const ub=document.createElement("button");
           ub.className="cellundo"; ub.textContent="↺"; ub.title=t("cellUndoTip");
-          ub.addEventListener("click",e=>{ e.stopPropagation(); revertCell(ds,tm); });
+          ub.addEventListener("click",e=>{ e.stopPropagation();
+            if(wiOn){ state.agWhatIf.delete(ds+"|"+tm); if(!state.cellOrig.has(ds+"|"+tm)){ memo.clear(); saveData(); renderAll(); return; } }
+            revertCell(ds,tm); });
           td.querySelector(".v").appendChild(ub);
         }
         // plain-language tooltip: the % is SERVICE (measured on history, forecast ahead);
@@ -6034,10 +6496,13 @@ function renderMatrixBody(){
         const measured=c&&!c.forecast;
         const mName=state.metric==="tsf"?("TSF "+state.settings.tsfT):t("metricAr");
         const verd=over?(meets?t("mxVerdOverOk"):t("mxVerdOverLow"))
-          :short?(meets?t("mxVerdShortOk"):t("mxVerdShortLow"))
+          :short?(meets?t(measured?"mxVerdShortOkMeas":"mxVerdShortOkFc"):t("mxVerdShortLow"))
           :t("mxVerdBalanced");
+        // "needed" is sized for the PRIMARY metric — say so when the toggle shows the other one
+        const offPrim=(state.metric==="tsf")!==(state.settings.primaryMetric==="tsf");
         td.title=t("mxTipHead",{m:mName,v:pct(v),src:t(measured?"mxSrcMeas":"mxSrcFc")})+"\n"
-          +t("mxTipBody",{t:tgt,s:row.sched,r:row.reqEff})+"\n"+verd;
+          +t("mxTipBody",{t:tgt,s:row.sched,r:row.reqEff})+"\n"+verd
+          +(offPrim&&(short||over)?"\n"+t("mxVerdMetric",{p:primName()}):"");
         td.addEventListener("click",e=>openEditor(e,ds,tm,di));
       }
       tr.appendChild(td);
@@ -6045,6 +6510,8 @@ function renderMatrixBody(){
     tbody.appendChild(tr);
   });
   tbl.appendChild(tbody);
+  // frame today's column top-to-bottom (box-shadow, so tier colors stay intact)
+  if(todayIdx>=0) tbody.querySelectorAll("tr").forEach(tr=>{ const c=tr.children[todayIdx+1]; if(c) c.classList.add("todayCol"); });
   document.getElementById("kpiMaxDef").innerHTML=`<span class="num">${maxDef>0?"+"+maxDef:"0"}</span>`;
   const b=document.getElementById("decayBanner");
   if(state.policy.enabled&&totDrops>0){ b.textContent=t("decaySaved",{n:totDrops,h:totSaved.toFixed(1)}); b.classList.add("show"); }
@@ -6052,10 +6519,14 @@ function renderMatrixBody(){
   // kpiShort / kpiShortL were removed with the recruit-page declutter (renderRecruit
   // now owns the deficit KPI); don't write to elements that no longer exist.
   const eb=document.getElementById("editBadge");
-  if(state.edits.size){ eb.textContent=t("editsBadge",{n:state.edits.size}); eb.style.display="inline-block"; }
+  const wiN=whatIfRows(state.week).length;
+  if(state.edits.size||wiN){
+    eb.textContent=(state.edits.size?t("editsBadge",{n:state.edits.size}):"")+(state.edits.size&&wiN?" · ":"")+(wiN?t("wiBadge",{n:wiN}):"");
+    eb.style.display="inline-block"; }
   else eb.style.display="none";
+  const wx=document.getElementById("wiExport"); if(wx) wx.style.display=wiN?"":"none";
   const rb=document.getElementById("resetEdits");
-  rb.style.display=(state.edits.size||state.simDays.size)?"inline-block":"none";
+  rb.style.display=(state.edits.size||state.simDays.size||wiN)?"inline-block":"none";
 }
 
 /* ---- Holiday / Exception registry (item 5): drag-paint zero-overrides ---- */
@@ -6096,6 +6567,27 @@ function wireExcPaint(td,ds,tm){
 document.addEventListener("mouseup",()=>{ if(excPainting){ excPainting=false; rebuildLearningSeries(); saveData(); renderAll(); } });
 
 /* ---- Reset to Original Forecast (item 12): wipe manual edits for the active week ---- */
+/* what-if staffing changes (sidur cells) in a week, with the service effect of each */
+function whatIfRows(wk){
+  if(!wk||!state.agWhatIf.size) return [];
+  const set=new Set(weekDates(wk)), out=[], S=state.settings, eff=Math.max(0.05,availShare(S)*(state.calib||1));
+  for(const [k,n] of [...state.agWhatIf]){ // snapshot: the lift-and-restore below re-appends keys
+    const ds=k.slice(0,10), tm=k.slice(11); if(!set.has(ds)) continue;
+    const sd=sourceDay(ds), rec=sd&&sd.src.get(tm); if(!rec) continue;
+    const di=fromISO(ds).getDay();
+    state.agWhatIf.delete(k); const sid=capacityFor(ds,di,tm,rec); state.agWhatIf.set(k,n);
+    const inj=injectionAgents(di,tm), m=a=>primVal(evalInterval(rec.volume,rec.aht,Math.max(0,Math.round((a+inj)*eff)),S,rec.mpt));
+    out.push({ds,di,tm,sid,n,d:n-sid,before:m(sid),after:m(n)});
+  }
+  return out.sort((a,b)=>a.ds.localeCompare(b.ds)||a.tm.localeCompare(b.tm));
+}
+function exportWhatIf(wk){
+  const rows=whatIfRows(wk); if(!rows.length) return;
+  const days=t("days"), m=primName();
+  const lines=[[t("thDate"),t("fldDay"),t("wiCsvTm"),t("wiCsvSid"),t("wiCsvWi"),"Δ",m+" "+t("wiCsvBefore"),m+" "+t("wiCsvAfter")].map(csvQuote).join(",")]
+    .concat(rows.map(r=>[fmtD(r.ds),days[r.di],r.tm,r.sid,r.n,(r.d>0?"+":"")+r.d,pct(r.before),pct(r.after)].map(csvQuote).join(",")));
+  downloadFile("wfm_whatif_staffing.csv",lines.join("\n"));
+}
 function resetWeekEdits(){
   if(!state.week) return;
   for(const ds of weekDates(state.week)){
@@ -6104,6 +6596,7 @@ function resetWeekEdits(){
     for(const k of [...state.edits]) if(k.startsWith(ds+"|")) state.edits.delete(k);
     state.undoStack=state.undoStack.filter(u=>u.ds!==ds);
     state.volAdj=state.volAdj.filter(a=>a.ds!==ds); // forward-propagation born in this week dies with it
+    for(const k of [...state.agWhatIf.keys()]) if(k.startsWith(ds+"|")) state.agWhatIf.delete(k);
   }
   memo.clear(); state.fcCache.clear(); // stale chained forecasts must not survive a reset
   saveData(); renderAll();
@@ -6149,6 +6642,7 @@ function renderTrends(){
   hr.appendChild(thTip(t("thVol"),t("fTipVol")));
   hr.appendChild(thTip(t("thAr"),t("fTipAr")));
   hr.appendChild(thTip(t("thAht"),t("fTipAht")));
+  const workTh=thTip(t("thWork")," "); hr.appendChild(workTh); // tip filled once totals exist
   hr.appendChild(thTip(t("thNetProd"),t("fTipNetProd")));
   hr.appendChild(thTip(t("thUtil"),t("fTipOcc")));
   hr.appendChild(thTip(t("thTsf30"),t("fTipTsf",{s:30})));
@@ -6157,7 +6651,8 @@ function renderTrends(){
   thead.appendChild(hr); tbl.appendChild(thead);
   const tbody=document.createElement("tbody");
   const dayNames=t("days");
-  const T={vol:0,arW:0,ahtW:0,tsfW:0,tsf30W:0,tsf60W:0,prodNum:0,prodDen:0,occNum:0,occDen:0};
+  const T={vol:0,arW:0,ahtW:0,tsfW:0,tsf30W:0,tsf60W:0,prodNum:0,prodDen:0,occNum:0,occDen:0,grossH:0};
+  const effShareG=Math.max(0.05,availShare(S)*(state.calib||1)); // same bodies conversion as the matrix
   /* PASS 1 — math only (Erlang results are memoized): per-day stats + range totals.
      DOM is built afterwards IN CHUNKS, because materializing thousands of rows at
      once (multi-year files) is what made the browser tab devour memory. */
@@ -6170,7 +6665,7 @@ function renderTrends(){
     const dayIdx=fromISO(ds).getDay();
     const fc=sd.forecast;
     const holLvl=state.holidayDates.get(ds)||null; // 🕎 from the holidays table (settings)
-    let vol=0,arW=0,tsfW=0,tsf30W=0,tsf60W=0,ahtW=0,work=0,cap=0,schedHrs=0,loginHrs=0,answered=0,handledWork=0,occFileW=0,occFileVol=0;
+    let grossH=0,vol=0,arW=0,tsfW=0,tsf30W=0,tsf60W=0,ahtW=0,work=0,cap=0,schedHrs=0,loginHrs=0,answered=0,handledWork=0,occFileW=0,occFileVol=0;
     for(const [tm,rec] of sd.src){
       if(state.exceptions.has(ds+"|"+tm)) continue;
       const sched=capacityFor(ds,dayIdx,tm,rec)+injectionAgents(dayIdx,tm);
@@ -6193,6 +6688,8 @@ function renderTrends(){
       tsf30W+=perf.tsf30*rec.volume; tsf60W+=perf.tsf60*rec.volume;
       ahtW+=rec.aht*rec.volume;
       work+=rec.volume*rec.aht; cap+=agents*1800; schedHrs+=sched*0.5;
+      // GROSS hours to schedule = the matrix's "needed" (target-sized, ÷ shrinkage & absence) × ½h
+      grossH+=Math.round(requiredAgentsMemo(rec.volume,rec.aht,S.target,S,rec.mpt)/effShareG)*0.5;
       if(rec.login) loginHrs+=rec.login;
       if(rec.answered){
         // forecast rows carry the RECENT answer rate forward — anchored to measured
@@ -6237,8 +6734,11 @@ function renderTrends(){
     T.prodNum+=(answered>0?answered:vol); T.prodDen+=netHrs;
     T.occNum+=occWork; T.occDen+=occDen;
     const met=(S.primaryMetric==="ar"?ar:tsf)>=S.target/100;   // attainment on the Primary Target Metric
-    rowsData.push({ds,dayIdx,forecast:fc,vol,aht,ar,netProd,occ,tsf30,tsf60,met,holLvl});
+    T.grossH+=grossH;
+    rowsData.push({ds,dayIdx,forecast:fc,vol,aht,ar,netProd,occ,tsf30,tsf60,met,holLvl,grossH});
   }
+  { const inf=workTh.querySelector(".info"); if(inf) inf.dataset.tip=t("fTipWork",{m:primName(),t:S.target,
+      n:T.grossH>0?Math.round(T.ahtW/3600/T.grossH*100):"—"}); }
   /* PASS 2 — DOM row factory */
   const plain=v=>{ const td=document.createElement("td"); td.innerHTML=`<span class="v">${v}</span>`; return td; };
   const tinted=(v,cls)=>{ const td=document.createElement("td"); td.className=cls;
@@ -6249,33 +6749,39 @@ function renderTrends(){
     const c=HOL_COL[lvl]||"#6b7c90", nm=holidayName(ds);
     // named holiday → append the level for CLOSED ("יום כיפור · סגור"); the eve/chm
     // names already say it. No name (rare) → the generic level label, no double-up.
-    // pill sits snug beside the date; the row (holFlex) is right-aligned as a group
-    const s=document.createElement("span");
+    // pill trails the date in reading order (start-aligned cell, LTR-isolated date)
+    const s=document.createElement("span"); s.className="holPill";
     s.style.cssText=`background:${c}18;color:${c};border:1px solid ${c}55;border-radius:9px;padding:0 7px;font-size:.66rem;font-weight:700;white-space:nowrap`;
     s.textContent="🕎 "+(nm?nm+(lvl==="closed"?" · "+t("holLvlClosed"):""):(t("hol_"+lvl)||lvl));
     return s;
   };
-  const holFlex=dth=>{ dth.style.display="flex"; dth.style.alignItems="center"; dth.style.justifyContent="flex-end"; dth.style.gap="4px"; };
+  // 📣 planned-event badge: names the event, tooltip says how many extra calls land that day
+  const evPill=ds=>{ const ev=evMap().get(ds); if(!ev) return null;
+    const s=document.createElement("span"); s.className="evPill"; s.textContent="📣 "+ev.names.join(" + ");
+    s.title=state.days.has(ds)?t("exclEvNote"):t("evPillTip",{n:Math.round(ev.extra).toLocaleString()}); return s; };
+  // date as an LTR-isolated span; the cell itself follows page direction (start-aligned)
+  const dateCell=(dth,ds,suffix)=>{ const sp=document.createElement("span"); sp.className="trDate"; sp.textContent=fmtD(ds);
+    dth.appendChild(sp); if(suffix) dth.appendChild(document.createTextNode(suffix)); };
   const buildRow=d=>{
     const {ds,dayIdx}=d;
     if(d.zero){
       const tr=document.createElement("tr"); tr.className="fcast";
       const dth=document.createElement("th");
-      dth.textContent=fmtD(ds)+(d.forecast?t("forecastTag"):"")+(state.simDays.has(ds)?" ✎":"");
-      if(d.holLvl){ holFlex(dth); dth.appendChild(holPill(ds,d.holLvl)); }
+      dateCell(dth,ds,(d.forecast?t("forecastTag"):"")+(state.simDays.has(ds)?" ✎":""));
+      if(d.holLvl) dth.appendChild(holPill(ds,d.holLvl));
+      { const ep=evPill(ds); if(ep) dth.appendChild(ep); }
       tr.appendChild(dth);
       const dtd=document.createElement("td"); dtd.textContent=dayNames[dayIdx]??""; tr.appendChild(dtd);
       const z=document.createElement("td"); z.innerHTML='<span class="v">0</span>';
       if(d.forecast){ z.style.cursor="pointer"; z.addEventListener("click",e=>openTrendEditor(e,ds,0,0)); } tr.appendChild(z);
-      for(let i=0;i<7;i++){ const td=document.createElement("td"); td.textContent=t("noData"); tr.appendChild(td); }
+      for(let i=0;i<8;i++){ const td=document.createElement("td"); td.textContent=t("noData"); tr.appendChild(td); }
       return tr;
     }
     const tr=document.createElement("tr");
     if(d.forecast) tr.className="fcast";
     const dth=document.createElement("th");
-    dth.textContent=fmtD(ds)+(d.forecast?t("forecastTag"):"");
+    dateCell(dth,ds,(d.forecast?t("forecastTag"):"")+(state.simDays.has(ds)?" ✎":""));
     if(state.simDays.has(ds)){ // edited day: mark + one-click restore, same as matrix cells
-      dth.textContent+=" ✎";
       const rb=document.createElement("button");
       rb.className="cellundo"; rb.textContent="↺"; rb.title=t("cellUndoTip");
       rb.addEventListener("click",e=>{ e.stopPropagation();
@@ -6288,7 +6794,8 @@ function renderTrends(){
       ib.addEventListener("click",e=>{ e.stopPropagation(); openIntraday(ds); });
       dth.appendChild(document.createTextNode(" ")); dth.appendChild(ib);
     }
-    if(d.holLvl){ holFlex(dth); dth.appendChild(holPill(ds,d.holLvl)); } // 🕎 right-aligned, connect to the holidays table
+    if(d.holLvl) dth.appendChild(holPill(ds,d.holLvl)); // 🕎 trails the date in reading order
+    { const ep=evPill(ds); if(ep) dth.appendChild(ep); } // 📣 planned event
     tr.appendChild(dth);
     const dayTd=document.createElement("td"); dayTd.textContent=dayNames[dayIdx]??""; tr.appendChild(dayTd);
     const volTd=plain(Math.round(d.vol).toLocaleString());
@@ -6300,6 +6807,7 @@ function renderTrends(){
     if(d.forecast){ ahtTd.style.cursor="pointer"; ahtTd.classList.add("cell");
       ahtTd.addEventListener("click",e=>openTrendEditor(e,ds,Math.round(d.vol),Math.round(d.aht))); }
     tr.appendChild(ahtTd);
+    tr.appendChild(plain(Math.round(d.grossH).toLocaleString()));
     tr.appendChild(plain(d.netProd.toFixed(1)));
     tr.appendChild(tinted(d.occ,d.occ>=.65&&d.occ<=.92?"tier-good":"tier-warn"));
     tr.appendChild(tinted(d.tsf30,tier(d.tsf30)));
@@ -6317,6 +6825,7 @@ function renderTrends(){
     sr.appendChild(sc(Math.round(T.vol).toLocaleString()));
     sr.appendChild(sc(pct(T.arW/T.vol)));
     sr.appendChild(sc(fmtSec(T.ahtW/T.vol)));
+    sr.appendChild(sc(Math.round(T.grossH).toLocaleString()));
     sr.appendChild(sc(T.prodDen>0?(T.prodNum/T.prodDen).toFixed(1):t("noData")));
     sr.appendChild(sc(T.occDen>0?pct(Math.min(1,T.occNum/T.occDen)):t("noData")));
     sr.appendChild(sc(pct(T.tsf30W/T.vol)));
@@ -6331,7 +6840,7 @@ function renderTrends(){
   const CHUNK=150;
   let renderedRows=0;
   const moreTr=document.createElement("tr");
-  const moreTd=document.createElement("td"); moreTd.colSpan=10; moreTd.style.textAlign="center";
+  const moreTd=document.createElement("td"); moreTd.colSpan=11; moreTd.style.textAlign="center";
   const moreBtn=document.createElement("button"); moreBtn.className="linklike";
   moreTd.appendChild(moreBtn); moreTr.appendChild(moreTd);
   const appendChunk=()=>{
@@ -6350,6 +6859,15 @@ function renderTrends(){
   moreBtn.addEventListener("click",appendChunk);
   appendChunk();
   tbl.appendChild(tbody);
+  // guidance only when there's something to act on (forecast rows in range)
+  { const h=document.getElementById("trHint");
+    if(h){ const anyFc=rowsData.some(r=>r.forecast); h.style.display=anyFc?"":"none";
+      if(anyFc){ h.innerHTML=`💡 ${t("trHint")} `;
+        const a=document.createElement("button"); a.className="linklike"; a.textContent=t("trHintLink");
+        a.addEventListener("click",()=>{ showPage("settings"); openEvents(); });
+        h.appendChild(a); } } }
+  // the pinned סיכום row sits exactly under the pinned header, whatever its height
+  { const w=document.getElementById("trendsWrap"); const h=thead.getBoundingClientRect().height; if(w&&h>0) w.style.setProperty("--trHeadH",h+"px"); }
   // page-scoped reset visibility: any forecast edits inside the selected range?
   const from=state.trendFrom||state.minDate, to=state.trendTo||state.horizonISO;
   const anySim=[...state.simDays.keys()].some(ds=>ds>=from&&ds<=to);
@@ -6400,15 +6918,19 @@ function openIntraday(ds){
 /* Trends forecast-cell editor: daily volume & AHT scale the whole day proportionally */
 function openTrendEditor(e,ds,curVol,curAht){
   ceCtx={trend:true,ds};
-  document.getElementById("ceTitle").textContent=t("ceTitle",{day:fmtD(ds),time:t("forecastTag").trim()});
+  document.getElementById("ceTitle").textContent=t("ceTitle",{day:fmtD(ds),time:t("ceDayTotal")});
   document.getElementById("ceVol").value=curVol;
   document.getElementById("ceAht").value=fmtSec(curAht); // mm:ss everywhere durations are edited
   document.getElementById("ceAgRow").style.display="none";
   document.getElementById("ceFutRow").style.display="none"; // trend edits have day-level semantics
+  // day-level edit: no interval mirror; one hint says how a daily total is spread
+  ["ceLive","ceAgH"].forEach(id=>document.getElementById(id).style.display="none");
+  const src=document.getElementById("ceSrc"); src.className="ceSrc fc"; src.textContent=t("dTagFc");
+  document.getElementById("ceVolH").textContent=t("ceHintDay");
   ce.style.display="block";
   const r=e.currentTarget.getBoundingClientRect();
   let x=r.left+window.scrollX, y=r.bottom+window.scrollY+4;
-  if(x+250>document.documentElement.clientWidth) x=document.documentElement.clientWidth-256;
+  if(x+290>document.documentElement.clientWidth) x=document.documentElement.clientWidth-296;
   ce.style.left=Math.max(6,x)+"px"; ce.style.top=y+"px";
 }
 function applyTrendEdit(ds,newVol,newAht){
@@ -6976,6 +7498,7 @@ function renderInternalRoster(){
   const under=state.roster
     .map(e=>{ const base=baseOf(e); return {...e,base,def:Math.round((base-e.scheduled)*10)/10}; })
     .filter(e=>e.def>0.4)
+    .filter(e=>{ const m=state.rosterMeta.get(e.name)||{}; return wfPass({team:m.team,skill:m.skill,site:m.site}); }) // page filters apply here too
     // sorted by the BAR: emptiest fill first (lowest scheduled/base ratio), so the
     // visual order and the priority order are the same thing
     .sort((a,b)=>(a.scheduled/a.base)-(b.scheduled/b.base)||b.def-a.def);
@@ -6991,30 +7514,48 @@ function renderInternalRoster(){
     <span class="mini">${t("rosterRecov",{n:under.length,f:fte})}</span>
     <button class="linklike" id="rosterCopyBtn" style="margin-inline-start:auto">📋 ${t("rosterCopyBtn")}</button>`;
   rw.appendChild(head);
-  const maxDef=under[0].def;
-  under.slice(0,14).forEach(e=>{
+  // per rep, iron vs sidur hours by weekday → WHERE the missing hours can go back
+  const wk=wfWeek(), wkSet=new Set(wk?weekDates(wk):[]), dShort=t("daysShort"), dFull=t("days");
+  const dayStrip=e=>{
+    const ir=state.iron&&state.iron.emps.get(e.name), sch={};
+    for(const r of state.schedRows) if(r.name===e.name&&wkSet.has(r.ds)) sch[r.di]=(sch[r.di]||0)+(r.h||0);
+    const miss=[], cells=[];
+    for(let di=0;di<6;di++){
+      const ih=ir&&ir.days&&ir.days[di]?ir.days[di].h||0:0, sh=Math.round((sch[di]||0)*10)/10;
+      if(ih>0&&sh<0.1) miss.push(dFull[di]);
+      const cls=!ih&&!sh?"":sh>=ih-0.1?"tier-good":sh>0?"tier-warn":"tier-bad";
+      cells.push(`<span class="rrd ${cls}" title="${dFull[di]}: ${t("rosterDayTip",{s:sh,i:ih})}">${dShort[di]}<b>${ih||sh?sh+"/"+ih:"—"}</b></span>`);
+    }
+    return `<div class="rrDays">${cells.join("")}</div><p class="mini" style="margin:2px 0 8px">${
+      !ir?t("rosterNoIron"):miss.length?"➜ "+t("rosterMissing",{d:miss.join(", ")}):t("rosterSpread")}</p>`;
+  };
+  const LIMIT=14, shown=state._rosterAll?under:under.slice(0,LIMIT);
+  shown.forEach(e=>{
     const meta=state.rosterMeta.get(e.name)||{};
-    const row=document.createElement("div");
-    row.style.cssText="display:flex;align-items:center;gap:8px;font-size:.8rem;margin:3px 0";
+    const det=document.createElement("details"); det.className="drl";
     const fill=Math.min(100,e.scheduled/e.base*100);
-    row.innerHTML=`<span style="min-width:150px;font-weight:600">${e.name}</span>
+    det.innerHTML=`<summary title="${t("rosterRowTip")}"><span style="min-width:150px;font-weight:600">${e.name}</span>
       <span class="mini" style="min-width:88px">${meta.team||""}</span>
       <div style="flex:1;background:var(--sky-soft);border-radius:5px;height:16px;position:relative;direction:ltr" title="${e.scheduled}h / ${e.base}h">
         <div style="width:${fill.toFixed(0)}%;background:${e.def>=8?"#c94f2e":"#e3a72f"};height:16px;border-radius:5px"></div>
       </div>
-      <span style="min-width:56px;direction:ltr;font-weight:700;color:${e.def>=8?"var(--crimson)":"#8a6d1a"}">+${e.def}h</span>`;
-    rw.appendChild(row);
+      <span style="min-width:56px;direction:ltr;font-weight:700;color:${e.def>=8?"var(--crimson)":"#8a6d1a"}">+${e.def}h</span></summary>`;
+    det.addEventListener("toggle",()=>{ if(det.open&&!det._filled){ det._filled=true; det.insertAdjacentHTML("beforeend",dayStrip(e)); } }, {once:false});
+    rw.appendChild(det);
   });
-  if(under.length>14){
-    const more=document.createElement("p"); more.className="mini";
-    more.textContent="+"+(under.length-14)+" …"; rw.appendChild(more);
+  if(under.length>LIMIT){
+    const more=document.createElement("button"); more.className="linklike"; more.style.marginTop="4px";
+    more.textContent=state._rosterAll?t("rosterLess"):t("rosterAll",{n:under.length});
+    more.addEventListener("click",()=>{ state._rosterAll=!state._rosterAll; renderInternalRoster(); });
+    rw.appendChild(more);
   }
   const note=document.createElement("p"); note.className="mini"; note.style.marginTop="6px";
   note.textContent=t(hasContract?"rosterSortDef":"rosterSortSched",{h:fullTimeWeeklyHours()});
   rw.appendChild(note);
   document.getElementById("rosterCopyBtn").addEventListener("click",e2=>{
     e2.stopPropagation();
-    const txt=under.map(x=>`${x.name}: ${x.scheduled}h/${x.base}h (+${x.def}h)`).join("\n");
+    const byTeam={}; under.forEach(x=>{ const tm=(state.rosterMeta.get(x.name)||{}).team||"—"; (byTeam[tm]=byTeam[tm]||[]).push(x); });
+    const txt=Object.entries(byTeam).map(([tm,xs])=>tm+"\n"+xs.map(x=>`  ${x.name}: ${x.scheduled}h/${x.base}h (+${x.def}h)`).join("\n")).join("\n\n");
     navigator.clipboard&&navigator.clipboard.writeText(txt);
     showToast("📋 "+t("wfValCopied"),true);
   });
@@ -7060,6 +7601,8 @@ function loadState(){
     if(!Array.isArray(state.settings.recruitSkills))
       state.settings.recruitSkills=state.settings.recruitSkill?[state.settings.recruitSkill]:[];
     if(!Array.isArray(state.settings.skillReqs)) state.settings.skillReqs=[];
+    if(!Array.isArray(state.settings.demandEvents)) state.settings.demandEvents=[];
+    if(!state.settings.profileEdits||typeof state.settings.profileEdits!=="object") state.settings.profileEdits={};
     // migration: an early build seeded Av|9=work as an override — it is now the
     // table default, so drop it (otherwise it shows a permanent "changed" tag)
     if(state.settings.holOverride["Av|9"]==="work") delete state.settings.holOverride["Av|9"];
@@ -7200,22 +7743,63 @@ document.getElementById("modalBg").addEventListener("click",e=>{ if(e.target.id=
 /* ---------------- Inline cell editor ---------------- */
 const ce=document.getElementById("cellEditor");
 let ceCtx=null;
+/* where does a cell's "scheduled" number come from? mirrors capacityFor's precedence:
+   a loaded sidur is the ground truth; otherwise the file's own staffing baseline */
+function capSource(ds,dayIdx,tm){
+  if(state.rosterCap.has(ds+"|"+tm)||state.rosterDates.has(ds)) return "roster";
+  if(state.rosterCapWeekly.has(dayIdx+"|"+tm)||state.rosterDays.has(String(dayIdx))) return "roster";
+  return "file";
+}
+/* live mirror of the cell while editing: scheduled · needed · primary metric (before → after) */
+function ceRenderLive(){
+  const c=ceCtx; if(!c||c.trend||!c.base) return;
+  const S=state.settings, effShare=Math.max(0.05,availShare(S)*(state.calib||1));
+  const vol=Math.max(0,+document.getElementById("ceVol").value||0);
+  const aht=Math.max(1,Math.round(toDurationSec(document.getElementById("ceAht").value)||c.base.aht));
+  const sched=Math.max(0,+document.getElementById("ceAg").value||0)+injectionAgents(c.dayIdx,c.tm);
+  const req=Math.round(requiredAgents(vol,aht,S.target,S,c.base.mpt)/effShare);
+  const m=primVal(evalInterval(vol,aht,Math.max(0,Math.round(sched*effShare)),S,c.base.mpt));
+  const col=v=>v>=S.target/100?"var(--emerald)":v>=S.target/100-0.1?"var(--amber)":"var(--crimson)";
+  const cell=(s,r,v)=>`${t("ceSched")} <b>${Math.round(s)}</b> · ${t("ceNeed")} <b>${r}</b> · ${primName()} <b style="color:${col(v)}">${pct(v)}</b>`;
+  const changed=vol!==c.base.vol||aht!==c.base.aht||sched!==c.base.sched;
+  document.getElementById("ceLive").innerHTML=cell(c.base.sched,c.base.req,c.base.m)
+    // "after" speaks the grid's own notation (scheduled/needed · metric) — short, familiar
+    +(changed?`<br><span class="arrow">→ ${t("ceAfter")}</span> <b style="direction:ltr;unicode-bidi:isolate">${Math.round(sched)}/${req}</b> · <b style="color:${col(m)}">${pct(m)}</b>`:"");
+}
 function openEditor(e,ds,tm,dayIdx){
   const sd=sourceDay(ds); if(!sd) return;
   const rec=sd.src.get(tm); if(!rec) return;
-  ceCtx={ds,tm,forecast:sd.forecast};
+  const row=(computeDay(ds)||{rows:[]}).rows.find(r=>r.tm===tm);
+  const roster=capSource(ds,dayIdx,tm)==="roster";
+  const wiKey=ds+"|"+tm, wi=state.agWhatIf.get(wiKey);
+  // the sidur's own count, what-if lifted (capacityFor reads the what-if first)
+  let sidurN=null;
+  if(roster){ state.agWhatIf.delete(wiKey); sidurN=capacityFor(ds,dayIdx,tm,rec); if(wi!=null) state.agWhatIf.set(wiKey,wi); }
+  ceCtx={ds,tm,dayIdx,forecast:sd.forecast,roster,sidurN,
+    base:{vol:rec.volume,aht:rec.aht,mpt:rec.mpt,sched:row?row.sched:rec.agents,req:row?row.reqEff:0,m:row&&row.perf?primVal(row.perf):0}};
   document.getElementById("ceTitle").textContent=t("ceTitle",{day:t("days")[dayIdx],time:tm});
+  const src=document.getElementById("ceSrc");
+  src.className="ceSrc "+(sd.forecast?"fc":"act"); src.textContent=t(sd.forecast?"dTagFc":"dTagAct");
   document.getElementById("ceVol").value=rec.volume;
   document.getElementById("ceAht").value=fmtSec(rec.aht); // durations edit as mm:ss, never raw seconds
-  document.getElementById("ceAg").value=rec.agents;
+  // sidur cells: the count is editable as a WHAT-IF (simulated here only; the sidur and the scheduler stay as-is)
+  document.getElementById("ceAg").value=roster?(wi!=null?wi:sidurN):rec.agents;
+  document.getElementById("ceAg").style.display="";
+  const ro=document.getElementById("ceAgRO"); ro.style.display="none";
+  document.getElementById("ceVolH").textContent=t(sd.forecast?"ceHintVolFc":"ceHintVolAct");
+  document.getElementById("ceAgH").textContent=roster?t("ceHintAgWhatIf",{n:sidurN}):t("ceHintAgFile");
+  ["ceLive","ceAgH"].forEach(id=>document.getElementById(id).style.display="");
   document.getElementById("ceFutRow").style.display="";
   document.getElementById("ceFut").checked=true;
+  ceRenderLive();
   ce.style.display="block";
   const r=e.currentTarget.getBoundingClientRect();
   let x=r.left+window.scrollX, y=r.bottom+window.scrollY+4;
-  if(x+250>document.documentElement.clientWidth) x=document.documentElement.clientWidth-256;
+  if(x+290>document.documentElement.clientWidth) x=document.documentElement.clientWidth-296;
   ce.style.left=Math.max(6,x)+"px"; ce.style.top=y+"px";
+  document.getElementById("ceVol").focus(); document.getElementById("ceVol").select(); // type-to-edit, fewer clicks
 }
+["ceVol","ceAht","ceAg"].forEach(id=>document.getElementById(id).addEventListener("input",ceRenderLive));
 document.getElementById("ceCancel").addEventListener("click",()=>{ce.style.display="none";ceCtx=null;});
 document.getElementById("ceApply").addEventListener("click",()=>{
   if(!ceCtx) return;
@@ -7228,6 +7812,13 @@ document.getElementById("ceApply").addEventListener("click",()=>{
     return;
   }
   const {ds,tm,forecast}=ceCtx;
+  if(ceCtx.roster){
+    const k=ds+"|"+tm, n=Math.max(0,Math.round(+document.getElementById("ceAg").value||0));
+    if(n===ceCtx.sidurN) state.agWhatIf.delete(k); else state.agWhatIf.set(k,n); // back to the sidur's number = no what-if
+    const r0=sourceDay(ds).src.get(tm);
+    const volN=Math.max(0,+document.getElementById("ceVol").value||0), ahtN=Math.max(1,Math.round(toDurationSec(document.getElementById("ceAht").value)||1));
+    if(r0&&volN===r0.volume&&ahtN===r0.aht){ ce.style.display="none"; ceCtx=null; memo.clear(); saveData(); renderAll(); return; }
+  }
   let dayMap;
   if(!forecast) dayMap=state.days.get(ds);
   else{
@@ -7251,7 +7842,7 @@ document.getElementById("ceApply").addEventListener("click",()=>{
   const prevVol=rec.volume;
   rec.volume=Math.max(0,+document.getElementById("ceVol").value||0);
   rec.aht=Math.max(1,Math.round(toDurationSec(document.getElementById("ceAht").value)||1));
-  rec.agents=Math.max(0,+document.getElementById("ceAg").value||0);
+  if(!ceCtx.roster) rec.agents=Math.max(0,+document.getElementById("ceAg").value||0); // sidur cells keep theirs (what-if layer above)
   /* forward propagation: a volume edit with the "future weeks" box checked
      becomes a persistent scale factor on this weekday+interval from here on.
      GUARDED: a near-empty cell (e.g. a closed block edited to 40 calls) must not
@@ -7330,9 +7921,11 @@ document.getElementById("weekSelect").addEventListener("change",e=>{ closeEditor
 document.getElementById("excModeBtn").addEventListener("click",()=>{
   state.excMode=!state.excMode;
   document.getElementById("excModeBtn").classList.toggle("on",state.excMode);
+  document.getElementById("excModeBtn").setAttribute("aria-pressed",String(!!state.excMode));
   closeEditor(); renderMatrix();
 });
 document.getElementById("resetEdits").addEventListener("click",resetWeekEdits);
+document.getElementById("wiExport").addEventListener("click",()=>exportWhatIf(state.week));
 document.getElementById("resetTrends").addEventListener("click",()=>{ closeEditor(); resetTrendEdits(); });
 function stepWeek(dir){
   const sel=document.getElementById("weekSelect");
@@ -7465,6 +8058,7 @@ function syncCleanUI(){
   if(h) h.checked=state.settings.autoHolidays!==false;
   if(a) a.checked=state.settings.autoAnomaly!==false;
   if(p) p.value=state.settings.profileMode||"adaptive";
+  if(typeof renderEvents==="function") renderEvents(); // 📣 list + counts follow language/state
 }
 document.getElementById("setAutoHol").addEventListener("change",e=>{
   state.settings.autoHolidays=e.target.checked; rebuildLearningSeries(); saveState(); saveData(); renderAll(); });
@@ -7472,6 +8066,170 @@ document.getElementById("setAutoAnom").addEventListener("change",e=>{
   state.settings.autoAnomaly=e.target.checked; rebuildLearningSeries(); saveState(); saveData(); renderAll(); });
 document.getElementById("setProfile").addEventListener("change",e=>{
   state.settings.profileMode=e.target.value; state.fcCache.clear(); saveState(); renderAll(); });
+/* ---- 📣 Planned demand events: list, live preview, add/remove ---- */
+const evPanel=document.getElementById("evPanel"), $ev=id=>evPanel.querySelector("#"+id); // panel moves into the shared modal
+function evFormVals(){
+  return {name:$ev("evName").value.trim(),start:$ev("evStart").value,
+    days:Math.max(1,Math.min(30,+$ev("evDays").value||1)),
+    total:Math.max(0,Math.round(+$ev("evTotal").value||0)),
+    shape:(evPanel.querySelector("#evShape button.active")||{dataset:{shape:"front"}}).dataset.shape};
+}
+function evPreview(){
+  const v=evFormVals(), el=$ev("evPreview");
+  if(!v.start||!v.total){ el.textContent=t("evNeed"); return; }
+  const dn=t("days");
+  el.textContent=eventDays(v).slice(0,4).map((x,k)=>t("evPrev",{d:dn[fromISO(x.ds).getDay()]+" "+fmtD(x.ds).slice(0,5),n:Math.round(x.extra).toLocaleString()})).join(" · ")
+    +(v.days>4?" …":"");
+}
+/* peak-day uplift vs the normal forecast for that date (what the manager actually feels) */
+function evPeakPct(ev){
+  const ds=eventDays(ev)[0]; if(!ds) return null;
+  if(state.days.has(ds.ds)) return "past";
+  const f=forecastDay(ds.ds); if(!f) return null;
+  let tot=0; for(const r of f.values()) tot+=r.volume;
+  const base=tot-ds.extra; return base>0?Math.round(ds.extra/base*100):null;
+}
+function renderEvents(){
+  const evs=state.settings.demandEvents||[], list=$ev("evList"); if(!list) return;
+  const cnt=document.getElementById("evCount");
+  cnt.style.display=evs.length?"":"none"; cnt.textContent=evs.length;
+  list.innerHTML="";
+  evs.forEach(ev=>{
+    const ed=eventDays(ev), last=ed.length?ed[ed.length-1].ds:ev.start;
+    const row=document.createElement("div"); row.className="evrow";
+    const pk=evPeakPct(ev);
+    row.innerHTML=`<b>📣 ${(ev.name||"").replace(/</g,"&lt;")}</b><span style="direction:ltr;unicode-bidi:isolate">${fmtD(ev.start).slice(0,5)}–${fmtD(last).slice(0,5)}</span>`
+      +`<span>${t("evRowCalls",{n:(+ev.total).toLocaleString(),d:ed.length})}</span>`
+      +(pk==="past"?`<span class="mini">${t("evPast")}</span>`:pk!=null?`<span class="mini">${t("evPeak",{p:pk})}</span>`:"")
+      +`<span class="grow"></span>`;
+    const x=document.createElement("button"); x.className="xbtn"; x.textContent="✕"; x.title=t("evDel");
+    x.addEventListener("click",()=>{ state.settings.demandEvents=evs.filter(e=>e!==ev); evChanged(); });
+    row.appendChild(x); list.appendChild(row);
+  });
+  evPreview();
+}
+function evChanged(){
+  state.fcCache.clear(); saveState();
+  rebuildLearningSeries(); // event days in history must leave (or rejoin) learning
+  renderEvents(); renderAll();
+}
+["evStart","evDays","evTotal"].forEach(id=>document.getElementById(id).addEventListener("input",evPreview));
+$ev("evShape").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return;
+  evPanel.querySelectorAll("#evShape button").forEach(x=>x.classList.toggle("active",x===b)); evPreview(); });
+$ev("evAdd").addEventListener("click",()=>{
+  const v=evFormVals();
+  if(!v.start||!v.total){ showToast("⚠ "+t("evNeed"),false); return; }
+  if(!v.name) v.name=t("evDefName");
+  state.settings.demandEvents=(state.settings.demandEvents||[]).concat([{id:Date.now(),...v}]);
+  ["evName","evTotal"].forEach(id=>document.getElementById(id).value="");
+  evChanged(); showToast("📣 "+t("evAdded",{n:v.name}),true);
+});
+/* opens in the shared modal (same pattern as the holidays table) — the card never grows */
+function openEvents(){
+  document.getElementById("mTitle").textContent=t("evTitle");
+  document.getElementById("mCore").textContent=t("evIntro");
+  document.getElementById("mMsg").textContent="";
+  const mL=document.getElementById("mList"); mL.innerHTML="";
+  mL.parentNode.insertBefore(evPanel,mL); evPanel.hidden=false;
+  document.getElementById("mExport").style.display="none";
+  document.getElementById("modalBg").classList.add("show");
+  renderEvents(); $ev("evName").focus();
+}
+document.getElementById("evBtn").addEventListener("click",openEvents);
+/* ---- 📊 Intraday profile matrix: see the weights, what the window choice changes, pin a share ---- */
+const profPanel=document.getElementById("profPanel"), $pf=id=>profPanel.querySelector("#"+id);
+const pp=v=>(v*100).toFixed(1)+"%";
+function renderProfile(){
+  if(profPanel.hidden) return;
+  const S=state.settings, mode=S.profileMode||"adaptive", other=mode==="w12"?"adaptive":"w12";
+  const view=(profPanel.querySelector("#profView .active")||{dataset:{view:"share"}}).dataset.view;
+  profPanel.querySelectorAll("#profWin button").forEach(b=>b.classList.toggle("active",b.dataset.mode===mode));
+  const dn=t("days"), ds=t("daysShort"), edits=S.profileEdits||{};
+  const cur={},alt={},tms=new Set();
+  for(let di=0;di<6;di++){ cur[di]=applyProfileEdits(di,profileShares(di,mode)); alt[di]=applyProfileEdits(di,profileShares(di,other));
+    if(cur[di]) Object.keys(cur[di]).forEach(x=>tms.add(x)); }
+  const rows=[...tms].sort().filter(tm=>[0,1,2,3,4,5].some(di=>cur[di]&&cur[di][tm]>0.0005));
+  const tbl=$pf("profTable"); tbl.innerHTML=""; tbl.classList.toggle("diff",view==="diff");
+  if(!rows.length){ $pf("profInsight").textContent=t("profNone"); $pf("profFoot").textContent=""; return; }
+  // ONE insight: does the window choice matter, and where is the day's peak?
+  let mx={d:0}; const peakCnt={};
+  for(let di=0;di<6;di++){ if(!cur[di]) continue;
+    let pk=null; for(const tm of rows){ const c=cur[di][tm]||0, a=(alt[di]||{})[tm]||0;
+      if(Math.abs(c-a)>Math.abs(mx.d)) mx={d:c-a,di,tm}; if(!pk||c>cur[di][pk]) pk=tm; }
+    if(pk) peakCnt[pk]=(peakCnt[pk]||0)+1; }
+  const peak=Object.entries(peakCnt).sort((a,b)=>b[1]-a[1])[0][0];
+  const otherL=t(other==="w12"?"fmProf12":"fmProfAdapt");
+  $pf("profInsight").textContent="💡 "+(Math.abs(mx.d)<0.003
+    ?t("profInsSame",{o:otherL})
+    :t("profInsDiff",{o:otherL,p:(mx.d>0?"+":"−")+Math.abs(mx.d*100).toFixed(1),day:dn[mx.di],tm:mx.tm}))
+    +" · "+t("profPeak",{tm:peak});
+  const hr=document.createElement("tr"); hr.appendChild(th(t("thInterval")));
+  for(let di=0;di<6;di++) hr.appendChild(th(ds[di]));
+  const thead=document.createElement("thead"); thead.appendChild(hr); tbl.appendChild(thead);
+  const colMax=[0,1,2,3,4,5].map(di=>Math.max(0,...rows.map(tm=>(cur[di]||{})[tm]||0)));
+  const tb=document.createElement("tbody");
+  for(const tm of rows){
+    const tr=document.createElement("tr"); const rh=document.createElement("th"); rh.textContent=tm; tr.appendChild(rh);
+    for(let di=0;di<6;di++){
+      const td=document.createElement("td"), v=(cur[di]||{})[tm];
+      if(v==null){ td.textContent="—"; tr.appendChild(td); continue; }
+      if(view==="diff"){ const d=(v-((alt[di]||{})[tm]||0))*100;
+        td.textContent=Math.abs(d)<0.05?"·":(d>0?"+":"−")+Math.abs(d).toFixed(1);
+        td.style.background=d>0?`rgba(63,169,245,${Math.min(.55,Math.abs(d)/2)})`:`rgba(240,100,35,${Math.min(.45,Math.abs(d)/2)})`;
+      }else{
+        td.textContent=pp(v); td.style.background=`rgba(63,169,245,${(colMax[di]?v/colMax[di]:0)*.55})`;
+        const pinned=edits[di]&&edits[di][tm]!=null;
+        if(pinned){ td.classList.add("pinned"); td.title=t("profPinnedTip"); }
+        td.addEventListener("click",()=>profEditCell(td,di,tm,v));
+      }
+      tr.appendChild(td);
+    }
+    tb.appendChild(tr);
+  }
+  tbl.appendChild(tb);
+  // footer: what edits do + one-click reset of all pins
+  const nPins=Object.values(edits).reduce((s,o)=>s+Object.keys(o||{}).length,0);
+  const f=$pf("profFoot"); f.textContent=view==="diff"?t("profDiffNote",{o:otherL}):t("profEditNote")+" ";
+  if(nPins){ const r=document.createElement("button"); r.className="linklike"; r.textContent=t("profReset",{n:nPins});
+    r.addEventListener("click",()=>{ S.profileEdits={}; profChanged(); }); f.appendChild(r); }
+}
+/* click a weight → type a new % → Enter pins it (empty = unpin); the rest of that day rebalances */
+function profEditCell(td,di,tm,v){
+  if(td.querySelector("input")) return;
+  td.textContent=""; const inp=document.createElement("input"); inp.type="number"; inp.step="0.1"; inp.min="0"; inp.max="60";
+  inp.value=(v*100).toFixed(1); td.appendChild(inp); inp.focus(); inp.select();
+  let done=false;
+  const commit=save=>{ if(done) return; done=true;
+    if(save){ const E=state.settings.profileEdits=state.settings.profileEdits||{};
+      if(inp.value===""||!isFinite(+inp.value)){ if(E[di]){ delete E[di][tm]; if(!Object.keys(E[di]).length) delete E[di]; } }
+      else if(Math.abs(+inp.value-v*100)>=0.05){ (E[di]=E[di]||{})[tm]=Math.min(0.6,Math.max(0,+inp.value/100)); }
+      profChanged(); }
+    else renderProfile(); };
+  inp.addEventListener("keydown",e=>{ if(e.key==="Enter") commit(true); if(e.key==="Escape"){ e.stopPropagation(); commit(false); } });
+  inp.addEventListener("blur",()=>commit(true));
+}
+function profChanged(){ state.fcCache.clear(); saveState(); renderAll(); renderProfile(); }
+function openProfile(){
+  document.getElementById("mTitle").textContent=t("profTitle");
+  document.getElementById("mCore").textContent=t("profIntro");
+  document.getElementById("mMsg").textContent="";
+  const mL=document.getElementById("mList"); mL.innerHTML="";
+  mL.parentNode.insertBefore(profPanel,mL); profPanel.hidden=false;
+  document.getElementById("mExport").style.display="none";
+  document.getElementById("modalBg").classList.add("show");
+  renderProfile();
+}
+document.getElementById("profBtn").addEventListener("click",e=>{ e.preventDefault(); openProfile(); });
+profPanel.querySelector("#profWin").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return;
+  state.settings.profileMode=b.dataset.mode; document.getElementById("setProfile").value=b.dataset.mode; profChanged(); });
+profPanel.querySelector("#profView").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return;
+  profPanel.querySelectorAll("#profView button").forEach(x=>x.classList.toggle("active",x===b)); renderProfile(); });
+// whichever path closes the modal (✕, Esc, backdrop) — or reuses it for another dialog
+// (holidays table, excluded days) — the panel leaves with it
+{ const bg=document.getElementById("modalBg"), mt=document.getElementById("mTitle");
+  const mo=new MutationObserver(()=>{ document.querySelectorAll(".mpanel").forEach(p=>{
+    if(!bg.classList.contains("show")||mt.textContent!==t(p.dataset.tkey)) p.hidden=true; }); });
+  mo.observe(bg,{attributes:true,attributeFilter:["class"]}); mo.observe(mt,{childList:true,characterData:true,subtree:true}); }
 /* Review excluded days: everything the model held out, with an un-exclude toggle */
 document.getElementById("reviewExclBtn").addEventListener("click",()=>{
   document.getElementById("mTitle").textContent=t("reviewExclTitle");
@@ -7489,6 +8247,8 @@ document.getElementById("reviewExclBtn").addEventListener("click",()=>{
   }
   for(const [ds,info] of state.anomalyDates)
     rows.push({ds,tag:"⚠ "+t("anomWord"),note:t("anomNote",{p:Math.round((info.ratio||0)*100)})});
+  for(const [ds,ev] of evMap()) if(state.days.has(ds)) // 📣 planned-event days that already happened
+    rows.push({ds,tag:"📣 "+ev.names.join(" + "),note:t("exclEvNote")});
   rows.sort((a,b)=>a.ds<b.ds?1:-1); // newest first
   if(!rows.length){ const li=document.createElement("li"); li.textContent=t("noExcl"); mL.appendChild(li); }
   rows.slice(0,120).forEach(r=>{
@@ -7865,7 +8625,7 @@ function saveData(){
       capSkills:state.capSkills, capSkillMap:state.rosterCapSkill, skillList:state.skillList,
       un:state.unallocRows, schedSkills:state.schedSkills,
       week:state.week, wfFilter:state.wfFilter, cons:state.weeklyConstraints,
-      schedOut:state._schedOut, schedExt:state.appliedExtensions }));
+      schedOut:state._schedOut, schedExt:state.appliedExtensions, agWhatIf:[...state.agWhatIf] }));
   }catch(e){} // quota exceeded on huge files → data simply stays transient
 }
 function loadData(){
@@ -7894,9 +8654,12 @@ function loadData(){
     // non-data preferences that belong to this dataset: chosen week, workforce
     // filters and manually entered constraints all survive a refresh
     if(s.week) state._restoredWeek=s.week;
-    if(s.wfFilter) state.wfFilter={day:"",...s.wfFilter}; // day key may be absent in older saves
+    if(s.wfFilter){ state.wfFilter={day:"",...s.wfFilter}; // day key may be absent in older saves
+      // older saves hold one string per list → the multi-select array form
+      for(const k of ["team","skill","site"]){ const v=state.wfFilter[k]; state.wfFilter[k]=Array.isArray(v)?v:(v?[v]:[]); } }
     if(Array.isArray(s.cons)) state.weeklyConstraints=s.cons;
-    rebuildRosterCoverage(); // NB: this clears any optimized preview — restore it AFTER
+    rebuildRosterCoverage(); // NB: this clears any optimized preview AND what-ifs — restore both AFTER
+    state.agWhatIf=new Map(Array.isArray(s.agWhatIf)?s.agWhatIf:[]);
     // a persisted optimizer result: the sidur + matrix "Optimized" toggle survive a refresh
     state.appliedExtensions=Array.isArray(s.schedExt)?s.schedExt:[];
     if(s.schedOut&&s.schedOut.asg&&s.schedOut.asg.length){
@@ -7923,6 +8686,13 @@ document.getElementById("confirmYes").addEventListener("click",()=>{
 });
 
 /* ---------------- Boot ---------------- */
+// every .seg option announces its state (aria-pressed) — kept in sync with .active wherever set
+if(typeof MutationObserver!=="undefined"){
+  const syncSeg=b=>b.setAttribute("aria-pressed",String(b.classList.contains("active")));
+  new MutationObserver(ms=>ms.forEach(m=>{ const b=m.target; if(b.tagName==="BUTTON"&&b.parentElement&&b.parentElement.classList.contains("seg")) syncSeg(b); }))
+    .observe(document.body,{subtree:true,attributes:true,attributeFilter:["class"]});
+  document.querySelectorAll(".seg button").forEach(syncSeg);
+}
 const savedWs=loadState();
 buildTimes(); // restored window settings reshape the grid skeleton
 // re-sync inputs with the restored workspace (bindings were initialized from defaults)
