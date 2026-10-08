@@ -4,6 +4,39 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Fixed
+
+- Productivity and occupancy were inflated whenever some intervals carried answered calls but no
+  login hours (e.g. evening blocks exported without login): the numerator counted every
+  interval's calls, the denominator only the logged-in ones. Both now cover the same intervals
+  (example: 9.6 calls/hr · 80% shown as 12.0 · 100% before). Files with login hours on every
+  interval are unchanged.
+- Dragging the share-summary image (or any element) inside the page no longer triggers the
+  drop-a-file ingestion.
+
+### Added
+
+- Date Trends: Days / Weeks / Months toggle. Week and month rows aggregate correctly
+  (calls-weighted rates, occupancy and productivity as Σ÷Σ) and show "days on target"
+  (e.g. 14/22) plus an actual / forecast / actual+forecast tag; click a period to open its days.
+  A breadcrumb ("↩ Months › August 2026", also Backspace / Alt+←) returns to the same grouped
+  view and window, flashing the row you came from. The summary row shows days on target too.
+- 📤 Share summary (Date Trends): monthly image (copy to clipboard or PNG) or text of how we
+  did and where we're heading, with live options — months back/ahead, which columns, insights
+  on/off, and a free line for the reader — remembered in settings. Columns come from one
+  registry (SHARE_METRICS). Insights: month-over-month, strongest month, forecast risk,
+  courses joining (already in the forecast).
+
+### Changed
+
+- Date Trends opens on a window around today (or the end of the data when it is older):
+  days 3 weeks back / 3 ahead, weeks 12 back / 8 ahead, months 6 back / 3 ahead.
+- Date Trends: the guidance line above the table is hidden behind a quiet "?" next to the title.
+- `trendDayStat(ds)` extracted from `renderTrends` (one source for days, periods and the summary;
+  day-row numbers verified identical to before).
+
+## Merged in PR #15
+
 ### Added
 
 - Matrix: cumulative "day so far" service (AR/TSF per the toggle) on every cell hover, and
