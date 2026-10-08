@@ -162,6 +162,7 @@ td .short.soft{background:transparent;box-shadow:inset 0 0 0 1.5px #c22}
 #modalBg{position:fixed;inset:0;background:rgba(13,42,77,.45);z-index:120;display:none;align-items:center;justify-content:center}
 #modalBg.show{display:flex}
 #modal{background:#fff;border-radius:11px;max-width:580px;width:92%;max-height:76vh;overflow:auto;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+#modal:has(#shPanel:not([hidden])){max-width:960px;max-height:90vh} /* the summary image is read at full size */
 #modal h3{color:var(--navy);font-size:1rem;margin-bottom:5px}
 #modal .mini{margin-bottom:8px}
 #modal .acts{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
@@ -253,6 +254,12 @@ tr.sumrow td,tr.sumrow th{font-weight:700;background:var(--sky-soft);border-bott
 .evrow b{color:#6b46c1}.evrow .grow{flex:1}
 .evPill{background:#6b46c118;color:#6b46c1;border:1px solid #6b46c155;border-radius:9px;padding:0 7px;font-size:.66rem;font-weight:700;white-space:nowrap;margin-inline-start:6px;vertical-align:1px;unicode-bidi:isolate}
 #trHint{margin:0 0 6px}
+.trHelp{width:20px;height:20px;border-radius:50%;border:1px solid var(--border);font-size:.75rem;font-weight:700;color:var(--muted);text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.trHelp.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+#trendsTable tr.grp{cursor:pointer}
+#trendsTable tr.grp:hover > *{filter:brightness(.97)}
+#trendsTable .grpTag{font-size:.64rem;font-weight:600;border-radius:9px;padding:0 6px;margin-inline-start:6px;white-space:nowrap}
+.grpTag.act{background:#e7f0fa;color:#2c5f8a}.grpTag.fc{background:#efe8fb;color:#6b46c1}.grpTag.mix{background:#fff3df;color:#8a5a00}
 /* 📊 intraday profile matrix (modal): heat = share of the day; purple = user-pinned */
 #profTable{font-size:.72rem}
 #profTable td{padding:3px 4px;min-width:62px;cursor:pointer;direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums}
@@ -309,6 +316,12 @@ tr.r-ok td{background:var(--emerald-bg)}
 @keyframes spin{to{transform:rotate(360deg)}}
 .dropzone.busy{opacity:.6;pointer-events:none}
 .dropzone.loaded .pre{display:none}
+.shOpts{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:0 0 10px;padding:8px 10px;background:#f6f9fc;border:1px solid var(--border);border-radius:8px}
+.shOpts input[type=number]{width:52px}.shOpts #shNote{flex:1 1 260px}
+.trCrumb{display:flex;align-items:center;gap:6px;font-size:.8rem;margin:0 0 6px;color:var(--muted)}
+.trCrumb button{font-weight:600}
+#trendsTable tr.flash > *{animation:trFlash 1.6s ease-out}
+@keyframes trFlash{0%{box-shadow:inset 0 0 0 99px #ffe9a8}100%{box-shadow:inset 0 0 0 99px transparent}}
 .legend i.lgGrad{width:34px;margin-inline-start:6px;cursor:help;background:linear-gradient(to right,var(--amber-bg),#fbe1c8,var(--crimson-bg),#f3c1c1)}
 [dir=rtl] .legend i.lgGrad{background:linear-gradient(to left,var(--amber-bg),#fbe1c8,var(--crimson-bg),#f3c1c1)}
 #cellEditor .ceCum{margin-top:4px;padding-top:4px;border-top:1px dashed var(--border);font-size:.78rem;color:var(--muted)}
@@ -524,15 +537,39 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
   <!-- ============ TRENDS ============ -->
   <section class="page" id="page-trends">
     <div class="card">
-      <h2 data-i18n="trendsTitle">Date Trends — history &amp; forward projection</h2>
+      <h2><span data-i18n="trendsTitle">Date Trends — history &amp; forward projection</span>
+        <!-- the guidance line is opt-in: a quiet "?" reveals it, nothing nags by default -->
+        <button class="linklike trHelp" id="trHelpBtn" type="button" data-i18n-title="trHelpTip" title="How to adjust the forecast">?</button></h2>
       <div class="toolbar">
+        <!-- one control for the time grain; each grain opens on its own sensible window -->
+        <div class="seg" id="trGroup"><button type="button" data-g="day" class="active" data-i18n="trGDay">Days</button><button type="button" data-g="week" data-i18n="trGWeek">Weeks</button><button type="button" data-g="month" data-i18n="trGMonth">Months</button></div>
         <label data-i18n="trFromL">Start Date</label><input type="date" id="trFrom">
         <label data-i18n="trToL">End Date</label><input type="date" id="trTo">
         <button class="linklike" id="resetTrends" style="display:none" data-i18n="resetEdits">↺ Reset to Original Forecast</button>
-        <button class="btn ghost" id="exportTrends" style="margin-inline-start:auto" data-i18n="exportCsv">⬇ Download CSV</button>
+        <button class="btn navy" id="trShareBtn" style="margin-inline-start:auto" data-i18n="trShare">📤 Monthly summary</button>
+        <button class="btn ghost" id="exportTrends" data-i18n="exportCsv">⬇ Download CSV</button>
+      </div>
+      <!-- shareable monthly snapshot (opened in the shared modal): image + text, one click each -->
+      <div id="shPanel" class="mpanel" data-tkey="shTitle" hidden>
+        <!-- every option re-draws the preview instantly; choices are remembered for next time -->
+        <div class="shOpts">
+          <label class="mini"><span data-i18n="shBack">Months back</span> <input type="number" id="shBack" min="1" max="12"></label>
+          <label class="mini"><span data-i18n="shAhead">Months ahead</span> <input type="number" id="shAhead" min="0" max="6"></label>
+          <label class="chk mini"><input type="checkbox" class="sw" id="shIns"> <span data-i18n="shInsL">Insights</span></label>
+          <div id="shMetrics" class="skChips" style="margin:0"></div>
+          <input type="text" id="shNote" maxlength="140" data-i18n-ph="shNotePh" placeholder="Add a line for the reader (optional)">
+        </div>
+        <img id="shImg" alt="" style="width:100%;border:1px solid var(--border);border-radius:8px;display:block">
+        <div class="toolbar" style="margin:10px 0 0">
+          <button class="btn navy" id="shCopyImg" type="button" data-i18n="shCopyImg">📋 Copy image</button>
+          <button class="btn ghost" id="shPng" type="button" data-i18n="shPng">⬇ PNG</button>
+          <button class="btn ghost" id="shCopyTxt" type="button" data-i18n="shCopyTxt">📋 Copy as text</button>
+        </div>
       </div>
       <!-- one quiet line of guidance: how to adjust a forecast day, and where known events belong -->
       <p class="mini" id="trHint" style="display:none"></p>
+      <!-- after opening a period: "↩ Months › August 2026" — one click back to the same view, same row -->
+      <div class="trCrumb" id="trCrumb" hidden></div>
       <div class="tablewrap" id="trendsWrap"><table id="trendsTable"></table></div>
     </div>
   </section>
@@ -1439,6 +1476,20 @@ en:{
   evRowCalls:"+{n} calls · {d} working days", evPeak:"first day +{p}% vs normal", evPast:"happened — kept out of learning",
   evDel:"Remove event", evAdded:"Planned event added: {n}", evPillTip:"+{n} extra calls planned this day",
   exclEvNote:"planned event — held out of learning", trHintLink:"📣 Plan a known event",
+  trHelpTip:"How to adjust the forecast", trGDay:"Days", trGWeek:"Weeks", trGMonth:"Months",
+  thPeriod:"Period", thDaysMet:"Days on target", tipDaysMet:"Working days whose {m} reached your {t}% target, out of the days in the period.",
+  grpTag_act:"actual", grpTag_fc:"forecast", grpTag_mix:"actual + forecast", trDrill:"Click to see this period's days",
+  wkLbl:"Week {w} · {a}–{b}", trShare:"📤 Share summary", trBackTip:"Back to the grouped view (Backspace)",
+  shBack:"Months back", shAhead:"Months ahead", shInsL:"Insights", shNotePh:"Add a line for the reader (optional)", shColGross:"Hours to schedule", shColAht:"AHT",
+  shTitle:"📤 Monthly summary", shIntro:"How we did and where we're heading — ready to send. Pick the window and the columns; your choices are remembered. Courses joining in the forecast months are already included.",
+  shCopyImg:"📋 Copy image", shPng:"⬇ PNG", shCopyTxt:"📋 Copy as text", shCopied:"Image copied — paste it in WhatsApp / email", shCopiedTxt:"Summary text copied",
+  shCopyFail:"This browser blocked the clipboard — use ⬇ PNG instead",
+  shHead:"Call center — monthly summary", shSub:"{m} target {t}% · {a} – {b}", shFoot:"WFM Simulator · {d}",
+  shColMonth:"Month", shColStatus:"Data", shColOcc:"Occupancy", shColProd:"Productivity", shColVol:"Calls",
+  shLine:"{m} ({s}): {P} {v} · {a}/{n} days on target · occupancy {o} · productivity {p}",
+  insMoM:"{P} in {m}: {v} ({d} pts vs {p}).", insOne:"{P} in {m}: {v}.", insBest:"Strongest month: {m} — {a}/{n} days on target.",
+  insRisk:"Forecast: {m} at {v} — below the {t}% target.", insOk:"Forecast: on target in the next {n} month(s).",
+  insCourse:"Course \"{c}\" joins on {d} (+{n} reps) — already in the forecast.",
   trHint:"Forecast rows: click the calls number to adjust a single day. Know of an upcoming surge (campaign, vendor change)?",
   tipEv:"Use this for demand you can SIZE but history can't know. Enter the total extra calls you expect and how many working days it lasts. Front-loaded = most calls come first and fade (typical after an announcement). Saturdays and closed holidays are skipped; Friday counts half.",
   cleanNote:"🧹 {k} outlier points auto-clipped (billing peaks kept)",
@@ -1907,6 +1958,20 @@ he:{
   evRowCalls:"+{n} שיחות · {d} ימי עבודה", evPeak:"יום ראשון +{p}% מהרגיל", evPast:"התרחש — מוחרג מהלמידה",
   evDel:"הסרת האירוע", evAdded:"נוסף אירוע מתוכנן: {n}", evPillTip:"+{n} שיחות נוספות מתוכננות ביום הזה",
   exclEvNote:"אירוע מתוכנן — מוחרג מהלמידה", trHintLink:"📣 תכנון אירוע ידוע",
+  trHelpTip:"איך מתקנים את התחזית", trGDay:"ימים", trGWeek:"שבועות", trGMonth:"חודשים",
+  thPeriod:"תקופה", thDaysMet:"ימים ביעד", tipDaysMet:"ימי עבודה שבהם {m} הגיע ליעד {t}%, מתוך ימי התקופה.",
+  grpTag_act:"בפועל", grpTag_fc:"תחזית", grpTag_mix:"בפועל + תחזית", trDrill:"לחיצה מציגה את ימי התקופה",
+  wkLbl:"שבוע {w} · {a}–{b}", trShare:"📤 שיתוף סיכום", trBackTip:"חזרה לתצוגה המקובצת (Backspace)",
+  shBack:"חודשים אחורה", shAhead:"חודשים קדימה", shInsL:"תובנות", shNotePh:"שורה אישית לקורא (לא חובה)", shColGross:"שעות לשיבוץ", shColAht:"משך שיחה",
+  shTitle:"📤 סיכום חודשי", shIntro:"איך עמדנו ולאן אנחנו הולכים — מוכן לשליחה. בחרו טווח ועמודות; הבחירה נשמרת. קורסים שמצטרפים בחודשי התחזית כבר כלולים.",
+  shCopyImg:"📋 העתקת תמונה", shPng:"⬇ PNG", shCopyTxt:"📋 העתקה כטקסט", shCopied:"התמונה הועתקה — הדביקו בוואטסאפ / במייל", shCopiedTxt:"טקסט הסיכום הועתק",
+  shCopyFail:"הדפדפן חסם את ההעתקה — השתמשו ב־⬇ PNG",
+  shHead:"מוקד — סיכום חודשי", shSub:"יעד {m} {t}% · {a} – {b}", shFoot:"סימולטור WFM · {d}",
+  shColMonth:"חודש", shColStatus:"נתונים", shColOcc:"תעסוקה", shColProd:"פריון", shColVol:"שיחות",
+  shLine:"{m} ({s}): {P} {v} · {a}/{n} ימים ביעד · תעסוקה {o} · פריון {p}",
+  insMoM:"{P} ב{m}: {v} ({d} נק׳ מול {p}).", insOne:"{P} ב{m}: {v}.", insBest:"החודש החזק: {m} — {a}/{n} ימים ביעד.",
+  insRisk:"צפי: {m} ב־{v} — מתחת ליעד {t}%.", insOk:"צפי: עמידה ביעד ב־{n} החודשים הקרובים.",
+  insCourse:"קורס \"{c}\" מצטרף ב־{d} (+{n} נציגים) — כבר כלול בצפי.",
   trHint:"בשורות התחזית: לחיצה על מספר השיחות מתקנת יום בודד. יודעים על גל צפוי (קמפיין, החלפת ספק)?",
   tipEv:"לביקוש שאפשר להעריך בגודלו אך ההיסטוריה לא מכירה. הזינו את סה״כ השיחות הנוספות הצפויות ולכמה ימי עבודה זה נמשך. מרוכז בהתחלה = רוב השיחות מגיעות ראשונות ודועכות (אופייני אחרי הודעה ללקוחות). שבתות וחגים סגורים מדולגים; שישי נספר כחצי.",
   cleanNote:"🧹 {k} נקודות חריגות נוקו אוטומטית (שיאי ימי חיוב נשמרו)",
@@ -2443,10 +2508,10 @@ function loadSample(){
 /* ---------------- Ingestion ---------------- */
 function wireDropzone(zoneId,inputId,handler){
   const z=document.getElementById(zoneId), inp=document.getElementById(inputId);
-  ["dragenter","dragover"].forEach(ev=>z.addEventListener(ev,e=>{e.preventDefault();z.classList.add("hover");}));
+  ["dragenter","dragover"].forEach(ev=>z.addEventListener(ev,e=>{e.preventDefault(); if(!state._dragInternal) z.classList.add("hover");}));
   ["dragleave","drop"].forEach(ev=>z.addEventListener(ev,e=>{e.preventDefault();z.classList.remove("hover");}));
   // EVERY dropped file ingests — a forecast + sidur multi-selected together must not lose one
-  z.addEventListener("drop",e=>{ [...e.dataTransfer.files].forEach(handler); });
+  z.addEventListener("drop",e=>{ if(state._dragInternal) return; [...e.dataTransfer.files].forEach(handler); });
   z.addEventListener("click",e=>{ if(!e.target.closest(".linklike")) inp.click(); });
   // keyboard access: the zone acts as a button (Enter/Space opens the picker)
   z.tabIndex=0; z.setAttribute("role","button");
@@ -5438,12 +5503,11 @@ function afterForecastLoad(){
   state._hasMpt=false;
   outer: for(const dm of state.days.values())
     for(const r of dm.values()) if(r.mpt>0){ state._hasMpt=true; break outer; }
-  /* item 1: trends default range now extends into the forecast period */
-  state.trendFrom=state.minDate;
-  state.trendTo=addDays(state.maxDate,28)<=state.horizonISO?addDays(state.maxDate,28):state.horizonISO;
+  // trends open on a window around TODAY (or the end of the data when it's older) — never
+  // on the very first day of history
   const tf=document.getElementById("trFrom"), tt=document.getElementById("trTo");
   tf.min=tt.min=state.minDate; tf.max=tt.max=state.horizonISO;
-  tf.value=state.trendFrom; tt.value=state.trendTo;
+  applyTrendRange(state.settings.trendGroup||"day");
   updatePortalStatus();
   refreshDynamicLabels();
   buildWeekSelect(false);
@@ -6744,6 +6808,65 @@ function resetTrendEdits(){
 }
 
 /* item 1: trends spans history AND forward projections; item 5: dynamic custom columns */
+/* each time grain opens on its own window, anchored on today — or on the last actual day
+   when the data is older than today. Days: 3 weeks back / 3 ahead · weeks: 12 back / 8
+   ahead · months: 6 full months back / 3 ahead. Clamped to the data + forecast horizon. */
+function trendAnchor(){
+  const today=iso(new Date());
+  return today<state.minDate?state.minDate:(today>state.horizonISO?state.maxDate:today);
+}
+function trendDefaultRange(G){
+  if(!state.minDate) return [null,null];
+  const a=trendAnchor(), d=fromISO(a); let from,to;
+  if(G==="month"){ from=iso(new Date(d.getFullYear(),d.getMonth()-6,1)); to=iso(new Date(d.getFullYear(),d.getMonth()+4,0)); }
+  else if(G==="week"){ from=sundayOf(addDays(a,-84)); to=addDays(sundayOf(addDays(a,56)),5); }
+  else{ from=sundayOf(addDays(a,-21)); to=addDays(sundayOf(addDays(a,21)),5); }
+  return [from<state.minDate?state.minDate:from,to>state.horizonISO?state.horizonISO:to];
+}
+function applyTrendRange(G){
+  const [f2,t2]=trendDefaultRange(G); state.trendFrom=f2; state.trendTo=t2;
+  const tf=document.getElementById("trFrom"), tt=document.getElementById("trTo");
+  if(tf) tf.value=f2||""; if(tt) tt.value=t2||"";
+  document.querySelectorAll("#trGroup button").forEach(b=>b.classList.toggle("active",b.dataset.g===G));
+}
+/* week / month periods from day stats: calls-weighted rates, true occupancy & productivity
+   ratios (Σnumerators ÷ Σdenominators), and how many working days hit the target */
+function groupTrendRows(rows,G){
+  const by=new Map(), S=state.settings;
+  for(const r of rows){ if(r.zero) continue;
+    const k=G==="month"?r.ds.slice(0,7):sundayOf(r.ds);
+    let g=by.get(k);
+    if(!g){ g={k,from:r.ds,to:r.ds,n:0,met:0,fc:0,vol:0,arW:0,ahtW:0,tsfW:0,t30W:0,t60W:0,pN:0,pD:0,oN:0,oD:0,gross:0}; by.set(k,g); }
+    g.to=r.ds; g.n++; if(r.met) g.met++; if(r.forecast) g.fc++;
+    g.vol+=r.vol; g.arW+=r.ar*r.vol; g.ahtW+=r.aht*r.vol; g.tsfW+=r.tsf*r.vol; g.t30W+=r.tsf30*r.vol; g.t60W+=r.tsf60*r.vol;
+    g.pN+=r.prodN; g.pD+=r.prodD; g.oN+=r.occN; g.oD+=r.occD; g.gross+=r.grossH;
+  }
+  const loc=lang==="he"?"he-IL":"en-GB";
+  return [...by.values()].map(g=>{ const v=g.vol||1, o={...g,ar:g.arW/v,aht:g.ahtW/v,tsf:g.tsfW/v,tsf30:g.t30W/v,tsf60:g.t60W/v,
+      prod:g.pD>0?g.pN/g.pD:0,occ:g.oD>0?Math.min(1,g.oN/g.oD):0};
+    o.metAgg=(S.primaryMetric==="ar"?o.ar:o.tsf)>=S.target/100;
+    o.label=G==="month"?new Date(+g.k.slice(0,4),+g.k.slice(5,7)-1,1).toLocaleDateString(loc,{month:"long",year:"numeric"})
+      :t("wkLbl",{w:isoWeek(g.k),a:fmtD(g.k).slice(0,5),b:fmtD(addDays(g.k,5)).slice(0,5)});
+    o.tag=g.fc===0?"act":(g.fc===g.n?"fc":"mix");
+    return o; });
+}
+/* back from a drilled period: the same grain, the same window, the row it came from flashes */
+function trendBack(){
+  const c=state._trCrumb; if(!c) return; state._trCrumb=null;
+  state.settings.trendGroup=c.G; saveState();
+  state.trendFrom=c.from; state.trendTo=c.to;
+  document.getElementById("trFrom").value=c.from; document.getElementById("trTo").value=c.to;
+  document.querySelectorAll("#trGroup button").forEach(b=>b.classList.toggle("active",b.dataset.g===c.G));
+  renderTrends();
+  const row=document.querySelector(`#trendsTable tr.grp[data-k="${c.k}"]`);
+  if(row){ row.classList.add("flash"); row.scrollIntoView({block:"center"}); }
+}
+// Backspace / Alt+← on the trends page also goes back (the reflex browsers taught everyone)
+document.addEventListener("keydown",e=>{
+  if(!state._trCrumb||!document.getElementById("page-trends").classList.contains("active")) return;
+  if(/INPUT|TEXTAREA|SELECT/.test((e.target.tagName||""))) return;
+  if(e.key==="Backspace"||(e.altKey&&e.key==="ArrowLeft")){ e.preventDefault(); trendBack(); }
+});
 function trendDates(){
   const out=[];
   if(!state.minDate) return out;
@@ -6757,6 +6880,90 @@ function trendDates(){
   }
   return out;
 }
+/* ONE day of Date Trends: every number a row shows, plus the raw sums a period needs to
+   aggregate correctly (calls-weighted rates, occupancy/productivity numerators and
+   denominators). Shared by the day table, the week/month grouping and the share summary. */
+function trendDayStat(ds){
+  const S=state.settings, effShareG=Math.max(0.05,availShare(S)*(state.calib||1));
+  /* DATA INTEGRITY: historical days aggregate EVERY interval in the file —
+     never clipped to the planning grid window or the Friday close */
+  const sd=sourceDay(ds); if(!sd) return null;
+  if(state.exceptions.has(ds)) return null;
+  const dayIdx=fromISO(ds).getDay();
+  const fc=sd.forecast;
+  const holLvl=state.holidayDates.get(ds)||null; // 🕎 from the holidays table (settings)
+  let grossH=0,vol=0,arW=0,tsfW=0,tsf30W=0,tsf60W=0,ahtW=0,work=0,cap=0,schedHrs=0,loginHrs=0,answered=0,handledWork=0,occFileW=0,occFileVol=0;
+  // the same sums, restricted to intervals that HAVE login hours — productivity/occupancy pair
+  // calls with the hours of the same intervals (an interval with calls but no login must not
+  // inflate the numerator; with login on every interval these equal the full-day sums)
+  let ansL=0,workL=0,volL=0,workVL=0;
+  for(const [tm,rec] of sd.src){
+    if(state.exceptions.has(ds+"|"+tm)) continue;
+    const sched=capacityFor(ds,dayIdx,tm,rec)+injectionAgents(dayIdx,tm);
+    // same effective-agent basis as the matrix (availability × κ) — the two views must agree
+    const agents=Math.max(0,Math.round(sched*availShare(S)*(state.calib||1)));
+    let perf=evalInterval(rec.volume,rec.aht,agents,S,rec.mpt);
+    if(!fc){ // measured history beats the model (same rule as the matrix)
+      const meas={};
+      if(rec.answered>0) meas.ar=Math.min(1,rec.answered/rec.volume);
+      if(rec.ans30>0){ meas.tsf30=Math.min(1,rec.ans30/rec.volume);
+        if(S.tsfT===30) meas.tsf=meas.tsf30; }
+      if(meas.ar!=null||meas.tsf30!=null) perf={...perf,...meas};
+    }else{
+      const b=state.slotBias&&state.slotBias[dayIdx+"|"+tm];
+      if(b){ const c01=v=>Math.min(1,Math.max(0,v));
+        perf={...perf,ar:c01(perf.ar+b.ar),tsf30:c01(perf.tsf30+b.t30)};
+        if(S.tsfT===30) perf.tsf=c01(perf.tsf+b.t30); }
+    }
+    vol+=rec.volume; arW+=perf.ar*rec.volume; tsfW+=perf.tsf*rec.volume;
+    tsf30W+=perf.tsf30*rec.volume; tsf60W+=perf.tsf60*rec.volume;
+    ahtW+=rec.aht*rec.volume;
+    work+=rec.volume*rec.aht; cap+=agents*1800; schedHrs+=sched*0.5;
+    // GROSS hours to schedule = the matrix's "needed" (target-sized, ÷ shrinkage & absence) × ½h
+    grossH+=Math.round(requiredAgentsMemo(rec.volume,rec.aht,S.target,S,rec.mpt)/effShareG)*0.5;
+    if(rec.login>0){ loginHrs+=rec.login; volL+=rec.volume; workVL+=rec.volume*rec.aht; }
+    if(rec.answered){
+      // forecast rows carry the RECENT answer rate forward — anchored to measured
+      // reality so פריון/תעסוקה stay CONTINUOUS across the forecast boundary. The only
+      // cap is PHYSICS: an interval cannot serve more work than ~92% of its logged-in
+      // time (abandons occupy nobody). Normal days are untouched; only genuinely
+      // overloaded billing/peak forecasts get trimmed. (An earlier modeled-AR cap
+      // imported the queue model's pessimism into these columns — reverted.)
+      let served=rec.answered;
+      if(fc&&rec.login>0) served=Math.min(served,(rec.login*3600*0.92)/Math.max(1,rec.aht));
+      answered+=served; handledWork+=served*rec.aht;
+      if(rec.login>0){ ansL+=served; workL+=served*rec.aht; }
+    }
+    // the file's own measured occupancy (אחוז תעסוקה) is ground truth on history
+    if(!fc&&rec.occup>0){ occFileW+=rec.occup*rec.volume; occFileVol+=rec.volume; }
+  }
+  if(!vol){
+    // show a zero-volume day when it's a user-edited forecast OR a holiday (so a
+    // CLOSED holiday reads explicitly as 0 demand + a 🕎 badge, not a silent gap)
+    return (fc&&state.simDays.has(ds))||holLvl?{ds,dayIdx,forecast:fc,zero:true,holLvl}:null;
+  }
+  // actual answer rate from the file (שיחות נענות ÷ נכנסות) beats the model on history
+  const ar=answered>0?Math.min(1,answered/vol):arW/vol;
+  const tsf=tsfW/vol,tsf30=tsf30W/vol,tsf60=tsf60W/vol;
+  const aht=ahtW/vol;
+  // when the file carries actual floor data (net login hours + answered calls),
+  // productivity & occupancy are computed from it instead of the scheduling model:
+  //   productivity = answered calls ÷ net login hours
+  //   occupancy    = handled workload (answered × AHT) ÷ (net login hours × 3600)
+  const netHrs=loginHrs>0?loginHrs:schedHrs*availShare(S);
+  const prodN=loginHrs>0?(answered>0?ansL:volL):(answered>0?answered:vol);
+  const netProd=netHrs>0?prodN/netHrs:0;
+  let occWork=loginHrs>0?(answered>0?workL:workVL):(answered>0?handledWork:work);
+  const occDen=loginHrs>0?loginHrs*3600:cap;
+  let occ=occDen?Math.min(1,occWork/occDen):0;
+  // DATA INTEGRITY: when the file reports its own occupancy, display THAT on
+  // historical days — never a recomputation that can drift from the floor's metric
+  if(occFileVol>0){ const fo=occFileW/occFileVol; // defensive: pre-fix cached data may hold fractions
+    occ=Math.min(1,fo>1?fo/100:fo); occWork=occ*occDen; }
+  const met=(S.primaryMetric==="ar"?ar:tsf)>=S.target/100;   // attainment on the Primary Target Metric
+  return {ds,dayIdx,forecast:fc,vol,aht,ar,tsf,netProd,occ,tsf30,tsf60,met,holLvl,grossH,
+    prodN,prodD:netHrs,occN:occWork,occD:occDen};
+}
 function renderTrends(){
   const tbl=document.getElementById("trendsTable"); tbl.innerHTML="";
   if(ensureEmptyState("trends")) return;
@@ -6766,8 +6973,9 @@ function renderTrends(){
   const thTip=(label,tip)=>{ const e=document.createElement("th");
     e.innerHTML=tip?`${label} <span class="info" data-tip="${tip.replace(/"/g,"&quot;")}" tabindex="0">i</span>`:label;
     return e; };
-  hr.appendChild(thTip(t("thDate"),null));
-  hr.appendChild(thTip(t("fldDay"),null));
+  const G=state.settings.trendGroup||"day";
+  hr.appendChild(thTip(t(G==="day"?"thDate":"thPeriod"),null));
+  hr.appendChild(thTip(t(G==="day"?"fldDay":"thDaysMet"),G==="day"?null:t("tipDaysMet",{m:primName(),t:S.target})));
   hr.appendChild(thTip(t("thVol"),t("fTipVol")));
   hr.appendChild(thTip(t("thAr"),t("fTipAr")));
   hr.appendChild(thTip(t("thAht"),t("fTipAht")));
@@ -6780,91 +6988,18 @@ function renderTrends(){
   thead.appendChild(hr); tbl.appendChild(thead);
   const tbody=document.createElement("tbody");
   const dayNames=t("days");
-  const T={vol:0,arW:0,ahtW:0,tsfW:0,tsf30W:0,tsf60W:0,prodNum:0,prodDen:0,occNum:0,occDen:0,grossH:0};
-  const effShareG=Math.max(0.05,availShare(S)*(state.calib||1)); // same bodies conversion as the matrix
+  const T={vol:0,arW:0,ahtW:0,tsfW:0,tsf30W:0,tsf60W:0,prodNum:0,prodDen:0,occNum:0,occDen:0,grossH:0,days:0,met:0};
   /* PASS 1 — math only (Erlang results are memoized): per-day stats + range totals.
      DOM is built afterwards IN CHUNKS, because materializing thousands of rows at
      once (multi-year files) is what made the browser tab devour memory. */
   const rowsData=[];
   for(const ds of trendDates()){
-    /* DATA INTEGRITY: historical days aggregate EVERY interval in the file —
-       never clipped to the planning grid window or the Friday close */
-    const sd=sourceDay(ds); if(!sd) continue;
-    if(state.exceptions.has(ds)) continue;
-    const dayIdx=fromISO(ds).getDay();
-    const fc=sd.forecast;
-    const holLvl=state.holidayDates.get(ds)||null; // 🕎 from the holidays table (settings)
-    let grossH=0,vol=0,arW=0,tsfW=0,tsf30W=0,tsf60W=0,ahtW=0,work=0,cap=0,schedHrs=0,loginHrs=0,answered=0,handledWork=0,occFileW=0,occFileVol=0;
-    for(const [tm,rec] of sd.src){
-      if(state.exceptions.has(ds+"|"+tm)) continue;
-      const sched=capacityFor(ds,dayIdx,tm,rec)+injectionAgents(dayIdx,tm);
-      // same effective-agent basis as the matrix (availability × κ) — the two views must agree
-      const agents=Math.max(0,Math.round(sched*availShare(S)*(state.calib||1)));
-      let perf=evalInterval(rec.volume,rec.aht,agents,S,rec.mpt);
-      if(!fc){ // measured history beats the model (same rule as the matrix)
-        const meas={};
-        if(rec.answered>0) meas.ar=Math.min(1,rec.answered/rec.volume);
-        if(rec.ans30>0){ meas.tsf30=Math.min(1,rec.ans30/rec.volume);
-          if(S.tsfT===30) meas.tsf=meas.tsf30; }
-        if(meas.ar!=null||meas.tsf30!=null) perf={...perf,...meas};
-      }else{
-        const b=state.slotBias&&state.slotBias[dayIdx+"|"+tm];
-        if(b){ const c01=v=>Math.min(1,Math.max(0,v));
-          perf={...perf,ar:c01(perf.ar+b.ar),tsf30:c01(perf.tsf30+b.t30)};
-          if(S.tsfT===30) perf.tsf=c01(perf.tsf+b.t30); }
-      }
-      vol+=rec.volume; arW+=perf.ar*rec.volume; tsfW+=perf.tsf*rec.volume;
-      tsf30W+=perf.tsf30*rec.volume; tsf60W+=perf.tsf60*rec.volume;
-      ahtW+=rec.aht*rec.volume;
-      work+=rec.volume*rec.aht; cap+=agents*1800; schedHrs+=sched*0.5;
-      // GROSS hours to schedule = the matrix's "needed" (target-sized, ÷ shrinkage & absence) × ½h
-      grossH+=Math.round(requiredAgentsMemo(rec.volume,rec.aht,S.target,S,rec.mpt)/effShareG)*0.5;
-      if(rec.login) loginHrs+=rec.login;
-      if(rec.answered){
-        // forecast rows carry the RECENT answer rate forward — anchored to measured
-        // reality so פריון/תעסוקה stay CONTINUOUS across the forecast boundary. The only
-        // cap is PHYSICS: an interval cannot serve more work than ~92% of its logged-in
-        // time (abandons occupy nobody). Normal days are untouched; only genuinely
-        // overloaded billing/peak forecasts get trimmed. (An earlier modeled-AR cap
-        // imported the queue model's pessimism into these columns — reverted.)
-        let served=rec.answered;
-        if(fc&&rec.login>0) served=Math.min(served,(rec.login*3600*0.92)/Math.max(1,rec.aht));
-        answered+=served; handledWork+=served*rec.aht;
-      }
-      // the file's own measured occupancy (אחוז תעסוקה) is ground truth on history
-      if(!fc&&rec.occup>0){ occFileW+=rec.occup*rec.volume; occFileVol+=rec.volume; }
-    }
-    if(!vol){
-      // show a zero-volume day when it's a user-edited forecast OR a holiday (so a
-      // CLOSED holiday reads explicitly as 0 demand + a 🕎 badge, not a silent gap)
-      if((fc&&state.simDays.has(ds))||holLvl) rowsData.push({ds,dayIdx,forecast:fc,zero:true,holLvl});
-      continue;
-    }
-    // actual answer rate from the file (שיחות נענות ÷ נכנסות) beats the model on history
-    const ar=answered>0?Math.min(1,answered/vol):arW/vol;
-    const tsf=tsfW/vol,tsf30=tsf30W/vol,tsf60=tsf60W/vol;
-    const aht=ahtW/vol;
-    // סיכום accumulators — same numbers the row shows, so totals always reconcile
-    T.vol+=vol; T.arW+=ar*vol; T.ahtW+=aht*vol;
-    T.tsf30W+=tsf30*vol; T.tsf60W+=tsf60*vol; T.tsfW+=tsf*vol;
-    // when the file carries actual floor data (net login hours + answered calls),
-    // productivity & occupancy are computed from it instead of the scheduling model:
-    //   productivity = answered calls ÷ net login hours
-    //   occupancy    = handled workload (answered × AHT) ÷ (net login hours × 3600)
-    const netHrs=loginHrs>0?loginHrs:schedHrs*availShare(S);
-    const netProd=netHrs>0?(answered>0?answered:vol)/netHrs:0;
-    let occWork=answered>0?handledWork:work;
-    const occDen=loginHrs>0?loginHrs*3600:cap;
-    let occ=occDen?Math.min(1,occWork/occDen):0;
-    // DATA INTEGRITY: when the file reports its own occupancy, display THAT on
-    // historical days — never a recomputation that can drift from the floor's metric
-    if(occFileVol>0){ const fo=occFileW/occFileVol; // defensive: pre-fix cached data may hold fractions
-      occ=Math.min(1,fo>1?fo/100:fo); occWork=occ*occDen; }
-    T.prodNum+=(answered>0?answered:vol); T.prodDen+=netHrs;
-    T.occNum+=occWork; T.occDen+=occDen;
-    const met=(S.primaryMetric==="ar"?ar:tsf)>=S.target/100;   // attainment on the Primary Target Metric
-    T.grossH+=grossH;
-    rowsData.push({ds,dayIdx,forecast:fc,vol,aht,ar,netProd,occ,tsf30,tsf60,met,holLvl,grossH});
+    const r=trendDayStat(ds); if(!r) continue; rowsData.push(r); if(r.zero) continue;
+    // סיכום accumulators — same numbers the rows show, so totals always reconcile
+    T.vol+=r.vol; T.arW+=r.ar*r.vol; T.ahtW+=r.aht*r.vol; T.tsfW+=r.tsf*r.vol;
+    T.tsf30W+=r.tsf30*r.vol; T.tsf60W+=r.tsf60*r.vol;
+    T.prodNum+=r.prodN; T.prodDen+=r.prodD; T.occNum+=r.occN; T.occDen+=r.occD; T.grossH+=r.grossH;
+    T.days++; if(r.met) T.met++;
   }
   { const inf=workTh.querySelector(".info"); if(inf) inf.dataset.tip=t("fTipWork",{m:primName(),t:S.target,
       n:T.grossH>0?Math.round(T.ahtW/3600/T.grossH*100):"—"}); }
@@ -6949,7 +7084,7 @@ function renderTrends(){
   if(T.vol>0){
     const sr=document.createElement("tr"); sr.className="sumrow";
     const sth=document.createElement("th"); sth.textContent=t("sumRow"); sr.appendChild(sth);
-    sr.appendChild(document.createElement("td"));
+    { const dm=document.createElement("td"); dm.innerHTML=`<span class="v">${T.met}/${T.days}</span>`; dm.title=t("tipDaysMet",{m:primName(),t:S.target}); sr.appendChild(dm); }
     const sc=v=>{ const td=document.createElement("td"); td.innerHTML=`<span class="v">${v}</span>`; return td; };
     sr.appendChild(sc(Math.round(T.vol).toLocaleString()));
     sr.appendChild(sc(pct(T.arW/T.vol)));
@@ -6964,6 +7099,42 @@ function renderTrends(){
     st.textContent=metT?t("slaMet"):t("slaMissed"); sr.appendChild(st);
     tbody.appendChild(sr);
   }
+  // week / month rows — click one to open its days
+  const buildGroupRow=g=>{
+    const tr=document.createElement("tr"); tr.className="grp"+(g.tag==="fc"?" fcast":""); tr.title=t("trDrill");
+    const th0=document.createElement("th");
+    th0.innerHTML=`<span>${g.label}</span><span class="grpTag ${g.tag}">${t("grpTag_"+g.tag)}</span>`; tr.appendChild(th0);
+    const rt=g.n?g.met/g.n:0, dm=document.createElement("td");
+    dm.className=rt>=0.8?"tier-good":rt>=0.5?"tier-near":"tier-bad"; dm.innerHTML=`<span class="v">${g.met}/${g.n}</span>`; tr.appendChild(dm);
+    tr.appendChild(plain(Math.round(g.vol).toLocaleString()));
+    tr.appendChild(tinted(g.ar,tier(g.ar)));
+    tr.appendChild(plain(fmtSec(g.aht)));
+    tr.appendChild(plain(Math.round(g.gross).toLocaleString()));
+    tr.appendChild(plain(g.prod.toFixed(1)));
+    tr.appendChild(tinted(g.occ,g.occ>=.65&&g.occ<=.92?"tier-good":"tier-warn"));
+    tr.appendChild(tinted(g.tsf30,tier(g.tsf30)));
+    tr.appendChild(tinted(g.tsf60,tier(g.tsf60)));
+    const ts=document.createElement("td"); ts.className=g.metAgg?"tier-good":"tier-bad";
+    ts.textContent=g.metAgg?t("slaMet"):t("slaMissed"); tr.appendChild(ts);
+    tr.dataset.k=g.k;
+    tr.addEventListener("click",()=>{ // drill: the period's own days; the breadcrumb leads back
+      state._trCrumb={G,from:state.trendFrom,to:state.trendTo,k:g.k,label:g.label};
+      state.settings.trendGroup="day"; saveState();
+      state.trendFrom=g.from; state.trendTo=g.to;
+      document.getElementById("trFrom").value=g.from; document.getElementById("trTo").value=g.to;
+      document.querySelectorAll("#trGroup button").forEach(b=>b.classList.toggle("active",b.dataset.g==="day"));
+      renderTrends(); window.scrollTo(0,0); });
+    return tr;
+  };
+  const list=G==="day"?rowsData:groupTrendRows(rowsData,G), builder=G==="day"?buildRow:buildGroupRow;
+  { const cb=document.getElementById("trCrumb"), c=state._trCrumb;
+    if(cb){ cb.hidden=!(c&&G==="day"); cb.innerHTML="";
+      if(c&&G==="day"){ const back=document.createElement("button"); back.className="linklike";
+        back.textContent="↩ "+t(c.G==="month"?"trGMonth":"trGWeek"); back.title=t("trBackTip");
+        back.addEventListener("click",trendBack);
+        const sep=document.createElement("span"); sep.textContent="›";
+        const cur=document.createElement("b"); cur.textContent=c.label; cur.style.color="var(--ink)";
+        cb.append(back,sep,cur); } } }
   /* chunked materialization: 150 rows at a time keeps the DOM small on
      multi-year ranges; totals above already cover the entire range */
   const CHUNK=150;
@@ -6973,12 +7144,12 @@ function renderTrends(){
   const moreBtn=document.createElement("button"); moreBtn.className="linklike";
   moreTd.appendChild(moreBtn); moreTr.appendChild(moreTd);
   const appendChunk=()=>{
-    const end=Math.min(rowsData.length,renderedRows+CHUNK);
+    const end=Math.min(list.length,renderedRows+CHUNK);
     const frag=document.createDocumentFragment();
-    for(;renderedRows<end;renderedRows++) frag.appendChild(buildRow(rowsData[renderedRows]));
+    for(;renderedRows<end;renderedRows++) frag.appendChild(builder(list[renderedRows]));
     if(moreTr.parentNode===tbody) tbody.insertBefore(frag,moreTr);
     else tbody.appendChild(frag);
-    const left=rowsData.length-renderedRows;
+    const left=list.length-renderedRows;
     if(left<=0){ if(moreTr.parentNode===tbody) tbody.removeChild(moreTr); }
     else{
       moreBtn.textContent=t("trShowMore",{k:Math.min(CHUNK,left),r:left});
@@ -6990,7 +7161,8 @@ function renderTrends(){
   tbl.appendChild(tbody);
   // guidance only when there's something to act on (forecast rows in range)
   { const h=document.getElementById("trHint");
-    if(h){ const anyFc=rowsData.some(r=>r.forecast); h.style.display=anyFc?"":"none";
+    if(h){ const anyFc=rowsData.some(r=>r.forecast)&&state._trHelp; h.style.display=anyFc?"":"none";
+      const hb=document.getElementById("trHelpBtn"); if(hb){ hb.style.display=rowsData.some(r=>r.forecast)?"":"none"; hb.classList.toggle("on",!!state._trHelp); }
       if(anyFc){ h.innerHTML=`💡 ${t("trHint")} `;
         const a=document.createElement("button"); a.className="linklike"; a.textContent=t("trHintLink");
         a.addEventListener("click",()=>{ showPage("settings"); openEvents(); });
@@ -8094,8 +8266,140 @@ function stepWeek(dir){
 }
 document.getElementById("wkPrev").addEventListener("click",()=>stepWeek(-1));
 document.getElementById("wkNext").addEventListener("click",()=>stepWeek(1));
-document.getElementById("trFrom").addEventListener("change",e=>{ state.trendFrom=e.target.value||null; renderTrends(); });
+document.getElementById("trFrom").addEventListener("change",e=>{ state._trCrumb=null; state.trendFrom=e.target.value||null; renderTrends(); });
 document.getElementById("trTo").addEventListener("change",e=>{ state.trendTo=e.target.value||null; renderTrends(); });
+document.querySelectorAll("#trGroup button").forEach(b=>b.addEventListener("click",()=>{
+  state._trCrumb=null; state.settings.trendGroup=b.dataset.g; saveState(); applyTrendRange(b.dataset.g); renderTrends(); }));
+document.getElementById("trHelpBtn").addEventListener("click",()=>{ state._trHelp=!state._trHelp; renderTrends(); });
+/* ---- 📤 summary to send up the chain ----
+   WHEN: month-end / the weekly management meeting / "how are we doing?" from the director /
+   backing a hiring request. The reader gets ONE picture: how we did, where we're heading.
+   Modular: the columns come from SHARE_METRICS (add one entry = new column everywhere —
+   image, text, option chips); the options (window, columns, insights, a manager's line)
+   are remembered in settings.shareOpts. */
+const SHARE_METRICS=[
+  {k:"dm",   l:()=>t("thDaysMet"),  v:g=>g.met+"/"+g.n, tone:g=>{ const r=g.n?g.met/g.n:0; return r>=0.8?"g":r>=0.5?"a":"r"; }},
+  {k:"occ",  l:()=>t("shColOcc"),   v:g=>pct(g.occ)},
+  {k:"prod", l:()=>t("shColProd"),  v:g=>g.prod.toFixed(1)},
+  {k:"vol",  l:()=>t("shColVol"),   v:g=>Math.round(g.vol).toLocaleString()},
+  {k:"gross",l:()=>t("shColGross"), v:g=>Math.round(g.gross).toLocaleString()},
+  {k:"aht",  l:()=>t("shColAht"),   v:g=>fmtSec(g.aht)},
+  {k:"tsf30",l:()=>"TSF 30",        v:g=>pct(g.tsf30)}];
+function shareOpts(){
+  const o=state.settings.shareOpts||{};
+  return {back:o.back||3,ahead:o.ahead!=null?o.ahead:2,m:Array.isArray(o.m)?o.m:["dm","occ","prod","vol"],ins:o.ins!==false,note:o.note||""};
+}
+function shareMonths(o){
+  const d=fromISO(trendAnchor());
+  let from=iso(new Date(d.getFullYear(),d.getMonth()-o.back,1)), to=iso(new Date(d.getFullYear(),d.getMonth()+o.ahead+1,0));
+  if(from<state.minDate) from=state.minDate; if(to>state.horizonISO) to=state.horizonISO;
+  const rows=[]; let cur=from;
+  while(cur<=to){ if(state.days.has(cur)||(cur>state.maxDate&&fromISO(cur).getDay()<=5)){ const r=trendDayStat(cur); if(r) rows.push(r); } cur=addDays(cur,1); }
+  return groupTrendRows(rows,"month");
+}
+function shareInsights(M){
+  const S=state.settings, tg=S.target/100, pv=g=>S.primaryMetric==="ar"?g.ar:g.tsf, P=primName(), out=[];
+  const act=M.filter(g=>g.tag==="act"), fut=M.filter(g=>g.tag!=="act");
+  if(act.length>=2){ const a=act[act.length-1], b=act[act.length-2], dd=(pv(a)-pv(b))*100;
+    out.push(t("insMoM",{m:a.label,v:pct(pv(a)),d:(dd>=0?"+":"")+dd.toFixed(1),p:b.label,P})); }
+  else if(act.length===1) out.push(t("insOne",{m:act[0].label,v:pct(pv(act[0])),P}));
+  if(act.length>1){ const best=act.slice().sort((x,y)=>y.met/y.n-x.met/x.n)[0]; out.push(t("insBest",{m:best.label,a:best.met,n:best.n})); }
+  if(fut.length){ const low=fut.find(g=>pv(g)<tg);
+    out.push(low?t("insRisk",{m:low.label,v:pct(pv(low)),t:S.target,P}):t("insOk",{n:fut.length,P})); }
+  // courses landing inside the forecast months are already IN the forecast (projected headcount)
+  if(fut.length){ const a0=fut[0].from, z=fut[fut.length-1].to;
+    (state.cohorts||[]).filter(c=>{ const fd=cohortFloorDate(c); return fd>=a0&&fd<=z; }).slice(0,2)
+      .forEach(c=>out.push(t("insCourse",{c:c.name,d:fmtD(cohortFloorDate(c)).slice(0,5),n:Math.round(cohortEffective(c))}))); }
+  return out;
+}
+function shareCanvas(M,ins,o){
+  const rtl=lang==="he", S=state.settings, tg=S.target/100, pv=g=>S.primaryMetric==="ar"?g.ar:g.tsf;
+  const W=920, pad=28, rowH=40, F='"Segoe UI",Arial,sans-serif';
+  const mets=SHARE_METRICS.filter(m=>o.m.includes(m.k));
+  const fixedW=180+100+120, mw=mets.length?Math.floor((W-2*pad-fixedW)/mets.length):0;
+  const cols=[{l:t("shColMonth"),w:180},{l:t("shColStatus"),w:100},{l:primName(),w:120},...mets.map(m=>({l:m.l(),w:mw,m}))];
+  const c0=document.createElement("canvas").getContext("2d"); c0.font="14px "+F;
+  const wrap=(txt,maxW)=>{ const words=txt.split(" "), lines=[]; let ln="";
+    for(const w2 of words){ const tr=ln?ln+" "+w2:w2; if(c0.measureText(tr).width>maxW&&ln){ lines.push(ln); ln=w2; } else ln=tr; } if(ln) lines.push(ln); return lines; };
+  const insL=o.ins?ins.flatMap(x=>wrap("• "+x,W-2*pad)):[];
+  const noteL=o.note?wrap(o.note,W-2*pad):[];
+  const top=noteL.length?92+noteL.length*20+8:92;
+  const H=top+34+M.length*rowH+(insL.length?24+insL.length*22:0)+44;
+  const c=document.createElement("canvas"), k=2; c.width=W*k; c.height=H*k;
+  const x=c.getContext("2d"); x.scale(k,k); x.direction=rtl?"rtl":"ltr";
+  x.fillStyle="#fff"; x.fillRect(0,0,W,H); x.fillStyle="#0d2a4d"; x.fillRect(0,0,W,78);
+  const edge=rtl?W-pad:pad; x.textAlign=rtl?"right":"left";
+  x.fillStyle="#fff"; x.font="bold 22px "+F; x.fillText(t("shHead"),edge,36);
+  x.font="13px "+F; x.fillStyle="#bcd9f2";
+  x.fillText(t("shSub",{m:primName(),t:S.target,a:M.length?M[0].label:"",b:M.length?M[M.length-1].label:""}),edge,60);
+  let y=92;
+  if(noteL.length){ x.font="italic 15px "+F; x.fillStyle="#0d2a4d"; noteL.forEach(l=>{ x.fillText(l,edge,y+14); y+=20; }); y+=8; }
+  let cx=rtl?W-pad:pad; cols.forEach(cl=>{ if(rtl){ cl.x=cx-cl.w; cx-=cl.w; } else { cl.x=cx; cx+=cl.w; } });
+  const t0=y; x.fillStyle="#eef3f8"; x.fillRect(pad,y,W-2*pad,34);
+  x.font="bold 13px "+F; x.fillStyle="#44546a"; x.textAlign="center";
+  cols.forEach(cl=>x.fillText(cl.l,cl.x+cl.w/2,y+22)); y+=34;
+  const TAG={act:["#e7f0fa","#2c5f8a"],fc:["#efe8fb","#6b46c1"],mix:["#fff3df","#8a5a00"]};
+  const TONE={g:["#d6f3e2","#0f6a3f"],a:["#fdf0cf","#8a5a00"],r:["#f8dcdc","#9b1c1c"]};
+  M.forEach((g,i2)=>{
+    if(i2%2){ x.fillStyle="#f8fafc"; x.fillRect(pad,y,W-2*pad,rowH); }
+    const cell=(cl,txt,bg,fg,bold)=>{ if(bg){ x.fillStyle=bg; x.beginPath(); x.roundRect(cl.x+8,y+7,cl.w-16,rowH-14,8); x.fill(); }
+      x.fillStyle=fg||"#1d2b3a"; x.font=(bold?"bold ":"")+"14px "+F; x.textAlign="center"; x.fillText(txt,cl.x+cl.w/2,y+rowH/2+5); };
+    const v=pv(g), tone=v>=tg?"g":v>=tg-0.05?"a":"r";
+    cell(cols[0],g.label,null,"#0d2a4d",true);
+    cell(cols[1],t("grpTag_"+g.tag),TAG[g.tag][0],TAG[g.tag][1]);
+    cell(cols[2],pct(v),TONE[tone][0],TONE[tone][1],true);
+    cols.slice(3).forEach(cl=>{ const tn=cl.m.tone?cl.m.tone(g):null; cell(cl,cl.m.v(g),null,tn?TONE[tn][1]:null,!!tn); });
+    y+=rowH; });
+  x.strokeStyle="#d9e2ec"; x.strokeRect(pad,t0,W-2*pad,y-t0);
+  if(insL.length){ y+=24; x.font="14px "+F; x.fillStyle="#1d2b3a"; x.textAlign=rtl?"right":"left"; insL.forEach(l=>{ x.fillText(l,edge,y); y+=22; }); }
+  x.font="11px "+F; x.fillStyle="#8a98a8"; x.textAlign=rtl?"right":"left"; x.fillText(t("shFoot",{d:fmtD(iso(new Date()))}),edge,H-14);
+  return c;
+}
+function shareText(M,ins,o){
+  const S=state.settings, pv=g=>S.primaryMetric==="ar"?g.ar:g.tsf, mets=SHARE_METRICS.filter(m=>o.m.includes(m.k));
+  return [t("shHead")+" — "+t("shSub",{m:primName(),t:S.target,a:M.length?M[0].label:"",b:M.length?M[M.length-1].label:""})]
+    .concat(o.note?[o.note]:[]).concat([""])
+    .concat(M.map(g=>g.label+" ("+t("grpTag_"+g.tag)+"): "+[primName()+" "+pct(pv(g)),...mets.map(m=>m.l()+" "+m.v(g))].join(" · ")))
+    .concat(o.ins&&ins.length?["",...ins.map(z=>"• "+z)]:[]).join("\n");
+}
+const shPanel=document.getElementById("shPanel"), $sh=id=>shPanel.querySelector("#"+id);
+function drawShare(){
+  const o=shareOpts(), M=shareMonths(o), ins=shareInsights(M), cv=shareCanvas(M,ins,o);
+  state._share={cv,txt:shareText(M,ins,o)};
+  $sh("shImg").src=cv.toDataURL("image/png");
+}
+function setShareOpt(k,v){ state.settings.shareOpts={...shareOpts(),[k]:v}; saveState(); drawShare(); }
+function openShare(){
+  if(!state.days.size){ showToast("⚠ "+t("emptyState"),false); return; }
+  const o=shareOpts();
+  $sh("shBack").value=o.back; $sh("shAhead").value=o.ahead; $sh("shIns").checked=o.ins; $sh("shNote").value=o.note;
+  $sh("shNote").placeholder=t("shNotePh");
+  const box=$sh("shMetrics"); box.innerHTML="";
+  SHARE_METRICS.forEach(m=>{ const lb=document.createElement("label"); lb.className="skChip";
+    const cb=document.createElement("input"); cb.type="checkbox"; cb.checked=o.m.includes(m.k);
+    cb.addEventListener("change",()=>setShareOpt("m",SHARE_METRICS.filter((m2,i3)=>box.querySelectorAll("input")[i3].checked).map(m2=>m2.k)));
+    lb.appendChild(cb); lb.appendChild(document.createTextNode(m.l())); box.appendChild(lb); });
+  drawShare();
+  document.getElementById("mTitle").textContent=t("shTitle");
+  document.getElementById("mCore").textContent=t("shIntro");
+  document.getElementById("mMsg").textContent="";
+  const mL=document.getElementById("mList"); mL.innerHTML="";
+  mL.parentNode.insertBefore(shPanel,mL); shPanel.hidden=false;
+  document.getElementById("mExport").style.display="none";
+  document.getElementById("modalBg").classList.add("show");
+}
+$sh("shBack").addEventListener("change",e=>setShareOpt("back",Math.max(1,Math.min(12,+e.target.value||3))));
+$sh("shAhead").addEventListener("change",e=>setShareOpt("ahead",Math.max(0,Math.min(6,+e.target.value||0))));
+$sh("shIns").addEventListener("change",e=>setShareOpt("ins",e.target.checked));
+{ let tmr; $sh("shNote").addEventListener("input",e=>{ clearTimeout(tmr); tmr=setTimeout(()=>setShareOpt("note",e.target.value.trim()),250); }); }
+document.getElementById("trShareBtn").addEventListener("click",openShare);
+$sh("shPng").addEventListener("click",()=>{ const a=document.createElement("a");
+  a.href=state._share.cv.toDataURL("image/png"); a.download="wfm_monthly_summary.png"; a.click(); });
+$sh("shCopyImg").addEventListener("click",()=>{
+  state._share.cv.toBlob(async b=>{ try{ await navigator.clipboard.write([new ClipboardItem({"image/png":b})]); showToast("📋 "+t("shCopied"),true); }
+    catch(e){ showToast("⚠ "+t("shCopyFail"),false); } }); });
+$sh("shCopyTxt").addEventListener("click",async()=>{
+  try{ await navigator.clipboard.writeText(state._share.txt); showToast("📋 "+t("shCopiedTxt"),true); }catch(e){ showToast("⚠ "+t("shCopyFail"),false); } });
 document.getElementById("exportTrends").addEventListener("click",()=>{
   const rows=[];
   document.querySelectorAll("#trendsTable tr").forEach(tr=>{
@@ -8728,9 +9032,14 @@ wireDropzone("dzForecast","fcInput",f=>ingestFile(f,"forecast"));
 wireDropzone("dzRoster","roInput",f=>ingestFile(f,"roster"));
 document.getElementById("btnSample").addEventListener("click",e=>{ e.stopPropagation(); loadSample(); });
 
-/* drop-anywhere: any file dropped on any page is auto-classified and ingested */
+/* drop-anywhere: any file dropped on any page is auto-classified and ingested.
+   Browsers attach a dragged <img> as a "file" too — so a drag that starts inside the
+   page (the share image, a link) is ignored by every file input. */
 let dragDepth=0;
+document.addEventListener("dragstart",()=>{ state._dragInternal=true; });
+document.addEventListener("dragend",()=>{ state._dragInternal=false; });
 document.addEventListener("dragenter",e=>{
+  if(state._dragInternal) return;
   if(!e.dataTransfer||![...(e.dataTransfer.types||[])].includes("Files")) return;
   dragDepth++;
   // over a portal the zone's own highlight speaks — the full-screen overlay would cover it
@@ -8744,6 +9053,7 @@ document.addEventListener("dragover",e=>e.preventDefault());
 document.addEventListener("drop",e=>{
   e.preventDefault();
   dragDepth=0;
+  if(state._dragInternal){ state._dragInternal=false; return; }
   document.getElementById("dropOverlay").classList.remove("show");
   if(e.target.closest&&e.target.closest(".dropzone")) return; // portal handlers own these
   // multi-file drops ingest EVERY file (forecast + sidur together in one gesture)
