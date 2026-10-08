@@ -4,6 +4,42 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Added
+
+- Matrix: cumulative "day so far" service (AR/TSF per the toggle) on every cell hover, and
+  before → after in the cell editor, from the day's first interval to the hovered one.
+- Settings → 🎧 Answering skills: one persisted choice shared by the matrix, recruitment and
+  scheduler 🎧 buttons (all stay in sync). Every skill ever seen is remembered; a reloaded
+  sidur keeps the choice instead of resetting to קו 1; a skill new to the workspace triggers
+  a one-time notice. Empty state: the list arrives with the first sidur (all count until then).
+
+- AHT forecasting: three new models in Settings → Forecasting Models, alongside the existing
+  ones — calls-weighted exponential smoothing, day level × intraday shape (interval factor
+  shrunk toward the day when calls are few, smoothed with neighbouring intervals), and a blend
+  of the two; plus Holt damped trend. The AHT backtest is now calls-weighted (WAPE) and ranks
+  AHT models by error. Default model unchanged (4-week average) until the backtest says otherwise.
+
+### Changed
+
+- Matrix color scale: green only at/above target, light green within 3 points of it; below
+  that, the week's under-target intervals split into four equal groups (red = worst quarter;
+  fixed bands when the week has too little spread to rank). The daily strip uses the same
+  scale. Legend reduced to three words (on target · close · below, darker = look first);
+  the exact cut-offs are on hover.
+- Weekly matrix is a one-screen page: no page scroll. The grid fills the window (rows stretch
+  on big screens; on smaller ones cells go to one line, then drop the small scheduled/needed
+  line, which stays in the hover). Holiday/Exception control moved into the matrix toolbar.
+- Cell editor opens above the cell when there is no room below and is always kept inside the
+  viewport, so Apply/Cancel stay reachable on the last rows.
+- Week chip on the matrix: shows an explicit "↩ this week" button part when it can jump; when
+  the current week is outside the data, its hover says why and how to fix it.
+- Matrix: the standing calibration sentence above the grid is gone. Problems show as a
+  toolbar chip only when actionable (hover = what's wrong, click = where to fix it).
+- Every dropdown (.splitbtn) opens and closes by click: a second click closes it, as do a
+  click outside and Esc; checkbox lists stay open while ticking.
+
+## Merged in PR #14
+
 ### Fixed
 
 - Matrix cell editor showed and edited the forecast file's staffing baseline even when
