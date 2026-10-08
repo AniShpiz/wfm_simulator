@@ -37,6 +37,21 @@ nav button:focus-visible{outline:2px solid var(--magenta);outline-offset:2px}
 main{padding:12px 16px}
 .page{display:none}
 .page.active{display:block}
+/* the weekly matrix is a ONE-SCREEN page: no page scroll. The grid fills what's left of the
+   viewport (rows stretch to it); on a short screen it scrolls INSIDE with a pinned header. */
+body.mxFit{overflow:hidden;padding-bottom:0}
+body.mxFit #page-matrix.active{display:flex;flex-direction:column;height:calc(100vh - var(--hdrH,46px) - 24px - 44px)}
+#page-matrix > .card:first-child{flex:1;min-height:0;display:flex;flex-direction:column;margin-bottom:0}
+body.mxFit #page-matrix .tablewrap{flex:1;min-height:0;overflow:auto}
+body.mxFit #matrixTable{height:100%}
+#matrixTable thead th{position:sticky;top:0;z-index:3}
+/* adaptive density (fitMatrix): dense = each cell on ONE line; denser = drop the small
+   scheduled/needed·calls line (it stays in the hover) — the % and its color never go */
+#matrixTable.dense td,#matrixTable.dense tbody th{padding:1px 4px;line-height:1.15}
+#matrixTable.dense td.cell .v,#matrixTable.dense td.cell .sub{display:inline-block}
+#matrixTable.dense td.cell .sub{margin-inline-start:5px}
+#matrixTable.denser td.cell .sub{display:none}
+#matrixTable.denser td,#matrixTable.denser tbody th{font-size:.72rem;padding:0 4px}
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;box-shadow:0 1px 3px rgba(13,42,77,.06);margin-bottom:12px}
 .card h2{font-size:.95rem;color:var(--navy);margin-bottom:9px;display:flex;align-items:center;gap:7px}
 .toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
@@ -171,7 +186,8 @@ li.insight{border-inline-start:4px solid var(--sky);background:var(--sky-soft)}
 /* week-vs-today chip: one glance tells past / current / future; clickable when not "now" */
 .wkctx{font-size:.74rem;padding:3px 10px;font-weight:600}
 .wkctx.now{background:var(--navy);color:#fff}.wkctx.past{background:#eef1f5;color:#4a5a6e}.wkctx.fut{background:#efe8fb;color:#6b46c1}
-.wkctx.jump{cursor:pointer}.wkctx.jump:hover{filter:brightness(.95)}.wkctx .sub2{font-weight:400;opacity:.85}
+.wkctx.jump{cursor:pointer}.wkctx.jump:hover{filter:brightness(.95)}
+.wkctx .jmp{margin-inline-start:6px;padding:1px 7px;border-radius:999px;background:var(--navy);color:#fff;font-weight:600}.wkctx .sub2{font-weight:400;opacity:.85}
 /* per-day source tag under each matrix day header (actual / forecast / today) */
 .dtag{display:block;font-size:.6rem;font-weight:600;letter-spacing:.2px;margin-top:1px;opacity:.9}
 .dtag.act{color:#a8e6c3}.dtag.fc{color:#d6c6ff}.dtag.today{color:#7cc8ff}
@@ -266,8 +282,9 @@ tr.r-ok td{background:var(--emerald-bg)}
 #auditBody div{padding:3px 0;border-bottom:1px solid #f0f4f8;direction:ltr;text-align:left;unicode-bidi:plaintext}
 /* export split-button with hoverable menu */
 .splitbtn{position:relative;display:inline-block}
+.splitbtn > button::after{content:" ▾";font-size:.75em;opacity:.7}
+.splitbtn.open > button::after{content:" ▴"}
 .splitbtn .menu{position:absolute;top:100%;inset-inline-end:0;background:#fff;border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(13,42,77,.18);display:none;min-width:230px;z-index:60;overflow:hidden}
-.splitbtn:hover .menu,.splitbtn:focus-within .menu{display:block}
 .splitbtn .menu button{display:block;width:100%;background:#fff;border:none;padding:9px 14px;text-align:start;font-size:.83rem;cursor:pointer;color:var(--ink)}
 .splitbtn .menu button:hover{background:var(--sky-soft)}
 .splitbtn .menu.pad{padding:12px}
@@ -292,6 +309,15 @@ tr.r-ok td{background:var(--emerald-bg)}
 @keyframes spin{to{transform:rotate(360deg)}}
 .dropzone.busy{opacity:.6;pointer-events:none}
 .dropzone.loaded .pre{display:none}
+.legend i.lgGrad{width:34px;margin-inline-start:6px;cursor:help;background:linear-gradient(to right,var(--amber-bg),#fbe1c8,var(--crimson-bg),#f3c1c1)}
+[dir=rtl] .legend i.lgGrad{background:linear-gradient(to left,var(--amber-bg),#fbe1c8,var(--crimson-bg),#f3c1c1)}
+#cellEditor .ceCum{margin-top:4px;padding-top:4px;border-top:1px dashed var(--border);font-size:.78rem;color:var(--muted)}
+.mxFlag{border:1px solid;cursor:pointer;font-weight:600}
+.mxFlag.warn{background:#fff6e0;color:#8a5a00;border-color:#f0cf7a}
+.mxFlag.opt{background:#8a5fd022;color:#8a5fd0;border-color:#8a5fd055;cursor:default}
+.skChips{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 8px}
+.skChip{display:inline-flex;align-items:center;gap:5px;font-size:.8rem;border:1px solid var(--border);border-radius:999px;padding:3px 10px;cursor:pointer;background:#fff}
+.skChip.off{opacity:.55;border-style:dashed}
 .rrDays{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin:4px 0 0;padding-inline-start:16px}
 .rrd{border-radius:6px;padding:3px 2px;text-align:center;font-size:.7rem;background:#f2f5f9;color:var(--muted)}
 .rrd b{display:block;font-size:.78rem;direction:ltr}
@@ -403,6 +429,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <button class="btn ghost wknav" id="wkNext" title="▶">›</button>
         <!-- where is this week vs TODAY (past / current / future) + where actual ends -->
         <span class="pill wkctx" id="wkCtx" style="display:none"></span>
+        <span id="mxFlags" style="display:contents"></span>
         <span class="info" id="horizonInfo" data-tip="" tabindex="0">i</span>
         <span class="pill" id="editBadge" style="display:none"></span>
         <button class="linklike" id="wiExport" style="display:none" data-i18n="wiExport">⬇ What-if changes</button>
@@ -421,7 +448,10 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
           <button data-view="original" class="active" data-i18n="mxViewOrig">Current sidur</button>
           <button data-view="optimized" data-i18n="mxViewOpt">Optimized</button>
         </div>
-        <div class="splitbtn" id="expWrap" style="margin-inline-start:auto">
+        <span style="margin-inline-start:auto;display:inline-flex;align-items:center;gap:4px">
+          <button class="btn ghost sw" id="excModeBtn" aria-pressed="false" data-i18n="excBtn">🗓 Holiday / Exception Control</button>
+          <span class="info" data-tipkey="tipExc" tabindex="0">i</span></span>
+        <div class="splitbtn" id="expWrap">
           <button class="btn ghost" id="expToggle" data-i18n="exportDemand">⬇ Export Demand Profile</button>
           <div class="menu pad">
             <div class="frow"><label data-i18n="expMetricL">Content</label>
@@ -445,10 +475,13 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
       <div class="banner good" id="decayBanner"></div>
       <div class="tablewrap"><table id="matrixTable"></table></div>
       <div class="legend">
-        <span style="display:inline-flex;align-items:center;gap:2px">
-          <i style="background:#bfe9cf"></i><i style="background:var(--emerald-bg)"></i><i style="background:#eef3c6"></i><i style="background:var(--amber-bg)"></i><i style="background:#fbe1c8"></i><i style="background:var(--crimson-bg)"></i><i style="background:#f3c1c1"></i>
-          <span data-i18n="legScale" style="margin-inline-start:4px">service level vs your target: above → critical</span>
-          <span class="info" data-tipkey="tipBreach" tabindex="0">i</span></span>
+        <!-- three words, not seven swatches: on target · close · below (darker = look first).
+             The live cut-offs live in the hover of the gradient, not on screen. -->
+        <span style="display:inline-flex;align-items:center;gap:5px">
+          <i style="background:var(--emerald-bg)"></i><span data-i18n="legOn">on target</span>
+          <i style="background:#eef3c6;margin-inline-start:6px"></i><span data-i18n="legNear">close</span>
+          <i class="lgGrad" id="mxScale"></i><span data-i18n="legBelow">below — darker = look first</span>
+          <span class="info" data-tipkey="tipScale" tabindex="0">i</span></span>
         <span><i style="background:#c22;border-radius:50%"></i><span data-i18n="legShort">understaffed — fewer scheduled than the target needs</span></span>
         <span><i style="background:transparent;border-radius:50%;box-shadow:inset 0 0 0 1.5px #c22"></i><span data-i18n="legShortSoft">fewer than the model sizes for — yet service is on target</span></span>
         <span><i style="background:#8a63d2"></i><span data-i18n="legOver">overstaffed — more than the target needs (answer rate won't be 100% — that's normal)</span></span>
@@ -457,8 +490,10 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <span data-i18n="legEdit">Click any cell to edit values.</span>
       </div>
     </div>
-    <!-- item 3: policy builder relocated to a horizontal panel beneath the matrix -->
-    <div class="card">
+    <!-- item 3: policy builder relocated to a horizontal panel beneath the matrix.
+         Hidden: its one visible control (holiday/exception paint) now sits in the matrix
+         toolbar, so the matrix page fits one screen. Optimizer UI kept for future revival. -->
+    <div class="card" style="display:none">
       <div class="polrow">
         <!-- ===== Operational Policy Optimizer (מייעל מדיניות תפעולית) — HIDDEN =====
              Hidden 2026-07-18: the value isn't clear enough — the user can't tell what
@@ -478,8 +513,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
           </fieldset>
         </div>
         <span class="grow"></span>
-        <button class="btn ghost sw" id="excModeBtn" aria-pressed="false" data-i18n="excBtn">🗓 Holiday / Exception Control</button>
-        <span class="info" data-tipkey="tipExc" tabindex="0">i</span>
+
         <!-- Schedule Optimizer hidden 2026-07-19 alongside the Policy Optimizer (its
              engine) — kept wired for future development; remove display:none to revive -->
         <button class="btn navy" id="optimizerBtn" style="display:none" data-i18n="optimizerBtn">🛠 Run Schedule Optimizer</button>
@@ -784,6 +818,8 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
           </span></div>
         <div class="frow"><label><span data-i18n="setAbsence">Absence — היעדרויות (%)</span> <span class="info" data-tipkey="tipAbsence" tabindex="0">i</span></label><input type="number" id="setAbsence" min="0" max="60" step="1"></div>
         <div class="frow"><label><span data-i18n="setShrink">Shrinkage (%)</span> <span class="info" data-tipkey="tipShrink" tabindex="0">i</span></label><input type="number" id="setShrink" min="0" max="60" step="1"></div>
+        <h2 style="margin-top:14px"><span data-i18n="skTitle">🎧 Answering skills</span> <span class="info" data-tipkey="tipSk" tabindex="0">i</span></h2>
+        <div id="setSkills" class="skChips"></div>
         <p class="mini" data-i18n="shrinkNote">When your file carries measured answer rates, the model auto-calibrates to them — so changing shrinkage/absence is largely absorbed (reality outranks estimates). These sliders matter most when no measured data is loaded.</p>
         <details class="danger">
           <summary data-i18n="resetZone">Workspace reset (danger zone)</summary>
@@ -996,6 +1032,7 @@ en:{
   fmMptNote:"Global setting / per-interval 'mpt' file column (model slot reserved)",
   mEns:"5-Method Ensemble (EMA·MA·Avg·Linear·Exp) — default",
   mProphet:"Prophet-style (trend + changepoint, offline approx.)",
+  mAhtEwma:"Calls-weighted smoothing", mAhtHier:"Day level × intraday shape", mAhtBlend:"AHT blend (shape + smoothing)",
   mHolt:"Holt damped trend", mWavg:"4-week weighted average", mMa4:"4-week moving average", mLast:"Previous week",
   btMpt:"MPT",
   mptFromFile:"Measured from your file per interval (ממוצע המתנה עד לנטישה) — the manual value is inactive.",
@@ -1050,7 +1087,7 @@ en:{
   logicTitle:"Analytical Logic",
   logicIntro:"The models running behind every number on the dashboards:",
   logicVol:"Call Volume Forecast — Double Exponential Smoothing (Holt's method, α=0.4, β=0.2, damped φ=0.95), fitted separately per weekday + interval across your uploaded weeks.",
-  logicAht:"AHT Prediction — 4-week moving average per weekday + interval, weighted toward your most recent data.",
+  logicAht:"AHT Prediction — per weekday + interval, from the model chosen in Settings. Beyond the simple averages: calls-weighted smoothing (busy weeks count more, old weeks fade), day level × intraday shape (the day's AHT from all its calls, each interval's own factor shrunk toward the day when it has few calls, smoothed with its neighbours), and a blend of the two. The backtest scores AHT weighted by calls.",
   logicErlang:"Service Level & Answer Rate — one unified Erlang A (Palm) core for abandonment queues: Answer Rate and every TSF window share the same patience-adjusted physics (SL(t) = AR − (pW − pAb)·e^(−rt), exact Erlang C in the zero-abandonment limit); classic Erlang C for emergency/hotline queues.",
   logicStaff:"Required staffing — iterative search starting at ⌊load⌋+1, incrementing until the Primary Target Metric meets your attainment target. Shrinkage is deducted from scheduled capacity beforehand.",
   resetZone:"Workspace reset (danger zone)",
@@ -1065,7 +1102,7 @@ en:{
   weekLabel:"Week:", thInterval:"Interval",
   weekOpt:"Week {w} | {a} – {b}", forecastTag:" (forecast)",
   wkNow:"📍 This week", wkPast1:"⏮ Last week", wkPast:"⏮ Past · {n} weeks ago", wkFut1:"⏭ Next week", wkFut:"⏭ Future · in {n} weeks",
-  wkActUntil:"actual through {d}, forecast after", wkNoAct:"no actual data yet — forecast", wkJump:"Jump to the current week",
+  wkActUntil:"actual through {d}, forecast after", wkNoAct:"no actual data yet — forecast", wkJump:"Jump to the current week", wkJumpShort:"this week", wkNoJump:"The current week is outside your data — the forecast reaches {d}. Load a newer forecast file to view it.",
   dTagAct:"actual", dTagFc:"forecast", dTagToday:"today",
   horizonTip:"Forecast horizon: with {d} days of uploaded history you can simulate up to {m} beyond your last data date. Uploading 2+ years of history unlocks a 12-month horizon.",
   m3:"3 months", m12:"12 months",
@@ -1110,7 +1147,10 @@ en:{
   /* ===== WFM 2.0 ===== */
   tabWorkforce:"Workforce & Iron", tabScheduler:"Auto-Scheduler",
   wfNoIron:"No Iron sheet loaded — drop one multi-sheet Tikshuv workbook (סידור עבודה + סידור ברזל). Falling back to manual contracted hours per rep.",
-  wfTeamL:"Team", wfSkillL:"Skill", wfSiteL:"Site", wfAll:"(all)", wfNSel:"{n} selected", wfShowAll:"↺ Show all", wfNoVals:"This file has no values in this column.",
+  wfTeamL:"Team", wfSkillL:"Skill", wfSiteL:"Site", wfAll:"(all)", skTitle:"🎧 Answering skills", tipSk:"Which skills answer the queue the matrix measures (AR/TSF, needed agents) — the same choice the 🎧 buttons on the matrix, recruitment and scheduler pages edit. Saved, and kept when you reload a sidur. Reps with no skill always count.",
+  skEmpty:"The list appears after you load your first sidur. Until then every rep counts as answering.", skNotInSidur:"Not in the current sidur — your choice is kept for when it returns.",
+  skNew:"New skill in this sidur: {s} — not counted as answering yet. Change it in Settings → Answering skills.", skInSettings:"⚙ Settings",
+  wfNSel:"{n} selected", wfShowAll:"↺ Show all", wfNoVals:"This file has no values in this column.",
   wfDayL:"Day", wfDayAll:"All", daysShort:["Su","Mo","Tu","We","Th","Fr"],
   wfKpiUtil:"Roster-to-Iron Utilization",
   tipWfUtil:"HOW MUCH: Σ scheduled hours ÷ Σ Iron hours — what share of the contracted volume became real shifts. Measures quantity only. NOT the mirror of the Deviation Index: hours can be 100% used yet every shift moved to different times.",
@@ -1209,6 +1249,13 @@ en:{
   mxCalibOn:"Forecasts are automatically tuned to this floor's real measured answer rates.",
   mxCalibOff:"⚠ Uncalibrated model estimates — the file carries no (or too little) measured answered-calls data, so AR/TSF here are pure Erlang and usually read higher than your real floor. Load a forecast export that includes answered-calls columns to calibrate.",
   mxAuditFlag:"Data audit flagged {n} suspicious values — see the Home page forecast portal.",
+  legOn:"on target", legNear:"close (within 3 pts)", legBelow:"below — darker = look first",
+  tipScale:"Green: at or above your target. Light green: within 3 points of it — almost there. Below that the shade is RELATIVE to this week: the under-target intervals are split into four equal groups, so the darkest red is always the worst quarter — the first place to look. Hover the gradient for this week's exact cut-offs.",
+  mxScaleCuts:"This week: light amber {a}–{b}% · amber {b}–{c}% · red {c}–{d}% · dark red under {d}%",
+  mxScaleDyn:"Green = at/above target · light green = within 3 points of it · below that, this week's under-target intervals split into four equal groups — red is the worst quarter, the place to look first.",
+  mxScaleFix:"Green = at/above target · light green = within 3 points · below that, fixed steps of distance from target (too few under-target intervals this week to rank).",
+  mxFlagCal:"⚠ Estimates only", mxFlagCalTip:"Your forecast file has no measured answered calls, so AR/TSF here come from the queue model alone and usually read higher than your real floor.\nTo fix: load a forecast export that includes answered calls (שיחות נענות) — the model then tunes itself to reality. Click to open the upload page.",
+  mxFlagAudit:"⚠ {n} suspicious values", mxFlagAuditTip:"The data check found impossible or unusual values in the forecast file. Click to see them on the Home page.",
   wfValTitle:"Iron Base Validation Matrix",
   tipWfVal:"Active employees in the weekly roster whose Iron sheet start/end times are blank — send the alert to the team leader.",
   wfValNone:"✅ All roster employees have a valid Iron base.",
@@ -1366,6 +1413,7 @@ en:{
   setMptHint:"Don't know your MPT? Pull the 'average delay of abandoned calls' from your telephony/ACD abandoned-calls report — that value in seconds is your MPT. Typical service queues: 60–240s.",
   ceTitle:"Edit {day} {time}", ceCancel:"Cancel", ceApply:"Apply",
   ceFutL:"Apply to this and all future weeks (same weekday & interval)",
+  mxCum:"Day so far ({a}–{b}): {v} · {n} calls", ceCum:"Day so far {a}–{b}:",
   ceSched:"scheduled", ceNeed:"needed", ceAfter:"after the change", ceDayTotal:"· daily total",
   ceHintVolFc:"Model forecast for this half-hour — change it if you know something the model doesn't.",
   ceHintVolAct:"Measured in your file — edit only to correct bad data.",
@@ -1452,6 +1500,7 @@ he:{
   fmMptNote:"הגדרה גלובלית / עמודת 'mpt' פר־אינטרוול (משבצת מודל שמורה)",
   mEns:"אנסמבל 5 שיטות (EMA·MA·ממוצע·לינארי·מעריכי) — ברירת מחדל",
   mProphet:"בהשראת Prophet (מגמה + נקודת שינוי, קירוב מקומי)",
+  mAhtEwma:"החלקה משוקללת בשיחות", mAhtHier:"רמה יומית × צורה תוך-יומית", mAhtBlend:"שילוב AHT (צורה + החלקה)",
   mHolt:"מגמת Holt מרוסנת", mWavg:"ממוצע משוקלל 4 שבועות", mMa4:"ממוצע נע 4 שבועות", mLast:"שבוע קודם",
   btMpt:"MPT",
   mptFromFile:"נמדד מהקובץ שלכם פר־אינטרוול (ממוצע המתנה עד לנטישה) — הערך הידני אינו פעיל.",
@@ -1506,7 +1555,7 @@ he:{
   logicTitle:"לוגיקה אנליטית",
   logicIntro:"המודלים שפועלים מאחורי כל מספר בלוחות:",
   logicVol:"חיזוי נפח שיחות — החלקה מעריכית כפולה (שיטת Holt, ‏α=0.4, β=0.2, ריסון φ=0.95), מכוילת בנפרד לכל יום שבוע + אינטרוול על פני השבועות שהועלו.",
-  logicAht:"חיזוי AHT — ממוצע נע של 4 שבועות לכל יום שבוע + אינטרוול, עם משקל לנתונים העדכניים ביותר.",
+  logicAht:"חיזוי AHT — לכל יום שבוע + אינטרוול, לפי המודל שנבחר בהגדרות. מעבר לממוצעים הפשוטים: החלקה משוקללת בשיחות (שבועות עמוסים שוקלים יותר, ישנים דועכים), רמה יומית × צורה תוך-יומית (משך השיחה של היום מכל שיחותיו, ולכל אינטרוול מקדם משלו שמתכווץ לכיוון היום כשיש בו מעט שיחות, מוחלק עם השכנים), ושילוב של השניים. הבדיקה לאחור מעריכה AHT בשקלול שיחות.",
   logicErlang:"רמת שירות ואחוז מענה — ליבת Erlang A (פאלם) מאוחדת לתורי נטישה: אחוז המענה וכל חלונות ה־TSF חולקים את אותה פיזיקת סבלנות (במגבלת אפס-נטישה — Erlang C מדויק); Erlang C קלאסי לתורי חירום.",
   logicStaff:"איוש נדרש — חיפוש איטרטיבי שמתחיל ב־⌊עומס⌋+1 ועולה עד שהמדד המוביל עומד ביעד. השחיקה מנוכה מהקיבולת המשובצת מראש.",
   resetZone:"איפוס סביבת עבודה (אזור רגיש)",
@@ -1521,7 +1570,7 @@ he:{
   weekLabel:"שבוע:", thInterval:"אינטרוואל",
   weekOpt:"שבוע {w} | {a} – {b}", forecastTag:" (תחזית)",
   wkNow:"📍 השבוע הנוכחי", wkPast1:"⏮ שבוע שעבר", wkPast:"⏮ עבר · לפני {n} שבועות", wkFut1:"⏭ שבוע הבא", wkFut:"⏭ עתיד · בעוד {n} שבועות",
-  wkActUntil:"בפועל עד יום {d}, משם תחזית", wkNoAct:"אין עדיין נתוני אמת — תחזית", wkJump:"מעבר לשבוע הנוכחי",
+  wkActUntil:"בפועל עד יום {d}, משם תחזית", wkNoAct:"אין עדיין נתוני אמת — תחזית", wkJump:"מעבר לשבוע הנוכחי", wkJumpShort:"לשבוע הנוכחי", wkNoJump:"השבוע הנוכחי מחוץ לטווח הנתונים — התחזית מגיעה עד {d}. טענו קובץ תחזית עדכני כדי לראות אותו.",
   dTagAct:"בפועל", dTagFc:"תחזית", dTagToday:"היום",
   horizonTip:"אופק חיזוי: עם {d} ימי היסטוריה שהועלו ניתן לדמות עד {m} מעבר לתאריך הנתונים האחרון. העלאת שנתיים ומעלה של היסטוריה פותחת אופק של 12 חודשים.",
   m3:"3 חודשים", m12:"12 חודשים",
@@ -1566,7 +1615,10 @@ he:{
   /* ===== WFM 2.0 ===== */
   tabWorkforce:"כוח אדם וברזל", tabScheduler:"שיבוץ אוטומטי",
   wfNoIron:"לא נטען גיליון ברזל — גררו קובץ תקשוב רב-גיליוני אחד (סידור עבודה + סידור ברזל). בינתיים חישוב לפי שעות חוזיות ידניות לנציג.",
-  wfTeamL:"מנהל צוות", wfSkillL:"מיומנות", wfSiteL:"מוקד", wfAll:"(הכול)", wfNSel:"{n} נבחרו", wfShowAll:"↺ הצג הכול", wfNoVals:"אין ערכים בעמודה הזו בקובץ.",
+  wfTeamL:"מנהל צוות", wfSkillL:"מיומנות", wfSiteL:"מוקד", wfAll:"(הכול)", skTitle:"🎧 מיומנויות עונות", tipSk:"אילו מיומנויות עונות לתור שהמטריצה מודדת (מענה/TSF, נדרשים) — אותה בחירה שכפתורי 🎧 במטריצה, בגיוס ובשיבוץ עורכים. נשמרת, ונשארת כשטוענים סידור מחדש. נציגים ללא מיומנות תמיד נספרים.",
+  skEmpty:"הרשימה תופיע אחרי טעינת סידור העבודה הראשון. עד אז כל הנציגים נספרים כעונים.", skNotInSidur:"לא בסידור הנוכחי — הבחירה שלכם נשמרת לפעם שיחזור.",
+  skNew:"מיומנות חדשה בסידור: {s} — עדיין לא נספרת כעונה. לשינוי: הגדרות ← מיומנויות עונות.", skInSettings:"⚙ הגדרות",
+  wfNSel:"{n} נבחרו", wfShowAll:"↺ הצג הכול", wfNoVals:"אין ערכים בעמודה הזו בקובץ.",
   wfDayL:"יום", wfDayAll:"הכל", daysShort:["א׳","ב׳","ג׳","ד׳","ה׳","ו׳"],
   wfKpiUtil:"ניצול סידור מול ברזל",
   tipWfUtil:"כמה: ‏Σ שעות משובצות ÷ ‏Σ שעות ברזל — איזה חלק מנפח השעות החוזי הפך למשמרות בפועל. מודד כמות בלבד. זה לא ההופכי של מדד הסטייה: אפשר לנצל 100% מהשעות כשכל משמרת הוזזה לשעה אחרת.",
@@ -1665,6 +1717,13 @@ he:{
   mxCalibOn:"התחזיות מכוונות אוטומטית לאחוזי המענה האמיתיים שנמדדו במוקד שלכם.",
   mxCalibOff:"⚠ הערכות מודל לא מכוילות — בקובץ אין (או כמעט אין) נתוני שיחות נענות מדודים, ולכן המענה/TSF כאן הם ארלנג תאורטי ולרוב גבוהים מהמציאות במוקד. טענו תחזית עם עמודות שיחות נענות לכיול.",
   mxAuditFlag:"בקרת הנתונים סימנה {n} ערכים חשודים — ראו את פורטל התחזית בדף הבית.",
+  legOn:"ביעד", legNear:"קרוב (עד 3 נק׳)", legBelow:"מתחת — כהה יותר = להתחיל שם",
+  tipScale:"ירוק: ביעד או מעליו. ירוק בהיר: עד 3 נקודות מתחת — כמעט שם. מתחת לזה הגוון יחסי לשבוע הזה: האינטרוולים שמתחת ליעד מחולקים לארבע קבוצות שוות, כך שהאדום הכהה הוא תמיד הרבע הגרוע — המקום הראשון להסתכל. מעבר על פס הצבע מציג את הספים המדויקים של השבוע.",
+  mxScaleCuts:"השבוע: כתום בהיר {b}–{a}% · כתום {c}–{b}% · אדום {d}–{c}% · אדום כהה מתחת ל־{d}%",
+  mxScaleDyn:"ירוק = ביעד ומעליו · ירוק בהיר = עד 3 נקודות מתחת · מתחת לזה, האינטרוולים שמתחת ליעד בשבוע הזה מחולקים לארבע קבוצות שוות — אדום הוא הרבע הגרוע, המקום להתחיל בו.",
+  mxScaleFix:"ירוק = ביעד ומעליו · ירוק בהיר = עד 3 נקודות מתחת · מתחת לזה, מדרגות קבועות של מרחק מהיעד (מעט מדי אינטרוולים מתחת ליעד השבוע כדי לדרג).",
+  mxFlagCal:"⚠ הערכות בלבד", mxFlagCalTip:"בקובץ התחזית אין שיחות נענות מדודות, ולכן המענה/TSF כאן מחושבים ממודל התור בלבד ולרוב גבוהים מהמציאות.\nלתיקון: טענו קובץ תחזית שכולל שיחות נענות — המודל יכוונן את עצמו למציאות. לחיצה פותחת את דף הטעינה.",
+  mxFlagAudit:"⚠ {n} ערכים חשודים", mxFlagAuditTip:"בקרת הנתונים מצאה ערכים בלתי אפשריים או חריגים בקובץ התחזית. לחיצה מציגה אותם בדף הבית.",
   wfValTitle:"מטריצת תיקוף בסיס ברזל",
   tipWfVal:"עובדים פעילים בסידור השבועי ששעות הכניסה/יציאה שלהם בגיליון הברזל ריקות — שלחו התראה למנהל הצוות.",
   wfValNone:"✅ לכל עובדי הסידור יש בסיס ברזל תקין.",
@@ -1822,6 +1881,7 @@ he:{
   setMptHint:"לא יודעים את ה־MPT? שלפו את 'זמן ההמתנה הממוצע של שיחות נטושות' מדוח השיחות הנטושות במערכת הטלפוניה/ACD — הערך בשניות הוא ה־MPT שלכם. תורי שירות טיפוסיים: 60–240 שניות.",
   ceTitle:"עריכת {day} {time}", ceCancel:"ביטול", ceApply:"החלה",
   ceFutL:"החל על שורה זו ועל כל השבועות הבאים (אותו יום ואותו אינטרוול)",
+  mxCum:"מצטבר יומי ({a}–{b}): {v} · {n} שיחות", ceCum:"מצטבר יומי {a}–{b}:",
   ceSched:"משובצים", ceNeed:"נדרשים", ceAfter:"אחרי השינוי", ceDayTotal:"· סה״כ יומי",
   ceHintVolFc:"תחזית המודל לחצי השעה הזו — שנו אם אתם יודעים משהו שהמודל לא יודע.",
   ceHintVolAct:"נמדד בקובץ שלכם — ערכו רק כדי לתקן נתון שגוי.",
@@ -2161,6 +2221,53 @@ function prophetLike(series,h){
   return Math.max(0,level+slope*damp);
 }
 Models.volume.prophet={label:"mProphet",fn:(s,h)=>prophetLike(s,h)};
+/* ============ AHT MODELS (research-backed) ============
+   An interval's AHT is the mean of LOGNORMAL call durations (Brown et al., JASA 2005), so a
+   thin interval is noisy: one long call moves it. Three remedies, each a model below:
+   · weight every week by its CALLS and let old weeks decay (busy weeks are better evidence);
+   · borrow strength from the whole DAY: day-level AHT is forecast from many calls, then each
+     interval keeps its own relative factor, shrunk toward 1 when it has few calls;
+   · smooth that factor with the neighbouring intervals, call-weighted (the practice WFM suites
+     document for AHT: the interval + its nearest neighbours, weighted by volume).
+   Every model reads other series only up to series.length, so the rolling backtest never
+   peeks at the week it is scoring. Course/tenure effects are deliberately NOT modelled. */
+const AHT_DECAY=0.8; // week weight ×0.8 per week back → ~3-week half-life
+function ahtSlot(ctx){ const d=ctx&&ctx.allSeries&&ctx.allSeries[ctx.weekday]; return d?d[ctx.interval]:null; }
+function ahtVols(series,ctx){ const sl=ahtSlot(ctx), v=sl?sl.vols:[]; return series.map((_,i)=>v[i]>0?v[i]:null); }
+function ahtEwmaVW(series,vols){
+  const n=series.length, known=vols.filter(x=>x!=null).sort((a,b)=>a-b);
+  const vMed=known.length?known[Math.floor(known.length/2)]:1; // a week with no call count = a typical week
+  let num=0,den=0;
+  for(let i=0;i<n;i++){ const a=series[i]; if(!(a>0)) continue;
+    const w=Math.pow(AHT_DECAY,n-1-i)*(vols[i]!=null?vols[i]:vMed); num+=w*a; den+=w; }
+  return den?num/den:0;
+}
+function ahtHier(series,h,ctx){
+  const own=ahtEwmaVW(series,ahtVols(series,ctx));
+  const day=ctx&&ctx.allSeries&&ctx.allSeries[ctx.weekday]; if(!day||!day[ctx.interval]) return own;
+  const n=series.length, slots=Object.keys(day).sort();
+  // 1) day-level AHT per week, call-weighted across intervals → forecast it the same way
+  const dA=[],dV=[];
+  for(let w=0;w<n;w++){ let num=0,den=0;
+    for(const tm of slots){ const sl=day[tm], a=sl.ahts[w], v=sl.vols[w]; if(a>0&&v>0){ num+=a*v; den+=v; } }
+    dA.push(den?num/den:null); dV.push(den||null); }
+  const dayLevel=ahtEwmaVW(dA.map(x=>x||0),dV); if(!(dayLevel>0)) return own;
+  // 2) each interval's factor vs its day, recent + call-weighted, SHRUNK toward 1 by one typical week
+  const factor=tm=>{ const sl=day[tm]; let num=0,den=0; const vs=[];
+    for(let w=Math.max(0,n-12);w<n;w++){ const a=tm===ctx.interval?series[w]:sl.ahts[w], v=sl.vols[w];
+      if(a>0&&v>0&&dA[w]>0){ const wt=Math.pow(AHT_DECAY,n-1-w)*v; num+=wt*a/dA[w]; den+=wt; vs.push(v); } }
+    vs.sort((x,y)=>x-y); const k=vs.length?vs[Math.floor(vs.length/2)]:1;
+    return {f:(num+k)/(den+k),v:vs.length?vs.reduce((x,y)=>x+y,0)/vs.length:0}; };
+  // 3) neighbour smoothing: self + 2 each side, weight = calls × distance decay (1, ½, ¼)
+  const i0=slots.indexOf(ctx.interval); let num=0,den=0;
+  for(let d=-2;d<=2;d++){ const tm=slots[i0+d]; if(!tm) continue; const r=factor(tm);
+    const w=(r.v||1)*[0.25,0.5,1,0.5,0.25][d+2]; num+=w*r.f; den+=w; }
+  return den?dayLevel*num/den:own;
+}
+Models.aht.ewmavw={label:"mAhtEwma",fn:(s,h,ctx)=>ahtEwmaVW(s,ahtVols(s,ctx))};
+Models.aht.hier  ={label:"mAhtHier",fn:(s,h,ctx)=>ahtHier(s,h,ctx)};
+Models.aht.blend ={label:"mAhtBlend",fn:(s,h,ctx)=>{ const a=ahtHier(s,h,ctx), b=ahtEwmaVW(s,ahtVols(s,ctx)); return a>0&&b>0?(a+b)/2:(a||b); }};
+Models.aht.holt  ={label:"mHolt",fn:(s,h)=>holtForecast(s.filter(v=>v>0),h)};
 const ForecastEngines={
   volume:(series,horizonWeeks,ctx)=>(Models.volume[state.settings.modelVolume]||Models.volume.ensemble5).fn(series,horizonWeeks,ctx),
   aht:(series,horizonWeeks,ctx)=>(Models.aht[state.settings.modelAht]||Models.aht.ma4).fn(series,horizonWeeks,ctx),
@@ -2174,21 +2281,23 @@ function backtestModel(kind,modelId){
   if(!state.series) return null;
   const field=kind==="volume"?"vols":(kind==="aht"?"ahts":"mpts");
   const K=6; // rolling holdout depth (weeks)
-  let err=0,n=0,sumF=0,sumA=0;
+  let err=0,n=0,sumF=0,sumA=0,wSum=0;
   for(const di in state.series)
     for(const tm in state.series[di]){
-      const s=state.series[di][tm][field];
+      const s=state.series[di][tm][field], vols=state.series[di][tm].vols;
       if(!s||s.length<5) continue;
       const maxK=Math.min(K,s.length-4); // keep ≥4 training points per origin
       for(let k=1;k<=maxK;k++){
         const actual=s[s.length-k];
         if(!(actual>0)) continue;
-        const pred=Models[kind][modelId].fn(s.slice(0,s.length-k),1,{weekday:+di,interval:tm});
-        err+=Math.abs(pred-actual)/actual; n++;
-        sumF+=pred; sumA+=actual;
+        const pred=Models[kind][modelId].fn(s.slice(0,s.length-k),1,{weekday:+di,interval:tm,allSeries:state.series});
+        // AHT: an interval's miss counts by its calls (a 3-call slot can't outweigh a 300-call one)
+        const w=kind==="aht"?(vols[s.length-k]>0?vols[s.length-k]:0):1; if(!w) continue;
+        err+=w*Math.abs(pred-actual)/actual; wSum+=w; n++;
+        sumF+=w*pred; sumA+=w*actual;
       }
     }
-  return n?{mape:err/n*100,pace:sumA>0?sumF/sumA*100:null,n}:null;
+  return n?{mape:err/wSum*100,pace:sumA>0?sumF/sumA*100:null,n}:null;
 }
 function holtForecast(series,h){
   if(!series.length) return 0;
@@ -3524,7 +3633,7 @@ function populateWfFilters(){
     const vals=wfFilterValues(key);
     const cur=(state.wfFilter[key]||[]).filter(v=>vals.includes(v)); // picks absent from the data drop out
     state.wfFilter[key]=cur;
-    btn.textContent=(!cur.length?t("wfAll"):cur.length===1?cur[0]:t("wfNSel",{n:cur.length}))+" ▾";
+    btn.textContent=(!cur.length?t("wfAll"):cur.length===1?cur[0]:t("wfNSel",{n:cur.length})); // caret comes from .splitbtn CSS
     btn.style.borderColor=cur.length?"var(--navy)":"";
     // stable menu: rebuild only when the value list changes, so the open popover survives a toggle
     const sig=vals.join("|")+"@"+lang;
@@ -3865,35 +3974,8 @@ function schedulerEmps(){
 }
 /* skill checkbox menu on the scheduler toolbar — same modular queue list as the matrix */
 function renderSchedSkills(){
-  const wrap=document.getElementById("schSkillWrap"); if(!wrap) return;
-  const skills=state.skillList||[];
-  wrap.style.display=skills.length?"inline-block":"none";
-  if(!skills.length) return;
-  const sc=state.schedSkills;
-  document.getElementById("schSkillBtn").textContent="🎧 "+
-    (!sc||!sc.length?t("skillScopeAll"):(sc.length===1?sc[0]:t("skillScopeN",{n:sc.length})));
-  const menu=document.getElementById("schSkillMenu");
-  if(menu._skills===skills.join("|")){
-    menu.querySelectorAll("input").forEach(cb=>{ cb.checked=!sc||sc.includes(cb._skill); });
-    return;
-  }
-  menu._skills=skills.join("|");
-  menu.innerHTML="";
-  const hint=document.createElement("div"); hint.className="mini"; hint.style.marginBottom="6px";
-  hint.textContent=t("schSkillHint"); menu.appendChild(hint);
-  skills.forEach(s=>{
-    const lb=document.createElement("label");
-    lb.style.cssText="display:flex;gap:6px;align-items:center;font-size:.8rem;margin:3px 0;cursor:pointer";
-    const cb=document.createElement("input"); cb.type="checkbox";
-    cb.checked=!sc||sc.includes(s); cb._skill=s;
-    cb.addEventListener("change",()=>{
-      const on=[...menu.querySelectorAll("input:checked")].map(x=>x._skill);
-      state.schedSkills=on.length===skills.length?null:on;
-      saveData(); renderScheduler();
-    });
-    lb.appendChild(cb); lb.appendChild(skillDot(s)); lb.appendChild(document.createTextNode(" "+s));
-    menu.appendChild(lb);
-  });
+  renderScopeMenu("schSkillWrap","schSkillBtn","schSkillMenu","schSkillHint",
+    sc=>"🎧 "+(!sc||!sc.length?t("skillScopeAll"):(sc.length===1?sc[0]:t("skillScopeN",{n:sc.length}))));
 }
 /* ============================================================
    MOVE-ONLY SIDUR OPTIMIZER
@@ -6001,7 +6083,9 @@ function renderWeekContext(dates){
   const sel=document.getElementById("weekSelect");
   const canJump=n!==0&&sel&&[...sel.options].some(o=>o.value===nowWk);
   el.classList.toggle("jump",canJump);
-  el.title=canJump?t("wkJump"):"";
+  // the chip reads as a button only when it IS one; otherwise its hover says why it can't jump
+  if(canJump) el.innerHTML+=` <span class="jmp">↩ ${t("wkJumpShort")}</span>`;
+  el.title=canJump?t("wkJump"):(n!==0?t("wkNoJump",{d:state.horizonISO?fmtD(state.horizonISO):"—"}):"");
   el.onclick=canJump?()=>{ sel.value=nowWk; sel.dispatchEvent(new Event("change")); }:null;
   el.style.display="inline-block";
 }
@@ -6099,11 +6183,87 @@ function readCustomWindows(){
    קו-1 queue — while HR/workforce pages always include everyone. Fully modular:
    any skill can be toggled in or out (seniors convert to קו 1 on billing days,
    מרפאות usually answer קו 1, future queues just appear in the list). */
+/* answering skills = ONE persisted choice (settings.answerSkills), shared by the matrix, the
+   recruit simulator and the scheduler. A reloaded sidur RESPECTS it (no reset to קו 1).
+   undefined = never chosen → קו 1 when present, else all · null = all · [..] = these */
 function applyDefaultCapSkills(){
+  const sk=state.skillList||[], S=state.settings;
+  const known=S.knownSkills||[];
+  // remember every skill ever seen: the Settings list survives a week whose sidur lacks one
+  S.knownSkills=[...new Set([...known,...sk])].sort((a,b)=>a.localeCompare(b,"he"));
+  let on;
+  if(S.answerSkills===undefined){ const kav=sk.find(s=>/קו\s*1|kav\s*1|line\s*1/i.test(s)); on=kav?[kav]:null; }
+  else if(S.answerSkills===null) on=null;
+  else{ on=S.answerSkills.filter(x=>sk.includes(x)); if(!on.length) on=null; }
+  if(on&&on.length===sk.length) on=null;
+  state.capSkills=on; state.schedSkills=on;
+  // a skill this file brings that the user has never decided on: say it once, don't guess
+  const fresh=Array.isArray(S.answerSkills)&&known.length?sk.filter(x=>!known.includes(x)):[];
+  if(fresh.length) setTimeout(()=>showToast("🎧 "+t("skNew",{s:fresh.join(", ")}),true),600);
+  saveState();
+}
+function setAnswerSkills(on){
   const sk=state.skillList||[];
-  const kav=sk.find(s=>/קו\s*1|kav\s*1|line\s*1/i.test(s));
-  state.capSkills=kav?[kav]:null; // null = all skills count (no skill data / no קו-1)
-  state.schedSkills=kav?[kav]:null; // the scheduler pool defaults to the same queue as the demand
+  if(on&&sk.length&&on.length===sk.length&&sk.every(x=>on.includes(x))) on=null;
+  state.capSkills=on; state.schedSkills=on; state.settings.answerSkills=on;
+  saveState(); capScopeChanged(); syncScopeMenus();
+}
+function syncScopeMenus(){ renderSkillScope(); renderRecruitScope(); renderSchedSkills(); renderSetSkills(); }
+/* one menu builder for every 🎧 button (matrix / recruit / scheduler) — same list, same state */
+function renderScopeMenu(wrapId,btnId,menuId,hintKey,label){
+  const wrap=document.getElementById(wrapId); if(!wrap) return;
+  const skills=state.skillList||[];
+  wrap.style.display=skills.length?"inline-block":"none";
+  if(!skills.length) return;
+  const sc=state.capSkills;
+  document.getElementById(btnId).textContent=label(sc);
+  const menu=document.getElementById(menuId);
+  if(menu._skills!==skills.join("|")+"@"+lang){ // stable menu: rebuilt only when the list changes
+    menu._skills=skills.join("|")+"@"+lang; menu.innerHTML="";
+    const hint=document.createElement("div"); hint.className="mini"; hint.style.marginBottom="6px";
+    hint.textContent=t(hintKey); menu.appendChild(hint);
+    skills.forEach(s2=>{
+      const lb=document.createElement("label");
+      lb.style.cssText="display:flex;gap:6px;align-items:center;font-size:.8rem;margin:3px 0;cursor:pointer";
+      const cb=document.createElement("input"); cb.type="checkbox"; cb._skill=s2;
+      cb.addEventListener("change",()=>setAnswerSkills([...menu.querySelectorAll("input:checked")].map(x=>x._skill)));
+      lb.appendChild(cb); lb.appendChild(skillDot(s2)); lb.appendChild(document.createTextNode(" "+s2));
+      menu.appendChild(lb);
+    });
+    const all=document.createElement("button"); all.className="linklike"; all.style.marginTop="6px";
+    all.textContent=t("skillScopeAllBtn"); all.addEventListener("click",()=>setAnswerSkills(null));
+    menu.appendChild(all);
+    const st=document.createElement("button"); st.className="linklike"; st.style.cssText="margin-top:6px;margin-inline-start:10px";
+    st.textContent=t("skInSettings"); st.addEventListener("click",()=>showPage("settings"));
+    menu.appendChild(st);
+  }
+  menu.querySelectorAll("input").forEach(cb=>{ cb.checked=!sc||sc.includes(cb._skill); });
+}
+/* Settings → 🎧 answering skills: every skill ever seen, ticked = answers the measured queue */
+function renderSetSkills(){
+  const box=document.getElementById("setSkills"); if(!box) return;
+  const known=state.settings.knownSkills||[], cur=state.skillList||[], sc=state.capSkills;
+  if(!known.length){ box.innerHTML=`<p class="mini">${t("skEmpty")}</p>`; return; }
+  box.innerHTML="";
+  known.forEach(s2=>{
+    const here=cur.includes(s2);
+    // a skill missing from the current sidur keeps the user's past decision, shown faded
+    const on=here?(!sc||sc.includes(s2)):(state.settings.answerSkills==null||state.settings.answerSkills.includes(s2));
+    const lb=document.createElement("label"); lb.className="skChip"+(here?"":" off");
+    if(!here) lb.title=t("skNotInSidur");
+    const cb=document.createElement("input"); cb.type="checkbox"; cb.checked=on;
+    cb.addEventListener("change",()=>{
+      const picked=[...box.querySelectorAll("input")].map((x,i)=>x.checked?known[i]:null).filter(Boolean);
+      if(!cur.length){ state.settings.answerSkills=picked.length===known.length?null:picked; saveState(); renderSetSkills(); return; }
+      const keepAway=picked.filter(x=>!cur.includes(x)); // remembered choices for absent skills
+      setAnswerSkills(picked.filter(x=>cur.includes(x)));
+      if(Array.isArray(state.settings.answerSkills)) state.settings.answerSkills=[...new Set([...state.settings.answerSkills,...keepAway])];
+      else if(keepAway.length<known.filter(x=>!cur.includes(x)).length) state.settings.answerSkills=picked;
+      saveState();
+    });
+    lb.appendChild(cb); lb.appendChild(skillDot(s2)); lb.appendChild(document.createTextNode(s2));
+    box.appendChild(lb);
+  });
 }
 /* in-scope body count from a {skill:count} breakdown, honoring state.capSkills.
    Untagged reps always count (unknown ≠ excluded). Shared by the roster + optimized paths. */
@@ -6229,6 +6389,34 @@ function tier(v){
   if(v>=g-0.30)             return "tier-bad";
   return "tier-crit";
 }
+/* MATRIX color scale — target-anchored on top, data-driven below:
+   ≥ target+3 deep green · ≥ target green · within 3 points light green ("almost there");
+   under that, THIS week's below-target intervals split into four equal groups, so the
+   shades always spread across what's real and red marks the worst quarter — where to
+   look first. Thin weeks (< 8 such cells) fall back to fixed distance-from-target bands. */
+function mxBands(comp){
+  const g=state.settings.target/100, nearLo=g-0.03, low=[];
+  for(const c of comp) if(c) for(const r of c.rows){
+    if(!r.rec||r.closed||r.exc||r.nodata||!(r.rec.volume>0)) continue;
+    const v=state.metric==="tsf"?r.perf.tsf:r.perf.ar; if(v<nearLo) low.push(v);
+  }
+  low.sort((a,b)=>a-b);
+  const q=p=>low[Math.min(low.length-1,Math.floor(p*low.length))];
+  // rank only when there is something to rank: ≥8 cells AND ≥2 points of spread (else the
+  // quartiles collapse onto one value and every shade means the same thing)
+  const dyn=low.length>=8&&q(0.75)-q(0.25)>=0.02;
+  const cuts=dyn?[q(0.75),q(0.5),q(0.25)]:[g-0.10,g-0.18,g-0.30];
+  return {g,nearLo,cuts,dyn};
+}
+function tierMx(v,B){
+  if(v>=Math.min(1,B.g+0.03)) return "tier-exc";
+  if(v>=B.g) return "tier-good";
+  if(v>=B.nearLo) return "tier-near";
+  if(v>=B.cuts[0]) return "tier-warn";
+  if(v>=B.cuts[1]) return "tier-poor";
+  if(v>=B.cuts[2]) return "tier-bad";
+  return "tier-crit";
+}
 function pct(v){ return (v*100).toFixed(1)+"%"; }
 function th(x){ const e=document.createElement("th"); e.textContent=x; return e; }
 
@@ -6266,42 +6454,8 @@ function ensureEmptyState(pageId){
 }
 /* queue-scope selector on the matrix toolbar — checkboxes per skill, modular */
 function renderSkillScope(){
-  const wrap=document.getElementById("skillScopeWrap"); if(!wrap) return;
-  const skills=state.skillList||[];
-  wrap.style.display=skills.length?"inline-block":"none";
-  if(!skills.length) return;
-  const sc=state.capSkills;
-  document.getElementById("skillScopeBtn").textContent="🎧 "+
-    (!sc||!sc.length?t("skillScopeAll"):(sc.length===1?sc[0]:t("skillScopeN",{n:sc.length})));
-  const menu=document.getElementById("skillScopeMenu");
-  // stable menu: rebuilding on every toggle closes the hover popover mid-interaction —
-  // when the skill list is unchanged just sync the checkbox states
-  if(menu._skills===skills.join("|")){
-    menu.querySelectorAll("input").forEach(cb=>{ cb.checked=!sc||sc.includes(cb._skill); });
-    return;
-  }
-  menu._skills=skills.join("|");
-  menu.innerHTML="";
-  const hint=document.createElement("div"); hint.className="mini"; hint.style.marginBottom="6px";
-  hint.textContent=t("skillScopeHint"); menu.appendChild(hint);
-  skills.forEach(s=>{
-    const lb=document.createElement("label");
-    lb.style.cssText="display:flex;gap:6px;align-items:center;font-size:.8rem;margin:3px 0;cursor:pointer";
-    const cb=document.createElement("input"); cb.type="checkbox";
-    cb.checked=!sc||sc.includes(s);
-    cb.addEventListener("change",()=>{
-      const on=[...menu.querySelectorAll("input:checked")].map(x=>x._skill);
-      state.capSkills=on.length===skills.length?null:on;
-      capScopeChanged();
-    });
-    cb._skill=s;
-    lb.appendChild(cb); lb.appendChild(skillDot(s)); lb.appendChild(document.createTextNode(" "+s));
-    menu.appendChild(lb);
-  });
-  const all=document.createElement("button"); all.className="linklike"; all.style.marginTop="6px";
-  all.textContent=t("skillScopeAllBtn");
-  all.addEventListener("click",()=>{ state.capSkills=null; capScopeChanged(); });
-  menu.appendChild(all);
+  renderScopeMenu("skillScopeWrap","skillScopeBtn","skillScopeMenu","skillScopeHint",
+    sc=>"🎧 "+(!sc||!sc.length?t("skillScopeAll"):(sc.length===1?sc[0]:t("skillScopeN",{n:sc.length}))));
 }
 function capScopeChanged(){
   memo.clear(); state.fcCache.clear(); saveData();
@@ -6313,41 +6467,8 @@ function capScopeChanged(){
    Parallel to renderSkillScope (matrix) and renderSchedSkills (scheduler); the honest
    label reads the live scope ("מענה: קו 1", "מענה: כל המוקד") instead of a fixed guess. */
 function renderRecruitScope(){
-  const wrap=document.getElementById("rcScopeWrap"); if(!wrap) return;
-  const skills=state.skillList||[];
-  // no skill data → capacity is whole-center by definition; nothing to scope, hide it
-  wrap.style.display=skills.length?"inline-block":"none";
-  if(!skills.length) return;
-  const sc=state.capSkills;
-  document.getElementById("rcScopeBtn").textContent="🎧 "+
-    (!sc||!sc.length?t("rcScopeAll"):t("rcScopePfx")+(sc.length===1?sc[0]:t("skillScopeN",{n:sc.length})));
-  const menu=document.getElementById("rcScopeMenu");
-  if(menu._skills===skills.join("|")){ // stable menu: just sync checkboxes so the popover survives a toggle
-    menu.querySelectorAll("input").forEach(cb=>{ cb.checked=!sc||sc.includes(cb._skill); });
-    return;
-  }
-  menu._skills=skills.join("|");
-  menu.innerHTML="";
-  const hint=document.createElement("div"); hint.className="mini"; hint.style.marginBottom="6px";
-  hint.textContent=t("rcScopeHint"); menu.appendChild(hint);
-  skills.forEach(s=>{
-    const lb=document.createElement("label");
-    lb.style.cssText="display:flex;gap:6px;align-items:center;font-size:.8rem;margin:3px 0;cursor:pointer";
-    const cb=document.createElement("input"); cb.type="checkbox";
-    cb.checked=!sc||sc.includes(s);
-    cb.addEventListener("change",()=>{
-      const on=[...menu.querySelectorAll("input:checked")].map(x=>x._skill);
-      state.capSkills=on.length===skills.length?null:on;
-      capScopeChanged();
-    });
-    cb._skill=s;
-    lb.appendChild(cb); lb.appendChild(skillDot(s)); lb.appendChild(document.createTextNode(" "+s));
-    menu.appendChild(lb);
-  });
-  const all=document.createElement("button"); all.className="linklike"; all.style.marginTop="6px";
-  all.textContent=t("skillScopeAllBtn");
-  all.addEventListener("click",()=>{ state.capSkills=null; capScopeChanged(); });
-  menu.appendChild(all);
+  renderScopeMenu("rcScopeWrap","rcScopeBtn","rcScopeMenu","rcScopeHint",
+    sc=>"🎧 "+(!sc||!sc.length?t("rcScopeAll"):t("rcScopePfx")+(sc.length===1?sc[0]:t("skillScopeN",{n:sc.length}))));
 }
 function renderMatrix(){
   // optimized preview is offered only for the week that was optimized; else force original.
@@ -6356,6 +6477,7 @@ function renderMatrix(){
   if(!canOpt&&state.matrixView==="optimized") state.matrixView="original";
   state._optView=canOpt&&state.matrixView==="optimized";
   try{ renderMatrixBody(); } finally{ state._optView=false; }
+  fitMatrix();
   const seg=document.getElementById("matrixViewSeg");
   if(seg){ seg.style.display=canOpt?"inline-flex":"none";
     seg.querySelectorAll("button").forEach(b=>b.classList.toggle("active",b.dataset.view===state.matrixView)); }
@@ -6365,21 +6487,19 @@ function renderMatrixBody(){
   const tbl=document.getElementById("matrixTable"); tbl.innerHTML="";
   if(ensureEmptyState("matrix")) return;
   if(!state.week) return;
-  // credibility note: an uncalibrated Erlang model reads optimistic (90%+ AR) —
-  // say so explicitly instead of letting the numbers pretend to be measurements
+  // no standing sentence above the grid: when all is well, say nothing. Only an ACTIONABLE
+  // problem earns a chip in the toolbar — what's wrong on hover, where to fix it on click.
   {
-    let note=document.getElementById("mxCalibNote");
-    if(!note){ note=document.createElement("p"); note.className="mini"; note.id="mxCalibNote";
-      tbl.parentNode.insertBefore(note,tbl); }
-    const audit=state.fcAudit||{};
-    note.innerHTML=(state.calib&&state.calib!==1)
-      ? t("mxCalibOn")
-      : `<span style="color:var(--crimson);font-weight:600">${t("mxCalibOff")}</span>`;
-    note.title="κ="+(state.calib||1); // the factor stays available for pros, never in the UI text
-    if(audit.imp||audit.aht||audit.far)
-      note.innerHTML+=` <span style="color:var(--crimson)">${t("mxAuditFlag",{n:(audit.imp||0)+(audit.aht||0)+(audit.far||0)})}</span>`;
-    // make the optimized preview unmistakable (and remind that the loaded sidur is untouched)
-    if(state._optView) note.innerHTML+=` <span style="background:#8a5fd022;color:#8a5fd0;border:1px solid #8a5fd055;border-radius:9px;padding:1px 8px;font-weight:700">🧩 ${t("mxViewOptNote")}</span>`;
+    const old=document.getElementById("mxCalibNote"); if(old) old.remove();
+    const box=document.getElementById("mxFlags"); box.innerHTML="";
+    const chip=(txt,tip,cls,go)=>{ const b=document.createElement("button"); b.type="button";
+      b.className="pill mxFlag "+cls; b.textContent=txt; b.title=tip;
+      if(go) b.addEventListener("click",go); else b.style.cursor="help"; box.appendChild(b); };
+    if(!(state.calib&&state.calib!==1)) chip(t("mxFlagCal"),t("mxFlagCalTip"),"warn",()=>showPage("home"));
+    const audit=state.fcAudit||{}, an=(audit.imp||0)+(audit.aht||0)+(audit.far||0);
+    if(an) chip(t("mxFlagAudit",{n:an}),t("mxFlagAuditTip"),"warn",()=>showPage("home"));
+    // the optimized preview is a MODE, not a problem — a quiet label while it is on
+    if(state._optView) chip("🧩 "+t("mxViewOptNote"),"","opt",null);
   }
   const dates=weekDates(state.week), dayNames=t("days");
   let totSaved=0,totDrops=0,shortCount=0;
@@ -6405,6 +6525,10 @@ function renderMatrixBody(){
   renderWeekContext(dates);
   thead.appendChild(hr); tbl.appendChild(thead);
   const comp=dates.map(ds=>computeDay(ds));
+  const B=mxBands(comp);
+  { const el=document.getElementById("mxScale"); if(el){ const p0=v=>Math.round(v*100);
+    // numbers only on hover of the gradient — the grid itself carries the meaning
+    el.title=t(B.dyn?"mxScaleDyn":"mxScaleFix")+"\n"+t("mxScaleCuts",{a:p0(B.nearLo),b:p0(B.cuts[0]),c:p0(B.cuts[1]),d:p0(B.cuts[2])}); } }
   comp.forEach(c=>{ if(c){ totSaved+=c.saved; totDrops+=c.drops; } });
   const tbody=document.createElement("tbody");
   /* thin daily-summary strip between the headers and the first interval:
@@ -6435,7 +6559,8 @@ function renderMatrixBody(){
       if(vol>0||full>0){
         const m=vol>0?acc/vol:0;
         const offGrid=Math.round(full-vol);
-        td.innerHTML=`<span class="v" style="color:${m>=.9?"var(--emerald)":m>=.8?"var(--amber)":"var(--crimson)"}">${pct(m)}</span> <span class="sub">${Math.round(full).toLocaleString()}</span>`;
+        const tc=tierMx(m,B); // same scale as the cells (was a fixed 90/80 rule)
+        td.innerHTML=`<span class="v" style="color:${tc==="tier-exc"||tc==="tier-good"?"var(--emerald)":tc==="tier-near"||tc==="tier-warn"?"var(--amber)":"var(--crimson)"}">${pct(m)}</span> <span class="sub">${Math.round(full).toLocaleString()}</span>`;
         td.title=`${t("tipVolume")}: ${Math.round(full).toLocaleString()} | ${state.metric==="tsf"?"TSF":t("metricAr")}: ${pct(m)}`
           +(offGrid>0?` | ${t("mxOffGrid",{n:offGrid})}`:"");
       } else td.textContent="—";
@@ -6443,6 +6568,8 @@ function renderMatrixBody(){
     });
     tbody.appendChild(sr);
   }
+  // cumulative service from the day's first interval to this one (volume-weighted, shown on hover)
+  const cum=dates.map(()=>({vol:0,acc:0,from:null}));
   TIMES.forEach((tm,ri)=>{
     const tr=document.createElement("tr");
     const rh=document.createElement("th"); rh.textContent=tm; tr.appendChild(rh);
@@ -6463,13 +6590,13 @@ function renderMatrixBody(){
       }
       else if(state.excMode){
         const v=(state.metric==="tsf")?row.perf.tsf:row.perf.ar;
-        td.className="cell "+tier(v);
+        td.className="cell "+tierMx(v,B);
         td.innerHTML=`<div class="v">${pct(v)}</div><div class="sub">${row.sched}/${row.reqEff} • ${Math.round(row.rec.volume)}</div>`;
         wireExcPaint(td,ds,tm);
       }
       else{
         const v=(state.metric==="tsf")?row.perf.tsf:row.perf.ar;
-        td.className="cell "+tier(v);
+        td.className="cell "+tierMx(v,B);
         // standardized capacity states: scheduled vs required (item 2)
         const short=row.sched<row.reqEff, over=row.sched>row.reqEff;
         if(short){ shortCount++; maxDef=Math.max(maxDef,row.reqEff-row.sched); }
@@ -6500,7 +6627,9 @@ function renderMatrixBody(){
           :t("mxVerdBalanced");
         // "needed" is sized for the PRIMARY metric — say so when the toggle shows the other one
         const offPrim=(state.metric==="tsf")!==(state.settings.primaryMetric==="tsf");
+        const cu=cum[di]; if(row.rec.volume>0){ cu.vol+=row.rec.volume; cu.acc+=v*row.rec.volume; if(!cu.from) cu.from=tm; }
         td.title=t("mxTipHead",{m:mName,v:pct(v),src:t(measured?"mxSrcMeas":"mxSrcFc")})+"\n"
+          +(cu.vol>0?t("mxCum",{a:cu.from,b:tm,v:pct(cu.acc/cu.vol),n:Math.round(cu.vol).toLocaleString()})+"\n":"")
           +t("mxTipBody",{t:tgt,s:row.sched,r:row.reqEff})+"\n"+verd
           +(offPrim&&(short||over)?"\n"+t("mxVerdMetric",{p:primName()}):"");
         td.addEventListener("click",e=>openEditor(e,ds,tm,di));
@@ -6928,10 +7057,7 @@ function openTrendEditor(e,ds,curVol,curAht){
   const src=document.getElementById("ceSrc"); src.className="ceSrc fc"; src.textContent=t("dTagFc");
   document.getElementById("ceVolH").textContent=t("ceHintDay");
   ce.style.display="block";
-  const r=e.currentTarget.getBoundingClientRect();
-  let x=r.left+window.scrollX, y=r.bottom+window.scrollY+4;
-  if(x+290>document.documentElement.clientWidth) x=document.documentElement.clientWidth-296;
-  ce.style.left=Math.max(6,x)+"px"; ce.style.top=y+"px";
+  placeEditor(e.currentTarget.getBoundingClientRect());
 }
 function applyTrendEdit(ds,newVol,newAht){
   const sd=sourceDay(ds); if(!sd) return;
@@ -7575,6 +7701,7 @@ function renderDirty(){
   }
 }
 function renderAll(){
+  renderSetSkills();
   dirtyPages.add("matrix"); dirtyPages.add("trends"); dirtyPages.add("recruit");
   dirtyPages.add("workforce"); dirtyPages.add("scheduler");
   renderDirty(); saveState();
@@ -7741,6 +7868,16 @@ document.getElementById("mClose").addEventListener("click",()=>document.getEleme
 document.getElementById("modalBg").addEventListener("click",e=>{ if(e.target.id==="modalBg") e.target.classList.remove("show"); });
 
 /* ---------------- Inline cell editor ---------------- */
+/* below the cell when it fits, else ABOVE it; always clamped inside the viewport so
+   Apply / Cancel stay reachable even on the last rows of the grid */
+function placeEditor(r){
+  const ce2=document.getElementById("cellEditor"), W=document.documentElement.clientWidth, H=window.innerHeight;
+  const w=ce2.offsetWidth||290, h=ce2.offsetHeight||260;
+  let x=Math.min(r.left,W-w-6), y=r.bottom+4;
+  if(y+h>H-6) y=r.top-h-4;             // flip above
+  y=Math.max(6,Math.min(y,H-h-6));     // still too tall → pin inside the viewport
+  ce2.style.left=(Math.max(6,x)+window.scrollX)+"px"; ce2.style.top=(y+window.scrollY)+"px";
+}
 const ce=document.getElementById("cellEditor");
 let ceCtx=null;
 /* where does a cell's "scheduled" number come from? mirrors capacityFor's precedence:
@@ -7765,6 +7902,10 @@ function ceRenderLive(){
   document.getElementById("ceLive").innerHTML=cell(c.base.sched,c.base.req,c.base.m)
     // "after" speaks the grid's own notation (scheduled/needed · metric) — short, familiar
     +(changed?`<br><span class="arrow">→ ${t("ceAfter")}</span> <b style="direction:ltr;unicode-bidi:isolate">${Math.round(sched)}/${req}</b> · <b style="color:${col(m)}">${pct(m)}</b>`:"");
+  { const P=c.prior, cb=P.vol+c.base.vol>0?(P.acc+c.base.m*c.base.vol)/(P.vol+c.base.vol):null;
+    const ca=P.vol+vol>0?(P.acc+m*vol)/(P.vol+vol):null;
+    if(cb!=null) document.getElementById("ceLive").innerHTML+=`<div class="ceCum">${t("ceCum",{a:P.from||c.tm,b:c.tm})} <b style="color:${col(cb)}">${pct(cb)}</b>`
+      +(changed&&ca!=null&&Math.abs(ca-cb)>=0.0005?` → <b style="color:${col(ca)}">${pct(ca)}</b>`:"")+`</div>`; }
 }
 function openEditor(e,ds,tm,dayIdx){
   const sd=sourceDay(ds); if(!sd) return;
@@ -7775,7 +7916,14 @@ function openEditor(e,ds,tm,dayIdx){
   // the sidur's own count, what-if lifted (capacityFor reads the what-if first)
   let sidurN=null;
   if(roster){ state.agWhatIf.delete(wiKey); sidurN=capacityFor(ds,dayIdx,tm,rec); if(wi!=null) state.agWhatIf.set(wiKey,wi); }
-  ceCtx={ds,tm,dayIdx,forecast:sd.forecast,roster,sidurN,
+  // calls + metric of the day's intervals BEFORE this one → cumulative before/after in the live mirror
+  const prior={vol:0,acc:0,from:null};
+  for(const r2 of (computeDay(ds)||{rows:[]}).rows){
+    if(r2.tm>=tm) break;
+    if(!r2.rec||r2.closed||r2.exc||r2.nodata||!(r2.rec.volume>0)) continue;
+    prior.vol+=r2.rec.volume; prior.acc+=primVal(r2.perf)*r2.rec.volume; if(!prior.from) prior.from=r2.tm;
+  }
+  ceCtx={ds,tm,dayIdx,forecast:sd.forecast,roster,sidurN,prior,
     base:{vol:rec.volume,aht:rec.aht,mpt:rec.mpt,sched:row?row.sched:rec.agents,req:row?row.reqEff:0,m:row&&row.perf?primVal(row.perf):0}};
   document.getElementById("ceTitle").textContent=t("ceTitle",{day:t("days")[dayIdx],time:tm});
   const src=document.getElementById("ceSrc");
@@ -7793,10 +7941,7 @@ function openEditor(e,ds,tm,dayIdx){
   document.getElementById("ceFut").checked=true;
   ceRenderLive();
   ce.style.display="block";
-  const r=e.currentTarget.getBoundingClientRect();
-  let x=r.left+window.scrollX, y=r.bottom+window.scrollY+4;
-  if(x+290>document.documentElement.clientWidth) x=document.documentElement.clientWidth-296;
-  ce.style.left=Math.max(6,x)+"px"; ce.style.top=y+"px";
+  placeEditor(e.currentTarget.getBoundingClientRect());
   document.getElementById("ceVol").focus(); document.getElementById("ceVol").select(); // type-to-edit, fewer clicks
 }
 ["ceVol","ceAht","ceAg"].forEach(id=>document.getElementById(id).addEventListener("input",ceRenderLive));
@@ -7895,12 +8040,25 @@ document.addEventListener("keydown",e=>{
 /* ---------------- Wiring ---------------- */
 const pages=["home","matrix","workforce","scheduler","trends","recruit","settings"];
 function closeEditor(){ ce.style.display="none"; ceCtx=null; document.getElementById("ceAgRow").style.display=""; document.getElementById("ceFutRow").style.display="none"; }
+/* header height feeds the one-screen matrix layout (the nav can wrap on narrow screens) */
+function fitMatrix(){
+  const tbl=document.getElementById("matrixTable"); if(!tbl) return;
+  tbl.classList.remove("dense","denser");
+  if(!document.body.classList.contains("mxFit")) return;
+  const tw=tbl.parentElement, over=()=>tw.scrollHeight>tw.clientHeight+1;
+  if(over()) tbl.classList.add("dense");
+  if(over()) tbl.classList.add("denser"); // still too tall → internal scroll is the last resort
+}
+function fitHeader(){ const h=document.querySelector("header"); if(h) document.documentElement.style.setProperty("--hdrH",h.offsetHeight+"px"); }
+window.addEventListener("resize",()=>{ fitHeader(); fitMatrix(); });
 function showPage(p){
   closeEditor(); // bug fix: an open cell popover must not survive page switches
   document.getElementById("expWrap").classList.remove("open");
   pages.forEach(q=>{ document.getElementById("tab-"+q).classList.toggle("active",q===p);
     document.getElementById("page-"+q).classList.toggle("active",q===p); });
+  document.body.classList.toggle("mxFit",p==="matrix"); fitHeader();
   renderDirty(); // deferred: a page renders only when it becomes visible
+  if(p==="matrix") fitMatrix();
 }
 pages.forEach(p=>document.getElementById("tab-"+p).addEventListener("click",()=>showPage(p)));
 document.querySelectorAll("[data-goto]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.goto)));
@@ -8023,14 +8181,21 @@ document.getElementById("expGo").addEventListener("click",()=>{
   exportDemand(document.getElementById("expRes").value,document.getElementById("expMetric").value);
   document.getElementById("expWrap").classList.remove("open");
 });
-document.getElementById("expToggle").addEventListener("click",e=>{
-  e.stopPropagation();
-  document.getElementById("expWrap").classList.toggle("open");
-});
+/* every dropdown (.splitbtn) behaves the same: its button toggles it (a second click closes),
+   one open at a time, a click outside or Esc closes; an ACTION button inside closes it,
+   checkbox lists stay open while you tick */
 document.addEventListener("click",e=>{
-  if(!e.target.closest||!e.target.closest("#expWrap"))
-    document.getElementById("expWrap").classList.remove("open");
+  const t0=e.target.closest?e.target:null; if(!t0) return;
+  const head=t0.closest(".splitbtn > button");
+  const inMenu=t0.closest(".splitbtn .menu");
+  document.querySelectorAll(".splitbtn.open").forEach(w=>{
+    if(head&&w===head.parentElement) return;
+    if(inMenu&&w.contains(inMenu)&&!t0.closest(".menu button")) return;
+    w.classList.remove("open");
+  });
+  if(head) head.parentElement.classList.toggle("open");
 });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") document.querySelectorAll(".splitbtn.open").forEach(w=>w.classList.remove("open")); });
 
 /* Forecasting Models: registry-driven selectors + holdout backtest */
 function populateModelSelects(){
@@ -8362,15 +8527,17 @@ document.getElementById("backtestBtn").addEventListener("click",()=>{
     const scores=Object.keys(Models[kind])
       .map(mid=>({mid,r:backtestModel(kind,mid)}))
       .filter(s=>s.r!==null)
-      // rank by how CLOSE pace sits to 100% (least biased); MAPE breaks ties
-      .sort((a,b)=>(Math.abs((a.r.pace??999)-100)-Math.abs((b.r.pace??999)-100))||(a.r.mape-b.r.mape));
+      // volume: rank by how CLOSE pace sits to 100% (least biased), MAPE breaks ties.
+      // AHT: rank by the calls-weighted error — a 1% pace bias matters less than the spread
+      .sort(kind==="aht"?(a,b)=>a.r.mape-b.r.mape
+        :(a,b)=>(Math.abs((a.r.pace??999)-100)-Math.abs((b.r.pace??999)-100))||(a.r.mape-b.r.mape));
     if(!scores.length) return;
     any=true;
     scores.forEach((s,i)=>{
       const li=document.createElement("li");
       li.className=i===0?"ok":"insight";
       const pace=s.r.pace!=null?`<span class="num">${s.r.pace.toFixed(0)}% ${t("paceWord")}</span>`:"—";
-      li.innerHTML=`<span>${t(titleKey)} — ${t(Models[kind][s.mid].label)}: ${pace} <span style="opacity:.6">(${s.r.mape.toFixed(0)}% MAPE)</span>${i===0?" "+t("btBest"):""}</span>`;
+      li.innerHTML=`<span>${t(titleKey)} — ${t(Models[kind][s.mid].label)}: ${pace} <span style="opacity:.6">(${s.r.mape.toFixed(kind==="aht"?1:0)}% ${kind==="aht"?"WAPE":"MAPE"})</span>${i===0?" "+t("btBest"):""}</span>`;
       mL.appendChild(li);
     });
   });

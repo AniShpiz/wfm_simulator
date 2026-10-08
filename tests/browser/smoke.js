@@ -99,11 +99,12 @@ const crsCSV = "שם קורס,תאריך התחלה,משך בימים,כמות �
     return { n, added: state.cohorts.length - before, sample: state.cohorts[state.cohorts.length - 1] };
   }, crsCSV);
 
-  // 7. matrix calibration note + audit
+  // 7. matrix calibration/audit chips (no standing note line; chips only when actionable)
   await p.click("#tab-matrix");
   await p.evaluate(() => renderMatrix());
   R.calib = await p.evaluate(() => ({
-    note: document.getElementById("mxCalibNote").textContent.slice(0, 70),
+    flags: [...document.querySelectorAll("#mxFlags .mxFlag")].map(x => x.textContent),
+    noNoteLine: !document.getElementById("mxCalibNote"),
     audit: state.fcAudit
   }));
 
