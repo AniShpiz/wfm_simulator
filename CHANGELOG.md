@@ -6,6 +6,35 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+- Productivity read high on ACD exports whose login column is named "שעות נטו" / "net hours":
+  it wasn't recognized, so the app estimated hours from the gross schedule × availability.
+  Now read as net login hours (Book1 June 2026: app = file on every day, was −21%…+20%).
+- Occupancy above 100% in a 0–1 column (1.114 = 111.4%, end-of-day ACD intervals) was read
+  as 1.1%. The scale is now decided once per column; a day's measured occupancy is weighted
+  by net hours when the file has them (matches the file's own totals).
+- Weekly matrix: switching to the optimized preview no longer pushes the toolbar around
+  (the preview chip is gone; preview = the toggle + a thin frame around the grid).
+- "i" tooltips are never clipped: one floating tooltip, kept inside the window.
+
+### Added
+
+- Weekly matrix: "Optimized ✨" appears on any week that has a sidur — the first click runs
+  the fine-tune for that week and previews it in place (the sidur is untouched).
+- Home: the queue file's minimum in one line (date · interval · inbound calls · AHT) and a
+  row of optional-column chips — hover = what each adds; ✓ for those your file has.
+- Date Trends: "Net hours (actual)" column, shown only when the file has net/login hours
+  (measured days only — never a projection).
+- Share summary: drag the column chips to reorder the summary's columns (remembered).
+
+### Changed
+
+- All "i" tooltips rewritten short and in the user's terms (−55% text, EN + HE), no internals.
+- Home: the 4 step cards are gone (the portals are the steps); sidur portal trimmed to one line.
+- Matrix: the data-audit chip moved off the matrix (it lives on Home, next to the file);
+  the calibration chip is a 💡 recommendation instead of a ⚠ warning.
+
+### Fixed (earlier in this cycle)
+
 - Productivity and occupancy were inflated whenever some intervals carried answered calls but no
   login hours (e.g. evening blocks exported without login): the numerator counted every
   interval's calls, the denominator only the logged-in ones. Both now cover the same intervals
