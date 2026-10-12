@@ -4,6 +4,77 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Added
+
+- Optimizer explainability ("How the sidur was moved", Auto-Scheduler, fine-tune runs): one
+  day at a time, drawn the way the algorithm works — shifts SLIDE. Identical moves are one
+  lane ("×14", bar labelled with its hours); each bar starts at its old slot (dashed outline),
+  slides to the new one and turns navy with its new hours. Above, a colour-only strip
+  (short — darker = more / surplus / balanced) switches from before to after as the bars land.
+  One sentence carries the numbers; who moved is a collapsed list; ↻ replays.
+- Weekly matrix, optimized view: each cell shows ▲n / ▼n reps vs the current sidur, and a
+  "↔" in the day header opens the same explanation for that day.
+
+- "What to send to team leaders" (result card): a checklist — one row per team leader; hover
+  = the exact message, click = the changes; 📋 per TL or one message for everyone; "n/N sent"
+  and "changed since sent". A switch per team (and "don't move" per rep) keeps them as in the
+  sidur — the optimizer re-runs without them and every number, picture and offer follows.
+- Uncovered demand: a line saying what it builds on (the moves you kept; approvals add on top
+  and go into the export). The gap map is live — hover = reps short + how many offers help,
+  click = only those offers, ticking an offer closes its cells (✓) before anything is applied.
+- Export for the analyst: "📋 Copy for the sidur" (paste-ready, tab-separated) and CSV with only
+  the sidur's input columns — entry · exit · day · name by default — one row per shift, each
+  rep's rows together in the original sidur's order, days א→ו. ⚙ picks/reorders columns (drag)
+  and the header row; remembered. The full export moved into ⚙.
+
+### Fixed (round 5)
+
+- Locking a team/rep made OTHER teams jump: locked reps stopped counting toward demand (they went
+  to the rules-only group), so the optimizer compensated elsewhere — and every switch re-ran the
+  whole optimizer. Now locked reps still cover demand, a switch changes only what it names, and
+  switching back restores exactly the previous moves (no re-run, ~50 ms, no animation replay,
+  save deferred). "↻ Re-optimize with your choices" is offered after a lock, never automatic.
+- Split shifts (two shifts for one rep on one day): export, extensions, locks and restores now
+  match the exact shift (the export used to drop one of them).
+- Every dropdown stays inside the window (the export columns menu opened off-screen in RTL).
+
+### Changed (round 5)
+
+- Weekly shortage tile says "weekly", with "≈x% of the hours needed · ~y a day" and a tooltip
+  (a morning surplus doesn't cancel an evening shortage).
+- Kept reps stay on their line and show what was given up ("kept · instead of 10:00–17:00");
+  "don't move" / "allow moving" are pill buttons.
+- One reorder control app-wide (`chipOrder`): pill chips on a track, click = in/out, smooth
+  pointer drag (first/last included), keyboard arrows. Used by the analyst export and the share
+  summary. Export menu grows with its columns; the button reads "⚙ Columns".
+- Analyst export: every rep × every day א–ו (Friday included; entry/exit empty when there's no
+  shift). A "⤳ skip" chip marks a formula column in the sidur — the copy then runs in steps
+  ("📋 Copy 1/2" → paste → "2/2").
+- ③ Uncovered demand: offers and the gap map side by side (map pinned while scrolling). A tray
+  shows what the selection closes and its service gain, with "➕ Add" and requests by TL. Short
+  rows (likelihood dot · name · day · "until 17:00 · +2h" · 📱), details on hover, hover a row
+  → its cells light up on the map. Likelihood filter with a one-line explanation. Adding an
+  extension changes only that shift (no re-run); "Added to the sidur" lists each with ✕ to undo
+  one (a rep changed their mind). The card explains why stretching is separate from sliding.
+
+### Fixed
+
+- "Projected answer-rate change" compared measured history with a pure model and counted every
+  skill on the optimized side only — inflated. Both sides now run through the same model with
+  the same answering reps; only the sidur differs.
+- Result KPIs: "shortage, rep-hours (before → after)" leads; the coverage-rule KPI shows only
+  when rules exist (no empty "—"); "hours moved" removed.
+
+### Changed
+
+- Auto-Scheduler page follows the manager's journey: ① prepare & run (constraints and coverage
+  rules folded into one "⚙ Before running (optional)" section whose summary shows what's set)
+  → ② the result (KPIs → how it moved → coverage → changes per team leader) → ③ what's still
+  missing (extension offers + gap map) → the full schedule and pool for reference. ②, ③ and the
+  reference tables appear only after a run. Replay is a small round ↻ beside before/after.
+
+## Merged in PR #17
+
 ### Fixed
 
 - Productivity read high on ACD exports whose login column is named "שעות נטו" / "net hours":

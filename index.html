@@ -314,6 +314,97 @@ tr.r-ok td{background:var(--emerald-bg)}
 @keyframes spin{to{transform:rotate(360deg)}}
 .dropzone.busy{opacity:.6;pointer-events:none}
 .dropzone.loaded .pre{display:none}
+/* ③ two panes: the offers to act on, and the map they change — always both in view */
+.gapLayout{display:grid;grid-template-columns:minmax(340px,1fr) minmax(380px,1.15fr);gap:14px;align-items:start}
+#schGapWrap{position:sticky;top:8px;max-height:calc(100vh - 70px);overflow:auto}
+@media (max-width:1100px){.gapLayout{grid-template-columns:1fr}#schGapWrap{position:static;max-height:none}}
+.exTray{position:sticky;top:0;z-index:2;background:#fff;border:1px solid var(--border);border-radius:10px;padding:8px 10px;margin-bottom:8px;box-shadow:0 2px 6px rgba(13,42,77,.06)}
+.exTray .tsum{font-size:.82rem;font-weight:600;color:var(--navy)}
+.exTray .tsum.idle{font-weight:400;color:var(--muted)}
+.exTray .tacts{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.offFilt{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:6px 0}
+.offRow{display:grid;grid-template-columns:18px 10px minmax(100px,1fr) 64px minmax(110px,auto) 22px;gap:8px;align-items:center;font-size:.8rem;padding:4px 6px;border-radius:6px;cursor:pointer}
+.offRow:hover{background:#f3f7fc}.offRow.on{background:#eef7f1}
+.offRow .dot{width:9px;height:9px;border-radius:50%}
+.dot.hi{background:#1e9e5a}.dot.med{background:#d8a400}.dot.lo{background:#c94f4f}
+.offRow .ask{font-weight:600;color:var(--navy);white-space:nowrap}
+.offRow .when,.offRow b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.offRow .cp{border:none;background:none;cursor:pointer;font-size:.9rem;padding:0}
+.applied{margin-top:10px;padding-top:8px;border-top:1px dashed var(--border)}
+.applied .apChip{display:inline-flex;align-items:center;gap:6px;border:1px solid #9fd8b8;background:#e9f8ef;color:#0f6a3f;border-radius:999px;padding:2px 4px 2px 10px;font-size:.74rem;margin:2px}
+.applied .apChip button{border:none;background:#fff;color:#9b1c1c;border-radius:50%;width:18px;height:18px;cursor:pointer;line-height:1;font-size:.7rem}
+td.gapCell.hl{box-shadow:inset 0 0 0 2px #1e9e5a}
+/* the app's reorder control: a track like .seg; on = navy pill; drag lifts */
+.ordTrack{display:flex;flex-wrap:wrap;gap:4px;padding:4px;background:#e7edf4;border:1px solid var(--border);border-radius:14px;box-shadow:inset 0 1px 2px rgba(13,42,77,.08);touch-action:none;user-select:none}
+.ordChip{display:inline-flex;align-items:center;gap:5px;padding:5px 12px 5px 9px;border-radius:999px;font-size:.8rem;color:var(--muted);background:rgba(255,255,255,.55);border:1px dashed #b9c7d6;cursor:grab;transition:background .15s,color .15s,box-shadow .15s}
+.ordChip .grip{font-size:.7rem;opacity:.5;letter-spacing:-2px}
+.ordChip.on{background:var(--navy);color:#fff;border:1px solid var(--navy);font-weight:600;box-shadow:0 1px 3px rgba(13,42,77,.3)}
+.ordChip.on .grip{opacity:.7}
+.ordChip.skip{font-style:italic}.ordChip.skip.on{background:#6b46c1;border-color:#6b46c1}
+.ordChip.lift{cursor:grabbing;transform:scale(1.06);box-shadow:0 6px 16px rgba(13,42,77,.35);z-index:2;position:relative}
+.ordChip:focus-visible{outline:2px solid var(--magenta);outline-offset:1px}
+#anFmtMenu{width:max-content;min-width:320px;max-width:min(92vw,760px)}
+.gapCtx{font-size:.8rem;color:var(--navy);background:var(--sky-soft);border-radius:8px;padding:6px 10px;margin:0 0 8px}
+td.gapCell{cursor:pointer;transition:background-color .3s}
+td.gapCell.pick{outline:2px solid var(--navy);outline-offset:-2px}
+td.gapCell.closing{background:#fff3cf!important;color:#8a5a00}
+td.gapCell.closed{background:#d6f3e2!important;color:#0f6a3f;font-weight:700}
+.pickChip{display:flex;align-items:center;gap:8px;font-size:.8rem;font-weight:600;color:var(--navy);background:#eef3fb;border-radius:8px;padding:5px 10px;margin:4px 0}
+/* "what to send": a team-leader checklist */
+.tlHead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0 4px;padding-top:10px;border-top:1px solid var(--border)}
+.tlHead h3{font-size:.88rem;color:var(--navy);margin:0}
+.tlRow{display:flex;align-items:center;gap:10px;padding:6px 4px;border-bottom:1px solid var(--border);font-size:.83rem}
+.tlRow:hover{background:#f7fafd}
+.tlRow.off .tlName{color:var(--muted);text-decoration:line-through}
+.tlName{background:none;border:none;font:inherit;font-weight:700;color:var(--ink);cursor:pointer;padding:0;display:inline-flex;align-items:center;gap:5px}
+.tlName::before{content:"▸";font-size:.7rem;color:var(--muted);transition:transform .15s}
+[dir=rtl] .tlName::before{content:"◂"}
+.tlName.open::before{transform:rotate(90deg)}[dir=rtl] .tlName.open::before{transform:rotate(-90deg)}
+.tlChip{background:color-mix(in srgb,var(--c) 13%,#fff);color:var(--c);border:1px solid color-mix(in srgb,var(--c) 35%,#fff);border-radius:9px;padding:1px 8px;font-size:.7rem;font-weight:700;white-space:nowrap}
+.tlSt{font-size:.74rem;font-weight:700;color:#0f6a3f;white-space:nowrap}.tlSt.upd{color:#b45309}
+.tlDet{padding:4px 34px 8px;background:#fafcfe;border-bottom:1px solid var(--border)}
+.tlLine{display:grid;grid-template-columns:minmax(110px,max-content) 54px 82px 16px minmax(82px,max-content) 1fr auto;gap:8px;align-items:center;font-size:.78rem;padding:3px 0}
+.tlLine .tlArr{color:var(--muted);text-align:center}
+.tlLine .tlGave{color:var(--muted);font-size:.74rem}
+.tlLine.kept b{color:var(--muted)}
+.tlAct{grid-column:7;justify-self:end;border:1px solid var(--border);background:#fff;color:var(--navy);border-radius:999px;padding:2px 10px;font-size:.72rem;font-weight:600;cursor:pointer;white-space:nowrap}
+.tlAct:hover{background:var(--sky-soft);border-color:#9cc8ee}
+.tlAct.undo{color:#6b46c1;border-color:#d8ccf3}
+.kpi .kSub{font-size:.7rem;color:var(--muted);margin-top:2px}
+.tlLine .tlFrom{color:var(--muted);text-decoration:line-through;direction:ltr}.tlLine .tlTo{font-weight:700;direction:ltr}
+
+.stepN{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:var(--navy);color:#fff;font-size:.72rem;font-weight:700;flex:none}
+.schPrep{margin-top:8px;border:1px solid var(--border);border-radius:8px;padding:6px 10px;background:#fafcfe}
+.schPrep > summary{cursor:pointer;font-size:.82rem;font-weight:600;color:var(--navy)}
+.prepSec{margin-top:8px}.prepSec h3{font-size:.85rem;color:var(--navy);display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.resSec{margin:10px 0 4px;padding-top:10px;border-top:1px solid var(--border)}.resSec h3{font-size:.88rem;color:var(--navy);margin-bottom:6px}
+.exReplay{width:26px;height:26px;border-radius:50%;border:1px solid var(--border);background:#fff;color:var(--navy);font-size:.95rem;line-height:1;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:transform .3s,background .15s}
+.exReplay:hover{background:var(--sky-soft);transform:rotate(-90deg)}
+/* optimizer explainability: shifts slide; a colour strip shows the effect */
+.exSum{font-size:.9rem;font-weight:600;color:var(--navy);margin:0 0 2px}
+.exHow{font-size:.74rem;color:var(--muted);margin:0 0 8px}
+.exLegend{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center;font-size:.72rem;color:var(--muted);margin-bottom:8px}
+.exLegend span{display:inline-flex;align-items:center;gap:5px}
+.exLegend .exState{margin-inline-start:auto;color:var(--navy);font-size:.8rem}
+.exK{display:inline-block;width:14px;height:10px;border-radius:3px}
+.exK.sh{background:linear-gradient(90deg,#f8d4d4,#d95c5c)}.exK.ov{background:linear-gradient(90deg,#e4daf7,#c2aced)}.exK.ok{background:#bfe6cc}
+.exK.bar{background:var(--navy);width:18px}.exK.ghost{border:1.5px dashed #9aa9ba;width:18px;height:8px}
+.exGrid{display:grid;grid-template-columns:44px 1fr;gap:5px 8px;align-items:center;direction:ltr}
+.exL{font-size:.78rem;color:var(--navy);text-align:center}
+.exTimes,.exStrip{display:grid;grid-template-columns:repeat(var(--n),1fr);gap:2px}
+.exTimes span{font-size:.62rem;color:var(--muted);white-space:nowrap}
+.exStrip i{height:16px;border-radius:3px;background:#f1f4f8;transition:background-color .6s}
+.exStrip i.sh1{background:#f8d4d4}.exStrip i.sh2{background:#ef9f9f}.exStrip i.sh3{background:#d95c5c}
+.exStrip i.ov1{background:#e4daf7}.exStrip i.ov2{background:#c2aced}.exStrip i.ok{background:#bfe6cc}.exStrip i.na{background:transparent}
+.exLane{position:relative;height:20px;border-radius:4px;background:repeating-linear-gradient(90deg,#f6f8fb 0 calc(100% / var(--n) - 2px),transparent calc(100% / var(--n) - 2px) calc(100% / var(--n)))}
+.exGhost,.exBar{position:absolute;top:2px;height:16px;border-radius:4px}
+.exGhost{border:1.5px dashed #9aa9ba;box-sizing:border-box}
+.exBar{background:#e0a100;color:#fff;font-size:.62rem;font-weight:700;display:flex;align-items:center;justify-content:center;overflow:hidden;white-space:nowrap;transition:left 1.2s cubic-bezier(.4,0,.2,1),background-color .4s}
+.exBar.landed{background:var(--navy)}
+.exWho summary{cursor:pointer;margin-top:6px}
+.exWhoList{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:2px 14px;font-size:.74rem;margin-top:6px;max-height:180px;overflow:auto}
+#matrixTable .mvd{font-size:.62rem;font-weight:700;margin-inline-start:3px}.mvd.up{color:#0f6a3f}.mvd.dn{color:#9b1c1c}
+#matrixTable .exLink{cursor:pointer;margin-inline-start:4px;font-weight:700;color:#8a5fd0}
 .dropzone .fcMin{font-size:.82rem;color:var(--ink)}
 .xChips{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;align-items:center;margin-top:8px;font-size:.72rem;color:var(--muted)}
 .xChip{border:1px dashed #b9c7d6;border-radius:999px;padding:2px 9px;background:#fff;cursor:help;color:#4a5a6e}
@@ -552,6 +643,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <button class="btn ghost" id="exportTrends" data-i18n="exportCsv">⬇ Download CSV</button>
       </div>
       <!-- shareable monthly snapshot (opened in the shared modal): image + text, one click each -->
+      <div id="exPanel" class="mpanel" data-tkey="exTitle" hidden></div>
       <div id="shPanel" class="mpanel" data-tkey="shTitle" hidden>
         <!-- every option re-draws the preview instantly; choices are remembered for next time -->
         <div class="shOpts">
@@ -718,7 +810,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
   <!-- ============ WFM 2.0: DEMAND-DRIVEN AUTO-SCHEDULER ============ -->
   <section class="page" id="page-scheduler">
     <div class="card">
-      <h2><span data-i18n="schTitle">Auto-Scheduling</span> <span class="info" data-tipkey="tipSch" tabindex="0">i</span></h2>
+      <h2><span class="stepN">1</span><span data-i18n="schTitle">Auto-Scheduling</span> <span class="info" data-tipkey="tipSch" tabindex="0">i</span></h2>
       <!-- TWO jobs, one page: Mode 1 REPAIRS the current sidur; Mode 2 CONSTRUCTS a fresh
            baseline from the iron base. Only the input row + a couple of blocks differ. -->
       <div class="toolbar" style="margin:0 0 8px">
@@ -753,64 +845,90 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <p class="mini" data-i18n="schMode2Hint">Builds a baseline by placing each contracted iron window where it best covers demand.</p>
         <p class="gateNote" id="schGenGate" style="display:none" data-i18n="schGenNeed">Load a demand forecast and an iron base (סידור ברזל) to generate a baseline.</p>
       </div>
-      <div class="dropzone" id="dzSchCon" style="margin-top:8px">
-        <h3 data-i18n="schConL">Weekly constraints file (optional):</h3>
-        <p class="mini" data-i18n="schConHint">Employee | Date | Start | End | Type (Unavailable / Partial / Vacation)</p>
-        <input type="file" id="schConInput" accept=".csv,.tsv,.txt,.json,.xlsx,.xlsm,.xls" style="display:none">
-      </div>
-      <!-- name reconciliation: unknown names get a did-you-mean flow, never a silent no-op -->
-      <div id="conNameCheck" style="display:none"></div>
-      <!-- manual entry is collapsed by default — minimal cognitive load, there when needed -->
-      <details id="conManual" style="margin-top:6px">
-        <summary class="mini" style="cursor:pointer" data-i18n="conManualT">✍ Add a constraint manually</summary>
-        <div class="toolbar" style="margin-top:6px">
-          <input id="cmName" list="knownNames" style="width:170px" data-i18n-ph="cmNamePh" placeholder="Employee name">
-          <datalist id="knownNames"></datalist>
-          <input id="cmDate" type="date" style="width:140px">
-          <input id="cmStart" type="time" style="width:100px">
-          <input id="cmEnd" type="time" style="width:100px">
-          <select id="cmType" style="width:120px">
-            <option value="vacation" data-i18n="cmTvac">Vacation</option>
-            <option value="unavailable" data-i18n="cmTunav">Unavailable</option>
-            <option value="partial" data-i18n="cmTpart">Partial</option>
-          </select>
-          <button class="btn ghost" id="cmAdd" data-i18n="cmAdd">+ Add</button>
+      <!-- optional before a run: constraints + coverage rules, folded; the summary says what's set -->
+      <details id="schPrep" class="schPrep">
+        <summary><span data-i18n="schPrepT">⚙ Before running (optional)</span> <span class="mini" id="schPrepSum"></span></summary>
+        <div class="prepSec">
+        <div class="dropzone" id="dzSchCon" style="margin-top:8px">
+          <h3 data-i18n="schConL">Weekly constraints file (optional):</h3>
+          <p class="mini" data-i18n="schConHint">Employee | Date | Start | End | Type (Unavailable / Partial / Vacation)</p>
+          <input type="file" id="schConInput" accept=".csv,.tsv,.txt,.json,.xlsx,.xlsm,.xls" style="display:none">
         </div>
-        <div id="cmList" style="margin-top:6px"></div>
+        <!-- name reconciliation: unknown names get a did-you-mean flow, never a silent no-op -->
+        <div id="conNameCheck" style="display:none"></div>
+        <!-- manual entry is collapsed by default — minimal cognitive load, there when needed -->
+        <details id="conManual" style="margin-top:6px">
+          <summary class="mini" style="cursor:pointer" data-i18n="conManualT">✍ Add a constraint manually</summary>
+          <div class="toolbar" style="margin-top:6px">
+            <input id="cmName" list="knownNames" style="width:170px" data-i18n-ph="cmNamePh" placeholder="Employee name">
+            <datalist id="knownNames"></datalist>
+            <input id="cmDate" type="date" style="width:140px">
+            <input id="cmStart" type="time" style="width:100px">
+            <input id="cmEnd" type="time" style="width:100px">
+            <select id="cmType" style="width:120px">
+              <option value="vacation" data-i18n="cmTvac">Vacation</option>
+              <option value="unavailable" data-i18n="cmTunav">Unavailable</option>
+              <option value="partial" data-i18n="cmTpart">Partial</option>
+            </select>
+            <button class="btn ghost" id="cmAdd" data-i18n="cmAdd">+ Add</button>
+          </div>
+          <div id="cmList" style="margin-top:6px"></div>
+        </details>
+        </div>
+        <!-- STEP 1b — coverage rules live WHERE they are enforced: rules feed the audit
+             that runs on every generated schedule (migrated from the Workforce page) -->
+        <div id="wfCovCard" class="prepSec">
+          <h3><span id="wfCovHead" data-i18n="covTitle">Mandatory Skill Coverage</span> <span class="info" data-tipkey="tipCov" tabindex="0">i</span></h3>
+          <div id="wfCovList"></div>
+          <details id="wfCovAdd" style="margin-top:8px">
+            <summary class="mini" style="cursor:pointer" data-i18n="covAddT">+ Add a coverage rule</summary>
+            <div class="covform" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px">
+              <select id="covSkill" style="min-width:130px"></select>
+              <label class="mini"><span>≥</span> <input id="covMin" type="number" min="1" max="20" value="1" style="width:52px"></label>
+              <label class="mini"><span data-i18n="covPrefL">target</span> <input id="covPref" type="number" min="0" max="20" value="0" style="width:52px"></label>
+              <label class="mini"><span data-i18n="covFromL">from</span> <input id="covFrom" type="time" style="width:96px"></label>
+              <label class="mini"><span data-i18n="covToL">to</span> <input id="covTo" type="time" style="width:96px"></label>
+              <button class="btn ghost" id="covAdd" data-i18n="covAdd">+ Add</button>
+            </div>
+            <p class="mini" data-i18n="covHint">Set the minimum agents of a skill required in each interval (leave the time window empty for all day). A gap = an interval that has agents scheduled but too few of this skill.</p>
+          </details>
+        </div>
       </details>
       <div class="banner good" id="schBanner"></div>
     </div>
-    <!-- STEP 1b — coverage rules live WHERE they are enforced: rules feed the audit
-         that runs on every generated schedule (migrated from the Workforce page) -->
-    <div class="card" id="wfCovCard">
-      <h2><span id="wfCovHead" data-i18n="covTitle">Mandatory Skill Coverage</span> <span class="info" data-tipkey="tipCov" tabindex="0">i</span></h2>
-      <div id="wfCovList"></div>
-      <details id="wfCovAdd" style="margin-top:8px">
-        <summary class="mini" style="cursor:pointer" data-i18n="covAddT">+ Add a coverage rule</summary>
-        <div class="covform" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px">
-          <select id="covSkill" style="min-width:130px"></select>
-          <label class="mini"><span>≥</span> <input id="covMin" type="number" min="1" max="20" value="1" style="width:52px"></label>
-          <label class="mini"><span data-i18n="covPrefL">target</span> <input id="covPref" type="number" min="0" max="20" value="0" style="width:52px"></label>
-          <label class="mini"><span data-i18n="covFromL">from</span> <input id="covFrom" type="time" style="width:96px"></label>
-          <label class="mini"><span data-i18n="covToL">to</span> <input id="covTo" type="time" style="width:96px"></label>
-          <button class="btn ghost" id="covAdd" data-i18n="covAdd">+ Add</button>
-        </div>
-        <p class="mini" data-i18n="covHint">Set the minimum agents of a skill required in each interval (leave the time window empty for all day). A gap = an interval that has agents scheduled but too few of this skill.</p>
-      </details>
-    </div>
     <!-- STEP 3 — compliance & delta: rendered after every run -->
     <div class="card" id="schAuditCard" style="display:none">
-      <h2><span data-i18n="schAuditTitle">Compliance &amp; Changes vs. the Original Sidur</span> <span class="info" data-tipkey="tipSchAudit" tabindex="0">i</span></h2>
+      <h2><span class="stepN">2</span><span data-i18n="schAuditTitle">Compliance &amp; Changes vs. the Original Sidur</span> <span class="info" data-tipkey="tipSchAudit" tabindex="0">i</span></h2>
       <div class="kpis" id="schKpis" style="margin-bottom:8px"></div>
+      <!-- ② how: one day at a time, surplus squares fly into missing slots -->
+      <div id="exCard" class="resSec" style="display:none">
+        <h3 data-i18n="exTitle">How the sidur was moved</h3>
+        <div class="seg" id="exDays" style="margin-bottom:8px"></div>
+        <div id="exBody"></div>
+      </div>
+
       <div id="schCovAudit"></div>
       <div id="schDeltaWrap" style="margin-top:8px"></div>
     </div>
-    <div class="grid2">
+    <!-- ONE story, one card: the gap (the problem) with its offers (the action)
+         layered on top — the manager reads top-down: who to ask, then the map -->
+    <div class="card" id="schGapCard" style="display:none">
+      <h2><span class="stepN">3</span><span data-i18n="schGapTitle">Uncovered Demand</span> <span class="info" data-tipkey="tipExt" tabindex="0">i</span></h2>
+      <p class="gapCtx" id="schGapCtx"></p>
+      <div class="gapLayout"><div id="schExtWrap"></div><div id="schGapWrap"></div></div>
+    </div>
+    <!-- for reference: the full schedule (export) and the surplus pool -->
+    <div class="grid2" id="schRefGrid" style="display:none">
       <div class="card">
         <!-- export sits beside the headline → both cards' titles align -->
         <div class="toolbar" style="margin:0 0 6px">
           <h2 style="margin:0" data-i18n="schOutTitle">Optimized Schedule</h2>
           <span class="grow"></span>
+          <!-- for the analyst: only the sidur's INPUT columns (the rest are formulas there) -->
+          <button class="btn navy" id="anCopy" data-i18n="anCopy">📋 Copy for the sidur</button>
+          <button class="btn ghost" id="anCsv" data-i18n="anCsv">⬇ CSV</button>
+          <div class="splitbtn" id="anFmtWrap"><button class="btn ghost" id="anFmtBtn" data-i18n="anFmtBtn" data-i18n-title="anFmtTip" title="Columns &amp; order">⚙ Columns</button>
+            <div class="menu pad" id="anFmtMenu" style="min-width:270px"></div></div>
           <button class="btn ghost" id="schCsv" style="display:none" data-i18n="schCsv">⬇ Download Optimized Schedule (CSV)</button>
         </div>
         <div class="tablewrap" id="schOutWrap" style="max-height:380px;overflow-y:auto"></div>
@@ -820,13 +938,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <div class="tablewrap" id="schPoolWrap" style="max-height:380px;overflow-y:auto"></div>
       </div>
     </div>
-    <!-- ONE story, one card: the gap (the problem) with its offers (the action)
-         layered on top — the manager reads top-down: who to ask, then the map -->
-    <div class="card">
-      <h2><span data-i18n="schGapTitle">Uncovered Demand</span> <span class="info" data-tipkey="tipExt" tabindex="0">i</span></h2>
-      <div id="schExtWrap"></div>
-      <div id="schGapWrap" style="margin-top:10px"></div>
-    </div>
+
   </section>
 
   <section class="page" id="page-settings">
@@ -1269,7 +1381,7 @@ en:{
   extSummary:"{n} extension offers can help close the gaps",
   extTierN:"{n} offers", extExport:"⬇ Export list (CSV)", extTlBtn:"📱 Team-leader messages ({n})",
   extPick:"Accept this extension", extAdd0:"➕ Add to sidur", extAddN:"➕ Add {n} to sidur · +{p}% {m}",
-  extApN:"{n} extensions folded into the sidur", extApClear:"↺ undo", extApplied:"{n} added — re-optimizing", extApDup:"Already applied",
+  extApN:"{n} extensions folded into the sidur", extApClear:"↺ undo", extApplied:"{n} added to the sidur — only those shifts changed", extApDup:"Already applied",
   extProb_hi:"High", extProb_med:"Medium", extProb_lo:"Low",
   extAsk_pull:"stay until {to} (+{h}h)", extAsk_early:"start at {from} (+{h}h)",
   extShort:"short {n} at {w}", extDeficit:"{h}h below weekly base",
@@ -1291,6 +1403,10 @@ en:{
   auditDl:"⬇ Download all {n} skipped rows (CSV with reasons)",
   fcAuditWarn:"Data audit:", auditImp:"{n} intervals with more answered than offered calls (AR>100% — capped)", auditAht:"{n} intervals with AHT outside 1–60 min", auditFar:"{n} dates more than ~13 months from today — check the date column format",
   mxViewOrig:"Current sidur", mxViewOpt:"Optimized",
+  exTitle:"How the sidur was moved", exHow:"Each shift keeps its length and slides up to 2 hours — out of surplus, toward where reps were missing.",
+  exSum:"{n} shifts moved from {from} to {to} — the shortage fell from {a} to {b} rep-hours.", exNone:"No shift needed moving on this day.",
+  exBefore:"before", exAfter:"after ✓", exReplayTip:"Play again", schPrepT:"⚙ Before running (optional)", schPrepCon:"{n} constraints", schPrepRules:"{n} coverage rules", exLgMiss:"short (darker = more)", exLgOver:"surplus", exLgOk:"balanced", exLgShift:"shift (×n identical)", exLgWas:"where it was", exMoreLanes:"+{n} more move patterns — see who moved", exCellGap:"short {b} → {a}", exWho:"Who moved ({n})", exReplay:"▶ Replay", exMore:"+{n} more moved shifts on this day", exOpen:"How this day's shifts moved",
+  exCellTip:"{b} in the current sidur → {a} after optimizing",
   mxOptHint:"One click: see this week with the sidur optimized to cover demand. Your sidur stays as it is.", mxOptDone:"{m} shifts moved — previewing the optimized sidur",
   mxViewOptNote:"Optimized-schedule preview — the loaded sidur is unchanged",
   mxCalibOn:"Forecasts are automatically tuned to this floor's real measured answer rates.",
@@ -1376,10 +1492,28 @@ en:{
   covWaitNote:"No scheduled intervals match this rule's window yet — coverage will appear once that queue's agents are in the roster.",
   covNoSkill:"Pick a skill first.", covBadWin:"End time must be after start.", covAdded:"Coverage rule added for {s}.",
   covPrioTip:"Raise priority — the first rule is the most critical",
-  schAuditTitle:"Compliance & Changes vs. the Original Sidur",
+  schAuditTitle:"The result — what changed",
   tipSchAudit:"After each run: coverage rules re-checked on the new schedule, and every changed shift listed by team leader, ready to send.",
-  saKpiBreach:"half-hours still short", saKpiShifts:"changed shifts", saKpiHours:"hours moved",
-  saKpiMetric:"projected {m} change",
+  saKpiBreach:"half-hours below a coverage rule", saKpiShifts:"changed shifts", saKpiHours:"hours moved",
+  saKpiMetric:"projected {m} change (week)", saKpiShortSub:"≈{p}% of the hours needed · ~{d} a day", saKpiShortTip:"Every half hour of the week where fewer reps were scheduled than needed, added up. A surplus in the morning doesn't cancel a shortage in the evening — so it can be large even when total hours look sufficient.",
+  saGaveUp:"kept · instead of {b}", saRebalance:"↻ Re-optimize with your choices", saRebalanceTip:"Runs the fine-tune again around the reps you kept — it may move other teams to compensate.",
+  gapCtx:"What the free moves couldn't close ({n} shifts moved, contract hours kept). Closing the rest takes extra paid hours and the rep's agreement — pick who to ask; what you add goes on top of the sidur and into the export.", gapCtxLocked:"{n} reps you kept are not moved.", gapCtxGen:"Gaps the iron base can't cover — structural: hire or allocate here.",
+  gapCellTip:"{n} reps short · {o} offers can help",
+  exTraySel:"{n} selected · closes {c} of {t} missing half-hours · +{p}% {m}", exTrayIdle:"{n} reps can help — tick them; the map updates as you go",
+  exTrayAdd:"➕ Add {n} to the sidur", exTrayMsgSel:"📋 Requests for the selected (by TL)", exTrayMsgAll:"📋 Requests for all (by TL)",
+  exAll:"All {n}", exTierTip:"How likely the rep says yes — from their weekly hours: High = 4+ hours below their contract base (they'll want the hours) · Medium = a little below · Low = already at their full base.",
+  exRowTip:"Closes {n} short in {w} · team: {team}", exProbIs:"Likelihood of yes: {p}", exAskPull:"until {to} · +{h}h", exAskEarly:"from {from} · +{h}h",
+  exMoreOffers:"+{n} more — pick a cell on the map to narrow", exApT:"Added to the sidur ({n})", exApUndo:"Undo — the rep changed their mind", exH:"h", gapCellClick:"Click to see only those offers", extPicked:"Offers for {d} {tm} ({n})", extShowAll:"✕ all offers",
+  anCopy:"📋 Copy for the sidur", anCsv:"⬇ CSV", anFmtTip:"Columns & order", anFmtHint:"Click a column to include it · drag to set the order", anHead:"Header row when copying",
+  anFull:"⬇ Full export (all columns)", anCopied:"{n} shifts copied — paste them under the sidur's input columns",
+  anC_skip:"⤳ skip (formula column)", anSkipTip:"Put it where your sidur has a formula column — the copy then goes in steps around it.",
+  anCopySeg:"📋 Copy {i}/{n}", anCopySegTip:"Copies in {n} steps around the skipped column", anSegCopied:"Step {i}/{n} copied ({c}) — paste, then press again for the next block",
+  anSegDone:"Last step {i}/{n} copied ({c}) — paste and you're done", anFmtBtn:"⚙ Columns",
+  anC_s:"Entry", anC_e:"Exit", anC_day:"Day", anC_name:"Name", anC_date:"Date", anC_site:"Site", anC_team:"Team leader",
+  saSendT:"What to send to team leaders", saSentN:"{a}/{n} sent", saCopyAll:"📋 Copy for everyone (one message)", saCopy:"Copy",
+  saSent:"sent", saUpdated:"changed since sent", saTlOffTip:"Don't move this team — keep its sidur as is", saTlOnTip:"Let the optimizer move this team",
+  saTlKept:"not moved · {n} reps kept as in the sidur", saRepKeptN:"{n} kept as is", saKeepRep:"don't move", saMoveRep:"allow moving", saKeptAsIs:"kept as in the sidur",
+  saRerun:"Re-optimizing without them…", saKpiShort:"weekly shortage, rep-hours (before → after)", saKpiMoved:"shifts moved",
   saCovLegend:"An interval = one 30-min slot. ✓ = rule met every interval · ⚠ = short in some.",
   saCovOk:"Covered", saCovGap:"short in {n} intervals", saCovImp:"(improved from {n})",
   saCovOutScope:"This skill isn't in the scheduling scope — tick it in the 🎧 menu above to let the optimizer move its reps, or send an extension request.",
@@ -1490,7 +1624,7 @@ en:{
   thPeriod:"Period", thDaysMet:"Days on target", tipDaysMet:"Working days whose {m} reached your {t}% target, out of the days in the period.",
   grpTag_act:"actual", grpTag_fc:"forecast", grpTag_mix:"actual + forecast", trDrill:"Click to see this period's days",
   wkLbl:"Week {w} · {a}–{b}", trShare:"📤 Share summary", trBackTip:"Back to the grouped view (Backspace)",
-  shBack:"Months back", shDragTip:"Tick to show · drag to reorder", shAhead:"Months ahead", shInsL:"Insights", shNotePh:"Add a line for the reader (optional)", shColGross:"Hours to schedule", shColAht:"AHT",
+  shBack:"Months back", shDragTip:"Click to show · drag to reorder", shAhead:"Months ahead", shInsL:"Insights", shNotePh:"Add a line for the reader (optional)", shColGross:"Hours to schedule", shColAht:"AHT",
   shTitle:"📤 Monthly summary", shIntro:"How we did and where we're heading — ready to send. Pick the window and the columns; your choices are remembered. Courses joining in the forecast months are already included.",
   shCopyImg:"📋 Copy image", shPng:"⬇ PNG", shCopyTxt:"📋 Copy as text", shCopied:"Image copied — paste it in WhatsApp / email", shCopiedTxt:"Summary text copied",
   shCopyFail:"This browser blocked the clipboard — use ⬇ PNG instead",
@@ -1759,7 +1893,7 @@ he:{
   extSummary:"{n} הצעות הרחבה יכולות לעזור לסגור את החוסרים",
   extTierN:"{n} הצעות", extExport:"⬇ ייצוא הרשימה (CSV)", extTlBtn:"📱 הודעות למנהלי צוות ({n})",
   extPick:"אימוץ ההצעה", extAdd0:"➕ הוספה לסידור", extAddN:"➕ הוסף {n} לסידור · +{p}% {m}",
-  extApN:"{n} הרחבות שולבו בסידור", extApClear:"↺ ביטול", extApplied:"{n} נוספו — ממטב מחדש", extApDup:"כבר שולבו",
+  extApN:"{n} הרחבות שולבו בסידור", extApClear:"↺ ביטול", extApplied:"{n} נוספו לסידור — רק המשמרות האלה השתנו", extApDup:"כבר שולבו",
   extProb_hi:"גבוהה", extProb_med:"בינונית", extProb_lo:"נמוכה",
   extAsk_pull:"להישאר עד {to} (+{h} ש׳)", extAsk_early:"להגיע כבר ב-{from} (+{h} ש׳)",
   extShort:"חסרים {n} בחלון {w}", extDeficit:"חסרות לו {h} ש׳ מהבסיס",
@@ -1781,6 +1915,10 @@ he:{
   auditDl:"⬇ הורדת כל {n} השורות שדולגו (CSV עם סיבות)",
   fcAuditWarn:"בקרת נתונים:", auditImp:"{n} אינטרוולים עם יותר שיחות נענות מנכנסות (מענה>100% — נחסם)", auditAht:"{n} אינטרוולים עם אורך שיחה מחוץ לטווח 1–60 דק'", auditFar:"{n} תאריכים רחוקים מהיום ביותר מ־13 חודשים — בדקו את פורמט עמודת התאריך",
   mxViewOrig:"הסידור הנוכחי", mxViewOpt:"מיטבי",
+  exTitle:"איך הסידור הוזז", exHow:"כל משמרת שומרת על אורכה ומחליקה עד שעתיים — מהעודף, אל המקום שבו חסרו נציגים.",
+  exSum:"{n} משמרות הוזזו מ־{from} אל {to} — החוסר ירד מ־{a} ל־{b} שעות נציג.", exNone:"ביום הזה לא היה צורך להזיז משמרות.",
+  exBefore:"לפני", exAfter:"אחרי ✓", exReplayTip:"הפעלה מחדש", schPrepT:"⚙ לפני ההרצה (לא חובה)", schPrepCon:"{n} אילוצים", schPrepRules:"{n} כללי כיסוי", exLgMiss:"חסר (כהה = יותר)", exLgOver:"עודף", exLgOk:"מאוזן", exLgShift:"משמרת (×מספר זהות)", exLgWas:"איפה הייתה", exMoreLanes:"+{n} דפוסי הזזה נוספים — ראו מי הוזז", exCellGap:"חסר {b} ← {a}", exWho:"מי הוזז ({n})", exReplay:"▶ הפעלה מחדש", exMore:"+{n} משמרות נוספות הוזזו ביום הזה", exOpen:"איך המשמרות של היום הוזזו",
+  exCellTip:"{b} בסידור הנוכחי ← {a} אחרי הכוונון",
   mxOptHint:"לחיצה אחת: השבוע הזה עם סידור מכוונן לכיסוי הביקוש. הסידור שלכם לא משתנה.", mxOptDone:"{m} משמרות הוזזו — מוצג הסידור המיטבי",
   mxViewOptNote:"תצוגה מקדימה של הסידור המיטבי — הסידור שנטען לא משתנה",
   mxCalibOn:"התחזיות מכוונות אוטומטית לאחוזי המענה האמיתיים שנמדדו במוקד שלכם.",
@@ -1866,10 +2004,28 @@ he:{
   covWaitNote:"אין עדיין אינטרוולים משובצים שתואמים את חלון הכלל — הכיסוי יופיע ברגע שנציגי התור יופיעו בסידור.",
   covNoSkill:"בחרו מיומנות קודם.", covBadWin:"שעת הסיום חייבת להיות אחרי שעת ההתחלה.", covAdded:"נוסף כלל כיסוי עבור {s}.",
   covPrioTip:"העלאת עדיפות — הכלל הראשון הוא הקריטי ביותר",
-  schAuditTitle:"עמידה בחוקים ושינויים מול הסידור המקורי",
+  schAuditTitle:"התוצאה — מה השתנה",
   tipSchAudit:"אחרי כל הרצה: כללי הכיסוי נבדקים על הסידור החדש, וכל משמרת שהשתנתה מוצגת לפי מנהל צוות, מוכנה לשליחה.",
-  saKpiBreach:"חצאי-שעה עדיין חסרים", saKpiShifts:"משמרות ששונו", saKpiHours:"שעות שהוזזו",
-  saKpiMetric:"שינוי {m} צפוי",
+  saKpiBreach:"חצאי-שעה מתחת לכלל כיסוי", saKpiShifts:"משמרות ששונו", saKpiHours:"שעות שהוזזו",
+  saKpiMetric:"שינוי צפוי ב{m} (שבועי)", saKpiShortSub:"≈{p}% מהשעות הנדרשות · ~{d} ביום", saKpiShortTip:"כל חצי שעה בשבוע שבה שובצו פחות נציגים מהנדרש, מסוכמת. עודף בבוקר לא מקזז חוסר בערב — ולכן המספר יכול להיות גדול גם כשסך השעות נראה מספיק.",
+  saGaveUp:"נשאר · במקום {b}", saRebalance:"↻ כוונון מחדש עם הבחירות שלכם", saRebalanceTip:"מריץ שוב את הכוונון סביב מי שהשארתם — עשוי להזיז צוותים אחרים כדי לפצות.",
+  gapCtx:"מה שההזזות החינמיות לא סגרו ({n} משמרות הוזזו, שעות החוזה נשמרו). את השאר אפשר לסגור רק בשעות נוספות ובהסכמת הנציג — בחרו את מי לבקש; מה שתוסיפו נכנס לסידור ולייצוא.", gapCtxLocked:"{n} נציגים שבחרתם לא להזיז נשארו במקומם.", gapCtxGen:"פערים שבסיס הברזל לא מכסה — מבניים: לגייס או להקצות כאן.",
+  gapCellTip:"חסרים {n} נציגים · {o} הצעות יכולות לעזור",
+  exTraySel:"נבחרו {n} · סוגרות {c} מתוך {t} חצאי-שעה חסרים · +{p}% {m}", exTrayIdle:"{n} נציגים יכולים לעזור — סמנו, והמפה מתעדכנת תוך כדי",
+  exTrayAdd:"➕ הוספת {n} לסידור", exTrayMsgSel:"📋 בקשות לנבחרים (לפי מנהל צוות)", exTrayMsgAll:"📋 בקשות לכולם (לפי מנהל צוות)",
+  exAll:"הכול {n}", exTierTip:"כמה סביר שהנציג יסכים — לפי השעות השבועיות שלו: גבוהה = חסרות לו 4+ שעות לבסיס החוזי (ירצה את השעות) · בינונית = חסר לו מעט · נמוכה = כבר בבסיס המלא.",
+  exRowTip:"סוגר {n} חסרים ב־{w} · צוות: {team}", exProbIs:"סבירות להסכמה: {p}", exAskPull:"עד {to} · +{h} ש׳", exAskEarly:"מ־{from} · +{h} ש׳",
+  exMoreOffers:"+{n} נוספות — בחרו תא במפה כדי לצמצם", exApT:"נוספו לסידור ({n})", exApUndo:"ביטול — הנציג התחרט", exH:" ש׳", gapCellClick:"לחיצה מציגה רק את ההצעות האלה", extPicked:"הצעות ל{d} {tm} ({n})", extShowAll:"✕ כל ההצעות",
+  anCopy:"📋 העתקה לסידור", anCsv:"⬇ CSV", anFmtTip:"עמודות וסדר", anFmtHint:"לחיצה על עמודה מצרפת אותה · גרירה קובעת את הסדר", anHead:"שורת כותרת בהעתקה",
+  anFull:"⬇ ייצוא מלא (כל העמודות)", anCopied:"{n} משמרות הועתקו — הדביקו מתחת לעמודות הקלט של הסידור",
+  anC_skip:"⤳ דילוג (עמודת נוסחה)", anSkipTip:"שימו אותו במקום שבו בסידור שלכם יש עמודת נוסחה — ההעתקה תתבצע בשלבים סביבה.",
+  anCopySeg:"📋 העתקה {i}/{n}", anCopySegTip:"מעתיק ב־{n} שלבים סביב העמודה המדולגת", anSegCopied:"שלב {i}/{n} הועתק ({c}) — הדביקו, ואז לחצו שוב לבלוק הבא",
+  anSegDone:"השלב האחרון {i}/{n} הועתק ({c}) — הדביקו וסיימתם", anFmtBtn:"⚙ עמודות",
+  anC_s:"כניסה", anC_e:"יציאה", anC_day:"יום", anC_name:"שם", anC_date:"תאריך", anC_site:"מוקד", anC_team:"מנהל צוות",
+  saSendT:"מה לשלוח למנהלי הצוות", saSentN:"{a}/{n} נשלחו", saCopyAll:"📋 העתקה לכולם (הודעה אחת)", saCopy:"העתקה",
+  saSent:"נשלח", saUpdated:"השתנה מאז ששלחתם", saTlOffTip:"לא להזיז את הצוות הזה — הסידור שלו נשאר כמו שהוא", saTlOnTip:"לאפשר להזיז את הצוות הזה",
+  saTlKept:"לא מוזז · {n} נציגים נשארים כמו בסידור", saRepKeptN:"{n} נשארים כמו שהם", saKeepRep:"לא להזיז", saMoveRep:"לאפשר הזזה", saKeptAsIs:"נשאר כמו בסידור",
+  saRerun:"מכוונן מחדש בלעדיהם…", saKpiShort:"חוסר שבועי בשעות נציג (לפני ← אחרי)", saKpiMoved:"משמרות שהוזזו",
   saCovLegend:"אינטרוואל = חלון של חצי שעה. ✓ = החוק מתקיים בכל אינטרוואל · ⚠ = חסר כיסוי בחלקם.",
   saCovOk:"מכוסה", saCovGap:"חסר ב-{n} אינטרוואלים", saCovImp:"(שופר מ-{n})",
   saCovOutScope:"המיומנות אינה בתחום השיבוץ — סמנו אותה בתפריט 🎧 למעלה כדי לאפשר למייעל להזיז את נציגיה, או שלחו בקשת הרחבה.",
@@ -1980,7 +2136,7 @@ he:{
   thPeriod:"תקופה", thDaysMet:"ימים ביעד", tipDaysMet:"ימי עבודה שבהם {m} הגיע ליעד {t}%, מתוך ימי התקופה.",
   grpTag_act:"בפועל", grpTag_fc:"תחזית", grpTag_mix:"בפועל + תחזית", trDrill:"לחיצה מציגה את ימי התקופה",
   wkLbl:"שבוע {w} · {a}–{b}", trShare:"📤 שיתוף סיכום", trBackTip:"חזרה לתצוגה המקובצת (Backspace)",
-  shBack:"חודשים אחורה", shDragTip:"סמנו להצגה · גררו לשינוי הסדר", shAhead:"חודשים קדימה", shInsL:"תובנות", shNotePh:"שורה אישית לקורא (לא חובה)", shColGross:"שעות לשיבוץ", shColAht:"משך שיחה",
+  shBack:"חודשים אחורה", shDragTip:"לחיצה להצגה · גרירה לשינוי הסדר", shAhead:"חודשים קדימה", shInsL:"תובנות", shNotePh:"שורה אישית לקורא (לא חובה)", shColGross:"שעות לשיבוץ", shColAht:"משך שיחה",
   shTitle:"📤 סיכום חודשי", shIntro:"איך עמדנו ולאן אנחנו הולכים — מוכן לשליחה. בחרו טווח ועמודות; הבחירה נשמרת. קורסים שמצטרפים בחודשי התחזית כבר כלולים.",
   shCopyImg:"📋 העתקת תמונה", shPng:"⬇ PNG", shCopyTxt:"📋 העתקה כטקסט", shCopied:"התמונה הועתקה — הדביקו בוואטסאפ / במייל", shCopiedTxt:"טקסט הסיכום הועתק",
   shCopyFail:"הדפדפן חסם את ההעתקה — השתמשו ב־⬇ PNG",
@@ -4125,8 +4281,10 @@ function optimizeSidur(){
       return true;
     });
     // in-scope shifts answer the demand and may move/cut; the rest stay put
-    const shifts=allShifts.filter(sh=>inScope(sh.skill));
-    const fixed =allShifts.filter(sh=>!inScope(sh.skill));
+    // locked reps (the manager said "don't move") are counted like out-of-scope ones: present, never moved
+    const locked=state.schedLocks||new Set();
+    const shifts=allShifts.filter(sh=>inScope(sh.skill)&&!locked.has(sh.name));
+    const fixed =allShifts.filter(sh=>!inScope(sh.skill)||locked.has(sh.name));
     // staff = frontline capacity (in-scope only); skl = per-skill counts (EVERYONE,
     // so a rule for an out-of-scope skill still sees its reps — just can't move them)
     const staff={},skl={};
@@ -4136,7 +4294,8 @@ function optimizeSidur(){
     const addShift=(sh,sign)=>{ for(let m=mins(sh.s);m<mins(sh.e);m+=30){
       const tm=toTm(m); if(staff[tm]!=null) staff[tm]+=sign; } addSkl(sh,sign); };
     shifts.forEach(sh=>addShift(sh,1));
-    fixed.forEach(sh=>addSkl(sh,1)); // counted for the rules, never repositioned
+    // out-of-scope: counted for the coverage rules only · locked in-scope: cover demand too, never move
+    fixed.forEach(sh=>{ if(inScope(sh.skill)&&locked.has(sh.name)) addShift(sh,1); else addSkl(sh,1); });
     const ruleW=reqs.map((r,i)=>({r,w:2*(reqs.length-i)})); // priority order = weight
     const cost=()=>{
       let cst=0;
@@ -4355,22 +4514,37 @@ function calcRosterDelta(out){
   return diffs;
 }
 /* the same demand, staffed by the original sidur vs the optimized schedule */
+/* projected weekly change in the primary metric: the ORIGINAL sidur vs the optimized one, both
+   counted with the same answering skills and run through the same queue model, weighted by calls.
+   (Measured history isn't mixed in — that compared reality to theory and counted every skill
+   on one side only, which inflated the gain.) */
 function projectedMetricDelta(out){
   if(!schWeek()||!state.days.size) return null;
   const S=state.settings, effShare=Math.max(0.05,availShare(S)*(state.calib||1));
-  const optCounts={};
-  out.asg.forEach(a=>{ for(const tm of halfHoursBetween(a.s,a.e)){
-    const k=a.ds+"|"+tm; optCounts[k]=(optCounts[k]||0)+1; } });
+  const sc=state.capSkills, skillOf=n=>((state.rosterMeta.get(n)||{}).skill||"").trim();
+  const ans=n=>{ const sk=skillOf(n); return !sc||!sc.length||!sk||sc.includes(sk); };
+  const count=list=>{ const m={}; list.forEach(a2=>{ if(!a2.s||!a2.e||!ans(a2.name)) return;
+    for(const tm of halfHoursBetween(a2.s,a2.e)){ const k=a2.ds+"|"+tm; m[k]=(m[k]||0)+1; } }); return m; };
+  const wk=new Set(weekDates(schWeek()));
+  const orig=count(state.schedRows.filter(r=>wk.has(r.ds))), opt=count(out.asg);
   let vol=0,accO=0,accN=0;
-  for(const ds of weekDates(schWeek())){
+  for(const ds of wk){
     const c=computeDay(ds); if(!c) continue;
     for(const row of c.rows){
       if(!row.rec||row.closed||row.exc||row.nodata||!(row.rec.volume>0)) continue;
-      const pN=evalInterval(row.rec.volume,row.rec.aht,Math.round((optCounts[ds+"|"+row.tm]||0)*effShare),S,row.rec.mpt);
-      vol+=row.rec.volume; accO+=primVal(row.perf)*row.rec.volume; accN+=primVal(pN)*row.rec.volume;
+      const k=ds+"|"+row.tm, v=row.rec.volume;
+      const pO=evalInterval(v,row.rec.aht,Math.round((orig[k]||0)*effShare),S,row.rec.mpt);
+      const pN=evalInterval(v,row.rec.aht,Math.round((opt[k]||0)*effShare),S,row.rec.mpt);
+      vol+=v; accO+=primVal(pO)*v; accN+=primVal(pN)*v;
     }
   }
   return vol?{before:accO/vol,after:accN/vol}:null;
+}
+/* the week's shortage in rep-hours, original sidur vs the plan (same reps, same need) */
+function weekShortage(out){
+  let b=0,a=0,need=0,days=0;
+  for(const ds of weekDates(schWeek())){ const ex=explainDay(out,ds); if(ex){ b+=ex.shortB; a+=ex.shortA; need+=ex.needH; days++; } }
+  return {b,a,need,days};
 }
 const SA_TYPE={shift:{c:"#8a5fd0",k:"saTypeShift"},add:{c:"#0f6a3f",k:"saTypeAdd"},cut:{c:"#b3271e",k:"saTypeCut"}};
 function renderSchedAudit(out){
@@ -4390,14 +4564,19 @@ function renderSchedAudit(out){
   const pd=projectedMetricDelta(out);
   // ---- KPI banner: the whole run in four numbers (mode-appropriate) ----
   const kp=document.getElementById("schKpis"); kp.innerHTML="";
-  const mk=(val,label,color)=>{ const d=document.createElement("div"); d.className="kpi";
-    d.innerHTML=`<div class="n"${color?` style="color:${color}"`:""}>${val}</div><div class="l">${label}</div>`;
+  const mk=(val,label,color,sub,tip)=>{ const d=document.createElement("div"); d.className="kpi"+(tip?" tipHost":"");
+    if(tip) d.dataset.tip=tip;
+    d.innerHTML=`<div class="n"${color?` style="color:${color}"`:""}>${val}</div><div class="l">${label}</div>${sub?`<div class="kSub">${sub}</div>`:""}`;
     kp.appendChild(d); };
-  mk(reqs.length?totB:"—",t("saKpiBreach"),totB?"var(--crimson)":"var(--emerald)");
+  const fmt1=v=>(Math.round(v*10)/10).toLocaleString();
   if(gen){ mk(out.asg.length,t("saKpiPlaced")); mk((out.pool||[]).length,t("saKpiPool")); }
-  else{ mk(diffs.length,t("saKpiShifts")); mk(hours,t("saKpiHours")); }
+  else{ const ws=weekShortage(out);
+    mk(`${fmt1(ws.b)} → ${fmt1(ws.a)}`,t("saKpiShort"),ws.a<ws.b?"var(--emerald)":null,
+      ws.need>0?t("saKpiShortSub",{p:Math.round(ws.a/ws.need*100),d:fmt1(ws.a/Math.max(1,ws.days))}):"",t("saKpiShortTip"));
+    mk(diffs.filter(d=>d.type==="shift").length,t("saKpiMoved")); }
   if(pd){ const d2=(pd.after-pd.before)*100;
     mk((d2>=0?"+":"")+d2.toFixed(1),t("saKpiMetric",{m:primName()}),d2>=0?"var(--emerald)":"var(--crimson)"); }
+  if(reqs.length) mk(totB,t("saKpiBreach"),totB?"var(--crimson)":"var(--emerald)"); // only when there ARE rules
   // ---- coverage audit: each rule, plainly — is it covered, and if not, why ----
   const sc=state.schedSkills, inScope=sk=>!sc||!sc.length||sc.includes(sk);
   const cw=document.getElementById("schCovAudit"); cw.innerHTML="";
@@ -4433,62 +4612,113 @@ function renderSchedAudit(out){
     }
     cw.appendChild(det);
   });
-  // ---- per-team change summary + TL messages ----
-  // one line per team, 📱 inline (one click, not two). The full row-level
-  // detail lives ONCE — in the optimized-sidur table via its status chips —
-  // so no second table repeats it here.
+  // ---- what to send: one row per team leader ----
+  // verify (hover = the exact message; click = the changes), copy (per TL or all at once),
+  // know who already got it (sent ✓ / updated since), and decide what NOT to move (switch).
   const dw=document.getElementById("schDeltaWrap"); dw.innerHTML="";
-  if(gen) return; // no delta / no team alerts for a fresh baseline (nothing to diff against)
-  if(!diffs.length){ const p2=document.createElement("p"); p2.className="mini";
-    p2.textContent=t("saNoDiffs"); dw.appendChild(p2); return; }
+  if(gen) return; // a fresh baseline has nothing to diff against
+  const teamOf=n=>extMetaOf(n).team||t("wfAll");
+  const locks=state.schedLocks||(state.schedLocks=new Set()), lockTL=state.schedLockTL||(state.schedLockTL=new Set());
   const byTeam={}; diffs.forEach(d=>(byTeam[d.team]=byTeam[d.team]||[]).push(d));
-  const breachLines=audits.filter(a=>a.opt&&a.opt.breaches>0).map(a=>
-    t("saTlBreach",{s:a.r.skill,cells:a.opt.breachCells.slice(0,4)
-      .map(b2=>dayNames[b2.di]+" "+b2.tm).join(", ")+(a.opt.breachCells.length>4?"…":"")}));
+  const lockedBy={}; locks.forEach(n=>{ const tl=teamOf(n); (lockedBy[tl]=lockedBy[tl]||[]).push(n); });
+  const teams=[...new Set([...Object.keys(byTeam),...lockTL,...Object.keys(lockedBy)])].sort((a2,b2)=>a2.localeCompare(b2,"he"));
+  if(!teams.length){ dw.innerHTML=`<p class="mini">${t("saNoDiffs")}</p>`; return; }
+  const breachLines=audits.filter(a2=>a2.opt&&a2.opt.breaches>0).map(a2=>
+    t("saTlBreach",{s:a2.r.skill,cells:a2.opt.breachCells.slice(0,4).map(b2=>dayNames[b2.di]+" "+b2.tm).join(", ")+(a2.opt.breachCells.length>4?"…":"")}));
   const lineFor=d=>t("saTl_"+d.type,{name:d.name,day:dayNames[d.di],date:fmtD(d.ds),orig:d.orig,opt:d.opt});
-  // ONE combined WhatsApp summary for EVERY team leader: *bold* team headers, changes
-  // bulleted per team, remaining gaps once at the end — organized, paste-and-send.
-  const buildAllMsg=()=>{
-    const parts=[t("saAllHead")];
-    for(const tl in byTeam){ parts.push("","*"+tl+"*  ("+byTeam[tl].length+")");
-      byTeam[tl].forEach(d=>parts.push(lineFor(d))); }
-    if(breachLines.length){ parts.push("",t("saTlBreachHead"),...breachLines); }
-    parts.push("",t("saTlFoot"));
-    return parts.join("\n");
-  };
-  // header row: the summary line + the single "message ALL team leaders" action
-  const headRow=document.createElement("div");
-  headRow.style.cssText="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 4px";
-  const head=document.createElement("p"); head.className="mini"; head.style.margin="0";
-  head.innerHTML=`<b>${t("saDeltaHead",{n:diffs.length})}</b> · ${t("saDeltaHint")}`;
-  headRow.appendChild(head);
-  const hgrow=document.createElement("span"); hgrow.className="grow"; headRow.appendChild(hgrow);
-  const allBtn=document.createElement("button"); allBtn.className="btn navy applymini"; allBtn.textContent=t("saTlSendAll");
-  allBtn.addEventListener("click",()=>{ navigator.clipboard&&navigator.clipboard.writeText(buildAllMsg());
-    showToast("📋 "+t("waCopiedAll"),true); });
-  headRow.appendChild(allBtn);
-  dw.appendChild(headRow);
-  const chip=(n,tt)=>`<span style="background:${tt.c}22;color:${tt.c};border:1px solid ${tt.c}55;border-radius:9px;padding:1px 8px;font-size:.7rem;font-weight:700;white-space:nowrap">${n} ${t(tt.k)}</span>`;
-  for(const tl in byTeam){
-    const row=document.createElement("div");
-    row.style.cssText="display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-top:1px solid var(--border);padding:5px 2px;font-size:.82rem";
-    const nm=document.createElement("b"); nm.textContent=tl; row.appendChild(nm);
-    const cnt={}; byTeam[tl].forEach(d=>cnt[d.type]=(cnt[d.type]||0)+1);
-    const chips=document.createElement("span");
-    chips.innerHTML=["shift","add","cut"].filter(k=>cnt[k]).map(k=>chip(cnt[k],SA_TYPE[k])).join(" ");
-    row.appendChild(chips);
-    const grow=document.createElement("span"); grow.className="grow"; row.appendChild(grow);
-    const b2=document.createElement("button"); b2.className="btn ghost applymini";
-    b2.textContent="📱 "+t("saTlSend");
-    b2.addEventListener("click",()=>{
-      const msg=[t("saTlHead",{team:tl}),...(breachLines.length?[t("saTlBreachHead"),...breachLines]:[]),
-        t("saTlChanges"),...byTeam[tl].map(lineFor),t("saTlFoot")].join("\n");
-      navigator.clipboard&&navigator.clipboard.writeText(msg);
-      showToast("📋 "+t("waCopied",{team:tl}),true);
-    });
-    row.appendChild(b2);
+  const msgFor=tl=>[t("saTlHead",{team:tl}),...(breachLines.length?[t("saTlBreachHead"),...breachLines]:[]),
+    t("saTlChanges"),...(byTeam[tl]||[]).map(lineFor),t("saTlFoot")].join("\n");
+  const allMsg=()=>{ const parts=[t("saAllHead")];
+    teams.filter(tl=>byTeam[tl]).forEach(tl=>{ parts.push("","*"+tl+"*  ("+byTeam[tl].length+")"); byTeam[tl].forEach(d=>parts.push(lineFor(d))); });
+    if(breachLines.length) parts.push("",t("saTlBreachHead"),...breachLines);
+    parts.push("",t("saTlFoot")); return parts.join("\n"); };
+  const sent=state._sentTL||(state._sentTL={}); // TL → the exact message copied (so "updated since" is detectable)
+  const sendable=teams.filter(tl=>byTeam[tl]);
+  const nSent=sendable.filter(tl=>sent[tl]===msgFor(tl)).length;
+  const head=document.createElement("div"); head.className="tlHead";
+  head.innerHTML=`<h3>${t("saSendT")}</h3><span class="mini">${t("saSentN",{a:nSent,n:sendable.length})}</span><span class="grow"></span>`;
+  const allB=document.createElement("button"); allB.className="btn navy applymini"; allB.textContent=t("saCopyAll");
+  allB.addEventListener("click",()=>{ navigator.clipboard&&navigator.clipboard.writeText(allMsg());
+    sendable.forEach(tl=>sent[tl]=msgFor(tl)); showToast("📋 "+t("waCopiedAll"),true); renderSchedAudit(state._schedOut); });
+  // the rebalance offer exists only when something can't simply be restored (kept as a manual re-run)
+  head.appendChild(allB); dw.appendChild(head);
+  // a choice changes only what it names: the locked go back to their sidur, everyone else stays
+  // exactly where the plan put them. Re-balancing the others is a separate, explicit action.
+  const declined=state.schedDeclined||(state.schedDeclined={}); // name → the moves you gave up [{ds,di,os,oe,s,e}]
+  const keep=names=>{ const out2=state._schedOut; names.forEach(n=>{ locks.add(n);
+      const mv=diffs.filter(d=>d.name===n&&d.type==="shift"); if(mv.length) declined[n]=mv.map(d=>({ds:d.ds,di:d.di,was:d.orig,would:d.opt})); });
+    state._rebalance=true; applyChoice(out2); }; // others MAY compensate — offered, never automatic
+  const release=names=>{ const out2=state._schedOut;
+    names.forEach(n=>{ locks.delete(n); (declined[n]||[]).forEach(x=>{ const a=out2.asg.find(r=>r.name===n&&r.ds===x.ds&&r.s+"–"+r.e===x.was)||out2.asg.find(r=>r.name===n&&r.ds===x.ds);
+      if(a){ const [s2,e2]=x.would.split("–"); a.s=s2; a.e=e2; a.src="moved"; } }); delete declined[n]; });
+    if(!locks.size) state._rebalance=false; applyChoice(out2); };
+  // screen first (no animation replay), the save after — a click answers instantly even on big files
+  const applyChoice=out2=>{ const y=window.scrollY; revertLocked(out2); state._exStill=true;
+    renderSchedulerResults(out2); state._exStill=false; window.scrollTo(0,y); setTimeout(saveData,60); };
+  if(state._rebalance){ const rb=document.createElement("button"); rb.className="btn ghost applymini"; rb.textContent=t("saRebalance"); rb.title=t("saRebalanceTip");
+    rb.addEventListener("click",()=>{ state._rebalance=false; showToast("⏳ "+t("saRerun"),true); setTimeout(()=>runScheduler(),30); });
+    head.insertBefore(rb,allB); }
+  const chip=(n,tt)=>`<span class="tlChip" style="--c:${tt.c}">${n} ${t(tt.k)}</span>`;
+  teams.forEach(tl=>{
+    const off=lockTL.has(tl), ds=byTeam[tl]||[], lk=lockedBy[tl]||[];
+    const row=document.createElement("div"); row.className="tlRow"+(off?" off":"");
+    const sw=document.createElement("input"); sw.type="checkbox"; sw.className="sw"; sw.checked=!off; sw.title=t(off?"saTlOnTip":"saTlOffTip");
+    sw.addEventListener("change",()=>{ // whole team in / out of the move — nobody else changes
+      const names=[...state.rosterMeta.entries()].filter(([,m])=>(m.team||t("wfAll"))===tl).map(([n])=>n);
+      if(sw.checked){ lockTL.delete(tl); release(names); } else { lockTL.add(tl); keep(names); } });
+    const nm=document.createElement("button"); nm.type="button"; nm.className="tlName tipHost"; nm.textContent=tl;
+    if(ds.length) nm.dataset.tip=msgFor(tl).split("\n").slice(0,9).join("\n")+(msgFor(tl).split("\n").length>9?"\n…":"");
+    const cnt={}; ds.forEach(d=>cnt[d.type]=(cnt[d.type]||0)+1);
+    const meta=document.createElement("span"); meta.className="tlMeta";
+    const nDecl=lk.filter(n=>declined[n]).length;
+    meta.innerHTML=off?`<span class="mini">${t("saTlKept",{n:nDecl})}</span>`
+      :["shift","add","cut"].filter(k=>cnt[k]).map(k=>chip(cnt[k],SA_TYPE[k])).join(" ")+(lk.length?` <span class="mini">· ${t("saRepKeptN",{n:lk.length})}</span>`:"");
+    const st=document.createElement("span"); st.className="tlSt";
+    if(ds.length&&sent[tl]) st.textContent=sent[tl]===msgFor(tl)?"✓ "+t("saSent"):"↻ "+t("saUpdated");
+    if(sent[tl]&&sent[tl]!==msgFor(tl)) st.classList.add("upd");
+    row.append(sw,nm,meta,document.createElement("span"),st); row.children[3].className="grow";
+    if(ds.length){ const cp=document.createElement("button"); cp.className="btn ghost applymini"; cp.textContent="📋 "+t("saCopy");
+      cp.addEventListener("click",()=>{ navigator.clipboard&&navigator.clipboard.writeText(msgFor(tl)); sent[tl]=msgFor(tl);
+        showToast("📋 "+t("waCopied",{team:tl}),true); renderSchedAudit(state._schedOut); });
+      row.appendChild(cp); }
     dw.appendChild(row);
-  }
+    // the changes, one click away — and a per-rep "don't move" for exceptions
+    const det=document.createElement("div"); det.className="tlDet"; det.hidden=!(state._openTL===tl);
+    // one stable list (by name, then day): a kept rep stays on its line — it just shows what you gave up
+    const lines=ds.map(d=>({name:d.name,ds:d.ds,di:d.di,kind:"move",a:d.orig,b:d.opt,type:d.type}))
+      .concat(lk.filter(n=>declined[n]).flatMap(n=>declined[n].map(x=>({name:n,ds:x.ds,di:x.di,kind:"kept",a:x.was,b:x.would}))))
+      .sort((x,y)=>x.name.localeCompare(y.name,"he")||x.ds.localeCompare(y.ds));
+    lines.forEach(L=>{ const r=document.createElement("div"); r.className="tlLine"+(L.kind==="kept"?" kept":"");
+      r.innerHTML=L.kind==="move"
+        ?`<b>${L.name}</b><span>${dayNames[L.di]}</span><span class="tlFrom">${L.a}</span><span class="tlArr">→</span><span class="tlTo">${L.b}</span>`
+        :`<b>${L.name}</b><span>${dayNames[L.di]}</span><span class="tlTo">${L.a}</span><span class="tlArr">·</span><span class="tlGave">${t("saGaveUp",{b:L.b})}</span>`;
+      const btn=document.createElement("button"); btn.type="button"; btn.className="tlAct";
+      if(L.kind==="move"&&L.type==="shift"){ btn.textContent=t("saKeepRep"); btn.addEventListener("click",()=>keep([L.name])); r.appendChild(btn); }
+      else if(L.kind==="kept"&&!off){ btn.textContent=t("saMoveRep"); btn.classList.add("undo"); btn.addEventListener("click",()=>release([L.name])); r.appendChild(btn); }
+      det.appendChild(r); });
+    nm.addEventListener("click",()=>{ det.hidden=!det.hidden; state._openTL=det.hidden?null:tl; nm.classList.toggle("open",!det.hidden); });
+    nm.classList.toggle("open",!det.hidden);
+    dw.appendChild(det);
+  });
+}
+/* the locked go back to their sidur slot; nobody else moves. Gaps follow the plan as it now stands. */
+function revertLocked(out){
+  if(!out) return; const locks=state.schedLocks||new Set(), wk=new Set(weekDates(schWeek()));
+  const orig=new Map(); state.schedRows.filter(r=>wk.has(r.ds)&&r.s&&r.e).forEach(r=>{ const k=r.name+"|"+r.ds; (orig.get(k)||orig.set(k,[]).get(k)).push(r); });
+  const seen={};
+  out.asg.forEach(a=>{ const k=a.name+"|"+a.ds, i=seen[k]=(seen[k]||0)+1; // a.s isn't safe to match (it moved) — use the order
+    if(locks.has(a.name)&&a.src==="moved"){ const o=(orig.get(k)||[])[i-1]; if(o){ a.s=o.s; a.e=o.e; a.src="base"; } } });
+  out.moved=out.asg.filter(a=>a.src==="moved").length;
+  out.gaps=planGaps(out);
+}
+function planGaps(out){
+  const sc=state.schedSkills, skillOf=n=>((state.rosterMeta.get(n)||{}).skill||"").trim();
+  const inScope=n=>{ const sk=skillOf(n); return !sc||!sc.length||!sk||sc.includes(sk); };
+  const gaps=[];
+  for(const ds of weekDates(schWeek())){ const c=computeDay(ds); if(!c) continue;
+    const staff={}; out.asg.filter(a=>a.ds===ds&&inScope(a.name)).forEach(a=>halfHoursBetween(a.s,a.e).forEach(tm=>staff[tm]=(staff[tm]||0)+1));
+    c.rows.forEach(r=>{ if(!r.rec||r.closed||r.exc||r.nodata) return; const g=Math.round(r.reqEff-(staff[r.tm]||0)); if(g>0) gaps.push({ds,tm:r.tm,n:g}); }); }
+  return gaps;
 }
 /* per-interval per-skill DISTINCT-agent counts of the optimized schedule, so the
    weekly matrix can PREVIEW the optimized sidur's coverage (see capacityFor). */
@@ -4505,7 +4735,221 @@ function buildOptimizedCap(out){
   // derive from the schedule (robust on restore, when state.week isn't set yet)
   state.optimizedWeek=out.asg.length?sundayOf(out.asg[0].ds):(state.week||null);
 }
+/* ============ OPTIMIZER EXPLAINABILITY ============
+   For one day of a fine-tune run: the shortage/surplus per interval before → after, and the
+   shifts that moved (from → to). Drawn as a timeline where each moved shift SLIDES from its
+   old slot to its new one while the gap strip turns from "before" to "after" — the algorithm
+   in one picture: reps leave surplus intervals and land where reps were missing. */
+function explainDay(out,ds){
+  const c=computeDay(ds); if(!c) return null;
+  const req={}, tms=[];
+  c.rows.forEach(r=>{ if(r.rec&&!r.closed&&!r.exc&&!r.nodata){ req[r.tm]=r.reqEff; tms.push(r.tm); } });
+  if(!tms.length) return null;
+  const sc=state.schedSkills, skillOf=n=>((state.rosterMeta.get(n)||{}).skill||"").trim();
+  const inScope=n=>{ const sk=skillOf(n); return !sc||!sc.length||!sk||sc.includes(sk); };
+  const count=list=>{ const m={}; tms.forEach(tm=>m[tm]=0);
+    list.forEach(sh=>halfHoursBetween(sh.s,sh.e).forEach(tm=>{ if(m[tm]!=null) m[tm]++; })); return m; };
+  const before=count(state.schedRows.filter(r=>r.ds===ds&&r.s&&r.e&&inScope(r.name)));
+  const after=count(out.asg.filter(a=>a.ds===ds&&inScope(a.name)));
+  const orig=new Map(state.schedRows.filter(r=>r.ds===ds&&r.s&&r.e).map(r=>[r.name,r]));
+  const moved=out.asg.filter(a=>a.ds===ds&&a.src==="moved").map(a=>{ const o=orig.get(a.name);
+    return o&&o.s!==a.s?{name:a.name,os:o.s,oe:o.e,s:a.s,e:a.e}:null; }).filter(Boolean);
+  const mins=x=>{ const[h,m]=x.split(":").map(Number); return h*60+m; };
+  moved.sort((a,b)=>Math.abs(mins(b.s)-mins(b.os))-Math.abs(mins(a.s)-mins(a.os)));
+  const gapB={},gapA={}; let sb=0,sa=0;
+  tms.forEach(tm=>{ gapB[tm]=req[tm]-before[tm]; gapA[tm]=req[tm]-after[tm]; sb+=Math.max(0,gapB[tm]); sa+=Math.max(0,gapA[tm]); });
+  // where coverage was taken from / given to (first..last interval of each)
+  const lost=tms.filter(tm=>after[tm]<before[tm]), got=tms.filter(tm=>after[tm]>before[tm]);
+  const span=a=>a.length?a[0]+"–"+addHalf(a[a.length-1]):"";
+  const needH=tms.reduce((x,tm)=>x+req[tm],0)/2;
+  return {ds,tms,req,before,after,gapB,gapA,moved,shortB:sb/2,shortA:sa/2,needH,from:span(lost),to:span(got)};
+}
+/* The day as the algorithm really works: shifts SLIDE (same length, ≤2h). Identical moves are
+   one lane ("×6 08:00–15:00 → 10:00–17:00"), so a day of 46 moves reads as a handful of bars.
+   Above them, a colour-only strip (short / surplus / balanced) that switches from "before" to
+   "after" the moment the bars land — cause, then effect. Numbers live in one sentence; names in
+   "who moved" and the bar tooltips. */
+function buildExplain(ex){
+  const box=document.createElement("div"); box.className="exBox";
+  if(!ex){ box.innerHTML=`<p class="mini">${t("noData")}</p>`; return box; }
+  const mins=x=>{ const[h,m]=x.split(":").map(Number); return h*60+m; }, toTm=m=>pad(Math.floor(m/60))+":"+pad(m%60);
+  const fmt1=v=>(Math.round(v*10)/10).toLocaleString();
+  // identical moves → one lane
+  const pat=new Map();
+  ex.moved.forEach(m=>{ const k=m.os+"|"+m.oe+"|"+m.s+"|"+m.e; const p=pat.get(k)||{...m,n:0,names:[]}; p.n++; p.names.push(m.name); pat.set(k,p); });
+  const lanes=[...pat.values()].sort((a,b)=>mins(a.os)-mins(b.os)||b.n-a.n);
+  // time axis wide enough for every bar (no bar runs off the edge)
+  let lo=mins(ex.tms[0]), hi=mins(ex.tms[ex.tms.length-1])+30;
+  lanes.forEach(l=>{ lo=Math.min(lo,mins(l.os),mins(l.s)); hi=Math.max(hi,mins(l.oe),mins(l.e)); });
+  const axis=[]; for(let m=lo;m<hi;m+=30) axis.push(toTm(m));
+  const N=axis.length, X=tm=>(mins(tm)-lo)/30/N*100;
+  const sum=ex.moved.length?t("exSum",{n:ex.moved.length,from:ex.from||"—",to:ex.to||"—",a:fmt1(ex.shortB),b:fmt1(ex.shortA)}):t("exNone");
+  box.innerHTML=`<p class="exSum">${sum}</p><p class="exHow">${t("exHow")}</p>
+    <div class="exLegend"><span><i class="exK sh"></i>${t("exLgMiss")}</span><span><i class="exK ov"></i>${t("exLgOver")}</span><span><i class="exK ok"></i>${t("exLgOk")}</span>
+      <span><i class="exK bar"></i>${t("exLgShift")}</span><span><i class="exK ghost"></i>${t("exLgWas")}</span>
+      <b class="exState"></b>${ex.moved.length?`<button type="button" class="exReplay" title="${t("exReplayTip")}" aria-label="${t("exReplayTip")}">↻</button>`:""}</div>`;
+  const grid=document.createElement("div"); grid.className="exGrid"; grid.style.setProperty("--n",N);
+  // shade = depth: missing (or extra) as a share of what the interval needs → shrinking gaps visibly lighten
+  const cls=(g,r)=>{ if(g==null) return "na"; const x=r>0?g/r:0;
+    return g>=1?(x>=0.4?"sh3":x>=0.15?"sh2":"sh1"):g<=-1?(x<=-0.15?"ov2":"ov1"):"ok"; };
+  grid.innerHTML=`<span class="exL"></span><div class="exTimes">${axis.map((tm,k)=>`<span>${k%2===0?tm:""}</span>`).join("")}</div>
+    <span class="exL"></span><div class="exStrip">${axis.map(tm=>{ const b=ex.gapB[tm],a=ex.gapA[tm];
+      return `<i data-b="${b==null?"":b}" data-a="${a==null?"":a}" data-r="${ex.req[tm]||0}" title="${tm}${b==null?"":" · "+t("exCellGap",{b:Math.round(b),a:Math.round(a)})}"></i>`; }).join("")}</div>`;
+  const LIM=10;
+  lanes.slice(0,LIM).forEach(l=>{
+    const w=(mins(l.oe)-mins(l.os))/30/N*100;
+    grid.insertAdjacentHTML("beforeend",`<span class="exL" title="${l.names.join(", ")}"><b>×${l.n}</b></span>
+      <div class="exLane"><div class="exGhost" style="left:${X(l.os)}%;width:${w}%"></div>
+      <div class="exBar" data-from="${X(l.os)}" data-to="${X(l.s)}" data-was="${l.os}–${l.oe}" data-now="${l.s}–${l.e}" style="left:${X(l.os)}%;width:${w}%" title="${l.os}–${l.oe} → ${l.s}–${l.e} · ${l.names.slice(0,8).join(", ")}${l.names.length>8?"…":""}"><span>${l.os}–${l.oe}</span></div></div>`);
+  });
+  box.appendChild(grid);
+  if(lanes.length>LIM) box.insertAdjacentHTML("beforeend",`<p class="mini" style="margin:4px 0 0">${t("exMoreLanes",{n:lanes.length-LIM})}</p>`);
+  // who moved — details on request
+  if(ex.moved.length){ const det=document.createElement("details"); det.className="exWho";
+    det.innerHTML=`<summary class="mini">${t("exWho",{n:ex.moved.length})}</summary><div class="exWhoList">${ex.moved.map(m=>`<span><b>${m.name}</b> ${m.os}–${m.oe} → ${m.s}–${m.e}</span>`).join("")}</div>`;
+    box.appendChild(det); }
+  // play: bars at their old slots, strip "before" → bars slide → strip turns "after"
+  const play=()=>{
+    const st=box.querySelector(".exState"), cells=[...box.querySelectorAll(".exStrip i")], bars=[...box.querySelectorAll(".exBar")];
+    const paint=k=>cells.forEach(c=>{ const v=c.dataset[k]; c.className=cls(v===""?null:+v,+c.dataset.r); });
+    bars.forEach(b=>{ b.style.transition="none"; b.style.left=b.dataset.from+"%"; b.classList.remove("landed"); b.firstElementChild.textContent=b.dataset.was; });
+    paint("b"); st.textContent=t("exBefore");
+    void box.offsetWidth;
+    setTimeout(()=>{ bars.forEach(b=>{ b.style.transition=""; b.style.left=b.dataset.to+"%"; }); },450);
+    setTimeout(()=>{ bars.forEach(b=>{ b.classList.add("landed"); b.firstElementChild.textContent=b.dataset.now; }); paint("a"); st.textContent=t("exAfter"); },450+1200);
+  };
+  { const rp=box.querySelector(".exReplay"); if(rp) rp.addEventListener("click",play); }
+  if(state._exStill){ // a choice re-render: show the result as it stands, don't replay the slide
+    const cells=[...box.querySelectorAll(".exStrip i")];
+    cells.forEach(c=>{ const v=c.dataset.a; c.className=cls(v===""?null:+v,+c.dataset.r); });
+    box.querySelectorAll(".exBar").forEach(b=>{ b.style.transition="none"; b.style.left=b.dataset.to+"%"; b.classList.add("landed"); b.firstElementChild.textContent=b.dataset.now; });
+    box.querySelector(".exState").textContent=t("exAfter");
+  } else requestAnimationFrame(()=>requestAnimationFrame(play));
+  return box;
+}
+/* scheduler card: one day at a time; only days that had moves are offered */
+function renderExplainCard(out){
+  const card=document.getElementById("exCard"); if(!card) return;
+  const gen=state.settings.schedMode==="generateIron";
+  const days=gen||!out?[]:[...new Set(out.asg.filter(a=>a.src==="moved").map(a=>a.ds))].sort();
+  card.style.display=days.length?"":"none"; if(!days.length) return;
+  const seg=document.getElementById("exDays"), body=document.getElementById("exBody"), dn=t("days");
+  if(!days.includes(state._exDay)) state._exDay=days[0];
+  seg.innerHTML=days.map(ds=>{ const n=out.asg.filter(a=>a.ds===ds&&a.src==="moved").length;
+    return `<button type="button" data-ds="${ds}" class="${ds===state._exDay?"active":""}">${dn[fromISO(ds).getDay()]} · ${n}</button>`; }).join("");
+  seg.onclick=e=>{ const b=e.target.closest("button"); if(!b) return; state._exDay=b.dataset.ds; renderExplainCard(out); };
+  body.innerHTML=""; body.appendChild(buildExplain(explainDay(out,state._exDay)));
+}
+/* the same explanation from the matrix (optimized view → ↔ in a day header) */
+function openExplain(ds){
+  const out=state._schedOut; if(!out) return;
+  const p=document.getElementById("exPanel"); p.innerHTML=""; p.appendChild(buildExplain(explainDay(out,ds)));
+  document.getElementById("mTitle").textContent=t("exTitle");
+  document.getElementById("mCore").textContent=t("days")[fromISO(ds).getDay()]+" "+fmtD(ds).slice(0,5);
+  document.getElementById("mMsg").textContent="";
+  const mL=document.getElementById("mList"); mL.innerHTML="";
+  mL.parentNode.insertBefore(p,mL); p.hidden=false;
+  document.getElementById("mExport").style.display="none";
+  document.getElementById("modalBg").classList.add("show");
+}
+/* ===== analyst export ===== the sidur workbook only TAKES a few input columns (in the
+   Tikshuv sidur: entry, exit, day, name — everything else is formulas/macros that build the
+   text file for the HR system). So the export is exactly those columns, one row per shift,
+   grouped per rep in the ORIGINAL sidur's order, days א→ו — paste straight under the
+   sidur's input columns. Columns/order are a remembered setting (other centers differ). */
+const EXPORT_COLS=[
+  {k:"s",l:()=>t("anC_s"),v:a=>a.s},{k:"e",l:()=>t("anC_e"),v:a=>a.e},{k:"day",l:()=>t("anC_day"),v:a=>HE_DAY[a.di]||""},
+  {k:"name",l:()=>t("anC_name"),v:a=>a.name},{k:"date",l:()=>t("anC_date"),v:a=>fmtD(a.ds)},
+  {k:"site",l:()=>t("anC_site"),v:a=>(state.rosterMeta.get(a.name)||{}).site||""},
+  {k:"team",l:()=>t("anC_team"),v:a=>(state.rosterMeta.get(a.name)||{}).team||""},
+  {k:"skip",l:()=>t("anC_skip"),v:()=>"",skip:true}]; // a formula column in the sidur: copy around it
+function anOpts(){ const o=state.settings.anExport||{}, keys=EXPORT_COLS.map(c=>c.k);
+  const order=(Array.isArray(o.order)?o.order:[]).filter(k=>keys.includes(k)); keys.forEach(k=>{ if(!order.includes(k)) order.push(k); });
+  return {order,on:Array.isArray(o.on)?o.on:["s","e","day","name"],head:!!o.head}; }
+/* every rep of the sidur, every working day א→ו (Friday included) — a day with no shift keeps its
+   day + name and leaves entry/exit empty, exactly the shape the sidur expects */
+function anRows(){
+  const out=state._schedOut; if(!out) return [];
+  const wk=weekDates(schWeek()), wkSet=new Set(wk);
+  const rank=new Map(); state.schedRows.forEach(r=>{ if(wkSet.has(r.ds)&&!rank.has(r.name)) rank.set(r.name,rank.size); });
+  out.asg.forEach(a=>{ if(wkSet.has(a.ds)&&!rank.has(a.name)) rank.set(a.name,rank.size); });
+  const at=new Map(); out.asg.filter(a=>wkSet.has(a.ds)&&a.s&&a.e).forEach(a=>{ const k=a.name+"|"+a.ds; (at.get(k)||at.set(k,[]).get(k)).push(a); });
+  at.forEach(l=>l.sort((x,y)=>x.s.localeCompare(y.s))); // a split shift exports as two rows, in time order
+  return [...rank.keys()].flatMap(n=>wk.flatMap(ds=>at.get(n+"|"+ds)||[{name:n,ds,di:fromISO(ds).getDay(),s:"",e:""}]));
+}
+function anTable(withHead){ const o=anOpts(), cols=o.order.filter(k=>o.on.includes(k)).map(k=>EXPORT_COLS.find(c=>c.k===k));
+  return {cols,rows:(withHead?[cols.map(c=>c.skip?"":c.l())]:[]).concat(anRows().map(a=>cols.map(c=>c.v(a))))}; }
+/* the columns split at each "skip" → the copy goes in steps (paste, then the next block) */
+function anSegments(){ const o=anOpts(), cols=o.order.filter(k=>o.on.includes(k)).map(k=>EXPORT_COLS.find(c=>c.k===k));
+  const segs=[[]]; cols.forEach(c=>{ if(c.skip){ if(segs[segs.length-1].length) segs.push([]); } else segs[segs.length-1].push(c); });
+  return segs.filter(g=>g.length); }
+function syncAnCopy(){ const b=document.getElementById("anCopy"); if(!b) return; const n=anSegments().length, i=state._anSeg||0;
+  b.textContent=n>1?t("anCopySeg",{i:i+1,n}):t("anCopy"); b.title=n>1?t("anCopySegTip",{n}):""; }
+function renderAnFmt(){
+  const menu=document.getElementById("anFmtMenu"); if(!menu) return; const o=anOpts();
+  menu.innerHTML=`<div class="mini" style="margin-bottom:6px">${t("anFmtHint")}</div>`;
+  const box=document.createElement("div"); menu.appendChild(box);
+  chipOrder(box,EXPORT_COLS.map(c=>({k:c.k,label:c.l(),cls:c.skip?"skip":"",tip:c.skip?t("anSkipTip"):""})),o.order,o.on,(order,on)=>{
+    state.settings.anExport={...anOpts(),order,on}; state._anSeg=0; saveState(); syncAnCopy(); });
+  const hd=document.createElement("label"); hd.className="chk mini"; hd.style.marginTop="10px";
+  hd.innerHTML=`<input type="checkbox" class="sw" ${o.head?"checked":""}> ${t("anHead")}`;
+  hd.querySelector("input").addEventListener("change",e=>{ state.settings.anExport={...anOpts(),head:e.target.checked}; saveState(); });
+  menu.appendChild(hd);
+  const full=document.createElement("span"); full.className="linklike"; full.setAttribute("role","button"); full.style.cssText="display:block;margin-top:8px;cursor:pointer"; full.textContent=t("anFull");
+  full.addEventListener("click",()=>document.getElementById("schCsv").click()); menu.appendChild(full);
+}
+document.getElementById("anCopy").addEventListener("click",async()=>{
+  const segs=anSegments(), rows=anRows(); if(!rows.length||!segs.length) return;
+  const i=Math.min(state._anSeg||0,segs.length-1), cols=segs[i], head=anOpts().head;
+  const lines=(head?[cols.map(c=>c.l())]:[]).concat(rows.map(a=>cols.map(c=>c.v(a))));
+  try{ await navigator.clipboard.writeText(lines.map(r=>r.join("\t")).join("\n"));
+    if(segs.length>1){ state._anSeg=(i+1)%segs.length;
+      showToast("📋 "+t(i+1<segs.length?"anSegCopied":"anSegDone",{i:i+1,n:segs.length,c:cols.map(c=>c.l()).join(" · ")}),true); }
+    else showToast("📋 "+t("anCopied",{n:rows.length}),true);
+    syncAnCopy(); }
+  catch(e){ showToast("⚠ "+t("shCopyFail"),false); } });
+document.getElementById("anCsv").addEventListener("click",()=>{
+  const {rows}=anTable(true); if(rows.length<2) return;
+  downloadFile("sidur_for_analyst.csv",rows.map(r=>r.map(csvQuote).join(",")).join("\n")); });
+document.getElementById("anFmtBtn").addEventListener("click",renderAnFmt);
+syncAnCopy();
+/* ONE reorder control for the app: pill chips on a track (the .seg look). Click = in/out;
+   drag (pointer events, not native DnD) = order — the chip lifts, the others slide aside live,
+   so first and last are as easy as the middle. onChange(order,onKeys). Chips are spans, not
+   buttons, so a dropdown menu holding them stays open. */
+function chipOrder(box,items,order,on,onChange){
+  box.classList.add("ordTrack"); box.innerHTML="";
+  const by=Object.fromEntries(items.map(x=>[x.k,x]));
+  order.forEach(k=>{ const it=by[k]; if(!it) return; const c=document.createElement("span");
+    c.className="ordChip"+(on.includes(k)?" on":"")+(it.cls?" "+it.cls:""); c.dataset.k=k; c.tabIndex=0; c.setAttribute("role","button");
+    c.innerHTML=`<span class="grip">⋮⋮</span>${it.label}`; if(it.tip) c.title=it.tip; box.appendChild(c); });
+  const emit=()=>onChange([...box.children].map(c=>c.dataset.k),[...box.children].filter(c=>c.classList.contains("on")).map(c=>c.dataset.k));
+  let d=null;
+  box.onpointerdown=e=>{ const c=e.target.closest(".ordChip"); if(!c||e.button>0) return; d={c,x0:e.clientX,y0:e.clientY,moved:false}; c.setPointerCapture(e.pointerId); };
+  box.onpointermove=e=>{ if(!d) return; const c=d.c;
+    if(!d.moved){ if(Math.hypot(e.clientX-d.x0,e.clientY-d.y0)<5) return; d.moved=true; c.classList.add("lift"); }
+    const rtl=getComputedStyle(box).direction==="rtl", others=[...box.children].filter(x=>x!==c);
+    const onRow=o=>{ const r=o.getBoundingClientRect(); return e.clientY>=r.top-6&&e.clientY<=r.bottom+6; };
+    const row=others.filter(onRow); if(!row.length) return;
+    const target=row.find(o=>{ const r=o.getBoundingClientRect(), cx=r.left+r.width/2; return rtl?e.clientX>cx:e.clientX<cx; });
+    const ref=target||row[row.length-1].nextSibling;
+    if(ref===c||ref===c.nextSibling&&target) return;
+    const before=new Map(others.map(o=>[o,o.getBoundingClientRect()]));
+    box.insertBefore(c,ref||null);
+    others.forEach(o=>{ const a=before.get(o), b=o.getBoundingClientRect(), dx=a.left-b.left, dy=a.top-b.top;
+      if(dx||dy) o.animate([{transform:`translate(${dx}px,${dy}px)`},{transform:"none"}],{duration:170,easing:"ease-out"}); });
+  };
+  const end=()=>{ if(!d) return; const c=d.c, moved=d.moved; d=null; c.classList.remove("lift");
+    if(!moved) c.classList.toggle("on"); emit(); };
+  box.onpointerup=end; box.onpointercancel=end;
+  box.onkeydown=e=>{ const c=e.target.closest(".ordChip"); if(!c) return;
+    if(e.key==="Enter"||e.key===" "){ e.preventDefault(); c.classList.toggle("on"); emit(); }
+    const rtl=getComputedStyle(box).direction==="rtl", fwd=rtl?"ArrowLeft":"ArrowRight", back=rtl?"ArrowRight":"ArrowLeft";
+    if(e.key===fwd&&c.nextSibling){ box.insertBefore(c.nextSibling,c); c.focus(); emit(); }
+    if(e.key===back&&c.previousSibling){ box.insertBefore(c,c.previousSibling); c.focus(); emit(); } };
+}
 function renderSchedulerResults(out){
+  ["schGapCard","schRefGrid"].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display=""; });
   buildOptimizedCap(out); // refresh the matrix preview source on every run/restore
   dirtyPages.add("matrix"); // keep the matrix "Optimized" view in sync when next viewed
   const dayNames=t("days");
@@ -4535,7 +4979,8 @@ function renderSchedulerResults(out){
   state._schedFilter={}; state._schedSort=null;
   renderSchedTable();
   renderSchedAudit(out); // step 3: compliance + delta recompute on every render (incl. manual swaps)
-  document.getElementById("schCsv").style.display=out.asg.length?"inline-block":"none";
+  renderExplainCard(out); // how it moved — one day at a time
+  document.getElementById("schCsv").style.display="none"; /* the full export lives in the ⚙ menu (anFull) */
   state._poolFilter={}; state._poolSort=null;
   renderPoolTable();
   // the move-only optimizer never pools anyone — hide the empty card entirely
@@ -4545,13 +4990,17 @@ function renderSchedulerResults(out){
   const gen=state.settings.schedMode==="generateIron"; // extension offers ask NAMED people → Mode 1 only
   const ext=document.getElementById("schExtWrap"); if(gen&&ext) ext.innerHTML="";
   const gw=document.getElementById("schGapWrap"); gw.innerHTML="";
-  if(!out.gaps.length){ gw.innerHTML=`<p class="mini">${t("schNoGaps")}</p>`; if(!gen) renderExtensionOffers(out); return; }
+  { const cx=document.getElementById("schGapCtx"), nl=(state.schedLocks||new Set()).size;
+    if(cx) cx.textContent=gen?t("gapCtxGen"):t("gapCtx",{n:out.moved||0})+(nl?" "+t("gapCtxLocked",{n:nl}):""); }
+  if(!out.gaps.length){ state._gapCells=[]; gw.innerHTML=`<p class="mini">${t("schNoGaps")}</p>`; if(!gen) renderExtensionOffers(out); return; }
   const byCell={}, dsSet=new Set(), tmSet=new Set();
   out.gaps.forEach(g=>{ byCell[g.ds+"|"+g.tm]=g.n; dsSet.add(g.ds); tmSet.add(g.tm); });
   const dss=[...dsSet].sort(), tms=[...tmSet].sort();
   const tbl=document.createElement("table");
   const hr=document.createElement("tr"); hr.appendChild(th(t("thInterval")));
   dss.forEach(ds=>hr.appendChild(th(dayNames[fromISO(ds).getDay()]+" "+fmtD(ds))));
+  const offs=gen?[]:computeExtensionOffers(out), covers=(o,ds,tm)=>o.ds===ds&&halfHoursBetween(o.from,o.to).includes(tm);
+  state._gapCells=[];
   const thead=document.createElement("thead"); thead.appendChild(hr); tbl.appendChild(thead);
   const tb=document.createElement("tbody");
   tms.forEach(tm=>{
@@ -4559,7 +5008,14 @@ function renderSchedulerResults(out){
     const tht=document.createElement("th"); tht.textContent=tm; tr.appendChild(tht);
     dss.forEach(ds=>{
       const td=document.createElement("td"); const n=byCell[ds+"|"+tm];
-      if(n){ td.textContent="+"+n; td.className=n>=3?"tier-bad":"tier-warn"; }
+      if(n){ td.textContent="+"+n; td.className=(n>=3?"tier-bad":"tier-warn")+" gapCell tipHost";
+        const no=offs.filter(o=>covers(o,ds,tm)).length;
+        td.dataset.tip=t("gapCellTip",{n,o:no})+(no?"\n"+t("gapCellClick"):"");
+        state._gapCells.push({td,ds,tm,n});
+        if(state._extCell&&state._extCell.ds===ds&&state._extCell.tm===tm) td.classList.add("pick");
+        if(no&&!gen) td.addEventListener("click",()=>{ const c=state._extCell;
+          state._extCell=c&&c.ds===ds&&c.tm===tm?null:{ds,tm}; state._gapCells.forEach(g=>g.td.classList.toggle("pick",!!state._extCell&&g.ds===state._extCell.ds&&g.tm===state._extCell.tm));
+          renderExtensionOffers(out); document.getElementById("schExtWrap").scrollIntoView({block:"nearest",behavior:"smooth"}); }); }
       tr.appendChild(td);
     });
     tb.appendChild(tr);
@@ -4791,6 +5247,9 @@ function renderScheduler(){
   if(gr) gr.disabled=!genReady;
   if(gg) gg.style.display=genReady?"none":"block";
   renderSchWeek();
+  { // the folded prep section says what's already set — no need to open it to know
+    const ps=document.getElementById("schPrepSum"), nc=state.weeklyConstraints.length, nr=(state.settings.skillReqs||[]).length;
+    if(ps) ps.textContent=nc||nr?"· "+[nc?t("schPrepCon",{n:nc}):"",nr?t("schPrepRules",{n:nr}):""].filter(Boolean).join(" · "):""; }
   { // matrix what-ifs are a sandbox: say so where someone might expect the scheduler to obey them
     const wn=document.getElementById("schWiNote"), n=whatIfRows(schWeek()).length;
     if(wn){ wn.style.display=n?"":"none";
@@ -4884,6 +5343,7 @@ document.querySelectorAll("#schModeSeg button").forEach(btn=>btn.addEventListene
     state.optimizedOutput=[]; state._schedOut=null;
     const clear=id=>{ const el=document.getElementById(id); if(el) el.innerHTML=""; };
     const ac=document.getElementById("schAuditCard"); if(ac) ac.style.display="none";
+    ["schGapCard","schRefGrid"].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display="none"; });
     clear("schOutWrap"); clear("schPoolWrap"); clear("schGapWrap"); clear("schExtWrap");
     const csv=document.getElementById("schCsv"); if(csv) csv.style.display="none";
     if(b){ b.classList.remove("show"); b.textContent=""; }
@@ -5044,137 +5504,109 @@ function extMetaOf(name){
 }
 /* loop-closer: fold accepted extension offers into the sidur and RE-OPTIMIZE, so the
    optimizer can redistribute around the new hours (persisted → survives refresh). */
+/* adding an extension lengthens THAT shift in the plan (and nothing else); the previous edge is
+   kept so a single ✕ can undo it if the rep changes their mind. No re-run → nobody else moves. */
 function applyCheckedExtensions(list){
-  if(!list||!list.length) return;
+  if(!list||!list.length) return; const out=state._schedOut; if(!out) return;
   const have=new Set((state.appliedExtensions||[]).map(e=>e.name+"|"+e.ds+"|"+e.kind));
   const add=list.filter(e=>!have.has(e.name+"|"+e.ds+"|"+e.kind));
   if(!add.length){ showToast("⚠ "+t("extApDup"),false); return; }
+  add.forEach(e=>{ const a=out.asg.find(r=>r.name===e.name&&r.ds===e.ds&&(e.kind==="pull"?r.e===e.from:r.s===e.to))||out.asg.find(r=>r.name===e.name&&r.ds===e.ds); if(!a) return;
+    e.prevS=a.s; e.prevE=a.e; if(e.kind==="pull") a.e=e.to; else a.s=e.from; a.ext=true; });
   state.appliedExtensions=(state.appliedExtensions||[]).concat(add);
-  saveData();
-  showToast("✅ "+t("extApplied",{n:add.length}),true);
-  runScheduler(); // re-optimize with the extended shifts folded in
+  showToast("✅ "+t("extApplied",{n:add.length}),true); afterPlanEdit(out);
 }
-function clearExtensions(){
-  if(!(state.appliedExtensions||[]).length) return;
-  state.appliedExtensions=[]; saveData();
-  runScheduler();
-}
+function removeExtension(x){ const out=state._schedOut; if(!out) return;
+  const a=out.asg.find(r=>r.name===x.name&&r.ds===x.ds&&(x.kind==="pull"?r.e===x.to:r.s===x.from))||out.asg.find(r=>r.name===x.name&&r.ds===x.ds); if(a&&(x.prevS||x.prevE)){ if(x.kind==="pull") a.e=x.prevE; else a.s=x.prevS; delete a.ext; }
+  state.appliedExtensions=(state.appliedExtensions||[]).filter(e=>e!==x); afterPlanEdit(out); }
+function clearExtensions(){ (state.appliedExtensions||[]).slice().reverse().forEach(x=>{ const a=state._schedOut&&(state._schedOut.asg.find(r=>r.name===x.name&&r.ds===x.ds&&(x.kind==="pull"?r.e===x.to:r.s===x.from))||state._schedOut.asg.find(r=>r.name===x.name&&r.ds===x.ds));
+    if(a&&x.prevS){ if(x.kind==="pull") a.e=x.prevE; else a.s=x.prevS; delete a.ext; } });
+  state.appliedExtensions=[]; if(state._schedOut) afterPlanEdit(state._schedOut); }
+/* any manual edit of the plan: recompute gaps, redraw in place (no animation replay), save after */
+function afterPlanEdit(out){ const y=window.scrollY; out.gaps=planGaps(out); state._exStill=true;
+  renderSchedulerResults(out); state._exStill=false; window.scrollTo(0,y); setTimeout(saveData,60); }
 function renderExtensionOffers(out){
-  const wrap=document.getElementById("schExtWrap");
-  if(!wrap) return;
-  wrap.innerHTML="";
-  // already-accepted extensions for this week (shown even when no gaps remain), with an undo
-  const wkSet=new Set(schWeek()?weekDates(schWeek()):[]);
-  const appliedN=(state.appliedExtensions||[]).filter(e=>wkSet.has(e.ds)).length;
-  if(appliedN){
-    const ai=document.createElement("div"); ai.className="mini"; ai.style.cssText="margin:0 0 6px;color:#0f6a3f;font-weight:600";
-    ai.textContent="✅ "+t("extApN",{n:appliedN})+" ";
-    const clr=document.createElement("button"); clr.className="linklike"; clr.textContent=t("extApClear");
-    clr.addEventListener("click",()=>clearExtensions());
-    ai.appendChild(clr); wrap.appendChild(ai);
-  }
-  if(!out.gaps.length) return;
-  const offers=computeExtensionOffers(out);
-  if(!offers.length){ const p=document.createElement("p"); p.className="mini"; p.textContent=t("extNone"); wrap.appendChild(p); return; }
-  const dayNames=t("days"), primL=primName();
-  const checked=new Map(); // offer key -> {o, gain} for the accepted-so-far set
+  const wrap=document.getElementById("schExtWrap"); if(!wrap) return; wrap.innerHTML="";
+  const wkSet=new Set(schWeek()?weekDates(schWeek()):[]), dayNames=t("days"), primL=primName();
+  const applied=(state.appliedExtensions||[]).filter(e=>wkSet.has(e.ds));
+  const done=new Set((state.appliedExtensions||[]).map(e=>e.name+"|"+e.ds+"|"+e.kind));
+  const offers=out.gaps.length?computeExtensionOffers(out).filter(o=>!done.has(o.name+"|"+o.ds+"|"+o.kind)):[];
   const tierOf=d=>d>=4?"hi":(d>0?"med":"lo");
-  const TIER_STYLE={hi:["#0f6a3f","#d2f2df"],med:["#8a6d1a","#fdf3d0"],lo:["#7c1010","#f8dede"]};
-  // ---- headline + actions: one glance, one click ----
-  const bar=document.createElement("div");
-  bar.className="toolbar"; bar.style.margin="0 0 4px";
-  const head=document.createElement("b"); head.style.fontSize=".85rem";
-  head.textContent="🎯 "+t("extSummary",{n:offers.length});
-  bar.appendChild(head);
-  // ➕ Add to sidur: applies the CHECKED extensions and re-optimizes. The button itself
-  // carries the running total — count + summed metric gain — so the payoff is on the action.
-  const addBtn=document.createElement("button"); addBtn.className="btn navy applymini"; addBtn.disabled=true;
-  const updateAdd=()=>{ let sum=0; checked.forEach(v=>sum+=v.gain);
-    addBtn.disabled=!checked.size;
-    addBtn.textContent=checked.size?t("extAddN",{n:checked.size,p:pctGain(sum),m:primL}):t("extAdd0"); };
-  updateAdd();
-  addBtn.addEventListener("click",()=>{ if(!checked.size) return;
-    applyCheckedExtensions([...checked.values()].map(v=>({name:v.o.name,ds:v.o.ds,kind:v.o.kind,hours:v.o.hours}))); });
-  bar.appendChild(addBtn);
-  const grow=document.createElement("span"); grow.className="grow"; bar.appendChild(grow);
-  // export EVERYTHING: site + team leader + the exact suggestion, ready for Excel
-  const ex=document.createElement("button"); ex.className="btn ghost applymini";
-  ex.textContent=t("extExport");
-  ex.addEventListener("click",()=>{
-    const rows=[["מוקד","מנהל צוות","שם הנציג/ה","יום","תאריך","ההצעה","משעה","עד שעה","חלון חסר","חסרים","סבירות להסכמה","פער שבועי (ש')"]
-      .map(csvQuote).join(",")]
-      .concat(offers.map(o=>{ const m=extMetaOf(o.name);
-        return [m.site,m.team,o.name,dayNames[o.di],fmtD(o.ds),extAskText(o),o.from,o.to,
-          o.win,o.need,t("extProb_"+tierOf(o.def)),o.def].map(csvQuote).join(","); }));
-    downloadFile("extension_offers.csv",rows.join("\n"));
-  });
-  bar.appendChild(ex);
-  // one message per TEAM LEADER, bundling all their agents' asks
-  const byTeam={};
-  offers.forEach(o=>{ const tl=extMetaOf(o.name).team||t("wfAll"); (byTeam[tl]=byTeam[tl]||[]).push(o); });
-  const tlWrap=document.createElement("div"); tlWrap.className="splitbtn";
-  const tlBtn=document.createElement("button"); tlBtn.className="btn ghost applymini";
-  tlBtn.textContent=t("extTlBtn",{n:Object.keys(byTeam).length});
-  tlWrap.appendChild(tlBtn);
-  const tlMenu=document.createElement("div"); tlMenu.className="menu pad"; tlMenu.style.minWidth="240px";
-  for(const tl in byTeam){
-    const b2=document.createElement("button");
-    b2.textContent="📱 "+tl+" ("+byTeam[tl].length+")";
-    b2.addEventListener("click",()=>{
-      const lines=byTeam[tl].map(o=>t("extTlLine",{name:o.name,day:dayNames[o.di],date:fmtD(o.ds),ask:extAskText(o)}));
-      navigator.clipboard&&navigator.clipboard.writeText(t("extTlHead",{team:tl})+"\n"+lines.join("\n"));
-      showToast("📋 "+t("waCopied",{team:tl}),true);
-    });
-    tlMenu.appendChild(b2);
-  }
-  tlWrap.appendChild(tlMenu); bar.appendChild(tlWrap);
-  wrap.appendChild(bar);
-  // ---- tiers as accordions: HIGH open (that's where the yeses are), rest folded ----
-  [["hi",true],["med",false],["lo",false]].forEach(([tier,open])=>{
-    const list=offers.filter(o=>tierOf(o.def)===tier);
-    if(!list.length) return;
-    const [fg,bg]=TIER_STYLE[tier];
-    const det=document.createElement("details"); det.open=open;
-    det.style.cssText="margin:4px 0;border:1px solid var(--border);border-radius:8px;padding:4px 10px";
-    const sum=document.createElement("summary");
-    sum.style.cssText="cursor:pointer;font-size:.82rem;font-weight:700";
-    sum.innerHTML=`<span style="background:${bg};color:${fg};border-radius:10px;padding:1px 9px">${t("extProb_"+tier)}</span> <span class="mini">${t("extTierN",{n:list.length})}</span>`;
-    det.appendChild(sum);
-    list.slice(0,30).forEach(o=>{
-      const row=document.createElement("div");
-      row.style.cssText="display:flex;align-items:center;gap:8px;font-size:.8rem;margin:4px 0;flex-wrap:wrap";
-      const m=extMetaOf(o.name);
-      row.innerHTML=
-        `<b style="min-width:135px">${o.name}</b>
-         <span class="mini" style="min-width:80px">${m.team||""}</span>
-         <span style="min-width:120px">${dayNames[o.di]} ${fmtD(o.ds).slice(0,5)}</span>
-         <span style="min-width:170px;font-weight:600">${extAskText(o)}</span>
-         <span class="mini">${t("extShort",{n:o.need,w:o.win})}${o.def>0?" · "+t("extDeficit",{h:o.def}):""}</span>`;
-      // ☑ accept this extension → its marginal metric gain pops up right beside the box
-      const cb=document.createElement("input"); cb.type="checkbox"; cb.style.cursor="pointer"; cb.title=t("extPick");
-      const gs=document.createElement("span"); gs.style.cssText="min-width:78px;font-weight:700;color:#0f6a3f;display:none";
-      const key=o.name+"|"+o.ds+"|"+o.kind;
-      cb.addEventListener("change",()=>{
-        if(cb.checked){ const g=offerMetricGain(out,o); checked.set(key,{o,gain:g});
-          gs.textContent="+"+pctGain(g)+"% "+primL; gs.style.display=""; }
-        else{ checked.delete(key); gs.style.display="none"; }
-        updateAdd();
-      });
-      row.insertBefore(cb,row.firstChild); row.insertBefore(gs,cb.nextSibling); // checkbox then gain, at the start
-      const cp=document.createElement("button"); cp.className="linklike"; cp.textContent="📱";
-      cp.title=t("extCopy");
-      cp.addEventListener("click",()=>{
-        const msg=t("extMsg",{name:o.name.split(" ")[0],day:dayNames[o.di],date:fmtD(o.ds),ask:extAskText(o)});
-        navigator.clipboard&&navigator.clipboard.writeText(msg);
-        showToast("📋 "+t("waCopied",{team:o.name}),true);
-      });
-      row.appendChild(cp);
-      det.appendChild(row);
-    });
-    if(list.length>30){ const mm=document.createElement("p"); mm.className="mini";
-      mm.textContent="+"+(list.length-30)+" …"; det.appendChild(mm); }
-    wrap.appendChild(det);
-  });
+  const checked=state._extChecked||(state._extChecked=new Map()); // persists across redraws until applied
+  [...checked.keys()].forEach(k=>{ if(!offers.some(o=>o.name+"|"+o.ds+"|"+o.kind===k)) checked.delete(k); });
+  const halfSum=out.gaps.reduce((x,g)=>x+g.n,0);
+  // ---- the tray: what the selection does, and the two actions ----
+  const tray=document.createElement("div"); tray.className="exTray"; wrap.appendChild(tray);
+  const paintTray=()=>{
+    let gain=0, closes=0; checked.forEach(v=>gain+=v.gain);
+    (state._gapCells||[]).forEach(g=>{ let cov=0; checked.forEach(v=>{ if(v.o.ds===g.ds&&halfHoursBetween(v.o.from,v.o.to).includes(g.tm)) cov++; }); closes+=Math.min(cov,g.n); });
+    tray.innerHTML=checked.size
+      ?`<div class="tsum">${t("exTraySel",{n:checked.size,c:closes,t:halfSum,p:pctGain(gain),m:primL})}</div>`
+      :`<div class="tsum idle">${offers.length?t("exTrayIdle",{n:offers.length}):t("extNone")}</div>`;
+    const acts=document.createElement("div"); acts.className="tacts";
+    if(checked.size){ const add=document.createElement("button"); add.className="btn navy applymini"; add.textContent=t("exTrayAdd",{n:checked.size});
+      add.addEventListener("click",()=>{ const list=[...checked.values()].map(v=>({name:v.o.name,ds:v.o.ds,kind:v.o.kind,hours:v.o.hours,from:v.o.from,to:v.o.to})); checked.clear(); applyCheckedExtensions(list); });
+      acts.appendChild(add); }
+    if(offers.length){ const msg=document.createElement("button"); msg.className="btn ghost applymini"; msg.textContent=t(checked.size?"exTrayMsgSel":"exTrayMsgAll");
+      msg.addEventListener("click",()=>{ const list=checked.size?[...checked.values()].map(v=>v.o):offers, byTeam={};
+        list.forEach(o=>{ const tl=extMetaOf(o.name).team||t("wfAll"); (byTeam[tl]=byTeam[tl]||[]).push(o); });
+        const txt=Object.entries(byTeam).map(([tl,os])=>[t("extTlHead",{team:tl}),...os.map(o=>t("extTlLine",{name:o.name,day:dayNames[o.di],date:fmtD(o.ds),ask:extAskText(o)}))].join("\n")).join("\n\n");
+        navigator.clipboard&&navigator.clipboard.writeText(txt); showToast("📋 "+t("waCopiedAll"),true); });
+      acts.appendChild(msg); }
+    if(acts.children.length) tray.appendChild(acts);
+    // the map follows the selection live
+    (state._gapCells||[]).forEach(g=>{ let cov=0; checked.forEach(v=>{ if(v.o.ds===g.ds&&halfHoursBetween(v.o.from,v.o.to).includes(g.tm)) cov++; });
+      const r=Math.max(0,g.n-cov); g.td.textContent=r?"+"+r:"✓"; g.td.classList.toggle("closing",cov>0&&r>0); g.td.classList.toggle("closed",r===0); });
+  };
+  // ---- likelihood filter, explained once ----
+  const pick=state._extCell, inCell=o=>!pick||(o.ds===pick.ds&&halfHoursBetween(o.from,o.to).includes(pick.tm));
+  const tf=state._extTier||"all", cnt={hi:0,med:0,lo:0}; offers.filter(inCell).forEach(o=>cnt[tierOf(o.def)]++);
+  if(offers.length){ const fl=document.createElement("div"); fl.className="offFilt";
+    const seg=document.createElement("div"); seg.className="seg";
+    [["all",t("exAll",{n:offers.filter(inCell).length})],["hi",t("extProb_hi")+" "+cnt.hi],["med",t("extProb_med")+" "+cnt.med],["lo",t("extProb_lo")+" "+cnt.lo]].forEach(([k,l])=>{
+      const b=document.createElement("button"); b.type="button"; b.textContent=l; if(k===tf) b.classList.add("active");
+      b.addEventListener("click",()=>{ state._extTier=k; renderExtensionOffers(out); }); seg.appendChild(b); });
+    fl.appendChild(seg);
+    const inf=document.createElement("span"); inf.className="info"; inf.tabIndex=0; inf.textContent="i"; inf.dataset.tip=t("exTierTip"); fl.appendChild(inf);
+    wrap.appendChild(fl); }
+  if(pick){ const pc=document.createElement("div"); pc.className="pickChip";
+    pc.innerHTML=`${t("extPicked",{d:dayNames[fromISO(pick.ds).getDay()],tm:pick.tm,n:offers.filter(inCell).length})} `;
+    const x=document.createElement("button"); x.className="linklike"; x.textContent=t("extShowAll");
+    x.addEventListener("click",()=>{ state._extCell=null; (state._gapCells||[]).forEach(g=>g.td.classList.remove("pick")); renderExtensionOffers(out); });
+    pc.appendChild(x); wrap.appendChild(pc); }
+  // ---- the rows: short; the details live in the hover ----
+  const rank={hi:0,med:1,lo:2};
+  const list=offers.filter(o=>inCell(o)&&(tf==="all"||tierOf(o.def)===tf)).sort((a,b)=>rank[tierOf(a.def)]-rank[tierOf(b.def)]||a.ds.localeCompare(b.ds));
+  const box=document.createElement("div"); wrap.appendChild(box);
+  const cellsOf=o=>(state._gapCells||[]).filter(g=>g.ds===o.ds&&halfHoursBetween(o.from,o.to).includes(g.tm));
+  list.slice(0,60).forEach(o=>{
+    const key=o.name+"|"+o.ds+"|"+o.kind, tr=tierOf(o.def);
+    const row=document.createElement("div"); row.className="offRow tipHost"+(checked.has(key)?" on":"");
+    row.dataset.tip=t("exRowTip",{n:o.need,w:o.win,team:extMetaOf(o.name).team||"—"})+(o.def>0?"\n"+t("extDeficit",{h:o.def}):"")+"\n"+t("exProbIs",{p:t("extProb_"+tr)});
+    const cb=document.createElement("input"); cb.type="checkbox"; cb.checked=checked.has(key);
+    row.innerHTML=`<span></span><i class="dot ${tr}"></i><b>${o.name}</b><span class="mini when">${t("daysShort")[o.di]} ${fmtD(o.ds).slice(0,5)}</span><span class="ask">${o.kind==="pull"?t("exAskPull",{to:o.to,h:o.hours}):t("exAskEarly",{from:o.from,h:o.hours})}</span>`;
+    row.firstChild.appendChild(cb);
+    const cp=document.createElement("button"); cp.className="cp"; cp.textContent="📱"; cp.title=t("extCopy");
+    cp.addEventListener("click",e=>{ e.stopPropagation(); navigator.clipboard&&navigator.clipboard.writeText(t("extMsg",{name:o.name.split(" ")[0],day:dayNames[o.di],date:fmtD(o.ds),ask:extAskText(o)}));
+      showToast("📋 "+t("waCopied",{team:o.name}),true); });
+    row.appendChild(cp);
+    const toggle=()=>{ if(checked.has(key)) checked.delete(key); else checked.set(key,{o,gain:offerMetricGain(out,o)});
+      cb.checked=checked.has(key); row.classList.toggle("on",cb.checked); paintTray(); };
+    row.addEventListener("click",e=>{ if(e.target!==cb) toggle(); }); cb.addEventListener("change",()=>{ cb.checked=!cb.checked; toggle(); });
+    // hover an offer → see exactly which cells it closes
+    row.addEventListener("mouseenter",()=>cellsOf(o).forEach(g=>g.td.classList.add("hl")));
+    row.addEventListener("mouseleave",()=>cellsOf(o).forEach(g=>g.td.classList.remove("hl")));
+    box.appendChild(row); });
+  if(list.length>60){ const mm=document.createElement("p"); mm.className="mini"; mm.textContent=t("exMoreOffers",{n:list.length-60}); box.appendChild(mm); }
+  // ---- added to the sidur: each one can be undone (a rep changed their mind) ----
+  if(applied.length){ const ap=document.createElement("div"); ap.className="applied";
+    ap.innerHTML=`<div class="mini" style="margin-bottom:4px"><b>${t("exApT",{n:applied.length})}</b></div>`;
+    applied.forEach(x=>{ const c=document.createElement("span"); c.className="apChip";
+      c.textContent=`${x.name} · ${t("daysShort")[fromISO(x.ds).getDay()]} ${fmtD(x.ds).slice(0,5)} · +${x.hours}${t("exH")}`;
+      const xb=document.createElement("button"); xb.type="button"; xb.textContent="✕"; xb.title=t("exApUndo"); xb.addEventListener("click",()=>removeExtension(x));
+      c.appendChild(xb); ap.appendChild(c); });
+    wrap.appendChild(ap); }
+  paintTray();
 }
 /* ---- Pool → sidur: insert a surplus agent, optionally switching someone out ---- */
 function openSwapPop(e,p){
@@ -6403,7 +6835,7 @@ function rebuildRosterCoverage(){
   state.rosterDates=new Set([...state.rosterCap.keys()].map(k=>k.slice(0,10)));
   state.rosterDays=new Set([...state.rosterCapWeekly.keys()].map(k=>k.split("|")[0]));
   // a changed roster invalidates any prior optimized preview — and what-ifs made against the old sidur
-  state.agWhatIf.clear();
+  state.agWhatIf.clear(); state.schedLocks=new Set(); state.schedLockTL=new Set(); state.schedDeclined={}; state._sentTL={};
   state.optimizedCapSkill=null; state.optimizedWeek=null; state.matrixView="original";
 }
 function computeDay(ds){
@@ -6623,6 +7055,10 @@ function renderMatrixBody(){
       const ev=evMap().get(ds); // 📣 planned event this day — name on hover
       if(ev){ tg.textContent+=" · 📣"; hth.title=ev.names.join(" + ")+(sdd.forecast?" · "+t("evPillTip",{n:Math.round(ev.extra).toLocaleString()}):""); }
       hth.appendChild(tg); }
+    // optimized view: "↔" opens how this day's shifts moved
+    if(state._optView&&state._schedOut&&state._schedOut.asg.some(a=>a.ds===ds&&a.src==="moved")){
+      const lk=document.createElement("span"); lk.className="exLink"; lk.textContent="↔"; lk.title=t("exOpen");
+      lk.addEventListener("click",e=>{ e.stopPropagation(); openExplain(ds); }); hth.appendChild(lk); }
     if(i===todayIdx) hth.classList.add("todayHd");
     if(state.excMode){ hth.style.cursor="pointer"; hth.title=t("excBtn");
       hth.addEventListener("click",()=>{ toggleException(ds); }); }
@@ -6710,7 +7146,11 @@ function renderMatrixBody(){
         const edited=state.edits.has(ds+"|"+tm)||wiOn;
         // body-count short, but the SHOWN service is on target → hollow ring, not a red alarm
         const soft=short&&v*100>=state.settings.target;
-        td.innerHTML=`<div class="v">${pct(v)}${row.dropped?'<span class="decay">▼</span>':''}${short?`<span class="short${soft?" soft":""}"></span>`:''}${over?'<span class="overm"></span>':''}${edited?'<span class="edmark">✎</span>':''}</div>
+        // optimized view: how many reps this interval gained/lost vs the current sidur
+        let mv="";
+        if(state._optView){ state._optView=false; const base=capacityFor(ds,fromISO(ds).getDay(),tm,row.rec)+injectionAgents(fromISO(ds).getDay(),tm); state._optView=true;
+          const dlt=row.sched-base; if(dlt) mv=`<span class="mvd ${dlt>0?"up":"dn"}" title="${t("exCellTip",{b:base,a:row.sched})}">${dlt>0?"▲":"▼"}${Math.abs(dlt)}</span>`; }
+        td.innerHTML=`<div class="v">${pct(v)}${mv}${row.dropped?'<span class="decay">▼</span>':''}${short?`<span class="short${soft?" soft":""}"></span>`:''}${over?'<span class="overm"></span>':''}${edited?'<span class="edmark">✎</span>':''}</div>
           <div class="sub">${row.sched}/${row.reqEff} • ${Math.round(row.rec.volume)}</div>`;
         // edited cells carry their own tiny undo — one click back to the original value
         if(edited&&(state.cellOrig.has(ds+"|"+tm)||wiOn)){
@@ -8434,22 +8874,10 @@ function setShareOpt(k,v){ state.settings.shareOpts={...shareOpts(),[k]:v}; save
 /* column chips: tick = show, drag = order (the image follows the chip order). Drags stay
    in-page, so the file-drop guard (state._dragInternal) keeps them away from ingestion. */
 function renderShareChips(){
-  const o=shareOpts(), box=$sh("shMetrics"), by=Object.fromEntries(SHARE_METRICS.map(x=>[x.k,x]));
-  box.innerHTML=""; box.title=t("shDragTip");
-  o.order.forEach(k=>{ const m=by[k]; const lb=document.createElement("label"); lb.className="skChip shDrag"; lb.draggable=true; lb.dataset.k=k;
-    const cb=document.createElement("input"); cb.type="checkbox"; cb.checked=o.m.includes(k);
-    cb.addEventListener("change",()=>setShareOpt("m",[...box.querySelectorAll("label")].filter(l=>l.querySelector("input").checked).map(l=>l.dataset.k)));
-    lb.append("⋮⋮ ",cb,document.createTextNode(m.l())); box.appendChild(lb); });
+  const o=shareOpts(), box=$sh("shMetrics"); box.title=t("shDragTip");
+  chipOrder(box,SHARE_METRICS.map(m=>({k:m.k,label:m.l()})),o.order,o.m,(order,m)=>{
+    state.settings.shareOpts={...shareOpts(),order,m}; saveState(); drawShare(); });
 }
-{ const box=$sh("shMetrics"); let dragK=null;
-  box.addEventListener("dragstart",e=>{ const l=e.target.closest&&e.target.closest(".shDrag"); if(!l) return; dragK=l.dataset.k; l.classList.add("dragging"); e.dataTransfer.effectAllowed="move"; });
-  box.addEventListener("dragover",e=>{ if(!dragK) return; e.preventDefault(); const l=e.target.closest&&e.target.closest(".shDrag");
-    box.querySelectorAll(".dropAt").forEach(x=>x.classList.remove("dropAt")); if(l&&l.dataset.k!==dragK) l.classList.add("dropAt"); });
-  box.addEventListener("drop",e=>{ if(!dragK) return; e.preventDefault(); e.stopPropagation();
-    const l=e.target.closest&&e.target.closest(".shDrag"), ord=shareOpts().order.filter(k=>k!==dragK);
-    const at=l?ord.indexOf(l.dataset.k):ord.length; ord.splice(at<0?ord.length:at,0,dragK);
-    dragK=null; state._dragInternal=false; setShareOpt("order",ord); renderShareChips(); });
-  box.addEventListener("dragend",()=>{ dragK=null; box.querySelectorAll(".dragging,.dropAt").forEach(x=>x.classList.remove("dragging","dropAt")); }); }
 function openShare(){
   if(!state.days.size){ showToast("⚠ "+t("emptyState"),false); return; }
   const o=shareOpts();
@@ -8575,8 +9003,11 @@ document.addEventListener("click",e=>{
     if(inMenu&&w.contains(inMenu)&&!t0.closest(".menu button")) return;
     w.classList.remove("open");
   });
-  if(head) head.parentElement.classList.toggle("open");
+  if(head){ const w=head.parentElement; w.classList.toggle("open"); if(w.classList.contains("open")) fitMenu(w.querySelector(".menu")); }
 });
+/* a menu that opens past the window edge slides back in — every dropdown, both directions */
+function fitMenu(m){ if(!m) return; m.style.transform=""; const r=m.getBoundingClientRect(), W=document.documentElement.clientWidth;
+  let dx=0; if(r.right>W-8) dx=W-8-r.right; if(r.left+dx<8) dx=8-r.left; if(dx) m.style.transform=`translateX(${Math.round(dx)}px)`; }
 document.addEventListener("keydown",e=>{ if(e.key==="Escape") document.querySelectorAll(".splitbtn.open").forEach(w=>w.classList.remove("open")); });
 
 /* Forecasting Models: registry-driven selectors + holdout backtest */
@@ -9180,7 +9611,7 @@ function saveData(){
       capSkills:state.capSkills, capSkillMap:state.rosterCapSkill, skillList:state.skillList,
       un:state.unallocRows, schedSkills:state.schedSkills,
       week:state.week, wfFilter:state.wfFilter, cons:state.weeklyConstraints,
-      schedOut:state._schedOut, schedExt:state.appliedExtensions, agWhatIf:[...state.agWhatIf] }));
+      schedOut:state._schedOut, schedExt:state.appliedExtensions, schedLocks:[...(state.schedLocks||[])], schedLockTL:[...(state.schedLockTL||[])], schedDeclined:state.schedDeclined||{}, agWhatIf:[...state.agWhatIf] }));
   }catch(e){} // quota exceeded on huge files → data simply stays transient
 }
 function loadData(){
@@ -9217,6 +9648,7 @@ function loadData(){
     state.agWhatIf=new Map(Array.isArray(s.agWhatIf)?s.agWhatIf:[]);
     // a persisted optimizer result: the sidur + matrix "Optimized" toggle survive a refresh
     state.appliedExtensions=Array.isArray(s.schedExt)?s.schedExt:[];
+    state.schedLocks=new Set(Array.isArray(s.schedLocks)?s.schedLocks:[]); state.schedLockTL=new Set(Array.isArray(s.schedLockTL)?s.schedLockTL:[]); state.schedDeclined=s.schedDeclined||{};
     if(s.schedOut&&s.schedOut.asg&&s.schedOut.asg.length){
       state._schedOut=s.schedOut; state.optimizedOutput=s.schedOut.asg;
       state._schedOutBy={[state.settings.schedMode||"optimizeCurrent"]:s.schedOut};
