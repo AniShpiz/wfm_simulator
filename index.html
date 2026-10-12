@@ -314,6 +314,11 @@ tr.r-ok td{background:var(--emerald-bg)}
 @keyframes spin{to{transform:rotate(360deg)}}
 .dropzone.busy{opacity:.6;pointer-events:none}
 .dropzone.loaded .pre{display:none}
+#schChipFc,#schChipIron,#schChipCon,#schChipGenIron,#schChipGenCov{display:none!important} /* readiness speaks only when missing (gate notes) */
+/* hover an offer → the cells it would close lift and show the result before you tick */
+td.gapCell{transition:transform .12s,box-shadow .12s}
+td.gapCell.hl{position:relative;z-index:2;transform:scale(1.08);box-shadow:inset 0 0 0 2px #1e9e5a,0 3px 10px rgba(13,42,77,.25)}
+td.gapCell.hl.pv{color:#0f6a3f;font-weight:700}
 /* ③ two panes: the offers to act on, and the map they change — always both in view */
 .gapLayout{display:grid;grid-template-columns:minmax(340px,1fr) minmax(380px,1.15fr);gap:14px;align-items:start}
 #schGapWrap{position:sticky;top:8px;max-height:calc(100vh - 70px);overflow:auto}
@@ -374,6 +379,10 @@ td.gapCell.closed{background:#d6f3e2!important;color:#0f6a3f;font-weight:700}
 .tlLine .tlFrom{color:var(--muted);text-decoration:line-through;direction:ltr}.tlLine .tlTo{font-weight:700;direction:ltr}
 
 .stepN{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:var(--navy);color:#fff;font-size:.72rem;font-weight:700;flex:none}
+.runRow{display:flex;flex-direction:column;align-items:center;gap:6px;margin:14px 0 4px}
+.runRow .gateNote{margin:0;text-align:center}
+#exDays button{line-height:1.15}
+.exDt{display:block;font-size:.66rem;font-weight:400;opacity:.65} /* the sidur week, day by day — which dates this forecast is for */
 .schPrep{margin-top:8px;border:1px solid var(--border);border-radius:8px;padding:6px 10px;background:#fafcfe}
 .schPrep > summary{cursor:pointer;font-size:.82rem;font-weight:600;color:var(--navy)}
 .prepSec{margin-top:8px}.prepSec h3{font-size:.85rem;color:var(--navy);display:flex;align-items:center;gap:6px;margin-bottom:6px}
@@ -822,24 +831,14 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
              nothing to move anywhere else); Mode 2 = any forecast week, picked here -->
         <span class="pill" id="schWkFix"></span>
         <select id="schWkSel" style="display:none;min-width:238px"></select>
-        <button class="linklike" id="schWkHint" type="button" data-i18n="schWkHint">Another week? Generate from iron →</button>
-      </div>
-      <div class="toolbar">
-        <span class="pill" id="schChipFc"></span>
-        <span class="pill" id="schChipIron"></span>
-        <span class="pill" id="schChipCon"></span>
-        <span class="pill" id="schChipGenIron" style="display:none"></span>
-        <span class="pill" id="schChipGenCov" style="display:none"></span>
-        <span class="grow"></span>
         <div class="splitbtn" id="schSkillWrap" style="display:none">
           <button class="btn ghost" id="schSkillBtn"></button>
           <div class="menu pad" id="schSkillMenu" style="min-width:240px"></div>
         </div>
-        <button class="btn navy" id="schRun" data-i18n="schRun">Generate Optimized Schedule</button>
-        <button class="btn navy" id="schGenRun" style="display:none" data-i18n="schGenRun">🏗️ Generate baseline</button>
+        <button class="linklike" id="schWkHint" type="button" data-i18n="schWkHint">Another week? Generate from iron →</button>
       </div>
+      <span class="pill" id="schChipFc"></span><span class="pill" id="schChipIron"></span><span class="pill" id="schChipCon"></span><span class="pill" id="schChipGenIron"></span><span class="pill" id="schChipGenCov"></span>
       <p class="mini" id="schWiNote" style="display:none;margin:0 0 6px"></p>
-      <p class="gateNote" id="schGate" style="display:none" data-i18n="schNeedSidur">The optimizer MOVES shifts in the current sidur — load a sidur (with shifts in the selected week) and a forecast to enable it.</p>
       <!-- Mode 2 input surface: one line of intent + its own gate (needs forecast + iron) -->
       <div id="schGenPanel" style="display:none;margin-top:8px">
         <p class="mini" data-i18n="schMode2Hint">Builds a baseline by placing each contracted iron window where it best covers demand.</p>
@@ -894,6 +893,11 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
           </details>
         </div>
       </details>
+      <div class="runRow">
+        <p class="gateNote" id="schGate" style="display:none" data-i18n="schNeedSidur">The optimizer MOVES shifts in the current sidur — load a sidur (with shifts in the selected week) and a forecast to enable it.</p>
+        <button class="btn navy" id="schRun" data-i18n="schRun">Generate Optimized Schedule</button>
+        <button class="btn navy" id="schGenRun" style="display:none" data-i18n="schGenRun">🏗️ Generate baseline</button>
+      </div>
       <div class="banner good" id="schBanner"></div>
     </div>
     <!-- STEP 3 — compliance & delta: rendered after every run -->
@@ -1404,7 +1408,7 @@ en:{
   fcAuditWarn:"Data audit:", auditImp:"{n} intervals with more answered than offered calls (AR>100% — capped)", auditAht:"{n} intervals with AHT outside 1–60 min", auditFar:"{n} dates more than ~13 months from today — check the date column format",
   mxViewOrig:"Current sidur", mxViewOpt:"Optimized",
   exTitle:"How the sidur was moved", exHow:"Each shift keeps its length and slides up to 2 hours — out of surplus, toward where reps were missing.",
-  exSum:"{n} shifts moved from {from} to {to} — the shortage fell from {a} to {b} rep-hours.", exNone:"No shift needed moving on this day.",
+  exSum:"This day: {n} shifts moved from {from} to {to} — the day’s shortage fell from {a} to {b} rep-hours.", exNone:"No shift needed moving on this day.",
   exBefore:"before", exAfter:"after ✓", exReplayTip:"Play again", schPrepT:"⚙ Before running (optional)", schPrepCon:"{n} constraints", schPrepRules:"{n} coverage rules", exLgMiss:"short (darker = more)", exLgOver:"surplus", exLgOk:"balanced", exLgShift:"shift (×n identical)", exLgWas:"where it was", exMoreLanes:"+{n} more move patterns — see who moved", exCellGap:"short {b} → {a}", exWho:"Who moved ({n})", exReplay:"▶ Replay", exMore:"+{n} more moved shifts on this day", exOpen:"How this day's shifts moved",
   exCellTip:"{b} in the current sidur → {a} after optimizing",
   mxOptHint:"One click: see this week with the sidur optimized to cover demand. Your sidur stays as it is.", mxOptDone:"{m} shifts moved — previewing the optimized sidur",
@@ -1495,11 +1499,11 @@ en:{
   schAuditTitle:"The result — what changed",
   tipSchAudit:"After each run: coverage rules re-checked on the new schedule, and every changed shift listed by team leader, ready to send.",
   saKpiBreach:"half-hours below a coverage rule", saKpiShifts:"changed shifts", saKpiHours:"hours moved",
-  saKpiMetric:"projected {m} change (week)", saKpiShortSub:"≈{p}% of the hours needed · ~{d} a day", saKpiShortTip:"Every half hour of the week where fewer reps were scheduled than needed, added up. A surplus in the morning doesn't cancel a shortage in the evening — so it can be large even when total hours look sufficient.",
+  saKpiMetric:"projected {m} change (week)", saKpiShortSub:"≈{p}% of the hours needed · ~{d} a day", saKpiShortTip:"Every half hour of the week where fewer reps were scheduled than needed, added up. A surplus in the morning doesn't cancel a shortage in the evening — so it can be large even when total hours look sufficient. It is the sum of the days below (“How the sidur was moved”).",
   saGaveUp:"kept · instead of {b}", saRebalance:"↻ Re-optimize with your choices", saRebalanceTip:"Runs the fine-tune again around the reps you kept — it may move other teams to compensate.",
-  gapCtx:"What the free moves couldn't close ({n} shifts moved, contract hours kept). Closing the rest takes extra paid hours and the rep's agreement — pick who to ask; what you add goes on top of the sidur and into the export.", gapCtxLocked:"{n} reps you kept are not moved.", gapCtxGen:"Gaps the iron base can't cover — structural: hire or allocate here.",
+  gapCtx:"Left after the moves (contract hours kept). Closing it takes extra hours — with the rep's OK.", gapCtxLocked:"{n} kept as is.", gapCtxGen:"Gaps the iron base can't cover — structural: hire or allocate here.",
   gapCellTip:"{n} reps short · {o} offers can help",
-  exTraySel:"{n} selected · closes {c} of {t} missing half-hours · +{p}% {m}", exTrayIdle:"{n} reps can help — tick them; the map updates as you go",
+  exTraySel:"{n} selected · close {c} of {t} missing rep-hours · +{p}% {m}", exTrayIdle:"{n} reps can help — tick them; the map updates as you go",
   exTrayAdd:"➕ Add {n} to the sidur", exTrayMsgSel:"📋 Requests for the selected (by TL)", exTrayMsgAll:"📋 Requests for all (by TL)",
   exAll:"All {n}", exTierTip:"How likely the rep says yes — from their weekly hours: High = 4+ hours below their contract base (they'll want the hours) · Medium = a little below · Low = already at their full base.",
   exRowTip:"Closes {n} short in {w} · team: {team}", exProbIs:"Likelihood of yes: {p}", exAskPull:"until {to} · +{h}h", exAskEarly:"from {from} · +{h}h",
@@ -1522,7 +1526,8 @@ en:{
   saNoDiffs:"The optimized schedule matches the original sidur — no changes.",
   saDeltaHead:"{n} changes vs. the original sidur",
   saOrig:"original", saOpt:"optimized",
-  saTypeShift:"shifted", saTypeAdd:"added", saTypeCut:"cut",
+  saTypeShift:"shifted", saTypeExt:"extended", saTypeAdd:"added", saTypeCut:"cut", unitH:"h", saKpiExtSub:"+{n} extended in ③",
+  saTl_ext:"• {name} — {day} {date}: {orig} → {opt} (extended)",
   saTlBtn:"📱 Team-leader messages ({n})",
   saTlHead:"Hi {team}, schedule changes to hold coverage rules & answer rates:",
   saTlBreachHead:"⚠ Remaining coverage gaps:",
@@ -1916,7 +1921,7 @@ he:{
   fcAuditWarn:"בקרת נתונים:", auditImp:"{n} אינטרוולים עם יותר שיחות נענות מנכנסות (מענה>100% — נחסם)", auditAht:"{n} אינטרוולים עם אורך שיחה מחוץ לטווח 1–60 דק'", auditFar:"{n} תאריכים רחוקים מהיום ביותר מ־13 חודשים — בדקו את פורמט עמודת התאריך",
   mxViewOrig:"הסידור הנוכחי", mxViewOpt:"מיטבי",
   exTitle:"איך הסידור הוזז", exHow:"כל משמרת שומרת על אורכה ומחליקה עד שעתיים — מהעודף, אל המקום שבו חסרו נציגים.",
-  exSum:"{n} משמרות הוזזו מ־{from} אל {to} — החוסר ירד מ־{a} ל־{b} שעות נציג.", exNone:"ביום הזה לא היה צורך להזיז משמרות.",
+  exSum:"ביום הזה: {n} משמרות הוזזו מ־{from} אל {to} — החוסר של היום ירד מ־{a} ל־{b} שעות נציג.", exNone:"ביום הזה לא היה צורך להזיז משמרות.",
   exBefore:"לפני", exAfter:"אחרי ✓", exReplayTip:"הפעלה מחדש", schPrepT:"⚙ לפני ההרצה (לא חובה)", schPrepCon:"{n} אילוצים", schPrepRules:"{n} כללי כיסוי", exLgMiss:"חסר (כהה = יותר)", exLgOver:"עודף", exLgOk:"מאוזן", exLgShift:"משמרת (×מספר זהות)", exLgWas:"איפה הייתה", exMoreLanes:"+{n} דפוסי הזזה נוספים — ראו מי הוזז", exCellGap:"חסר {b} ← {a}", exWho:"מי הוזז ({n})", exReplay:"▶ הפעלה מחדש", exMore:"+{n} משמרות נוספות הוזזו ביום הזה", exOpen:"איך המשמרות של היום הוזזו",
   exCellTip:"{b} בסידור הנוכחי ← {a} אחרי הכוונון",
   mxOptHint:"לחיצה אחת: השבוע הזה עם סידור מכוונן לכיסוי הביקוש. הסידור שלכם לא משתנה.", mxOptDone:"{m} משמרות הוזזו — מוצג הסידור המיטבי",
@@ -2007,11 +2012,11 @@ he:{
   schAuditTitle:"התוצאה — מה השתנה",
   tipSchAudit:"אחרי כל הרצה: כללי הכיסוי נבדקים על הסידור החדש, וכל משמרת שהשתנתה מוצגת לפי מנהל צוות, מוכנה לשליחה.",
   saKpiBreach:"חצאי-שעה מתחת לכלל כיסוי", saKpiShifts:"משמרות ששונו", saKpiHours:"שעות שהוזזו",
-  saKpiMetric:"שינוי צפוי ב{m} (שבועי)", saKpiShortSub:"≈{p}% מהשעות הנדרשות · ~{d} ביום", saKpiShortTip:"כל חצי שעה בשבוע שבה שובצו פחות נציגים מהנדרש, מסוכמת. עודף בבוקר לא מקזז חוסר בערב — ולכן המספר יכול להיות גדול גם כשסך השעות נראה מספיק.",
+  saKpiMetric:"שינוי צפוי ב{m} (שבועי)", saKpiShortSub:"≈{p}% מהשעות הנדרשות · ~{d} ביום", saKpiShortTip:"כל חצי שעה בשבוע שבה שובצו פחות נציגים מהנדרש, מסוכמת. עודף בבוקר לא מקזז חוסר בערב — ולכן המספר יכול להיות גדול גם כשסך השעות נראה מספיק. זה סכום הימים שבהסבר למטה (״איך הוזז הסידור״).",
   saGaveUp:"נשאר · במקום {b}", saRebalance:"↻ כוונון מחדש עם הבחירות שלכם", saRebalanceTip:"מריץ שוב את הכוונון סביב מי שהשארתם — עשוי להזיז צוותים אחרים כדי לפצות.",
-  gapCtx:"מה שההזזות החינמיות לא סגרו ({n} משמרות הוזזו, שעות החוזה נשמרו). את השאר אפשר לסגור רק בשעות נוספות ובהסכמת הנציג — בחרו את מי לבקש; מה שתוסיפו נכנס לסידור ולייצוא.", gapCtxLocked:"{n} נציגים שבחרתם לא להזיז נשארו במקומם.", gapCtxGen:"פערים שבסיס הברזל לא מכסה — מבניים: לגייס או להקצות כאן.",
+  gapCtx:"נשאר אחרי ההזזות (שעות החוזה נשמרו). סגירה = שעות נוספות, בהסכמת הנציג.", gapCtxLocked:"{n} נשארו במקומם.", gapCtxGen:"פערים שבסיס הברזל לא מכסה — מבניים: לגייס או להקצות כאן.",
   gapCellTip:"חסרים {n} נציגים · {o} הצעות יכולות לעזור",
-  exTraySel:"נבחרו {n} · סוגרות {c} מתוך {t} חצאי-שעה חסרים · +{p}% {m}", exTrayIdle:"{n} נציגים יכולים לעזור — סמנו, והמפה מתעדכנת תוך כדי",
+  exTraySel:"נבחרו {n} · סוגרות {c} מתוך {t} שעות נציג חסרות · +{p}% {m}", exTrayIdle:"{n} נציגים יכולים לעזור — סמנו, והמפה מתעדכנת תוך כדי",
   exTrayAdd:"➕ הוספת {n} לסידור", exTrayMsgSel:"📋 בקשות לנבחרים (לפי מנהל צוות)", exTrayMsgAll:"📋 בקשות לכולם (לפי מנהל צוות)",
   exAll:"הכול {n}", exTierTip:"כמה סביר שהנציג יסכים — לפי השעות השבועיות שלו: גבוהה = חסרות לו 4+ שעות לבסיס החוזי (ירצה את השעות) · בינונית = חסר לו מעט · נמוכה = כבר בבסיס המלא.",
   exRowTip:"סוגר {n} חסרים ב־{w} · צוות: {team}", exProbIs:"סבירות להסכמה: {p}", exAskPull:"עד {to} · +{h} ש׳", exAskEarly:"מ־{from} · +{h} ש׳",
@@ -2034,7 +2039,8 @@ he:{
   saNoDiffs:"הסידור המיטבי זהה לסידור המקורי — אין שינויים.",
   saDeltaHead:"{n} שינויים מול הסידור המקורי",
   saOrig:"מקורי", saOpt:"מיטבי",
-  saTypeShift:"הוזז", saTypeAdd:"נוסף", saTypeCut:"קוצץ",
+  saTypeShift:"הוזז", saTypeExt:"הוארך", saTypeAdd:"נוסף", saTypeCut:"קוצץ", unitH:"ש׳", saKpiExtSub:"+{n} הוארכו ב־③",
+  saTl_ext:"• {name} — יום {day} {date}: {orig} ← {opt} (הארכה)",
   saTlBtn:"📱 הודעות למנהלי צוות ({n})",
   saTlHead:"היי {team}, שינויים בסידור לשמירה על חוקי הכיסוי ואחוזי המענה:",
   saTlBreachHead:"⚠ פערי כיסוי שנותרו:",
@@ -4494,7 +4500,7 @@ function calcRosterDelta(out){
   const mins=t2=>{ const[a,b]=String(t2).split(":").map(Number); return a*60+b; };
   const orig=new Map(), opt=new Map();
   for(const r of state.schedRows) if(wkSet.has(r.ds)&&r.s&&r.e) orig.set(r.name+"|"+r.ds,{s:r.s,e:r.e});
-  out.asg.forEach(a=>{ if(wkSet.has(a.ds)) opt.set(a.name+"|"+a.ds,{s:a.s,e:a.e}); });
+  out.asg.forEach(a=>{ if(wkSet.has(a.ds)) opt.set(a.name+"|"+a.ds,{s:a.s,e:a.e,ext:a.ext,src:a.src}); });
   const hoursChanged=(o,n)=>{ // symmetric difference of the two shift intervals, in hours
     const s1=mins(o.s),e1=mins(o.e),s2=mins(n.s),e2=mins(n.e);
     const inter=Math.max(0,Math.min(e1,e2)-Math.max(s1,s2));
@@ -4505,7 +4511,7 @@ function calcRosterDelta(out){
     const i=k.indexOf("|"), name=k.slice(0,i), ds=k.slice(i+1);
     const o=orig.get(k), n=opt.get(k);
     if(o&&n){ if(o.s!==n.s||o.e!==n.e)
-      diffs.push({name,ds,type:"shift",orig:o.s+"–"+o.e,opt:n.s+"–"+n.e,dh:hoursChanged(o,n)}); }
+      diffs.push({name,ds,type:n.ext&&n.src!=="moved"?"ext":"shift",orig:o.s+"–"+o.e,opt:n.s+"–"+n.e,dh:hoursChanged(o,n)}); }
     else if(!o&&n) diffs.push({name,ds,type:"add",orig:"—",opt:n.s+"–"+n.e,dh:(mins(n.e)-mins(n.s))/60});
     else if(o&&!n) diffs.push({name,ds,type:"cut",orig:o.s+"–"+o.e,opt:"—",dh:(mins(o.e)-mins(o.s))/60});
   }
@@ -4546,7 +4552,7 @@ function weekShortage(out){
   for(const ds of weekDates(schWeek())){ const ex=explainDay(out,ds); if(ex){ b+=ex.shortB; a+=ex.shortA; need+=ex.needH; days++; } }
   return {b,a,need,days};
 }
-const SA_TYPE={shift:{c:"#8a5fd0",k:"saTypeShift"},add:{c:"#0f6a3f",k:"saTypeAdd"},cut:{c:"#b3271e",k:"saTypeCut"}};
+const SA_TYPE={shift:{c:"#8a5fd0",k:"saTypeShift"},ext:{c:"#0f6a3f",k:"saTypeExt"},add:{c:"#0f6a3f",k:"saTypeAdd"},cut:{c:"#b3271e",k:"saTypeCut"}};
 function renderSchedAudit(out){
   const card=document.getElementById("schAuditCard"); if(!card) return;
   card.style.display="block";
@@ -4571,11 +4577,13 @@ function renderSchedAudit(out){
   const fmt1=v=>(Math.round(v*10)/10).toLocaleString();
   if(gen){ mk(out.asg.length,t("saKpiPlaced")); mk((out.pool||[]).length,t("saKpiPool")); }
   else{ const ws=weekShortage(out);
-    mk(`${fmt1(ws.b)} → ${fmt1(ws.a)}`,t("saKpiShort"),ws.a<ws.b?"var(--emerald)":null,
+    // the value box is LTR: in Hebrew write "after ← before" so it DISPLAYS before(right) ← after(left), like the label
+    mk(lang==="he"?`${fmt1(ws.a)} ← ${fmt1(ws.b)} ${t("unitH")}`:`${fmt1(ws.b)} → ${fmt1(ws.a)} ${t("unitH")}`,t("saKpiShort"),ws.a<ws.b?"var(--emerald)":null,
       ws.need>0?t("saKpiShortSub",{p:Math.round(ws.a/ws.need*100),d:fmt1(ws.a/Math.max(1,ws.days))}):"",t("saKpiShortTip"));
-    mk(diffs.filter(d=>d.type==="shift").length,t("saKpiMoved")); }
+    const nExt=out.asg.filter(a=>a.ext).length;
+    mk(out.asg.filter(a=>a.src==="moved").length,t("saKpiMoved"),null,nExt?t("saKpiExtSub",{n:nExt}):""); }
   if(pd){ const d2=(pd.after-pd.before)*100;
-    mk((d2>=0?"+":"")+d2.toFixed(1),t("saKpiMetric",{m:primName()}),d2>=0?"var(--emerald)":"var(--crimson)"); }
+    mk((d2>=0?"+":"")+d2.toFixed(1)+"%",t("saKpiMetric",{m:primName()}),d2>=0?"var(--emerald)":"var(--crimson)"); }
   if(reqs.length) mk(totB,t("saKpiBreach"),totB?"var(--crimson)":"var(--emerald)"); // only when there ARE rules
   // ---- coverage audit: each rule, plainly — is it covered, and if not, why ----
   const sc=state.schedSkills, inScope=sk=>!sc||!sc.length||sc.includes(sk);
@@ -4672,7 +4680,7 @@ function renderSchedAudit(out){
     const meta=document.createElement("span"); meta.className="tlMeta";
     const nDecl=lk.filter(n=>declined[n]).length;
     meta.innerHTML=off?`<span class="mini">${t("saTlKept",{n:nDecl})}</span>`
-      :["shift","add","cut"].filter(k=>cnt[k]).map(k=>chip(cnt[k],SA_TYPE[k])).join(" ")+(lk.length?` <span class="mini">· ${t("saRepKeptN",{n:lk.length})}</span>`:"");
+      :["shift","ext","add","cut"].filter(k=>cnt[k]).map(k=>chip(cnt[k],SA_TYPE[k])).join(" ")+(lk.length?` <span class="mini">· ${t("saRepKeptN",{n:lk.length})}</span>`:"");
     const st=document.createElement("span"); st.className="tlSt";
     if(ds.length&&sent[tl]) st.textContent=sent[tl]===msgFor(tl)?"✓ "+t("saSent"):"↻ "+t("saUpdated");
     if(sent[tl]&&sent[tl]!==msgFor(tl)) st.classList.add("upd");
@@ -4836,7 +4844,7 @@ function renderExplainCard(out){
   const seg=document.getElementById("exDays"), body=document.getElementById("exBody"), dn=t("days");
   if(!days.includes(state._exDay)) state._exDay=days[0];
   seg.innerHTML=days.map(ds=>{ const n=out.asg.filter(a=>a.ds===ds&&a.src==="moved").length;
-    return `<button type="button" data-ds="${ds}" class="${ds===state._exDay?"active":""}">${dn[fromISO(ds).getDay()]} · ${n}</button>`; }).join("");
+    return `<button type="button" data-ds="${ds}" class="${ds===state._exDay?"active":""}"><small class="exDt">${+ds.slice(8)}/${+ds.slice(5,7)}</small>${dn[fromISO(ds).getDay()]} · ${n}</button>`; }).join("");
   seg.onclick=e=>{ const b=e.target.closest("button"); if(!b) return; state._exDay=b.dataset.ds; renderExplainCard(out); };
   body.innerHTML=""; body.appendChild(buildExplain(explainDay(out,state._exDay)));
 }
@@ -5429,7 +5437,9 @@ function weeklyDeficitOf(name){
   return Math.round((base-sched)*10)/10;
 }
 function computeExtensionOffers(out){
-  const offers=[];
+  const offers=[], locks=state.schedLocks||new Set();
+  const sc=state.schedSkills, skillOf=n=>((state.rosterMeta.get(n)||{}).skill||"").trim();
+  const answers=n=>{ const sk=skillOf(n); return !sc||!sc.length||!sk||sc.includes(sk); };
   const minus2h=tm=>{ let[h,m]=tm.split(":").map(Number); h-=2; return (h<0?"00":pad(h))+":"+pad(m); };
   const plus2h=tm=>{ let[h,m]=tm.split(":").map(Number); h+=2; return pad(Math.min(23,h))+":"+pad(m); };
   // group gaps into contiguous blocks per day
@@ -5448,7 +5458,7 @@ function computeExtensionOffers(out){
       const blEnd=addHalf(bl.last);
       const need=Math.max(...tms.filter(tm=>tm>=bl.first&&tm<=bl.last).map(tm=>nOf[tm]));
       for(const a of out.asg){
-        if(a.ds!==ds) continue;
+        if(a.ds!==ds||!answers(a.name)||locks.has(a.name)) continue; // other queues (e.g. digital) don't answer this demand
         if(a.e===bl.first){ // ends where the gap starts → stay later
           const to=plus2h(a.e)<blEnd?plus2h(a.e):blEnd;
           if(to>a.e) offers.push({kind:"pull",name:a.name,ds,di:a.di,from:a.e,to,
@@ -5537,11 +5547,12 @@ function renderExtensionOffers(out){
   const halfSum=out.gaps.reduce((x,g)=>x+g.n,0);
   // ---- the tray: what the selection does, and the two actions ----
   const tray=document.createElement("div"); tray.className="exTray"; wrap.appendChild(tray);
+  const fmt1=v=>(Math.round(v*10)/10).toLocaleString();
   const paintTray=()=>{
     let gain=0, closes=0; checked.forEach(v=>gain+=v.gain);
     (state._gapCells||[]).forEach(g=>{ let cov=0; checked.forEach(v=>{ if(v.o.ds===g.ds&&halfHoursBetween(v.o.from,v.o.to).includes(g.tm)) cov++; }); closes+=Math.min(cov,g.n); });
     tray.innerHTML=checked.size
-      ?`<div class="tsum">${t("exTraySel",{n:checked.size,c:closes,t:halfSum,p:pctGain(gain),m:primL})}</div>`
+      ?`<div class="tsum">${t("exTraySel",{n:checked.size,c:fmt1(closes/2),t:fmt1(halfSum/2),p:pctGain(gain),m:primL})}</div>`
       :`<div class="tsum idle">${offers.length?t("exTrayIdle",{n:offers.length}):t("extNone")}</div>`;
     const acts=document.createElement("div"); acts.className="tacts";
     if(checked.size){ const add=document.createElement("button"); add.className="btn navy applymini"; add.textContent=t("exTrayAdd",{n:checked.size});
@@ -5594,8 +5605,11 @@ function renderExtensionOffers(out){
       cb.checked=checked.has(key); row.classList.toggle("on",cb.checked); paintTray(); };
     row.addEventListener("click",e=>{ if(e.target!==cb) toggle(); }); cb.addEventListener("change",()=>{ cb.checked=!cb.checked; toggle(); });
     // hover an offer → see exactly which cells it closes
-    row.addEventListener("mouseenter",()=>cellsOf(o).forEach(g=>g.td.classList.add("hl")));
-    row.addEventListener("mouseleave",()=>cellsOf(o).forEach(g=>g.td.classList.remove("hl")));
+    row.addEventListener("mouseenter",()=>cellsOf(o).forEach(g=>{ g.td.classList.add("hl");
+      if(!checked.has(key)){ g.td.dataset.was=g.td.textContent; const r=Math.max(0,(parseInt(g.td.textContent.replace("+",""))||0)-1);
+        g.td.textContent=r?`+${r}`:"✓"; g.td.classList.add("pv"); } }));
+    row.addEventListener("mouseleave",()=>cellsOf(o).forEach(g=>{ g.td.classList.remove("hl");
+      if(g.td.classList.contains("pv")){ g.td.textContent=g.td.dataset.was; g.td.classList.remove("pv"); } }));
     box.appendChild(row); });
   if(list.length>60){ const mm=document.createElement("p"); mm.className="mini"; mm.textContent=t("exMoreOffers",{n:list.length-60}); box.appendChild(mm); }
   // ---- added to the sidur: each one can be undone (a rep changed their mind) ----
