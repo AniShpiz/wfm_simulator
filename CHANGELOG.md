@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Changed (scheduler polish & scope)
+
+- ③ offers come only from reps in the answering scope (🎧) and never from reps kept "as is" —
+  a digital rep no longer shows up to close voice demand.
+- Hovering an offer previews it in the gap matrix: the covered cells lift, get a green border
+  and show the value they would drop to, before anything is ticked.
+- "Shifts moved" KPI counts moves only (= the day switcher sum); ③ extensions are their own
+  sub-line ("+n extended in ③") and their own type ("extended") in the TL list.
+- KPI units: answer-rate change shows "%", shortage shows "h"; in Hebrew the arrow reads the
+  same direction as the label (before ← after).
+- Readiness chips (forecast days / shifts / constraints) removed — the gate notes speak only
+  when something is missing. ③ context line shortened.
+- Auto-Scheduler step ① reads top-down: mode · week · answering scope → optional settings →
+  the run button, placed alone after the settings (same look as before).
+- "How the sidur was moved": each day button carries its short date (5/7) — the forecast shown
+  is the sidur week's own; the day sentence says "this day", the weekly KPI tooltip says it is
+  the sum of the days.
+- ③ tray totals in rep-hours (was "missing half-hours", which counted a +6 cell as 6) — the
+  total now equals the weekly KPI "after" value.
+
 ### Added
 
 - Optimizer explainability ("How the sidur was moved", Auto-Scheduler, fine-tune runs): one
