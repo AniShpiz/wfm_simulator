@@ -383,6 +383,45 @@ td.gapCell.closed{background:#d6f3e2!important;color:#0f6a3f;font-weight:700}
 .runRow .gateNote{margin:0;text-align:center}
 #exDays button{line-height:1.15}
 .exDt{display:block;font-size:.66rem;font-weight:400;opacity:.65} /* the sidur week, day by day — which dates this forecast is for */
+.ouWrap{display:flex;align-items:stretch}
+.ouAxis{display:flex;flex-direction:column;font-size:.72rem;font-weight:700;padding-inline-end:8px;white-space:nowrap}
+.ouAxis span{display:flex;align-items:center} .ouAxis .up{color:var(--emerald)} .ouAxis .dn{color:var(--crimson)}
+.ouCols{flex:1;display:flex}
+.rdyCol{flex:1;display:flex;flex-direction:column;align-items:stretch;background:none;border:none;padding:0;cursor:pointer;font:inherit;color:inherit;min-width:0}
+.ouUp,.ouDn,.ouSup{position:relative;display:flex;justify-content:center}
+.ouUp,.ouSup{background:#eef8f1;align-items:flex-end} .ouDn{background:#fdf1f0;align-items:flex-start;border-top:2px solid var(--navy)}
+.ouSup{background:#f4f7fa;border-bottom:2px solid var(--navy)}
+.rdyCol:hover .ouUp,.rdyCol:hover .ouDn,.rdyCol:hover .ouSup{filter:brightness(.96)}
+.rdyCol.pick .ouUp,.rdyCol.pick .ouDn,.rdyCol.pick .ouSup{box-shadow:inset 2px 0 0 var(--sky),inset -2px 0 0 var(--sky)}
+.rdyCol.pick .rdyDay{color:#1b7fd0}
+.ouBar{position:relative;width:52%;max-width:64px;display:flex;flex-direction:column}
+.ouBar.pos{background:#1e9e5a;border-radius:5px 5px 0 0}
+.ouBar.zero{height:0}
+.ouBar i{display:block;width:100%;flex:none}
+.ouBar.neg,.lg-st{background:#c8372d} .ouBar.neg{border-radius:0 0 5px 5px}
+.ouBar.sup{flex-direction:column-reverse}
+.ouBar.sup i.av,.lg-av,.lg-sur{background:#1e9e5a}
+.ouBar.sup i{border-radius:5px 5px 0 0}
+.ouLbl{position:absolute;left:50%;transform:translateX(-50%);font-weight:800;font-size:1rem;white-space:nowrap;direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums}
+.ouBar.pos .ouLbl,.ouBar.zero .ouLbl,.ouBar.sup .ouLbl{bottom:100%;margin-bottom:2px}
+.ouBar.pos .ouLbl{color:var(--emerald)} .ouBar.zero .ouLbl{color:var(--muted)} .ouBar.sup .ouLbl{color:var(--ink)}
+.ouBar.neg .ouLbl{top:100%;margin-top:2px;color:var(--crimson)}
+.rdyDay{text-align:center;font-size:.8rem;font-weight:600;padding:6px 0 0} .rdyDay small{font-weight:400;opacity:.65}
+.rdyLeg{justify-content:center;margin-top:8px}
+.rdyLeg i{display:inline-block;width:12px;height:12px;border-radius:3px}
+.ouHint{text-align:center;margin:6px 0 0}
+.ouAlert{font-size:.8rem;color:#8a5a00;background:#fff6e0;border-radius:8px;padding:6px 10px;margin:10px 0 0;text-align:center}
+.ouAlert span{white-space:nowrap;cursor:help} .ouAlert i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-inline-end:4px}
+.ouDay{margin-top:12px;border-top:1px solid var(--border);padding-top:10px}
+.ouDay .ouLbl{font-size:.78rem} .ouDay .rdyDay{font-size:.72rem;font-weight:500}
+.ouDayH{font-weight:700;color:var(--navy);font-size:.88rem;margin:4px 0 8px}
+.ouAbs{display:flex;flex-direction:column;gap:5px;font-size:.8rem;line-height:1.5}
+.ouAbs b{white-space:nowrap;margin-inline-end:6px} .ouAbs b i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-inline-end:5px;vertical-align:-1px}
+/* building from iron: the answering skill is THE decision — a label + a quiet ring (two soft pulses on entry) */
+.schAskL{font-size:.8rem;font-weight:700;color:var(--navy);cursor:help}
+#schSkillWrap.ask>.btn{box-shadow:0 0 0 2px var(--sky);background:var(--sky-soft);font-weight:700}
+#schSkillWrap.pulse>.btn{animation:askPulse 1.2s ease-out 2}
+@keyframes askPulse{0%{box-shadow:0 0 0 2px var(--sky),0 0 0 2px rgba(63,169,245,.55)}100%{box-shadow:0 0 0 2px var(--sky),0 0 0 12px rgba(63,169,245,0)}}
 .schPrep{margin-top:8px;border:1px solid var(--border);border-radius:8px;padding:6px 10px;background:#fafcfe}
 .schPrep > summary{cursor:pointer;font-size:.82rem;font-weight:600;color:var(--navy)}
 .prepSec{margin-top:8px}.prepSec h3{font-size:.85rem;color:var(--navy);display:flex;align-items:center;gap:6px;margin-bottom:6px}
@@ -781,13 +820,19 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
       <label data-i18n="wfDayL">Day</label><div class="seg" id="wfDaySeg" style="max-width:100%"></div>
       <span class="mini" id="wfWeekLbl"></span>
     </div>
-    <div class="kpis">
+    <!-- a sidur with no hours yet: one picture instead of utilization KPIs + treemap (renderReadiness) -->
+    <div class="card" id="wfReadyCard" style="display:none">
+      <h2><span id="wfReadyT"></span> <span class="info" data-tipkey="tipWfReady" tabindex="0">i</span></h2>
+      <div id="wfReady"></div>
+      <p class="mini" id="wfReadyNoFc" style="display:none;text-align:center" data-i18n="wfReadyNoFc">With a forecast, shortage and surplus appear here.</p>
+    </div>
+    <div class="kpis" id="wfKpis">
       <div class="kpi"><div class="n" id="wfKpiUtil">—</div><div class="l"><span data-i18n="wfKpiUtil">Roster-to-Iron Utilization</span> <span class="info" data-tipkey="tipWfUtil" tabindex="0">i</span></div></div>
       <div class="kpi"><div class="n" id="wfKpiLeak">—</div><div class="l"><span data-i18n="wfKpiLeak">Vacation Leakage Rate</span> <span class="info" data-tipkey="tipWfLeak" tabindex="0">i</span></div></div>
       <div class="kpi"><div class="n" id="wfKpiDev">—</div><div class="l"><span data-i18n="wfKpiDev">Contractual Deviation Index</span> <span class="info" data-tipkey="tipWfDev" tabindex="0">i</span></div></div>
     </div>
     <div class="grid2">
-      <div class="card">
+      <div class="card" id="wfTreeCard">
         <h2><span data-i18n="wfTreeTitle">Iron Hours Allocation (Treemap)</span> <span class="info" data-tipkey="tipWfTree" tabindex="0">i</span></h2>
         <div id="wfTreemap" style="direction:ltr"></div>
         <p class="mini" id="wfTreeTotal" style="text-align:center;margin-top:4px"></p>
@@ -831,6 +876,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
              nothing to move anywhere else); Mode 2 = any forecast week, picked here -->
         <span class="pill" id="schWkFix"></span>
         <select id="schWkSel" style="display:none;min-width:238px"></select>
+        <span class="schAskL" id="schSkillAsk" style="display:none" data-i18n="schSkillAsk">Answering skill:</span>
         <div class="splitbtn" id="schSkillWrap" style="display:none">
           <button class="btn ghost" id="schSkillBtn"></button>
           <div class="menu pad" id="schSkillMenu" style="min-width:240px"></div>
@@ -894,6 +940,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         </div>
       </details>
       <div class="runRow">
+        <p class="gateNote" id="schGateEmpty" style="display:none"><span id="schGateEmptyT"></span></p>
         <p class="gateNote" id="schGate" style="display:none" data-i18n="schNeedSidur">The optimizer MOVES shifts in the current sidur — load a sidur (with shifts in the selected week) and a forecast to enable it.</p>
         <button class="btn navy" id="schRun" data-i18n="schRun">Generate Optimized Schedule</button>
         <button class="btn navy" id="schGenRun" style="display:none" data-i18n="schGenRun">🏗️ Generate baseline</button>
@@ -1324,7 +1371,11 @@ en:{
   tipWfTree:"How the iron hours split: scheduled, absences, sidur statuses and unused iron. Click a tile to see who.",
   wf_prod:"Scheduled (actual)", wf_vacation:"Vacation", wf_miluim:"Reserve duty", wf_medical:"Medical",
   wf_training:"Training", wf_exam:"Exams", wf_other:"Other absence", wf_unalloc:"Unused iron base",
-  wfNoStatus:"Empty shift (no status)",
+  wfNoStatus:"Empty shift (no status)", wfNotYet:"Not scheduled yet",
+  roEmpty:"Week {w} sidur loaded — {e} reps, no hours yet.", roEmptyIron:"Iron: {i} reps.",
+  schEmptySidur:"The week {w} sidur has no hours yet.", schSkillAsk:"Answering skill:", schSkillAskTip:"Only these skills are placed against the demand; everyone else stays at their iron window.",
+  wfReadyT:"Week {w} readiness", wfReadyNoFc:"With a forecast, shortage and surplus appear here.", tipWfReady:"Per day: the answering reps (🎧) in the iron — everyone in the iron counts as fit to work — against what the forecast needs. Green up = surplus, red down = short. Statuses already typed in the work sidur (vacation, resignation…) are flagged, not subtracted. Click a day: when it is short.", ouUp:"Surplus", ouDn:"Short", ouLgIron:"Reps in the iron", ouAlert:"The work sidur already lists a status for {n} reps — counted as available:", ouPickHint:"Click a day — when it is short", ouByHour:"{d} — by hour (reps at the same time)", ouStDay:"Statuses in the work sidur this day ({n})", ouTipNeed:"Needed ~{n} reps ({h}h)", ouTipIron:"In the iron {i} reps ({h}h)", ouTipNeedH:"Needed {n}", ouTipIronH:"In the iron {a}",
+  wfImpactNoFc:"Load a forecast to see what each absence costs in answer rate.",
   wfImpactTitle:"Daily Vacation & SLA Impact Matrix",
   hrTitle:"🏖 Vacation headroom — how many more can be off",
   hrTip:"How many more reps can be off each weekday before {m} drops below target. A guide, not a guarantee.",
@@ -1438,6 +1489,7 @@ en:{
   schWkHint:"Another week? Generate from iron →",
   schGenRun:"🏗️ Generate baseline", schGenNeed:"Load a demand forecast and an iron base (סידור ברזל) to generate a baseline.",
   schChipGenIron:"🏗️ Iron {n}", schChipGenCov:"📐 Rules · {n}",
+  schDoneGenIron:"✅ Built from the iron as is: {a} shifts (no forecast for this week — not fitted to demand yet).",
   schDoneGen:"✅ Baseline generated: {a} shifts placed, {p} in the surplus pool. Still uncovered: {h} agent-hours (structural — hire/allocate there).",
   schGenOutTitle:"Generated Baseline", schGenAuditTitle:"Coverage Compliance",
   schGenCsv:"⬇ Download Generated Baseline (CSV)", schGenGapTitle:"Uncovered Demand (structural)",
@@ -1837,7 +1889,11 @@ he:{
   tipWfTree:"איך שעות הברזל מתחלקות: משובצות, היעדרויות, סטטוסים מהסידור ויתרה לא מנוצלת. לחיצה על אריח מציגה מי.",
   wf_prod:"משובץ בפועל", wf_vacation:"חופשה", wf_miluim:"מילואים", wf_medical:"רפואי",
   wf_training:"הדרכה", wf_exam:"מבחנים", wf_other:"היעדרות אחרת", wf_unalloc:"יתרת ברזל לא-מנוצלת",
-  wfNoStatus:"משמרת ריקה (ללא סטטוס)",
+  wfNoStatus:"משמרת ריקה (ללא סטטוס)", wfNotYet:"טרם שובץ",
+  roEmpty:"סידור שבוע {w} נטען — {e} נציגים, עדיין בלי שעות.", roEmptyIron:"ברזל: {i} נציגים.",
+  schEmptySidur:"בסידור שבוע {w} עדיין אין שעות.", schSkillAsk:"מיומנות עונה:", schSkillAskTip:"רק המיומנויות שסומנו משובצות מול הביקוש; כל השאר נשארים בחלון הברזל שלהם.",
+  wfReadyT:"מוכנות שבוע {w}", wfReadyNoFc:"עם תחזית, יופיעו כאן חוסר ועודף.", tipWfReady:"לכל יום: כמה נציגים עונים (🎧) יש בברזל — כל מי שבברזל נחשב כשיר לעבוד — מול כמה שהתחזית דורשת. ירוק למעלה = עודף, אדום למטה = חוסר. סטטוסים שכבר רשומים בסידור העבודה (חופש, התפטרות…) מסומנים בהתראה ולא מורדים. לחיצה על יום: מתי בו חסר.", ouUp:"עודף", ouDn:"חוסר", ouLgIron:"נציגים בברזל", ouAlert:"בסידור העבודה כבר רשום סטטוס ל־{n} נציגים — נספרו כזמינים:", ouPickHint:"לחיצה על יום — מתי בו חסר", ouByHour:"{d} — לפי שעה (נציגים במקביל)", ouStDay:"סטטוסים בסידור העבודה ביום הזה ({n})", ouTipNeed:"נדרשים ~{n} נציגים ({h} ש׳)", ouTipIron:"בברזל {i} נציגים ({h} ש׳)", ouTipNeedH:"נדרשים {n}", ouTipIronH:"בברזל {a}",
+  wfImpactNoFc:"טענו תחזית כדי לראות כמה כל היעדרות עולה באחוז המענה.",
   wfImpactTitle:"מטריצת חופשות יומית והשפעת SLA",
   hrTitle:"🏖 מרווח חופשות — כמה עוד אפשר לשחרר",
   hrTip:"כמה נציגים נוספים אפשר לשחרר בכל יום לפני ש{m} יורד מתחת ליעד. הכוונה, לא התחייבות.",
@@ -1951,6 +2007,7 @@ he:{
   schWkHint:"שבוע אחר? יצירה מהברזל ←",
   schGenRun:"🏗️ צור בסיס סידור", schGenNeed:"טענו תחזית ביקוש ובסיס ברזל (סידור ברזל) כדי ליצור בסיס.",
   schChipGenIron:"🏗️ ברזל {n}", schChipGenCov:"📐 כללי כיסוי · {n}",
+  schDoneGenIron:"✅ נבנה מהברזל כמו שהוא: {a} משמרות (אין תחזית לשבוע הזה — עוד לא מותאם לביקוש).",
   schDoneGen:"✅ נוצר בסיס: {a} משמרות שובצו, {p} במאגר העודף. עדיין חסר כיסוי: {h} שעות-נציג (מבני — גייסו/הקצו שם).",
   schGenOutTitle:"בסיס סידור שנוצר", schGenAuditTitle:"תאימות כיסוי",
   schGenCsv:"⬇ הורדת בסיס הסידור (CSV)", schGenGapTitle:"ביקוש לא מכוסה (מבני)",
@@ -3066,6 +3123,7 @@ function normDateAny(v){
 function normTimeAny(v){
   if(v==null) return null;
   const s=String(v).trim();
+  if(!s) return null; // an empty cell is not midnight (+"" === 0)
   let m=s.match(/^(\d{1,2}):(\d{2})/);
   if(m){ let h=+m[1]; const mm=+m[2];
     if(/pm/i.test(s)&&h<12) h+=12;
@@ -3207,7 +3265,7 @@ function buildRosterGrid(grid,hd){
   if(map.agents==null&&map.name==null) missing.push(t("tipSched")+" / "+t("fldName"));
   if(missing.length) throw {code:"missing",miss:missing};
   const capDated=new Map(), capWeekly=new Map(), emp=new Map(), weekSet=new Set();
-  let named=false, weekly=false, ok=0, skipped=0;
+  let named=false, weekly=false, ok=0, skipped=0, unsched=0; const rowSkills=new Set();
   const skippedRows=[];
   const logSkip=(r,row)=>{ skipped++;
     if(skippedRows.length<100) skippedRows.push({n:r+1,
@@ -3276,24 +3334,29 @@ function buildRosterGrid(grid,hd){
       const s=normTimeAny(row[map.start]), e=normTimeAny(row[map.end]);
       if(s&&e&&e>s) tms=halfHoursBetween(bucket30(s),e);
     }
-    if(!tms){ logSkip(r,row); continue; }
+    if(!tms){
+      // a named rep with a date but no hours = not scheduled yet (or a status like חופש) — not a bad row
+      if(rec.name){ named=true; unsched++; if(rec.skill) rowSkills.add(rec.skill);
+        if(!emp.has(rec.name)) emp.set(rec.name,{scheduled:0,contracted:rec.contracted??null,blocks:new Set()});
+        continue; }
+      logSkip(r,row); continue; }
     for(const tm of tms) put(target,keyBase,tm,rec);
     ok++;
   }
-  if((!capDated.size&&!capWeekly.size)||ok<1) throw {code:"nodata",skipped};
+  if(((!capDated.size&&!capWeekly.size)||ok<1)&&!unsched) throw {code:"nodata",skipped};
   state.rosterCap=capDated; state.rosterCapWeekly=capWeekly;
   state.rosterNamed=named||state.rosterNamed;
   // per-skill distinct counts per block → matrix coverage can scope to answering queues
   state.rosterCapSkill={};
   for(const [key,sm] of skillSets){ const o={}; for(const [sk,ss] of sm) o[sk]=ss.size; state.rosterCapSkill[key]=o; }
-  state.skillList=[...new Set([].concat(...[...skillSets.values()].map(sm=>[...sm.keys()])))].filter(Boolean).sort();
+  state.skillList=[...new Set([].concat(...[...skillSets.values()].map(sm=>[...sm.keys()])).concat([...rowSkills]))].filter(Boolean).sort();
   applyDefaultCapSkills();
   rebuildRosterCoverage(); // item 1: coverage sets make the roster the sole ground truth
   const wDiv=Math.max(1,weekSet.size); // multi-week files → weekly-average scheduled hours
   if(named) state.roster=[...emp.entries()].map(([name,v])=>({name,contracted:v.contracted,scheduled:Math.round(v.scheduled/wDiv*10)/10}));
   state._rosterWeekly=weekly;
   memo.clear();
-  return {type:"roster",blocks:capDated.size+capWeekly.size,named,reps:emp.size,rows:ok,skipped,skippedRows};
+  return {type:"roster",blocks:capDated.size+capWeekly.size,named,reps:emp.size,rows:ok,skipped,skippedRows,empty:ok<1};
 }
 
 /* ---- Matrix-shaped roster (pivot grid): day/date columns × interval rows,
@@ -3473,6 +3536,7 @@ function applyDataWeek(){
   const ds=[...state.rosterCap.keys()].map(k=>k.slice(0,10)).filter(k=>/^\d{4}-/.test(k));
   for(const r of state.schedRows||[]) if(r.ds) ds.push(r.ds);
   for(const v of state.vacations||[]) if(v.ds) ds.push(v.ds);
+  for(const u of state.unallocRows||[]) if(u.ds) ds.push(u.ds); // a sidur with no hours yet
   if(!ds.length) return;
   // a week the user explicitly chose (restored from the last session) wins once
   const sun=state._restoredWeek||sundayOf(ds.sort()[0]);
@@ -3510,7 +3574,7 @@ function parseTikshuvWorkbook(sheets){
   updatePortalStatus(); saveData(); renderAll();
   return {type:"workbook",reps:state.roster.length,iron:state.iron?state.iron.emps.size:0,
           val:state.validationErrors.length,blocks:rstats.blocks,named:rstats.named,
-          skipped:rstats.skipped,skippedRows:rstats.skippedRows};
+          skipped:rstats.skipped,skippedRows:rstats.skippedRows,empty:rstats.empty};
 }
 /* ---------- Workforce dashboard computation & rendering ---------- */
 function wfPass(rec){
@@ -3527,16 +3591,109 @@ function wfIronHours(e){ const d=state.wfFilter.day; return d===""?e.contracted:
    fall back to the week of the uploaded sidur so this page is never empty */
 function wfWeek(){
   const w=state.week;
-  if(w&&state.schedRows.some(r=>{const set=new Set(weekDates(w));return set.has(r.ds);})) return w;
-  const ds=state.schedRows.map(r=>r.ds).filter(Boolean).sort()[0];
+  // no hours yet → the sidur's rows are its statuses / empty cells
+  const rows=state.schedRows.length?state.schedRows:(state.unallocRows||[]).concat(state.vacations||[]);
+  if(w&&rows.some(r=>{const set=new Set(weekDates(w));return set.has(r.ds);})) return w;
+  const ds=rows.map(r=>r.ds).filter(Boolean).sort()[0];
   return ds?sundayOf(ds):w;
 }
 /* the scheduler's working week. Mode 1 fine-tunes the LOADED sidur, so it is pinned to the
    sidur's own week; Mode 2 builds from iron for any forecast week the user picks (schGenWeek). */
 function schWeek(){
   const w=state.settings.schGenWeek;
-  if(state.settings.schedMode==="generateIron"&&w&&state.minDate&&w>=sundayOf(state.minDate)&&w<=state.horizonISO) return w;
+  if(state.settings.schedMode==="generateIron"&&w&&(w===state.ironDraft||(state.minDate&&w>=sundayOf(state.minDate)&&w<=state.horizonISO))) return w;
   return wfWeek()||state.week;
+}
+/* the loaded sidur has (almost) no hours yet: under 10% of the week's iron hours are scheduled.
+   One definition — the upload, the Workforce page and the scheduler all read it. */
+function sidurEmpty(){
+  const wk=wfWeek(); if(!wk||!state.rosterMeta.size) return false;
+  const set=new Set(weekDates(wk));
+  const sched=state.schedRows.filter(r=>set.has(r.ds)).reduce((a,r)=>a+r.h,0);
+  let iron=0; if(state.iron) for(const [,e] of state.iron.emps) iron+=e.contracted||0;
+  return iron>0?sched<0.1*iron:sched===0;
+}
+/* Over/Under chart (the WFM-standard staffing view), in PEOPLE: a zero line; green bars up = surplus,
+   red bars down = short. No forecast → supply view (reps in the iron). Same builder for days and for
+   one day's hours. cols: [{key,label,sub,need,avail,tip,pick}] */
+function ouChart(cols,H){
+  const esc=v=>String(v).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");
+  const LBL=22, anyNeed=cols.some(c=>c.need!=null);
+  const head=(c,inner)=>`<button type="button" class="rdyCol${c.pick?" pick":""}" data-k="${c.key}" title="${esc(c.tip)}">${inner}<span class="rdyDay">${c.label}${c.sub?` <small>${c.sub}</small>`:""}</span></button>`;
+  if(!anyNeed){ // supply only
+    const max=Math.max(1,...cols.map(c=>c.avail)), s=H/max;
+    return `<div class="ouWrap"><div class="ouCols">`+cols.map(c=>head(c,`<span class="ouSup" style="height:${H+LBL}px"><span class="ouBar sup" style="height:${(c.avail*s).toFixed(1)}px"><i class="av" style="height:100%"></i><b class="ouLbl">${Math.round(c.avail)}</b></span></span>`)).join("")+`</div></div>`;
+  }
+  const g=c=>c.need==null?0:c.avail-c.need;
+  const pos=Math.max(0,...cols.map(g)), neg=Math.max(0,...cols.map(c=>-g(c)));
+  const s=H/Math.max(1,pos+neg), UP=Math.max(10,pos*s), DN=Math.max(10,neg*s);
+  return `<div class="ouWrap"><div class="ouAxis"><span class="up" style="height:${UP+LBL}px">▲ ${t("ouUp")}</span><span class="dn" style="height:${DN+LBL}px">▼ ${t("ouDn")}</span></div><div class="ouCols">`
+    +cols.map(c=>{ const v=g(c), r=Math.round(Math.abs(v));
+      let up="", dn="";
+      if(c.need==null) up=`<span class="ouBar zero"><b class="ouLbl">—</b></span>`;
+      else if(!r) up=`<span class="ouBar zero"><b class="ouLbl">0</b></span>`;
+      else if(v>0) up=`<span class="ouBar pos" style="height:${(v*s).toFixed(1)}px"><b class="ouLbl">+${r}</b></span>`;
+      else dn=`<span class="ouBar neg" style="height:${(-v*s).toFixed(1)}px"><b class="ouLbl">−${r}</b></span>`;
+      return head(c,`<span class="ouUp" style="height:${UP+LBL}px">${up}</span><span class="ouDn" style="height:${DN+LBL}px">${dn}</span>`); }).join("")+`</div></div>`;
+}
+/* empty sidur, one picture: per day, the answering reps (🎧) the iron brings — everyone in the iron is
+   fit to work — against what the forecast needs, in people. Statuses typed in the sidur (חופש,
+   התפטרות…) are only flagged. Click a day → its hours. */
+function renderReadiness(){
+  const box=document.getElementById("wfReady"), nf=document.getElementById("wfReadyNoFc"), wk=wfWeek();
+  if(!box||!wk) return;
+  document.getElementById("wfReadyT").textContent=t("wfReadyT",{w:isoWeek(wk)});
+  const sc=state.schedSkills, skillOf=n=>{ const m=state.rosterMeta.get(n)||{}, e=(state.iron&&state.iron.emps.get(n))||{}; return (m.skill||e.skill||"").trim(); };
+  const inScope=n=>{ const sk=skillOf(n); return !sc||!sc.length||!sk||sc.includes(sk); };
+  const teamOf=n=>{ const m=state.rosterMeta.get(n)||{}, e=(state.iron&&state.iron.emps.get(n))||{}; return m.team||e.team||""; };
+  const esc=v=>String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+  const dn=t("days"), pick=state.wfFilter.day, fmt=v=>Math.round(v).toLocaleString();
+  const week=new Set(weekDates(wk));
+  // statuses in the sidur (any rep): name → label key, for the alert
+  const st=new Map(), stDay=new Map();
+  (state.vacations||[]).concat((state.unallocRows||[]).filter(u=>u.status)).forEach(x=>{ if(!week.has(x.ds)) return;
+    const k=x.type||"st:"+x.status; if(!st.has(x.name)) st.set(x.name,k);
+    const m=stDay.get(x.ds)||new Map(); if(!m.has(x.name)) m.set(x.name,k); stDay.set(x.ds,m); });
+  const keys=[...new Set(st.values())], stOrder=keys.filter(k=>k.startsWith("st:")).map(k=>k.slice(3));
+  const colorOf=k=>k.startsWith("st:")?statusColor(k.slice(3),stOrder):(WF_COLORS[k]||"#999");
+  const labelOf=k=>k.startsWith("st:")?statusLabel(k.slice(3)):t("wf_"+k);
+  const groupsHtml=map=>{ const g={}; for(const [n,k] of map) (g[k]=g[k]||[]).push(n);
+    return Object.entries(g).sort((a,b)=>b[1].length-a[1].length); };
+  const days=weekDates(wk).map(ds=>{ const di=fromISO(ds).getDay();
+    const iron=[]; if(state.iron) for(const [n,e] of state.iron.emps) if(e.days&&e.days[di]&&inScope(n)) iron.push({n,w:e.days[di]});
+    const req={}; const c=computeDay(ds);
+    if(c) c.rows.forEach(r=>{ if(r.rec&&!r.closed&&!r.exc&&!r.nodata) req[r.tm]=r.reqEff; });
+    const needH=Object.keys(req).length?Object.values(req).reduce((a,b)=>a+b,0)/2:null;
+    const ironH=iron.reduce((a,r)=>a+r.w.h,0), avgH=iron.length?ironH/iron.length:8;
+    return {ds,di,iron,req,needH,ironH,need:needH==null?null:needH/avgH}; }).filter(d=>d.iron.length||d.need!=null);
+  const hasFc=days.some(d=>d.need!=null);
+  nf.style.display=hasFc?"none":"";
+  const cols=days.map(d=>({key:d.di,label:dn[d.di],sub:+d.ds.slice(8)+"/"+(+d.ds.slice(5,7)),need:d.need,avail:d.iron.length,pick:pick!==""&&+pick===d.di,
+    tip:[dn[d.di]+" "+fmtD(d.ds).slice(0,5), d.need!=null?t("ouTipNeed",{n:fmt(d.need),h:fmt(d.needH)}):null, t("ouTipIron",{i:d.iron.length,h:fmt(d.ironH)})].filter(Boolean).join("\n")}));
+  const leg=hasFc?[["sur",t("ouUp")],["st",t("ouDn")]]:[["av",t("ouLgIron")]];
+  let html=ouChart(cols,150)+`<div class="legend rdyLeg">${leg.map(([k,l])=>`<span><i class="lg-${k}"></i>${l}</span>`).join("")}</div>`;
+  // statuses: flagged, never subtracted
+  if(st.size) html+=`<p class="ouAlert">⚠ ${t("ouAlert",{n:st.size})} `+groupsHtml(st).map(([k,ns])=>
+    `<span title="${esc(ns.sort().join(", "))}"><i style="background:${colorOf(k)}"></i>${labelOf(k)} ${ns.length}</span>`).join(" · ")+`</p>`;
+  const d=days.find(x=>pick!==""&&+pick===x.di);
+  if(!d) html+=`<p class="mini ouHint">${t("ouPickHint")}</p>`;
+  else{ // the picked day, by hour (same picture) + its statuses
+    const hrs=new Set(Object.keys(d.req).map(tm=>tm.slice(0,2)));
+    if(!hrs.size) d.iron.forEach(r=>halfHoursBetween(r.w.s,r.w.e).forEach(tm=>hrs.add(tm.slice(0,2))));
+    const hcols=[...hrs].sort().map(h=>{ const hh=[h+":00",h+":30"];
+      const av=hh.reduce((a,tm)=>a+d.iron.filter(r=>halfHoursBetween(r.w.s,r.w.e).includes(tm)).length,0)/2;
+      const nv=hh.filter(tm=>d.req[tm]!=null), need=nv.length?nv.reduce((a,tm)=>a+d.req[tm],0)/nv.length:null;
+      return {key:h,label:h,need,avail:av,tip:h+":00"+(need!=null?"\n"+t("ouTipNeedH",{n:fmt(need)}):"")+"\n"+t("ouTipIronH",{a:fmt(av)})}; });
+    const dm=stDay.get(d.ds);
+    html+=`<div class="ouDay"><div class="ouDayH">${t("ouByHour",{d:dn[d.di]+" "+fmtD(d.ds).slice(0,5)})}</div>${ouChart(hcols,80)}`
+      +(dm&&dm.size?`<div class="ouDayH">${t("ouStDay",{n:dm.size})}</div><div class="ouAbs">`+groupsHtml(dm).map(([k,ns])=>
+        `<div><b><i style="background:${colorOf(k)}"></i>${labelOf(k)} · ${ns.length}</b> ${ns.sort().map(n=>`<span title="${esc(teamOf(n))}">${esc(n)}</span>`).join("، ")}</div>`).join("")+`</div>`:"")+`</div>`;
+  }
+  box.innerHTML=html;
+  // a day click opens that day (and focuses the page's day filter); the hour columns are read-only
+  box.querySelector(".ouWrap").querySelectorAll(".rdyCol").forEach(b=>b.addEventListener("click",()=>{ const di=b.dataset.k;
+    state.wfFilter.day=state.wfFilter.day===di?"":di; saveData(); renderWorkforce(); }));
+  box.querySelectorAll(".ouDay .rdyCol").forEach(b=>{ b.style.cursor="default"; });
 }
 function computeWorkforce(){
   const week=wfWeek()?new Set(weekDates(wfWeek())):new Set();
@@ -3579,6 +3736,7 @@ function renderTreemap(W){
   const unalloc=Math.max(0,total-prod-W.absTot-W.unTot); // residual: shortened shifts etc.
   const w=520,h=210;
   const stOrder=Object.keys(W.unBy).sort((a,b)=>W.unBy[b]-W.unBy[a]);
+  const stLabel=st=>!st&&W.sched===0?t("wfNotYet"):statusLabel(st); // empty sidur: the blank cells are "not scheduled yet"
   const cols=[["prod",prod],["__abs",W.absTot],["__un",W.unTot],["unalloc",unalloc]].filter(c=>c[1]>0.01);
   let x=0; const parts=[];
   const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
@@ -3610,7 +3768,7 @@ function renderTreemap(W){
       // the sidur's own statuses, size-ordered — empty status is a first-class tile
       let y=0;
       for(const st of stOrder){ const tv=W.unBy[st], thh=h*tv/val;
-        tile(x,y,tw,thh,"st:"+st,tv,statusLabel(st),statusColor(st,stOrder)); y+=thh; }
+        tile(x,y,tw,thh,"st:"+st,tv,stLabel(st),statusColor(st,stOrder)); y+=thh; }
     }else tile(x,0,tw,h,key,val,t("wf_"+key),WF_COLORS[key]||"#999");
     x+=tw;
   }
@@ -3622,7 +3780,7 @@ function renderTreemap(W){
   leg.innerHTML=[
     `<span><i style="background:${WF_COLORS.prod}"></i>${t("wf_prod")}</span>`,
     ...Object.keys(W.absByType).map(k=>`<span><i style="background:${WF_COLORS[k]||"#999"}"></i>${t("wf_"+k)}</span>`),
-    ...stOrder.map(st=>`<span><i style="background:${statusColor(st,stOrder)}"></i>${statusLabel(st)}</span>`),
+    ...stOrder.map(st=>`<span><i style="background:${statusColor(st,stOrder)}"></i>${stLabel(st)}</span>`),
     `<span><i style="background:${WF_COLORS.unalloc}"></i>${t("wf_unalloc")}</span>`,
   ].join("");
   // drill-down: click a tile → hours of that segment broken down by team/skill/site
@@ -3715,7 +3873,7 @@ function renderImpactMatrix(){
   if(starsEl) starsEl.style.display="none";
   // hard requirement: this matrix compares the ברזל base against the actual סידור עבודה —
   // without a loaded Iron sheet there is nothing valid to compare, so it stays gated
-  if(!state.iron||!state.series){ tbl.innerHTML=`<tr><td class="mini">${t("wfImpactNoIron")}</td></tr>`; if(metricEl) metricEl.textContent=""; return; }
+  if(!state.iron||!state.series){ tbl.innerHTML=`<tr><td class="mini">${t(state.iron?"wfImpactNoFc":"wfImpactNoIron")}</td></tr>`; if(metricEl) metricEl.textContent=""; return; }
   const iron=validatedIron();
   const unval=new Set(state.validationErrors.map(v=>v.name));
   if(metricEl) metricEl.textContent=t("wfImpactMetric",{m:primName()});
@@ -3739,6 +3897,14 @@ function renderImpactMatrix(){
     if(!week.has(r.ds)||!iron.has(r.name)||!wfPass(r)) continue;
     const sk=(r.skill||(metaOf(r.name).skill)||"—");
     schedBy[sk+"|"+r.di]=(schedBy[sk+"|"+r.di]||0)+r.h;
+  }
+  // a sidur with no hours yet: "actual" = iron minus the absences already typed in it —
+  // not scheduled yet is not absent (otherwise every row reads as a full-day loss)
+  if(!state.schedRows.some(r=>week.has(r.ds))){
+    for(const k in ironBy) schedBy[k]=ironBy[k];
+    const lost=x=>{ if(!week.has(x.ds)||!iron.has(x.name)||!wfPass(x)) return;
+      const k=(x.skill||metaOf(x.name).skill||"—")+"|"+x.di; if(schedBy[k]!=null) schedBy[k]=Math.max(0,schedBy[k]-x.hours); };
+    (state.vacations||[]).forEach(lost); (state.unallocRows||[]).forEach(u=>{ if(u.status) lost(u); });
   }
   const dayNames=t("days");
   const hr=document.createElement("tr");
@@ -4119,7 +4285,11 @@ function renderWorkforce(){
   const dLbl=state.wfFilter.day!==""?" · "+t("days")[+state.wfFilter.day]:"";
   document.getElementById("wfWeekLbl").textContent=wwk?t("weekOpt",{w:isoWeek(wwk),a:fmtD(wwk),b:fmtD(addDays(wwk,5))})+dLbl:"";
   const W=computeWorkforce();
-  document.getElementById("wfKpiUtil").textContent=W.ironTotal>0?pct(Math.min(1.5,W.sched/W.ironTotal)):t("noData");
+  // a sidur with (almost) no hours: the readiness picture replaces the utilization KPIs + treemap
+  const em=sidurEmpty();
+  [["wfReadyCard",em],["wfKpis",!em],["wfTreeCard",!em]].forEach(([id,on])=>{ const el=document.getElementById(id); if(el) el.style.display=on?"":"none"; });
+  if(em) renderReadiness();
+  document.getElementById("wfKpiUtil").textContent=W.ironTotal>0?(W.sched>0?pct(Math.min(1.5,W.sched/W.ironTotal)):t("wfNotYet")):t("noData");
   document.getElementById("wfKpiLeak").textContent=W.ironTotal>0?pct(Math.min(1,W.absTot/W.ironTotal)):t("noData");
   document.getElementById("wfKpiDev").textContent=W.tot>0?pct(W.dev/W.tot):t("noData");
   // micro target-bars: fill = level, color = status vs operational thresholds
@@ -4135,7 +4305,7 @@ function renderWorkforce(){
   };
   if(W.ironTotal>0){
     const u=W.sched/W.ironTotal;
-    setKpiBar("wfKpiUtil",Math.min(1,u),u>=0.9?"good":u>=0.75?"warn":"bad");
+    setKpiBar("wfKpiUtil",W.sched>0?Math.min(1,u):null,u>=0.9?"good":u>=0.75?"warn":"bad");
     const l=W.absTot/W.ironTotal;
     setKpiBar("wfKpiLeak",Math.min(1,l),l<=0.08?"good":l<=0.15?"warn":"bad");
   }
@@ -4392,22 +4562,31 @@ function generateIronBaseline(){
   const sc=state.schedSkills, inScope=sk=>!sc||!sc.length||!sk||sc.includes(sk);
   const mins=t2=>{ const[a,b]=String(t2).split(":").map(Number); return a*60+b; };
   const toTm=m=>pad(Math.floor(m/60))+":"+pad(m%60);
-  const asg=[],gaps=[],pool=[];
+  const asg=[],gaps=[],pool=[]; let noFc=0;
   const ruleW=reqs.map((r,i)=>({r,w:2*(reqs.length-i)})); // priority order = weight (same as Mode 1)
+  // everyone in the iron is fit to work — statuses typed in the sidur are only flagged (readiness);
+  // a full-day constraint the user set explicitly ("before running") is respected
+  const off=new Set();
+  (state.weeklyConstraints||[]).forEach(c=>{ if(c.ds&&c.type!=="partial") off.add(c.name+"|"+c.ds); });
   for(const ds of wk){
     const di=fromISO(ds).getDay();
-    const c=computeDay(ds); if(!c) continue;
+    const c=computeDay(ds);
     const req={};
-    c.rows.forEach(r=>{ if(r.rec&&!r.closed&&!r.exc&&!r.nodata) req[r.tm]=r.reqEff; });
+    if(c) c.rows.forEach(r=>{ if(r.rec&&!r.closed&&!r.exc&&!r.nodata) req[r.tm]=r.reqEff; });
     const tms=Object.keys(req).sort();
-    if(!tms.length) continue;
+    if(!tms.length){ noFc++;
+      for(const [name,e] of iron){ const w=e.days&&e.days[di]; if(!w||!w.s||!w.e||off.has(name+"|"+ds)) continue;
+        asg.push({name,ds,di,s:w.s,e:w.e,src:"base"}); }
+      continue; }
     const dayStartM=mins(tms[0]), dayEndM=mins(tms[tms.length-1])+30;
     // placeable units = each in-scope iron employee's contracted window THIS weekday
     // (the demand model is the frontline queue, so only answering skills are placed)
     const units=[];
     for(const [name,e] of iron){
       const w=e.days&&e.days[di]; if(!w||!w.s||!w.e) continue;
-      const sk=skillOf(name); if(!inScope(sk)) continue;
+      if(off.has(name+"|"+ds)) continue;
+      const sk=skillOf(name);
+      if(!inScope(sk)){ asg.push({name,ds,di,s:w.s,e:w.e,src:"base"}); continue; } // other queues: not placed against this demand
       const dur=mins(w.e)-mins(w.s); if(dur<30) continue;
       units.push({name,dur,skill:sk});
     }
@@ -4443,18 +4622,40 @@ function generateIronBaseline(){
     remaining.forEach(u=>pool.push({name:u.name,ds,di,s:toTm(dayStartM),e:toTm(Math.min(dayEndM,dayStartM+u.dur))}));
     for(const tm of tms){ const gap=Math.round(req[tm]-staff[tm]); if(gap>0) gaps.push({ds,tm,n:gap}); }
   }
-  return {asg,pool,cuts:[],gaps,moved:0};
+  return {asg,pool,cuts:[],gaps,moved:0,noFc};
+}
+/* the uploaded sidur was empty: the sidur generated from the iron for its week becomes the sidur —
+   shifts, matrix capacity, workforce rows — as if a full one had been uploaded. Regenerating replaces it;
+   a new sidur upload ends it. The empty sidur's own rows (statuses, blanks) stay the base. */
+function adoptIronSidur(out){
+  const metaOf=n=>{ const m=state.rosterMeta.get(n)||{}, e=(state.iron&&state.iron.emps.get(n))||{};
+    return {team:m.team||e.team||"",skill:m.skill||e.skill||"",site:m.site||e.site||""}; };
+  const hrs=a=>(toMinW(a.e)-toMinW(a.s))/60;
+  state.schedRows=out.asg.map(a=>({name:a.name,ds:a.ds,di:a.di,s:a.s,e:a.e,h:hrs(a),dev:false,...metaOf(a.name)}));
+  const on=new Set(out.asg.map(a=>a.name+"|"+a.ds));
+  state.unallocRows=(state._emptyUn||[]).filter(u=>!on.has(u.name+"|"+u.ds));
+  state.vacations=(state._emptyVac||state.vacations||[]).filter(v=>!on.has(v.name+"|"+v.ds));
+  const cap=new Map(), capSk={}, hByRep=new Map();
+  out.asg.forEach(a=>{ const sk=metaOf(a.name).skill;
+    halfHoursBetween(a.s,a.e).forEach(tm=>{ const k=a.ds+"|"+tm; cap.set(k,(cap.get(k)||0)+1); const o=capSk[k]=capSk[k]||{}; o[sk]=(o[sk]||0)+1; });
+    hByRep.set(a.name,(hByRep.get(a.name)||0)+hrs(a)); });
+  state.rosterCap=cap; state.rosterCapSkill=capSk; state.rosterNamed=true;
+  state.roster=(state.roster||[]).map(r=>({...r,scheduled:Math.round((hByRep.get(r.name)||0)*10)/10}));
+  rebuildRosterCoverage(); memo.clear();
+  ["home","matrix","trends","workforce","recruit"].forEach(p=>dirtyPages.add(p));
+  updatePortalStatus(); saveData();
 }
 async function runGenerator(){
-  if(!schWeek()||!state.days.size){ showToast("⚠ "+t("schNeedData"),false); return; }
+  if(!schWeek()){ showToast("⚠ "+t("schNeedData"),false); return; }
   if(!state.iron){ showToast("⚠ "+t("schGenNeed"),false); return; }
   const out=generateIronBaseline();
+  if(state.ironDraft&&schWeek()===state.ironDraft) adoptIronSidur(out);
   state.optimizedOutput=out.asg;
   state._schedOut=out;
   (state._schedOutBy=state._schedOutBy||{}).generateIron=out; // remembered per mode
   const b=document.getElementById("schBanner");
-  b.textContent=t("schDoneGen",{a:out.asg.length,p:out.pool.length,
-    h:Math.round(out.gaps.reduce((s,g)=>s+g.n,0)/2)}); // half-hour blocks → agent-hours
+  b.textContent=out.noFc>=weekDates(schWeek()).length?t("schDoneGenIron",{a:out.asg.length}) // no forecast: the iron as is
+    :t("schDoneGen",{a:out.asg.length,p:out.pool.length,h:Math.round(out.gaps.reduce((s,g)=>s+g.n,0)/2)}); // half-hour blocks → agent-hours
   b.classList.add("show");
   renderSchedulerResults(out);
 }
@@ -5244,13 +5445,19 @@ function renderScheduler(){
   const run=document.getElementById("schRun"), gate=document.getElementById("schGate");
   const ready=weekShifts>0&&state.days.size>0;
   if(run) run.disabled=!ready;
-  if(gate) gate.style.display=ready?"none":"block";
+  // the sidur is loaded but has no hours yet (and an iron exists) → say so, offer the iron path
+  const gen0=state.settings.schedMode==="generateIron";
+  const emptySidur=!ready&&!gen0&&!!state.iron&&weekShifts===0&&state.rosterMeta.size>0&&!!schWeek();
+  const ge=document.getElementById("schGateEmpty");
+  if(ge){ ge.style.display=emptySidur?"block":"none";
+    if(emptySidur) document.getElementById("schGateEmptyT").textContent=t("schEmptySidur",{w:isoWeek(schWeek())}); }
+  if(gate) gate.style.display=ready||gen0||emptySidur?"none":"block";
   // Mode 2 readiness: needs a forecast + an iron base (constraints/current sidur irrelevant)
   const reqN=(state.settings.skillReqs||[]).length, ironN=state.iron?state.iron.emps.size:0;
   const gi=document.getElementById("schChipGenIron"), gcv=document.getElementById("schChipGenCov");
   if(gi) gi.textContent=t("schChipGenIron",{n:ironN});
   if(gcv) gcv.textContent=t("schChipGenCov",{n:reqN});
-  const genReady=state.days.size>0&&!!state.iron;
+  const genReady=!!state.iron; // no forecast → the iron as is
   const gr=document.getElementById("schGenRun"), gg=document.getElementById("schGenGate");
   if(gr) gr.disabled=!genReady;
   if(gg) gg.style.display=genReady?"none":"block";
@@ -5279,6 +5486,12 @@ function applySchedMode(){
   if(gen){ const nc=document.getElementById("conNameCheck"); if(nc) nc.style.display="none"; }
   // Mode-2-only inputs
   show("schGenPanel",gen); show("schGenRun",gen);
+  { // from iron: point at the answering-skill choice (it decides who is placed against demand)
+    const sw=document.getElementById("schSkillWrap"), al=document.getElementById("schSkillAsk");
+    const ask=gen&&!!(state.skillList||[]).length;
+    if(sw){ if(ask&&!sw.classList.contains("ask")){ sw.classList.add("pulse"); setTimeout(()=>sw.classList.remove("pulse"),2600); }
+      sw.classList.toggle("ask",ask); }
+    if(al){ al.style.display=ask?"":"none"; al.title=t("schSkillAskTip"); } }
   show("schChipGenIron",gen); show("schChipGenCov",gen);
   // relabel shared output titles per mode (keep data-i18n in sync so language switches too)
   const relabel=(sel,key)=>{ const el=document.querySelector(sel); if(el){ el.dataset.i18n=key; el.textContent=t(key); } };
@@ -5864,6 +6077,8 @@ function ingestSuccess(stats,hint){
   const skip=stats.skipped?" "+t("skippedNote",{k:stats.skipped}):"";
   const msg=stats.type==="forecast"
     ? t("fcOk",{d:stats.days,n:stats.rows})
+    : stats.empty
+    ? t("roEmpty",{w:isoWeek(wfWeek()),e:stats.reps})+(stats.iron?" "+t("roEmptyIron",{i:stats.iron}):"")
     : stats.type==="workbook"
     ? t("wbOk",{e:stats.reps,i:stats.iron,v:stats.val})
     : (stats.named?t("roOkNamed",{e:stats.reps,n:stats.blocks}):t("roOk",{n:stats.blocks}));
@@ -5873,6 +6088,20 @@ function ingestSuccess(stats,hint){
   state[stats.type==="forecast"?"fcSkipped":"roSkipped"]={n:stats.skipped||0,rows:stats.skippedRows||[]};
   updatePortalStatus(); p.st.style.display="block";
   showToast("✅ "+msg+skip,true);
+  if(stats.type!=="forecast"&&state.rosterMeta.size){
+    const em=sidurEmpty(), wk=wfWeek();
+    state.ironDraft=em?wk:null; // the week whose sidur will come from the iron
+    state._emptyUn=em?(state.unallocRows||[]).map(u=>({...u})):null;
+    state._emptyVac=em?(state.vacations||[]).map(v=>({...v})):null;
+    // a new sidur = a fresh scheduler, in the mode that fits it (set once, here — the user may switch)
+    state._schedOutBy={};
+    const want=em&&state.iron?"generateIron":"optimizeCurrent";
+    if(em&&state.iron) state.settings.schGenWeek=wk;
+    state.settings.schedMode=want==="generateIron"?"optimizeCurrent":"generateIron";
+    const mb=document.querySelector(`#schModeSeg button[data-mode="${want}"]`); if(mb) mb.click();
+    saveData();
+    if(em) showPage("workforce");
+  }
 }
 /* item 13: unified skipped-rows audit popover (forecast + roster) */
 function showAuditPop(anchor,rows){
@@ -6382,13 +6611,14 @@ function updatePortalStatus(){
   document.getElementById("dzForecast").classList.toggle("loaded",!!state.days.size);
   renderFcExtras();
   const rs=document.getElementById("roStatus");
-  const hasRo=!!(state.rosterCap.size||state.rosterCapWeekly.size);
+  const hasRo=!!(state.rosterCap.size||state.rosterCapWeekly.size||state.rosterMeta.size); // a sidur with no hours is still loaded
   document.getElementById("dzRoster").classList.toggle("loaded",hasRo);
   if(hasRo){
     // the sidur's own dates → its week(s)
     const ds=new Set();
     for(const k of state.rosterCap.keys()){ const d=k.slice(0,10); if(/^\d{4}-/.test(d)) ds.add(d); }
     for(const r of state.schedRows||[]) if(r.ds) ds.add(r.ds);
+    for(const r of (state.unallocRows||[]).concat(state.vacations||[])) if(r.ds) ds.add(r.ds);
     const all=[...ds].sort(), parts=[];
     if(all.length){
       const w0=sundayOf(all[0]), w1=sundayOf(all[all.length-1]), a=fmtD(all[0]).slice(0,5), b=fmtD(all[all.length-1]);
@@ -6396,6 +6626,7 @@ function updatePortalStatus(){
     }else parts.push(t("roTemplate",{n:state.rosterCapWeekly.size}));
     if(state.rosterNamed&&state.roster.length) parts.push(t("roReps",{e:state.roster.length}));
     if(state.iron) parts.push(t("roIronNote",{n:state.iron.emps.size}));
+    if(sidurEmpty()) parts.push(t("wfNotYet"));
     rs.textContent="✅ "+parts.join(" · ");
     rs.style.color="";
     issueLine(rs,state.roSkipped,[],[],"dzRoster");
@@ -6640,18 +6871,27 @@ function buildWeekSelect(keepValue){
   const sel=document.getElementById("weekSelect");
   const prev=keepValue?sel.value:null;
   sel.innerHTML="";
-  if(!state.minDate) return;
-  let cur=sundayOf(state.minDate);
-  const opts=[];
-  while(cur<=state.horizonISO){
+  // the forecast range + the sidur's own week(s) — a sidur beyond the forecast (or with no forecast
+  // at all) is still a week to work on; rebuilt the same way on every refresh
+  const wks=new Set();
+  if(state.minDate) for(let cur=sundayOf(state.minDate);cur<=state.horizonISO;cur=addDays(cur,7)) wks.add(cur);
+  const sw=new Set();
+  for(const k of state.rosterCap.keys()){ const d=k.slice(0,10); if(/^d{4}-/.test(d)) sw.add(sundayOf(d)); }
+  for(const r of (state.schedRows||[]).concat(state.unallocRows||[],state.vacations||[])) if(r.ds) sw.add(sundayOf(r.ds));
+  sw.forEach(w=>wks.add(w));
+  const opts=[...wks].sort();
+  for(const cur of opts){
     const o=document.createElement("option");
     o.value=cur;
     o.textContent=t("weekOpt",{w:isoWeek(cur),a:fmtD(cur),b:fmtD(addDays(cur,5))})
-      +(cur>state.maxDate?t("forecastTag"):"");
-    sel.appendChild(o); opts.push(cur);
-    cur=addDays(cur,7);
+      +(state.maxDate&&cur>state.maxDate&&cur<=state.horizonISO?t("forecastTag"):"");
+    sel.appendChild(o);
   }
+  if(!opts.length) return;
+  const sidur0=[...sw].sort()[0];
   if(prev&&opts.includes(prev)) sel.value=prev;
+  else if(state._restoredWeek&&opts.includes(state._restoredWeek)) sel.value=state._restoredWeek;
+  else if(sidur0) sel.value=sidur0; // a loaded sidur opens on its own week
   else sel.value=opts.includes(sundayOf(state.maxDate))?sundayOf(state.maxDate):(opts[opts.length-1]||"");
   state.week=sel.value||null;
 }
@@ -9623,7 +9863,7 @@ function saveData(){
       meta:Object.fromEntries(state.rosterMeta), vac:state.vacations,
       schedRows:state.schedRows, valErr:state.validationErrors,
       capSkills:state.capSkills, capSkillMap:state.rosterCapSkill, skillList:state.skillList,
-      un:state.unallocRows, schedSkills:state.schedSkills,
+      un:state.unallocRows, schedSkills:state.schedSkills, ironDraft:state.ironDraft||null, emptyUn:state._emptyUn||null, emptyVac:state._emptyVac||null,
       week:state.week, wfFilter:state.wfFilter, cons:state.weeklyConstraints,
       schedOut:state._schedOut, schedExt:state.appliedExtensions, schedLocks:[...(state.schedLocks||[])], schedLockTL:[...(state.schedLockTL||[])], schedDeclined:state.schedDeclined||{}, agWhatIf:[...state.agWhatIf] }));
   }catch(e){} // quota exceeded on huge files → data simply stays transient
@@ -9633,7 +9873,7 @@ function loadData(){
     const s=JSON.parse(localStorage.getItem(PERSIST_DATA)||"null");
     if(!s) return false;
     const hasDays=s.days&&Object.keys(s.days).length;
-    const hasRoster=(s.schedRows&&s.schedRows.length)||s.iron||(s.cap&&Object.keys(s.cap).length);
+    const hasRoster=(s.schedRows&&s.schedRows.length)||s.iron||(s.cap&&Object.keys(s.cap).length)||(s.meta&&Object.keys(s.meta).length);
     if(!hasDays&&!hasRoster) return false; // a sidur-only workspace is still a workspace
     state.days=new Map(Object.entries(s.days).map(([ds,o])=>[ds,new Map(Object.entries(o))]));
     state.roster=s.roster||[]; state.rosterNamed=!!s.rosterNamed;
@@ -9650,6 +9890,7 @@ function loadData(){
     state.rosterCapSkill=s.capSkillMap||{}; state.skillList=s.skillList||[];
     state.capSkills=s.capSkills===undefined?null:s.capSkills;
     state.unallocRows=s.un||[];
+    state.ironDraft=s.ironDraft||null; state._emptyUn=s.emptyUn||null; state._emptyVac=s.emptyVac||null;
     state.schedSkills=s.schedSkills===undefined?null:s.schedSkills;
     // non-data preferences that belong to this dataset: chosen week, workforce
     // filters and manually entered constraints all survive a refresh
