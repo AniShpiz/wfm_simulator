@@ -4,6 +4,36 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Empty sidur → readiness → sidur from the iron
+
+- Fix: an empty cell parsed as 00:00 (`normTimeAny("")`, `+"" === 0`), so a sidur with no hours
+  yet was rejected as "no valid rows" — iron included. A named rep with a date but no hours is
+  now "not scheduled yet", not a bad row.
+- Fix: the week list was built from the forecast range only — after a refresh, a sidur week past
+  the forecast (or with no forecast) vanished and the week picker went blank. The list now
+  always includes the sidur's own week(s), and a loaded sidur opens on its week.
+- Fix: an empty sidur's skill list came only from rows with hours (none) → the answering skills
+  fell back to "all"; skills now come from every sidur row.
+- Empty (or <10% scheduled) sidur upload: the toast and the upload box say "week N · not
+  scheduled yet"; the app opens the Workforce page, where one readiness chart replaces the
+  utilization KPIs + treemap — an Over/Under chart in people: per day, the answering reps (🎧)
+  in the iron vs what the forecast needs; green up = surplus, red down = short, on tinted zones.
+  Everyone in the iron counts as fit to work; statuses already typed in the sidur (חופש,
+  התפטרות…) are flagged in one alert line, never subtracted. No forecast → reps per day.
+  Clicking a day opens it: the same chart by hour (reps at the same time) + that day's statuses.
+- The scheduler starts on "generate from iron" for that week (set once at upload; a full sidur
+  sets fine-tune). No forecast for the week → the sidur is built from the iron as is.
+- Generating from iron places everyone in the iron (only explicit full-day constraints are
+  respected), and keeps reps outside the answering skills at their iron windows (they were
+  missing from the generated sidur and its export).
+- "Generate from iron" mode marks the answering-skill choice: a short label + a quiet ring on the
+  🎧 picker (two soft pulses on entering the mode); hover says only those skills are placed
+  against demand.
+- The generated sidur of an empty sidur's week becomes the sidur (shifts, matrix capacity,
+  Workforce rows) — every page reads it as a full one; persists across refresh.
+- Absences impact matrix: on an empty sidur, "actual" = iron − known absences (was: every row
+  read as a full-day loss, −55%); without a forecast it says a forecast is missing (not "load iron").
+
 ### Changed (scheduler polish & scope)
 
 - ③ offers come only from reps in the answering scope (🎧) and never from reps kept "as is" —
