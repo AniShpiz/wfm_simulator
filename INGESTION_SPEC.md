@@ -50,6 +50,14 @@ When workbook has multiple sheets:
 - extract workforce metadata and validations
 - apply week from ingested data
 
+## Friday-Only Ingest (last week's sidur)
+
+The Friday card's drop box reads a sidur for its Friday only (`ingestFriOnly`): the work-sidur
+sheet (never the iron), header via `findHeader`, rows with a name, a date that is a Friday and a
+valid entry < exit. The names are stored per Friday in `settings.friHist`; nothing else from the
+file is kept and the loaded sidur is untouched. Every regular sidur upload also records its own
+Friday (`recordFriHist`).
+
 ## Normalization Rules
 
 - date normalization handles ISO, local formats, and Excel serials

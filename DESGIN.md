@@ -15,6 +15,40 @@ The app is intentionally:
 
 Any new design work should preserve those constraints.
 
+## The bar every change must clear (owner's standard)
+
+These come from the product owner and override taste. A feature that adds value but breaks one of
+them is not done.
+
+1. **Low cognitive load.** One idea per view. Managers read people ("29 reps"), not hours or model
+   terms. Plain words first; the method lives behind an "i" or a folded "⚙ fine-tune".
+2. **Power features, one click deep.** Depth is always there — hover = the period's numbers,
+   click = open it (drill-down), fold/unfold a card — but never in the way of the main answer.
+3. **Follow the user's journey.** Put a feature where the decision is made, not where the data
+   lives: the Friday rotation sits where the sidur is built (Auto-Scheduler, step ①) and next to
+   the iron lists (Iron validation card), not on a page of its own.
+4. **One applicative design.** Reuse what exists: the Over/Under column shell, chips, pills,
+   `details` fold cards, the `drl` people lists, the same palette and the same interactions. A new
+   chart looks like it was always there.
+5. **Fewest clicks.** Merge into an existing control instead of adding a button (the 📈 demand
+   shift lives inside the week pill on the matrix). Remember choices (folds, chart picks, the
+   Friday memory) so nothing is asked twice.
+6. **Value with minimum confusion and friction.** Every screen answers "what do I do now" with the
+   one number that matters.
+7. **Silence when all is well.** Never show a notice, banner or chip that makes a healthy state feel
+   broken — no "no shift detected", "not in memory yet", "filtered view…", "missing column"
+   lines. Speak only when something real happened, in plain words with its number
+   ("📈 calls rose 18% in the last 6 days — the next days are raised to match").
+8. **Fix the root cause, never paper over it.** No ⚠ badges or heuristic data conversions to hide a
+   suspicious number — trace it, reproduce it, fix the math.
+9. **Every area can step aside.** Secondary cards fold to a one-line summary (e.g. "89% of the iron
+   in the sidur") and stay folded across sessions.
+10. **If it could confuse, it does.** Don't ship it and offer to fix it later — fix it. One concept =
+    one control app-wide (the skills are the single 🎧 answering-skills list on every page, Workforce
+    included). Two numbers for the same thing must match exactly, at the same precision.
+11. **Explanations are short.** An "i" or a panel intro is two plain sentences at most: what
+    happened / what it does, and what the user gets.
+
 ## Product Design Principles
 
 1. Keep one-screen clarity
@@ -74,6 +108,16 @@ Do not add new pages unless there is a clear workflow boundary.
 - Always provide success/error feedback after ingestion.
 - Keep status messages in-page and also visible as toast.
 - Avoid silent failures.
+- Avoid noisy successes too: a calm state shows nothing (rule 7 above). Status colors (amber/red)
+  are for real problems only; informational lines use the sky/navy family.
+
+## Charts
+
+- Small multiples: one metric per chart, ONE axis each (never dual-axis), shared time axis.
+- Hover shows every metric of the period (one crosshair across all charts); click opens it.
+- Forecast periods: lighter bars / dashed line on a pale band — never mixed into "evidence"
+  (relationship scatters use actual periods only).
+- The table stays the accessible twin of every chart.
 
 ## Performance Design
 
@@ -96,3 +140,4 @@ A design change is done only if:
 3. It is understandable without extra training.
 4. It keeps offline/single-file constraints.
 5. It is validated with real ingest samples.
+6. It clears "The bar every change must clear" at the top of this file.
