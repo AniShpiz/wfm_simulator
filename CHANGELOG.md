@@ -4,6 +4,54 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Friday rotation, why-not-scheduled, iron by day, trend charts, own holidays, fast forecast
+
+- Fix (root cause): each rep works **every other Friday**, but the iron lists Friday for everyone
+  eligible — so every iron total counted twice the Friday that is really owed (week 27: 58 reps
+  with Friday in the iron, 29 on it). One rule now feeds utilization, the impact matrix, readiness,
+  the below-iron list and "generate from iron": worked last Friday → off this Friday; didn't → due;
+  last Friday unknown → half. `settings.friEvery` (2 / 1) switches it per center.
+  Who CAN work Friday comes from the iron only: hours in the Friday cell. Anything else in it
+  (חוזה, ללא שישי, empty, any text) = doesn't work Friday — never a validation error (unit-tested).
+- Friday memory: one sidur is loaded at a time, so every sidur upload keeps its Friday — names only,
+  the last 12 Fridays (~1 KB, `settings.friHist`). Without last Friday the card offers last week's
+  file in a small drop box (only its Friday is read; the loaded sidur stays).
+- "Friday — last week vs this week": two Fridays in a row · their turn and not in the sidur (with
+  the status typed in the sidur) · on as the rotation says · off (worked last week) · worked last
+  Friday and no longer active (left / resigned / not in the sidur or iron). Copy any list by team.
+  Lives in the Auto-Scheduler (under step ①, the scheduler's week; a week with no shifts yet shows
+  "their turn this Friday" — the list to build from) and folded into the Iron validation card.
+- "Below their iron — who and why" (was "Internal Roster Optimization"): each rep carries the
+  sidur's own reasons (vacation, sick, typed statuses, empty cells, or "no status — shorter
+  shifts"); reason chips on top filter the list; the area is no longer capped at 300px; 25 rows.
+- "Iron vs sidur — by day" (Workforce, full sidur): per day in people — the iron (light), the sidur
+  (navy), the forecast need (tick) — with sidur hours ÷ iron hours under each day; click a day for
+  its hours. Folds to one line ("89% of the iron in the sidur"), remembered.
+- Date Trends charts: small multiples of the same periods as the table (calls, answer rate, AHT,
+  occupancy; + productivity, TSF 30, net hours on demand), one crosshair + tooltip across all,
+  click = open the period. "How they relate": calls/net hours/AHT/occupancy vs answer rate over the
+  actual periods, fit line and one plain sentence (r and "every +X ≈ Y"). 📊 toggles the strip.
+- Holidays table: "your own dates" — name, from–to, level (closed / half / Chol HaMoed / regular);
+  they win over the Hebrew calendar and work with the auto calendar off.
+- 📈 Fast forecast for sudden demand changes (user story: *as the WFM planner, when a wave of
+  claim-status / claim-closure calls hits, I want the next days' forecast to follow within days —
+  including the callers who abandoned and will call again — so tomorrow's sidur is not short*).
+  Root cause of the slowness: each weekday learns only from its own weekday (a Tuesday surge reaches
+  Wednesday a week later), Holt smooths, and the outlier guard clips the very surge days. The fast
+  lane reads the last 10 working days against the same daily model fed only earlier history (and a
+  billing calendar learned before the window — a surge on billing days was being read as
+  "billing"), takes out callbacks (a share of the abandons above the usual rate: ¾ next working
+  day, ¼ the day after), and when the shift is clear (≥6%, last 3 days the same side) moves the
+  next days to the new level, fading back by half every ~2 weeks. Calm data is untouched.
+  Shown only during a real shift: "📈 +18%" in the matrix week pill and one line in Date Trends;
+  details + ⚙ fine-tune in Advanced Settings → Forecasting models.
+- One skill list app-wide: the Workforce page's own "Skill" filter is gone — its place holds the
+  same 🎧 answering-skills list as the matrix, scheduler, recruitment and Settings (one state).
+  Every Workforce number follows it, so the utilization KPI and the iron-by-day summary are the
+  same number (they were 90.6% vs 89%: one followed the page filter, the other also the 🎧 list).
+- 📈 short explanation ("i" by the switch, panel intro): two plain sentences.
+- Perf: `wfWeek()` built a new Set per sidur row on every call.
+
 ### Empty sidur → readiness → sidur from the iron
 
 - Fix: an empty cell parsed as 00:00 (`normTimeAny("")`, `+"" === 0`), so a sidur with no hours

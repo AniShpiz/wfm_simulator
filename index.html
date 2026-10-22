@@ -409,6 +409,80 @@ td.gapCell.closed{background:#d6f3e2!important;color:#0f6a3f;font-weight:700}
 .rdyDay{text-align:center;font-size:.8rem;font-weight:600;padding:6px 0 0} .rdyDay small{font-weight:400;opacity:.65}
 .rdyLeg{justify-content:center;margin-top:8px}
 .rdyLeg i{display:inline-block;width:12px;height:12px;border-radius:3px}
+/* iron vs sidur (people): iron light, sidur navy, side by side on one scale; the need is a tick */
+.ibPlot{position:relative;display:flex;justify-content:center;align-items:flex-end;gap:2px;background:#f4f7fa;border-bottom:2px solid var(--navy)}
+.rdyCol:hover .ibPlot{filter:brightness(.96)} .rdyCol.pick .ibPlot{box-shadow:inset 2px 0 0 var(--sky),inset -2px 0 0 var(--sky)}
+.ibB{position:relative;width:24%;max-width:30px;border-radius:4px 4px 0 0}
+.ibB.ir,.lg-ir{background:#a9d3f5} .ibB.sd,.lg-sd{background:var(--navy)}
+.ibB .ouLbl{bottom:100%;margin-bottom:2px;font-size:.82rem;color:var(--ink)}
+.ibN{position:absolute;left:12%;right:12%;height:0;border-top:3px solid #d9822b;border-radius:2px}
+.rdyLeg i.lg-nd{height:3px;border-radius:2px;background:#d9822b}
+.ibSub{text-align:center;font-size:.7rem;font-weight:700;color:var(--muted)} .ibSub.good{color:var(--emerald)} .ibSub.warn{color:var(--amber)} .ibSub.bad{color:var(--crimson)}
+/* Friday rotation card */
+.friHead{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin:0 0 8px}
+.friHead .n{font-size:1.45rem;font-weight:700;color:var(--navy);direction:ltr;unicode-bidi:isolate}
+.friHead .l{font-size:.74rem;color:var(--muted)}
+.friG summary{display:flex;align-items:center;gap:8px;list-style:none} .friG summary::-webkit-details-marker{display:none}
+.friG summary i{width:10px;height:10px;border-radius:50%;flex:none}
+.friG summary b{margin-inline-start:auto;font-variant-numeric:tabular-nums}
+.friG .drlWho span small{opacity:.7;margin-inline-start:3px}
+.friDz{margin-top:10px;padding:10px}
+details.foldCard>summary{list-style:none;cursor:pointer}
+details.foldCard>summary::-webkit-details-marker{display:none}
+details.foldCard>summary h2{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0}
+details.foldCard>summary h2::before{content:"▾";color:var(--muted);font-size:.8rem;transition:transform .15s}
+details.foldCard:not([open])>summary h2::before{transform:rotate(-90deg)} [dir=rtl] details.foldCard:not([open])>summary h2::before{transform:rotate(90deg)}
+details.foldCard[open]>summary{margin-bottom:10px}
+.foldSum{font-size:.74rem;font-weight:600;color:var(--muted)}
+.friEverySeg{margin-inline-start:auto;font-size:.72rem;font-weight:400}
+details.friIn{margin-top:14px;padding-top:10px;border-top:1px solid var(--border)}
+details.foldCard>summary h3{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0;font-size:.92rem;color:var(--navy)}
+details.foldCard>summary h3::before{content:"▾";color:var(--muted);font-size:.8rem;transition:transform .15s}
+details.foldCard:not([open])>summary h3::before{transform:rotate(-90deg)} [dir=rtl] details.foldCard:not([open])>summary h3::before{transform:rotate(90deg)}
+/* 📊 Date Trends dashboard */
+.trDash{position:relative;margin:4px 0 10px}
+.trPick{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin:0 0 8px}
+.trChip{border:1px solid var(--border);background:#fff;border-radius:14px;padding:2px 10px;font:inherit;font-size:.74rem;cursor:pointer;color:var(--muted)}
+.trChip.on{border-color:var(--navy);color:var(--navy);font-weight:700;background:var(--sky-soft)}
+.trDashHint{margin-inline-start:auto}
+.trTiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:10px}
+.trTile{border:1px solid var(--border);border-radius:9px;padding:6px 8px 2px;background:#fff;direction:ltr}
+.trTile.trRel{grid-column:span 2} @media (max-width:760px){ .trTile.trRel{grid-column:auto} }
+.trTileH{display:flex;align-items:baseline;justify-content:space-between;gap:8px;font-size:.8rem;color:var(--navy)}
+[dir=rtl] .trTileH{flex-direction:row-reverse}
+.trTileH span{font-weight:700;font-variant-numeric:tabular-nums} .trTileH small{font-weight:400;color:var(--muted)}
+.trGrid{stroke:#e7edf4;stroke-width:1} .trTick{font-size:11px;fill:#6b7c90}
+.trFcBand{fill:#f4f7fa} .trTgt{stroke:#6b7c90;stroke-width:1;stroke-dasharray:4 3}
+.trBar{fill:#2c7fb8} .trBar.fc{fill:#2c7fb8;opacity:.4}
+.trLine{fill:none;stroke:#2c7fb8;stroke-width:2;stroke-linejoin:round} .trLine.fc{stroke-dasharray:5 4;opacity:.7}
+.trXh{stroke:var(--navy);stroke-width:1;opacity:.35} .trDot{fill:#2c7fb8;stroke:#fff;stroke-width:2}
+.trHit{fill:transparent;cursor:pointer}
+.trTip{position:absolute;z-index:20;min-width:200px;background:#fff;border:1px solid var(--border);border-radius:8px;box-shadow:0 6px 20px rgba(13,42,77,.15);padding:7px 10px;font-size:.74rem;pointer-events:none}
+.trTip div{display:flex;justify-content:space-between;gap:12px} .trTip div b{font-variant-numeric:tabular-nums}
+.relPick{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0;direction:inherit}
+.relPick button{border:1px solid var(--border);background:#fff;border-radius:12px;padding:1px 8px;font:inherit;font-size:.7rem;cursor:pointer;color:var(--muted)}
+.relPick button.on{border-color:var(--navy);color:var(--navy);font-weight:700}
+.relFit{stroke:#d9822b;stroke-width:2} .relPt{fill:#2c7fb8;stroke:#fff;stroke-width:2} .relHit{fill:transparent;cursor:pointer}
+.relDot:hover .relPt{fill:var(--navy)}
+.relSentence{font-size:.82rem;color:var(--navy);font-weight:600;margin:2px 0;direction:inherit}
+[dir=rtl] .trRel .relSentence,[dir=rtl] .trRel .mini,[dir=rtl] .trRel .relPick{direction:rtl}
+/* ⚡ fast lane */
+.fastLine{margin:6px 0;padding:6px 10px;border-radius:8px;background:var(--sky-soft);border:1px solid #c4e2f9;color:var(--navy);font-size:.8rem}
+.wkFast{font-weight:700;color:var(--navy);cursor:pointer;border-bottom:1px dotted currentColor}
+.faMore{margin-top:8px} .faMore>summary{cursor:pointer;font-size:.8rem;color:var(--muted)}
+.faNow{font-size:.85rem;color:var(--navy);font-weight:600;margin:0 0 8px}
+.faCols{display:flex;gap:4px;direction:ltr;margin:4px 0}
+.faCol{flex:1;display:flex;flex-direction:column;align-items:center;min-width:0}
+.faUp,.faDn{width:100%;display:flex;justify-content:center;background:#f4f7fa}
+.faUp{align-items:flex-end;border-bottom:2px solid var(--navy)} .faDn{align-items:flex-start}
+.faUp i,.faDn i{width:60%;max-width:26px;display:block}
+.faUp i{background:#d9822b;border-radius:4px 4px 0 0} .faDn i{background:#3fa9f5;border-radius:0 0 4px 4px}
+.faCol b{font-size:.72rem;margin-top:2px;font-variant-numeric:tabular-nums} .faCol small{font-size:.64rem;color:var(--muted);white-space:nowrap}
+/* holidays table: your own dates on top */
+#mList li.holSec{font-weight:700;color:var(--navy);font-size:.8rem;margin:10px 0 2px;padding:0;border:none;background:none}
+#mList li.holOwn{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#mList li.holAdd{background:#f7fafc;border:1px dashed var(--border);border-radius:8px;padding:6px 8px}
+#mList li.holAdd input{font:inherit;font-size:.8rem;padding:3px 6px;border:1px solid var(--border);border-radius:6px}
 .ouHint{text-align:center;margin:6px 0 0}
 .ouAlert{font-size:.8rem;color:#8a5a00;background:#fff6e0;border-radius:8px;padding:6px 10px;margin:10px 0 0;text-align:center}
 .ouAlert span{white-space:nowrap;cursor:help} .ouAlert i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-inline-end:4px}
@@ -481,6 +555,15 @@ td.gapCell.closed{background:#d6f3e2!important;color:#0f6a3f;font-weight:700}
 .rrDays{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin:4px 0 0;padding-inline-start:16px}
 .rrd{border-radius:6px;padding:3px 2px;text-align:center;font-size:.7rem;background:#f2f5f9;color:var(--muted)}
 .rrd b{display:block;font-size:.78rem;direction:ltr}
+.rrd small{display:block;font-size:.62rem;line-height:1.1;color:var(--ink);opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rrd.rot{background:repeating-linear-gradient(135deg,#f2f5f9 0 4px,#e6ecf3 4px 8px)}
+/* below-iron list: why each rep is short — reason chips (filter) + per-row tags */
+.rrWhyBar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 10px}
+.rrWhy{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--border);background:#fff;border-radius:14px;padding:3px 10px;font:inherit;font-size:.76rem;cursor:pointer;color:var(--ink)}
+.rrWhy i,.rrTag i{width:9px;height:9px;border-radius:50%;flex:none}
+.rrWhy.on{border-color:var(--navy);box-shadow:inset 0 0 0 1px var(--navy);font-weight:700}
+.rrTags{display:inline-flex;flex-wrap:wrap;gap:4px;min-width:120px}
+.rrTag{display:inline-flex;align-items:center;gap:4px;font-size:.7rem;background:#f2f5f9;border-radius:9px;padding:1px 7px;color:var(--ink);white-space:nowrap}
 .hrChips{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:6px}
 .hrc{border-radius:8px;padding:6px 4px;text-align:center;font-size:.74rem;cursor:default;border:1px solid transparent}
 .hrc b{display:block;font-size:1.05rem;line-height:1.2}
@@ -687,7 +770,8 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <label data-i18n="trFromL">Start Date</label><input type="date" id="trFrom">
         <label data-i18n="trToL">End Date</label><input type="date" id="trTo">
         <button class="linklike" id="resetTrends" style="display:none" data-i18n="resetEdits">↺ Reset to Original Forecast</button>
-        <button class="btn navy" id="trShareBtn" style="margin-inline-start:auto" data-i18n="trShare">📤 Monthly summary</button>
+        <button class="btn ghost sw" id="trDashBtn" type="button" aria-pressed="true" style="margin-inline-start:auto" data-i18n="trDashBtn">📊 Charts</button>
+        <button class="btn navy" id="trShareBtn" data-i18n="trShare">📤 Monthly summary</button>
         <button class="btn ghost" id="exportTrends" data-i18n="exportCsv">⬇ Download CSV</button>
       </div>
       <!-- shareable monthly snapshot (opened in the shared modal): image + text, one click each -->
@@ -710,8 +794,12 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
       </div>
       <!-- one quiet line of guidance: how to adjust a forecast day, and where known events belong -->
       <p class="mini" id="trHint" style="display:none"></p>
+      <!-- ⚡ the forecast is following a sudden shift / callbacks: one line, details one click away -->
+      <p class="fastLine" id="trFast" hidden></p>
       <!-- after opening a period: "↩ Months › August 2026" — one click back to the same view, same row -->
       <div class="trCrumb" id="trCrumb" hidden></div>
+      <!-- 📊 small multiples of the same periods + how two metrics relate (renderTrendDash) -->
+      <div id="trDash" class="trDash"></div>
       <div class="tablewrap" id="trendsWrap"><table id="trendsTable"></table></div>
     </div>
   </section>
@@ -813,7 +901,8 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
     <div class="toolbar">
       <!-- multi-select: none checked = all; check any mix to narrow (populateWfFilters) -->
       <label data-i18n="wfTeamL">Team</label><div class="splitbtn"><button class="btn ghost" id="wfTeamBtn" style="min-width:130px"></button><div class="menu pad" id="wfTeamMenu"></div></div>
-      <label data-i18n="wfSkillL">Skill</label><div class="splitbtn"><button class="btn ghost" id="wfSkillBtn" style="min-width:130px"></button><div class="menu pad" id="wfSkillMenu"></div></div>
+      <!-- skills = the ONE system list (🎧 answering skills, same as matrix / scheduler / recruitment / Settings) -->
+      <div class="splitbtn" id="wfScopeWrap" style="display:none"><button class="btn ghost" id="wfScopeBtn" style="min-width:130px"></button><div class="menu pad" id="wfScopeMenu" style="min-width:240px"></div></div>
       <label data-i18n="wfSiteL">Site</label><div class="splitbtn"><button class="btn ghost" id="wfSiteBtn" style="min-width:130px"></button><div class="menu pad" id="wfSiteMenu"></div></div>
       <!-- day filter: 1-click zoom from the weekly summary to a single day (data is
            already per-weekday, so this only re-scopes the aggregation) -->
@@ -831,6 +920,12 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
       <div class="kpi"><div class="n" id="wfKpiLeak">—</div><div class="l"><span data-i18n="wfKpiLeak">Vacation Leakage Rate</span> <span class="info" data-tipkey="tipWfLeak" tabindex="0">i</span></div></div>
       <div class="kpi"><div class="n" id="wfKpiDev">—</div><div class="l"><span data-i18n="wfKpiDev">Contractual Deviation Index</span> <span class="info" data-tipkey="tipWfDev" tabindex="0">i</span></div></div>
     </div>
+    <!-- the iron, day by day: iron vs sidur in people (+ the forecast need); a day opens its hours (renderIronDays).
+         Folds to its title (remembered) -->
+    <details class="card foldCard" id="wfIronCard" style="display:none" open>
+      <summary><h2><span data-i18n="wfIronT">Iron vs sidur — by day</span> <span class="info" data-tipkey="tipWfIron" tabindex="0">i</span> <span class="foldSum" id="ibSum"></span></h2></summary>
+      <div id="wfIronDays"></div>
+    </details>
     <div class="grid2">
       <div class="card" id="wfTreeCard">
         <h2><span data-i18n="wfTreeTitle">Iron Hours Allocation (Treemap)</span> <span class="info" data-tipkey="tipWfTree" tabindex="0">i</span></h2>
@@ -854,10 +949,17 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <button class="btn ghost" id="wfValCopy" data-i18n="wfValCopy">📋 Copy for Excel</button>
       </div>
       <div class="tablewrap" id="wfValWrap" style="max-height:260px;overflow-y:auto"></div>
+      <!-- the same Friday rotation, next to the iron lists (people by team → messages to TLs); folds -->
+      <details class="foldCard friCard friIn" id="wfFriIn" data-wk="wf" style="display:none" open>
+        <summary><h3><span data-i18n="friT">Friday — last week vs this week</span> <span class="info" data-tipkey="tipFri" tabindex="0">i</span>
+        <span class="foldSum friSum"></span>
+        <span class="seg friEverySeg"><button type="button" data-v="2" data-i18n="friEv2">Every other Friday</button><button type="button" data-v="1" data-i18n="friEv1">Every Friday</button></span></h3></summary>
+        <div class="friBody"></div>
+      </details>
     </div>
     <div class="card">
-      <h2><span data-i18n="rosterTitle">Internal Roster Optimization</span></h2>
-      <div class="tablewrap" id="rosterWrap" style="max-height:300px;overflow-y:auto;margin-top:8px"></div>
+      <h2><span data-i18n="rosterTitle">Below their iron — who and why</span></h2>
+      <div id="rosterWrap" style="margin-top:8px"></div>
     </div>
   </section>
 
@@ -947,6 +1049,13 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
       </div>
       <div class="banner good" id="schBanner"></div>
     </div>
+    <!-- Friday rotation, where the sidur is built: last Friday vs this one (renderFriday). Folds (remembered). -->
+    <details class="card foldCard friCard" id="wfFriCard" data-wk="sch" style="display:none" open>
+      <summary><h2><span data-i18n="friT">Friday — last week vs this week</span> <span class="info" data-tipkey="tipFri" tabindex="0">i</span>
+        <span class="foldSum friSum"></span>
+        <span class="seg friEverySeg"><button type="button" data-v="2" data-i18n="friEv2">Every other Friday</button><button type="button" data-v="1" data-i18n="friEv1">Every Friday</button></span></h2></summary>
+      <div class="friBody"></div>
+    </details>
     <!-- STEP 3 — compliance & delta: rendered after every run -->
     <div class="card" id="schAuditCard" style="display:none">
       <h2><span class="stepN">2</span><span data-i18n="schAuditTitle">Compliance &amp; Changes vs. the Original Sidur</span> <span class="info" data-tipkey="tipSchAudit" tabindex="0">i</span></h2>
@@ -1054,6 +1163,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <div class="frow"><label data-i18n="fmMpt">MPT model</label><select id="setModelMpt" style="width:210px"></select></div>
         <div class="frow"><label for="setAutoHol" data-i18n="fmAutoHol">Auto Israeli-holiday calendar</label><input type="checkbox" class="sw" id="setAutoHol"></div>
         <div class="frow"><label for="setAutoAnom" data-i18n="fmAutoAnom">Auto war/outage detection</label><input type="checkbox" class="sw" id="setAutoAnom"></div>
+        <div class="frow"><label for="setFastAdapt"><span data-i18n="fmFast">📈 Follow sudden changes in demand</span> <span class="info" data-tipkey="tipFast" tabindex="0">i</span> <button class="linklike" id="faBtn" type="button" data-i18n-title="faBtnTip" title="What it sees now and how it works">⚙</button></label><input type="checkbox" class="sw" id="setFastAdapt"></div>
         <div class="frow"><label><span data-i18n="fmProfile">Interval profile window</span> <button class="linklike" id="profBtn" type="button" data-i18n-title="profBtnTip" title="See and edit the intraday call weights">📊</button></label><select id="setProfile" style="width:210px"><option value="adaptive" data-i18n="fmProfAdapt">Adaptive (8w, fallback all)</option><option value="w12" data-i18n="fmProf12">12 weeks</option></select></div>
         <div class="frow" style="border:none;gap:8px;flex-wrap:wrap"><button class="btn ghost" id="backtestBtn" data-i18n="backtestBtn">🧪 Backtest models</button><button class="btn ghost" id="reviewExclBtn" data-i18n="reviewExclBtn">📅 Review excluded days</button><button class="btn ghost" id="holTableBtn" data-i18n="holTableBtn">🕎 Holidays table</button><button class="btn ghost" id="evBtn"><span data-i18n="evTitle">📣 Planned demand events</span> <span class="pill" id="evCount" style="display:none"></span></button></div>
         <!-- planned one-off surges the history can't know (vendor change, campaign): sized once,
@@ -1069,6 +1179,19 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
           <p class="mini" id="profInsight"></p>
           <div class="tablewrap" style="max-height:52vh;overflow:auto"><table id="profTable"></table></div>
           <p class="mini" id="profFoot"></p>
+        </div>
+        <!-- ⚡ fast lane: what the last 10 working days say vs the model, and its two knobs (fastState) -->
+        <div id="faPanel" class="mpanel" data-tkey="faTitle" hidden>
+          <p class="faNow" id="faNow"></p>
+          <div id="faChart"></div>
+          <details class="faMore"><summary data-i18n="faTune">⚙ Fine-tune</summary>
+          <div class="frow"><label for="faOn" data-i18n="faOnL">Follow sudden shifts</label><input type="checkbox" class="sw" id="faOn"></div>
+          <div class="frow"><label data-i18n="faHalfL">Back to the regular model</label>
+            <div class="seg" id="faHalf"><button type="button" data-h="5" data-i18n="faH5">~1 week</button><button type="button" data-h="10" data-i18n="faH10">~2 weeks</button><button type="button" data-h="20" data-i18n="faH20">~4 weeks</button></div></div>
+          <div class="frow"><label><span data-i18n="faRetryL">Abandoned callers who call again</span> <span class="info" data-tipkey="tipFaRetry" tabindex="0">i</span></label>
+            <span><input type="range" id="faRetry" min="0" max="80" step="5" style="width:130px;vertical-align:middle"> <b class="num" id="faRetryV"></b></span></div>
+          <p class="mini" id="faFoot"></p>
+          </details>
         </div>
         <div id="evPanel" class="mpanel" data-tkey="evTitle" hidden>
           <div id="evList"></div>
@@ -1406,7 +1529,7 @@ en:{
   rosterCopyBtn:"Copy list",
   rosterAll:"Show all {n} ▾", rosterLess:"Show fewer ▴", rosterRowTip:"Click to see which days", rosterDayTip:"{s}h in the sidur / {i}h in the iron base",
   rosterMissing:"Iron days missing from the sidur: {d} — the natural place to give the hours back", rosterSpread:"No whole iron day is missing — the gap is shorter shifts; extend on the amber days.", rosterNoIron:"No iron day breakdown for this rep.",
-  skillScopeAll:"All skills answer", skillScopeN:"{n} answering skills",
+  skillScopeAll:"All skills answer", skillScopeN:"{n} answering skills", wfScopeHint:"The skills this page counts — the same 🎧 answering skills the whole app uses (matrix, scheduler, recruitment, Settings). Reps without a skill always count.",
   skillScopeHint:"Which skills count as ANSWERING capacity for this queue's AR/TSF? (HR & workforce pages always include everyone.) On billing days check בכיר; מרפאות usually answer קו 1 too.",
   skillScopeAllBtn:"Count every skill",
   rcScopeAll:"Answering: whole center", rcScopePfx:"Answering: ",
@@ -1622,7 +1745,7 @@ en:{
   tipYield:"Share of trainees expected to certify and start working.",
   cohLine:"{name} — {n} trainees × {y}% yield → ~{m} reps starting {d}",
   cohFloor:"Floor entry", cohReps:"~Reps on floor",
-  rosterTitle:"Internal Roster Optimization",
+  rosterTitle:"Below their iron — who and why",
   rosterHint:"Representatives below their contracted weekly hours — broaden their availability before hiring externally.",
   rosterUnder:"{name}: {s}h scheduled of {c}h contracted — extend availability by {d}h before external hiring.",
   rosterOk:"{name}: at contracted baseline ({c}h).", rosterNone:"No roster data loaded — drop a named roster file on the Home page.",
@@ -1696,7 +1819,32 @@ en:{
   cleanNote:"🧹 {k} outlier points auto-clipped (billing peaks kept)",
   trShowMore:"Show {k} more days ({r} remaining) ▼",
   mxSum:"Daily",
-  mxOffGrid:"incl. {n} calls outside the shift window (not shown as grid rows)"
+  mxOffGrid:"incl. {n} calls outside the shift window (not shown as grid rows)",
+  rrNoWhy:"No status in the sidur — shorter shifts", rrWhyL:"Why:", rrWhyTip:"{n} reps — click to show only them (again = everyone)", rrFriOff:"off this Friday (every other Friday)",
+  wfIronT:"Iron vs sidur — by day", tipWfIron:"Per day, in people: the reps the iron brings (light) vs the reps the sidur placed (navy), and what the forecast needs (orange tick). Friday counts by the rotation. Under each day: sidur hours ÷ iron hours. Follows the filters and the answering skills (🎧). Click a day: its hours.",
+  ibTipIron:"Iron: {n} reps ({h}h)", ibTipFri:"Friday by rotation (every other Friday)", ibTipSched:"Sidur: {n} reps ({h}h)", ibTipUtil:"{p}% of the iron hours are in the sidur", ibTipSchedH:"In the sidur {a}",
+  ibLgIron:"In the iron", ibLgSched:"In the sidur", ibLgNeed:"Needed (forecast)", ibNarrow:"Filtered view — the forecast need shows for the whole center only.", ibPickHint:"Click a day — its hours",
+  friT:"Friday — last week vs this week", tipFri:"Who can work Friday comes from the iron: hours in the Friday cell. Anything else (contract, no Friday, empty, any text) = doesn't work Friday. Those who can work every other Friday: who worked last Friday is off this one, who didn't is due. Last Friday comes from the memory of earlier sidurim (names only, the last 12 Fridays). Reps who left are listed apart.",
+  friEv2:"Every other Friday", friEv1:"Every Friday", friDropT:"Compare with last Friday?", friDropD:"Drop last week's sidur here — only its Friday is read (who worked). The current sidur stays.",
+  friNow:"this Friday {d}", friLastN:"last Friday {d}", friIronN:"with Friday in the iron", friNoLast:"Last Friday ({d}) isn't in memory yet — from next week it fills in by itself.",
+  fri_both:"Two Fridays in a row", fri_due:"Their turn — not in the sidur", fri_dueE:"Their turn this Friday", fri_on:"On, as the rotation says", fri_onAll:"In the sidur this Friday", fri_rest:"Off — worked last Friday", fri_left:"Worked last Friday, no longer active",
+  friTip_both:"Worked last Friday and are in the sidur again this Friday", friTip_due:"Off last Friday, Friday in the iron, and not in this sidur — a typed status shows next to the name", friTip_dueE:"Off last Friday with Friday in the iron — the list to build this Friday from", friTip_on:"In the sidur this Friday after a Friday off — as planned", friTip_onAll:"Everyone in the sidur this Friday", friTip_rest:"Worked last Friday and rest this one", friTip_left:"No longer in the sidur / iron, or the sidur marks them resigned / not active",
+  friCopyTip:"Copy the list by team", friNone:"No Friday with shifts found in that file.", friGot:"Friday {d} saved to memory",
+  holAutoSec:"Hebrew-calendar holidays", holOwnSec:"Your own dates", holOwnNoName:"(no name)", holOwnDel:"Remove", holOwnName:"Name (e.g. Election day)", holOwnTo:"Until (optional)", holOwnAdd:"+ Add", holOwnNeed:"Pick a date first", holOwnAdded:"{n} — {l}",
+  fmFast:"📈 Follow sudden changes in demand", faBtnTip:"What it sees now and how it works", faTitle:"📈 Sudden changes in demand",
+  faIntro:"Calls jumped suddenly? The coming days move to the new level within days, then ease back. Callers who hung up and will call again are counted too.", tipFast:"Calls jumped suddenly? The coming days move to the new level within days, then ease back. Callers who hung up and will call again are counted too.",
+  faOnL:"Follow sudden shifts", faHalfL:"Back to the regular model", faH5:"~1 week", faH10:"~2 weeks", faH20:"~4 weeks", faRetryL:"Abandoned callers who call again",
+  tipFaRetry:"Of the EXTRA abandoned calls (above your usual abandon rate), the share that calls again: ¾ the next working day, ¼ the day after. Typical: 30–60%.",
+  faOff:"Off — the forecast uses the regular models only.", faNoData:"⚡ Needs at least 14 working days of history.",
+  faUp:"📈 Calls rose {p}% in the last {n} days — the next days are raised to match, easing back over {h}.",
+  faDown:"📉 Calls fell {p}% in the last {n} days — the next days are lowered to match, easing back over {h}.",
+  faCalm:"The last days match the forecast.", faRetryNow:"Tomorrow's forecast includes ~{n} calls from people who hung up and will call again.", faNoAns:"With an answered-calls column in the queue file, callers who call again are counted too.",
+  faFoot:"Window {a}–{b} · usual abandon rate {r}. Each new day of data measures it again.", faTipAct:"Actual {n}", faTipExp:"The model expected {n}", faTipBack:"of them callbacks ~{n}", faLgUp:"More calls than forecast", faLgDn:"Fewer calls than forecast", faMore:"details",
+  trDashBtn:"📊 Charts", trPickL:"Show:", relT:"How they relate", trDashHint:"hover = the period's numbers · click = open it", trDashFew:"Pick a longer range to see trends.", trTarget:"target {t}%",
+  trTipDay:"click = its row in the table", trTipOpen:"click = open its days", relNeed:"Needs at least 6 actual periods — pick days or a longer range.",
+  relWeak:"Weakly", relMod:"Moderately", relStrong:"Strongly", relSent:"{s} related (r = {r}): every {dx} ({x}) ≈ {dy} ({y}).", relNone:"{x} and {y} barely move together here (r = {r}).",
+  ibSum:"{p}% of the iron in the sidur", faTune:"⚙ Fine-tune", friSumNow:"{n} on this Friday",
+  relPts:"pts", relHrs:"h", relFoot:"{n} actual periods · forecast periods are left out (they are the model's own numbers) · a relation, not proof of cause"
 },
 he:{
   appTitle:"סימולטור WFM — מתכנן קיבולת וגיוס",
@@ -1924,7 +2072,7 @@ he:{
   rosterCopyBtn:"העתקת רשימה",
   rosterAll:"הצג את כל {n} ▾", rosterLess:"הצג פחות ▴", rosterRowTip:"לחצו כדי לראות באילו ימים", rosterDayTip:"{s} ש׳ בסידור / {i} ש׳ בברזל",
   rosterMissing:"ימי ברזל שחסרים בסידור: {d} — המקום הטבעי להחזיר את השעות", rosterSpread:"אין יום ברזל שלם שחסר — הפער הוא משמרות קצרות; הארכה בימים הכתומים.", rosterNoIron:"אין פירוט ימי ברזל לנציג זה.",
-  skillScopeAll:"כל המיומנויות עונות", skillScopeN:"{n} מיומנויות עונות",
+  skillScopeAll:"כל המיומנויות עונות", skillScopeN:"{n} מיומנויות עונות", wfScopeHint:"המיומנויות שהעמוד הזה סופר — אותן מיומנויות עונות 🎧 של כל המערכת (מטריצה, שיבוץ, גיוס, הגדרות). נציגים ללא מיומנות תמיד נספרים.",
   skillScopeHint:"אילו מיומנויות נספרות כקיבולת מענה (AR/TSF) של התור? (דפי כוח אדם תמיד כוללים את כולם.) בימי גבייה סמנו גם בכיר; מרפאות לרוב עונות גם קו 1.",
   skillScopeAllBtn:"ספרו את כל המיומנויות",
   rcScopeAll:"מענה: כל המוקד", rcScopePfx:"מענה: ",
@@ -2140,7 +2288,7 @@ he:{
   tipYield:"אחוז החניכים הצפויים לעבור הסמכה ולהתחיל לעבוד.",
   cohLine:"{name} — {n} חניכים × {y}% הסמכה → ~{m} נציגים מתחילים {d}",
   cohFloor:"כניסה למשמרות", cohReps:"נציגים בפועל ~",
-  rosterTitle:"אופטימיזציית סידור פנימית",
+  rosterTitle:"מתחת לברזל — מי ולמה",
   rosterHint:"נציגים מתחת לשעות הבסיס החוזיות שלהם — הרחיבו זמינות לפני גיוס חיצוני.",
   rosterUnder:"{name}: משובצות {s} שעות מתוך {c} חוזיות — הרחיבו זמינות ב־{d} שעות לפני גיוס חיצוני.",
   rosterOk:"{name}: עומד בבסיס החוזי ({c} שעות).", rosterNone:"לא נטענו נתוני סידור — גררו קובץ סידור עם שמות בדף הבית.",
@@ -2214,7 +2362,32 @@ he:{
   cleanNote:"🧹 {k} נקודות חריגות נוקו אוטומטית (שיאי ימי חיוב נשמרו)",
   trShowMore:"הצג עוד {k} ימים (נותרו {r}) ▼",
   mxSum:"יומי",
-  mxOffGrid:"כולל {n} שיחות מחוץ לחלון המשמרת (לא מוצגות כשורות בגריד)"
+  mxOffGrid:"כולל {n} שיחות מחוץ לחלון המשמרת (לא מוצגות כשורות בגריד)",
+  rrNoWhy:"אין סטטוס בסידור — משמרות קצרות", rrWhyL:"למה:", rrWhyTip:"{n} נציגים — לחיצה מציגה רק אותם (שוב = כולם)", rrFriOff:"לא בשישי הזה (שישי לסירוגין)",
+  wfIronT:"ברזל מול סידור — לפי יום", tipWfIron:"לכל יום, באנשים: כמה נציגים הברזל מביא (בהיר) מול כמה הסידור שיבץ (כחול כהה), וכמה התחזית דורשת (קו כתום). שישי נספר לפי הסבב. מתחת לכל יום: שעות בסידור ÷ שעות בברזל. לפי הסינונים ומיומנויות המענה (🎧). לחיצה על יום: לפי שעות.",
+  ibTipIron:"ברזל: {n} נציגים ({h} ש׳)", ibTipFri:"שישי לפי סבב (לסירוגין)", ibTipSched:"סידור: {n} נציגים ({h} ש׳)", ibTipUtil:"{p}% משעות הברזל נכנסו לסידור", ibTipSchedH:"בסידור {a}",
+  ibLgIron:"בברזל", ibLgSched:"בסידור", ibLgNeed:"נדרשים (תחזית)", ibNarrow:"תצוגה מסוננת — הצורך מהתחזית מוצג רק לכל המוקד.", ibPickHint:"לחיצה על יום — לפי שעות",
+  friT:"שישי — שבוע שעבר מול השבוע", tipFri:"מי יכול לעבוד שישי — לפי הברזל: שעות בתא של שישי. כל דבר אחר (חוזה, ללא שישי, ריק, כל טקסט) = לא עובד שישי. מי שיכול — עובד שישי לסירוגין: מי שעבד בשישי שעבר לא בתורו השבוע, ומי שלא עבד — בתורו. שישי שעבר מגיע מהזיכרון של סידורים קודמים (שמות בלבד, 12 ימי שישי אחרונים). נציגים שעזבו מוצגים בנפרד.",
+  friEv2:"שישי לסירוגין", friEv1:"כל שישי", friDropT:"להשוות לשישי שעבר?", friDropD:"גררו לכאן את הסידור של שבוע שעבר — נקרא רק יום שישי שלו (מי עבד). הסידור הנוכחי נשאר.",
+  friNow:"בשישי הזה {d}", friLastN:"בשישי שעבר {d}", friIronN:"עם שישי בברזל", friNoLast:"שישי שעבר ({d}) עוד לא בזיכרון — מהשבוע הבא זה יתמלא לבד.",
+  fri_both:"שני ימי שישי ברצף", fri_due:"בתורם — לא בסידור", fri_dueE:"בתורם בשישי הזה", fri_on:"משובצים לפי הסבב", fri_onAll:"בסידור בשישי הזה", fri_rest:"לא בתורם — עבדו בשישי שעבר", fri_left:"עבדו בשישי שעבר, כבר לא פעילים",
+  friTip_both:"עבדו בשישי שעבר ושובצו שוב בשישי הזה", friTip_due:"לא עבדו בשישי שעבר, יש להם שישי בברזל ואינם בסידור — סטטוס שהוקלד מוצג ליד השם", friTip_dueE:"לא עבדו בשישי שעבר ויש להם שישי בברזל — הרשימה לבניית השישי הזה", friTip_on:"בסידור בשישי הזה אחרי שישי חופשי — כמתוכנן", friTip_onAll:"כל מי שבסידור בשישי הזה", friTip_rest:"עבדו בשישי שעבר ונחים בשישי הזה", friTip_left:"כבר לא בסידור / בברזל, או שהסידור מסמן התפטרות / לא פעיל",
+  friCopyTip:"העתקת הרשימה לפי צוות", friNone:"לא נמצא בקובץ יום שישי עם משמרות.", friGot:"שישי {d} נשמר בזיכרון",
+  holAutoSec:"חגים לפי הלוח העברי", holOwnSec:"תאריכים שלכם", holOwnNoName:"(ללא שם)", holOwnDel:"הסרה", holOwnName:"שם (למשל יום בחירות)", holOwnTo:"עד (לא חובה)", holOwnAdd:"+ הוספה", holOwnNeed:"בחרו תאריך קודם", holOwnAdded:"{n} — {l}",
+  fmFast:"📈 התחזית עוקבת אחרי שינוי פתאומי בביקוש", faBtnTip:"מה הוא רואה עכשיו ואיך זה עובד", faTitle:"📈 שינוי פתאומי בביקוש",
+  faIntro:"השיחות קפצו פתאום? הימים הקרובים עוברים לרמה החדשה תוך ימים, ואז חוזרים בהדרגה. גם מי שניתק ויתקשר שוב נכנס לתחזית.", tipFast:"השיחות קפצו פתאום? הימים הקרובים עוברים לרמה החדשה תוך ימים, ואז חוזרים בהדרגה. גם מי שניתק ויתקשר שוב נכנס לתחזית.",
+  faOnL:"מעקב אחרי שינוי פתאומי", faHalfL:"חזרה למודל הרגיל", faH5:"~שבוע", faH10:"~שבועיים", faH20:"~4 שבועות", faRetryL:"נוטשים שמתקשרים שוב",
+  tipFaRetry:"מתוך הנטישות העודפות (מעל שיעור הנטישה הרגיל שלכם) — כמה מתקשרים שוב: ¾ ביום העבודה הבא, ¼ ביום שאחריו. מקובל: 30–60%.",
+  faOff:"כבוי — התחזית משתמשת רק במודלים הרגילים.", faNoData:"⚡ נדרשים לפחות 14 ימי עבודה בהיסטוריה.",
+  faUp:"📈 בימים האחרונים ({n}) השיחות עלו ב־{p}% — הימים הקרובים הועלו בהתאם, וחוזרים בהדרגה תוך {h}.",
+  faDown:"📉 בימים האחרונים ({n}) השיחות ירדו ב־{p}% — הימים הקרובים הורדו בהתאם, וחוזרים בהדרגה תוך {h}.",
+  faCalm:"הימים האחרונים תואמים את התחזית.", faRetryNow:"התחזית למחר כוללת ~{n} שיחות של מי שניתק ויתקשר שוב.", faNoAns:"עם עמודת שיחות נענות בקובץ התור, נספרים גם מי שיתקשרו שוב.",
+  faFoot:"חלון {a}–{b} · שיעור נטישה רגיל {r}. כל יום נתונים חדש מודד מחדש.", faTipAct:"בפועל {n}", faTipExp:"המודל ציפה ל־{n}", faTipBack:"מתוכן שיחות חוזרות ~{n}", faLgUp:"יותר שיחות מהתחזית", faLgDn:"פחות שיחות מהתחזית", faMore:"פרטים",
+  trDashBtn:"📊 גרפים", trPickL:"הצגה:", relT:"קשר בין מדדים", trDashHint:"ריחוף = נתוני התקופה · לחיצה = פתיחה", trDashFew:"בחרו טווח ארוך יותר כדי לראות מגמה.", trTarget:"יעד {t}%",
+  trTipDay:"לחיצה = השורה בטבלה", trTipOpen:"לחיצה = פתיחת הימים", relNeed:"נדרשות לפחות 6 תקופות בפועל — בחרו ימים או טווח ארוך יותר.",
+  relWeak:"קשר חלש", relMod:"קשר בינוני", relStrong:"קשר חזק", relSent:"{s} (r = {r}): כל {dx} ({x}) ≈ {dy} ({y}).", relNone:"{x} ו־{y} כמעט לא זזים יחד כאן (r = {r}).",
+  ibSum:"{p}% מהברזל בסידור", faTune:"⚙ כוונון", friSumNow:"{n} בשישי הזה",
+  relPts:"נק׳", relHrs:"ש׳", relFoot:"{n} תקופות בפועל · תקופות תחזית לא נכללות (אלה מספרי המודל עצמו) · קשר, לא הוכחה לסיבה"
 }};
 let lang="en";
 const t=(k,vars)=>{ let s=I18N[lang][k] ?? I18N.en[k] ?? k;
@@ -2639,7 +2812,15 @@ const state={
             schedMode:"optimizeCurrent", // scheduler page: optimizeCurrent | generateIron
             schGenWeek:null, // Mode 2 only: the week (Sunday ISO) to build from iron; null = sidur week
             demandEvents:[], // planned one-off demand surges: {id,name,start,days,total,shape}
-            profileEdits:{}}, // user-pinned intraday shares: {weekday:{"HH:MM":share}}
+            profileEdits:{}, // user-pinned intraday shares: {weekday:{"HH:MM":share}}
+            friEvery:2,      // Friday rotation: 2 = each rep works every other Friday, 1 = every Friday
+            friHist:{},      // Friday memory across sidurim: {Friday ISO: [names who worked]} — last 12
+            customHol:[],    // your own holiday dates: {id,from,to,name,lvl}
+            fastAdapt:true,  // ⚡ forecast follows a sudden demand shift within days
+            fastHalf:10,     // ⚡ the adjustment fades by half every N working days
+            retryShare:0.4,  // share of EXTRA abandoned callers who call again (next 2 working days)
+            trDash:true,     // Date Trends: charts above the table
+            trCharts:["vol","ar","aht","occ"], trRel:"vol|ar"}, // which trend charts + the relationship pair
   edits:new Set(), undoStack:[], pristine:new Map(),
   volAdj:[],                     // forward-propagated volume edits: {ds,di,tm,factor}
   domFactor:null, cleanClipped:0, // calendar uplift factors + outlier-guard audit count
@@ -3463,7 +3644,7 @@ function parseIronGrid(grid){
     const en=m.end!=null?normTimeAny(row[m.end]):null;
     if(s&&en&&en>s){
       if(!e.days[di]){ const h=(toMinW(en)-toMinW(s))/60; e.days[di]={s,e:en,h}; e.contracted+=h; total+=h; }
-    }else e.missing.add(di); // blank Iron start/end → validation target
+    }else e.missing.add(di); // no hours in the cell (חוזה / ללא שישי / empty / any text) = does NOT work that day — never a validation error
   }
   if(!emps.size) return false;
   state.iron={emps,total}; state.ironManual=false;
@@ -3519,6 +3700,7 @@ function walkRosterExtras(grid,hd){
     }
   }
   // deviation index counters recompute from rows on demand (filter/week aware)
+  recordFriHist(); // this sidur's Friday joins the rotation memory (next week compares against it)
 }
 function crossValidateIron(){
   state.validationErrors=[];
@@ -3580,12 +3762,60 @@ function parseTikshuvWorkbook(sheets){
 function wfPass(rec){
   const f=state.wfFilter;
   const ok=(sel,v)=>!sel||!sel.length||sel.includes(v);
-  return ok(f.team,rec.team)&&ok(f.skill,rec.skill)&&ok(f.site,rec.site);
+  // skills: the ONE system list (🎧 answering skills) — every number on the page follows it; untagged reps always count
+  const sc=state.capSkills, sk=String(rec.skill||"").trim(), okSk=!sc||!sc.length||!sk||sc.includes(sk);
+  return ok(f.team,rec.team)&&okSk&&ok(f.site,rec.site);
 }
 /* day-scope helpers — every Workforce aggregation zooms identically to the picked day.
    day:"" = whole week; "0".."5" = a single weekday (data already carries r.di / e.days[di]) */
 function wfDayOK(r){ const d=state.wfFilter.day; return d===""||r.di===+d; }
-function wfIronHours(e){ const d=state.wfFilter.day; return d===""?e.contracted:((e.days&&e.days[+d]&&e.days[+d].h)||0); }
+function wfIronHours(e,name,wk){ const d=state.wfFilter.day; return d===""?ironWeekH(name,e,wk):ironDayH(name,e,+d,wk); }
+/* FRIDAY ROTATION — the iron gives Friday hours to every rep eligible for Friday, but each works
+   every other Friday (settings.friEvery=2; 1 = every Friday). One rule, app-wide: worked LAST
+   Friday → off this Friday (0); didn't → due (1); last Friday not known → half (0.5). Every iron
+   total (utilization, impact matrix, readiness, iron-by-day) reads the iron's Friday through it.
+   One sidur is loaded at a time, so settings.friHist keeps each sidur's Friday: {Friday ISO: [names]}
+   — names only, the last 12 Fridays (~10 KB). */
+function friLast(wk){ const h=state.settings.friHist||{}, p=wk&&addDays(wk,-2); return p&&h[p]?new Set(h[p]):null; }
+function friW(name,wk){
+  if((state.settings.friEvery||2)===1||!wk) return 1;
+  const last=friLast(wk); if(!last) return 0.5;
+  return last.has(name)?0:1;
+}
+function ironDayH(name,e,di,wk){ const h=(e&&e.days&&e.days[di]&&e.days[di].h)||0; return di===5&&h?h*friW(name,wk):h; }
+function ironWeekH(name,e,wk){ let s=0; for(let di=0;di<6;di++) s+=ironDayH(name,e,di,wk); return s; }
+/* a rep who is no longer active: the sidur says so this week (resigned / left / not active) */
+const LEFT_RE=/התפטר|עזב|סיים|לא פעיל|resign|left|inactive/i;
+function repLeft(name,wk){ const set=new Set(weekDates(wk));
+  return (state.unallocRows||[]).concat(state.vacations||[]).some(x=>x.name===name&&set.has(x.ds)&&LEFT_RE.test(x.status||x.type||"")); }
+function recordFriHist(rows){
+  const by={};
+  for(const r of rows||state.schedRows||[]) if(r.di===5&&r.ds&&r.h>0) (by[r.ds]=by[r.ds]||new Set()).add(r.name);
+  if(!Object.keys(by).length) return [];
+  const h=state.settings.friHist=state.settings.friHist||{};
+  for(const ds in by) h[ds]=[...by[ds]].sort();
+  const keep=new Set(Object.keys(h).sort().slice(-12)); for(const k of Object.keys(h)) if(!keep.has(k)) delete h[k];
+  saveState();
+  return Object.keys(by).sort();
+}
+/* last week's sidur, read for its FRIDAY only (who worked) → friHist. The loaded sidur is untouched. */
+async function ingestFriOnly(f){
+  const res=await bytesToGrid(await f.arrayBuffer());
+  const ironRe=/ברזל|iron|בסיס/i, rosterRe=/סידור|roster|actual/i;
+  const sheets=(res.grids?res.grids.map(s=>({name:String(s&&s.name||""),grid:((s&&s.grid)||s||[]).filter(r=>r&&r.length)})):[{name:"",grid:res.grid||[]}])
+    .filter(s=>!ironRe.test(s.name)).sort((a,b)=>rosterRe.test(b.name)-rosterRe.test(a.name));
+  for(const s of sheets){
+    const hd=findHeader(s.grid); if(!hd) continue; const m=hd.map;
+    if(m.name==null||m.start==null||m.end==null||m.date==null) continue;
+    const rows=[];
+    for(let r=hd.row+1;r<s.grid.length;r++){ const row=s.grid[r]; if(!row) continue;
+      const name=String(row[m.name]??"").trim(), ds=normDateAny(row[m.date]); if(!name||!ds) continue;
+      const a=normTimeAny(row[m.start]), b=normTimeAny(row[m.end]);
+      if(a&&b&&b>a) rows.push({name,ds,di:fromISO(ds).getDay(),h:1}); }
+    const got=recordFriHist(rows); if(got.length) return got;
+  }
+  return [];
+}
 /* the Workforce page anchors to the SIDUR's own week: if the globally selected
    week has no roster rows (e.g. the user browsed a forecast week on the matrix),
    fall back to the week of the uploaded sidur so this page is never empty */
@@ -3593,7 +3823,7 @@ function wfWeek(){
   const w=state.week;
   // no hours yet → the sidur's rows are its statuses / empty cells
   const rows=state.schedRows.length?state.schedRows:(state.unallocRows||[]).concat(state.vacations||[]);
-  if(w&&rows.some(r=>{const set=new Set(weekDates(w));return set.has(r.ds);})) return w;
+  if(w){ const set=new Set(weekDates(w)); if(rows.some(r=>set.has(r.ds))) return w; }
   const ds=rows.map(r=>r.ds).filter(Boolean).sort()[0];
   return ds?sundayOf(ds):w;
 }
@@ -3610,7 +3840,7 @@ function sidurEmpty(){
   const wk=wfWeek(); if(!wk||!state.rosterMeta.size) return false;
   const set=new Set(weekDates(wk));
   const sched=state.schedRows.filter(r=>set.has(r.ds)).reduce((a,r)=>a+r.h,0);
-  let iron=0; if(state.iron) for(const [,e] of state.iron.emps) iron+=e.contracted||0;
+  let iron=0; if(state.iron) for(const [n,e] of state.iron.emps) iron+=ironWeekH(n,e,wk);
   return iron>0?sched<0.1*iron:sched===0;
 }
 /* Over/Under chart (the WFM-standard staffing view), in PEOPLE: a zero line; green bars up = surplus,
@@ -3660,16 +3890,16 @@ function renderReadiness(){
   const groupsHtml=map=>{ const g={}; for(const [n,k] of map) (g[k]=g[k]||[]).push(n);
     return Object.entries(g).sort((a,b)=>b[1].length-a[1].length); };
   const days=weekDates(wk).map(ds=>{ const di=fromISO(ds).getDay();
-    const iron=[]; if(state.iron) for(const [n,e] of state.iron.emps) if(e.days&&e.days[di]&&inScope(n)) iron.push({n,w:e.days[di]});
+    const iron=[]; if(state.iron) for(const [n,e] of state.iron.emps) if(e.days&&e.days[di]&&inScope(n)){ const k=di===5?friW(n,wk):1; if(k>0) iron.push({n,w:e.days[di],k}); } // Friday: this week's rotation
     const req={}; const c=computeDay(ds);
     if(c) c.rows.forEach(r=>{ if(r.rec&&!r.closed&&!r.exc&&!r.nodata) req[r.tm]=r.reqEff; });
     const needH=Object.keys(req).length?Object.values(req).reduce((a,b)=>a+b,0)/2:null;
-    const ironH=iron.reduce((a,r)=>a+r.w.h,0), avgH=iron.length?ironH/iron.length:8;
-    return {ds,di,iron,req,needH,ironH,need:needH==null?null:needH/avgH}; }).filter(d=>d.iron.length||d.need!=null);
+    const ironN=iron.reduce((a,r)=>a+r.k,0), ironH=iron.reduce((a,r)=>a+r.w.h*r.k,0), avgH=ironN?ironH/ironN:8;
+    return {ds,di,iron,ironN,req,needH,ironH,need:needH==null?null:needH/avgH}; }).filter(d=>d.iron.length||d.need!=null);
   const hasFc=days.some(d=>d.need!=null);
   nf.style.display=hasFc?"none":"";
-  const cols=days.map(d=>({key:d.di,label:dn[d.di],sub:+d.ds.slice(8)+"/"+(+d.ds.slice(5,7)),need:d.need,avail:d.iron.length,pick:pick!==""&&+pick===d.di,
-    tip:[dn[d.di]+" "+fmtD(d.ds).slice(0,5), d.need!=null?t("ouTipNeed",{n:fmt(d.need),h:fmt(d.needH)}):null, t("ouTipIron",{i:d.iron.length,h:fmt(d.ironH)})].filter(Boolean).join("\n")}));
+  const cols=days.map(d=>({key:d.di,label:dn[d.di],sub:+d.ds.slice(8)+"/"+(+d.ds.slice(5,7)),need:d.need,avail:d.ironN,pick:pick!==""&&+pick===d.di,
+    tip:[dn[d.di]+" "+fmtD(d.ds).slice(0,5), d.need!=null?t("ouTipNeed",{n:fmt(d.need),h:fmt(d.needH)}):null, t("ouTipIron",{i:fmt(d.ironN),h:fmt(d.ironH)})].filter(Boolean).join("\n")}));
   const leg=hasFc?[["sur",t("ouUp")],["st",t("ouDn")]]:[["av",t("ouLgIron")]];
   let html=ouChart(cols,150)+`<div class="legend rdyLeg">${leg.map(([k,l])=>`<span><i class="lg-${k}"></i>${l}</span>`).join("")}</div>`;
   // statuses: flagged, never subtracted
@@ -3681,7 +3911,7 @@ function renderReadiness(){
     const hrs=new Set(Object.keys(d.req).map(tm=>tm.slice(0,2)));
     if(!hrs.size) d.iron.forEach(r=>halfHoursBetween(r.w.s,r.w.e).forEach(tm=>hrs.add(tm.slice(0,2))));
     const hcols=[...hrs].sort().map(h=>{ const hh=[h+":00",h+":30"];
-      const av=hh.reduce((a,tm)=>a+d.iron.filter(r=>halfHoursBetween(r.w.s,r.w.e).includes(tm)).length,0)/2;
+      const av=hh.reduce((a,tm)=>a+d.iron.filter(r=>halfHoursBetween(r.w.s,r.w.e).includes(tm)).reduce((x,r)=>x+r.k,0),0)/2;
       const nv=hh.filter(tm=>d.req[tm]!=null), need=nv.length?nv.reduce((a,tm)=>a+d.req[tm],0)/nv.length:null;
       return {key:h,label:h,need,avail:av,tip:h+":00"+(need!=null?"\n"+t("ouTipNeedH",{n:fmt(need)}):"")+"\n"+t("ouTipIronH",{a:fmt(av)})}; });
     const dm=stDay.get(d.ds);
@@ -3695,8 +3925,138 @@ function renderReadiness(){
     state.wfFilter.day=state.wfFilter.day===di?"":di; saveData(); renderWorkforce(); }));
   box.querySelectorAll(".ouDay .rdyCol").forEach(b=>{ b.style.cursor="default"; });
 }
+/* iron vs sidur in PEOPLE, one column per day (or hour): the iron (light) and the sidur (navy) side by
+   side on ONE scale, the forecast need a tick across the column. Same column/click shell as ouChart.
+   cols: [{key,label,sub,iron,sched,need,tip,pick,foot,cls}] */
+function ironBars(cols,H){
+  const esc=v=>String(v).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");
+  const max=Math.max(1,...cols.map(c=>Math.max(c.iron,c.sched,c.need||0))), s=H/max, LBL=20;
+  return `<div class="ouWrap"><div class="ouCols">`+cols.map(c=>
+    `<button type="button" class="rdyCol${c.pick?" pick":""}" data-k="${c.key}" title="${esc(c.tip)}"><span class="ibPlot" style="height:${H+LBL}px">`
+    +`<span class="ibB ir" style="height:${(c.iron*s).toFixed(1)}px"></span>`
+    +`<span class="ibB sd" style="height:${(c.sched*s).toFixed(1)}px"><b class="ouLbl">${Math.round(c.sched)}</b></span>`
+    +(c.need!=null?`<i class="ibN" style="bottom:${(c.need*s).toFixed(1)}px"></i>`:"")+`</span>`
+    +`<span class="rdyDay">${c.label}${c.sub?` <small>${c.sub}</small>`:""}</span>`
+    +(c.foot?`<span class="ibSub ${c.cls||""}">${c.foot}</span>`:"")+`</button>`).join("")+`</div></div>`;
+}
+/* a full sidur, the iron day by day: per day the reps the iron brings (Friday by rotation) vs the reps the
+   sidur placed, and what the forecast needs — people, the page filters + the answering skills (🎧).
+   Under each day: sidur hours ÷ iron hours. Click a day → the same picture by hour. */
+function renderIronDays(){
+  const card=document.getElementById("wfIronCard"), box=document.getElementById("wfIronDays"); if(!card||!box) return;
+  const wk=wfWeek(), on=!!(state.iron&&wk&&!sidurEmpty());
+  card.style.display=on?"":"none";
+  if(!on) return;
+  const dn=t("days"), pick=state.wfFilter.day, fmt=v=>Math.round(v).toLocaleString();
+  const sc=state.schedSkills, metaOf=n=>{ const m=state.rosterMeta.get(n)||{}, e=state.iron.emps.get(n)||{};
+    return {team:m.team||e.team||"",skill:(m.skill||e.skill||"").trim(),site:m.site||e.site||""}; };
+  const pass=n=>wfPass(metaOf(n)); // page filters + the 🎧 skills — the same scope as the KPIs above
+  const f=state.wfFilter, narrowed=f.team.length||f.site.length; // the need is the 🎧 queue's: shown unless a team/site slice is picked
+  const days=weekDates(wk).map(ds=>{ const di=fromISO(ds).getDay();
+    const iron=[]; for(const [n,e] of state.iron.emps){ const w=e.days&&e.days[di]; if(!w||!pass(n)) continue;
+      const k=di===5?friW(n,wk):1; if(k>0) iron.push({n,s:w.s,e:w.e,h:w.h,k}); }
+    const sched=state.schedRows.filter(r=>r.ds===ds&&r.h>0&&pass(r.name));
+    const ironN=iron.reduce((a,r)=>a+r.k,0), ironH=iron.reduce((a,r)=>a+r.h*r.k,0);
+    const schedN=new Set(sched.map(r=>r.name)).size, schedH=sched.reduce((a,r)=>a+r.h,0);
+    const req={}; if(!narrowed){ const c=computeDay(ds); if(c) c.rows.forEach(r=>{ if(r.rec&&!r.closed&&!r.exc&&!r.nodata) req[r.tm]=r.reqEff; }); }
+    const needH=Object.keys(req).length?Object.values(req).reduce((a,b)=>a+b,0)/2:null;
+    const avgH=schedN?schedH/schedN:(ironN?ironH/ironN:8);
+    return {ds,di,iron,sched,ironN,ironH,schedN,schedH,req,needH,need:needH==null?null:needH/avgH}; }).filter(d=>d.ironN||d.schedN);
+  const uTier=u=>u>=0.9?"good":u>=0.75?"warn":"bad";
+  const cols=days.map(d=>{ const u=d.ironH?d.schedH/d.ironH:null;
+    return {key:d.di,label:dn[d.di],sub:+d.ds.slice(8)+"/"+(+d.ds.slice(5,7)),iron:d.ironN,sched:d.schedN,need:d.need,pick:pick!==""&&+pick===d.di,
+      foot:u==null?"":Math.round(u*100)+"%",cls:u==null?"":uTier(u),
+      tip:[dn[d.di]+" "+fmtD(d.ds).slice(0,5),t("ibTipIron",{n:fmt(d.ironN),h:fmt(d.ironH)})+(d.di===5&&(state.settings.friEvery||2)===2?" · "+t("ibTipFri"):""),
+        t("ibTipSched",{n:fmt(d.schedN),h:fmt(d.schedH)}),d.need!=null?t("ouTipNeed",{n:fmt(d.need),h:fmt(d.needH)}):null,
+        u!=null?t("ibTipUtil",{p:Math.round(u*100)}):null].filter(Boolean).join("\n")}; });
+  const leg=[["ir",t("ibLgIron")],["sd",t("ibLgSched")]].concat(days.some(d=>d.need!=null)?[["nd",t("ibLgNeed")]]:[]);
+  let html=ironBars(cols,130)+`<div class="legend rdyLeg">${leg.map(([k,l])=>`<span><i class="lg-${k}"></i>${l}</span>`).join("")}</div>`;
+  const d=days.find(x=>pick!==""&&+pick===x.di);
+  if(!d) html+=`<p class="mini ouHint">${t("ibPickHint")}</p>`;
+  else{ // the picked day by hour: reps at the same time in the iron, in the sidur, and needed
+    const hrs=new Set(Object.keys(d.req).map(tm=>tm.slice(0,2)));
+    d.iron.concat(d.sched).forEach(r=>halfHoursBetween(r.s,r.e).forEach(tm=>hrs.add(tm.slice(0,2))));
+    const hcols=[...hrs].sort().map(h=>{ const hh=[h+":00",h+":30"];
+      const iv=hh.reduce((a,tm)=>a+d.iron.filter(r=>halfHoursBetween(r.s,r.e).includes(tm)).reduce((x,r)=>x+r.k,0),0)/2;
+      const sv=hh.reduce((a,tm)=>a+d.sched.filter(r=>halfHoursBetween(r.s,r.e).includes(tm)).length,0)/2;
+      const nv=hh.filter(tm=>d.req[tm]!=null), need=nv.length?nv.reduce((a,tm)=>a+d.req[tm],0)/nv.length:null;
+      return {key:h,label:h,iron:iv,sched:sv,need,tip:h+":00\n"+t("ouTipIronH",{a:fmt(iv)})+"\n"+t("ibTipSchedH",{a:fmt(sv)})+(need!=null?"\n"+t("ouTipNeedH",{n:fmt(need)}):"")}; });
+    html+=`<div class="ouDay"><div class="ouDayH">${t("ouByHour",{d:dn[d.di]+" "+fmtD(d.ds).slice(0,5)})}</div>${ironBars(hcols,80)}</div>`;
+  }
+  box.innerHTML=html;
+  // folded summary: the same number, at the same precision, as the utilization KPI above
+  { const iH=days.reduce((a,d)=>a+d.ironH,0), sH=days.reduce((a,d)=>a+d.schedH,0); document.getElementById("ibSum").textContent=iH?t("ibSum",{p:(sH/iH*100).toFixed(1)}):""; }
+  box.querySelector(".ouWrap").querySelectorAll(".rdyCol").forEach(b=>b.addEventListener("click",()=>{ const di=b.dataset.k;
+    state.wfFilter.day=state.wfFilter.day===di?"":di; saveData(); renderWorkforce(); }));
+  box.querySelectorAll(".ouDay .rdyCol").forEach(b=>{ b.style.cursor="default"; });
+}
+/* Friday rotation: this Friday vs last Friday. One sidur is loaded at a time, so last Friday comes from the
+   Friday memory (friHist, filled by every sidur upload); without it the card offers last week's file.
+   Groups: two Fridays in a row · due and not on · on as planned · off (worked last week) · no longer active. */
+function renderFriday(){ document.querySelectorAll(".friCard").forEach(c=>renderFriCard(c,c.dataset.wk==="sch"?schWeek():wfWeek())); }
+function renderFriCard(card,wk){
+  const box=card.querySelector(".friBody"); if(!box) return;
+  const on=!!(wk&&state.rosterMeta.size&&(state.iron||state.schedRows.length));
+  card.style.display=on?"":"none"; if(!on) return;
+  const every=state.settings.friEvery||2;
+  card.querySelectorAll(".friEverySeg button").forEach(b=>b.classList.toggle("active",+b.dataset.v===every));
+  const esc=v=>String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+  const fri=addDays(wk,5), prev=addDays(wk,-2), last=friLast(wk), wkSet=new Set(weekDates(wk));
+  const empty=sidurEmpty()||!state.schedRows.some(r=>wkSet.has(r.ds)&&r.h>0); // a week with no shifts yet: who is due
+  const metaOf=n=>{ const m=state.rosterMeta.get(n)||{}, e=(state.iron&&state.iron.emps.get(n))||{}; return {team:m.team||e.team||"",skill:m.skill||e.skill||"",site:m.site||e.site||""}; };
+  const pass=n=>wfPass(metaOf(n));
+  const ironFri=[]; if(state.iron) for(const [n,e] of state.iron.emps) if(e.days&&e.days[5]&&e.days[5].h>0&&pass(n)) ironFri.push(n);
+  const now=new Set(state.schedRows.filter(r=>r.ds===fri&&r.h>0&&pass(r.name)).map(r=>r.name));
+  const active=n=>(state.rosterMeta.has(n)||(state.iron&&state.iron.emps.has(n)))&&!repLeft(n,wk);
+  const stFri=new Map(); (state.vacations||[]).forEach(v=>{ if(v.ds===fri&&!stFri.has(v.name)) stFri.set(v.name,t("wf_"+v.type)); });
+  (state.unallocRows||[]).forEach(u=>{ if(u.ds===fri&&u.status&&!stFri.has(u.name)) stFri.set(u.name,u.status); });
+  const num=(n,l)=>`<span><span class="n">${n}</span> <span class="l">${l}</span></span>`;
+  let html=`<div class="friHead">`+num(empty?"—":now.size,t("friNow",{d:fmtD(fri).slice(0,5)})+(empty?" · "+t("wfNotYet"):""))
+    +(last?num(last.size,t("friLastN",{d:fmtD(prev).slice(0,5)})):"")+num(ironFri.length,t("friIronN"))+`</div>`;
+  const groups=[];
+  if(last){
+    const lastP=[...last].filter(n=>!state.rosterMeta.has(n)&&!(state.iron&&state.iron.emps.has(n))||pass(n));
+    if(every===2) groups.push({k:"both",c:"#c58a1a",names:[...now].filter(n=>last.has(n)),open:true});
+    groups.push({k:empty?"dueE":"due",c:empty?"#1b7fd0":"#c8372d",names:ironFri.filter(n=>!last.has(n)&&!now.has(n)&&active(n)),open:empty});
+    groups.push({k:every===2?"on":"onAll",c:"#1e9e5a",names:[...now].filter(n=>every===1||!last.has(n))});
+    groups.push({k:"rest",c:"#9aa9b9",names:lastP.filter(n=>!now.has(n)&&active(n))});
+    groups.push({k:"left",c:"#6b7c90",names:lastP.filter(n=>!active(n))});
+  }else{
+    if(!empty) groups.push({k:"onAll",c:"#1e9e5a",names:[...now]});
+  }
+  const shown=groups.filter(g=>g.names.length);
+  html+=shown.map(g=>{ const byT={}; g.names.forEach(n=>{ const tm=metaOf(n).team||"—"; (byT[tm]=byT[tm]||[]).push(n); });
+    return `<details class="drl friG"${g.open?" open":""}><summary title="${esc(t("friTip_"+g.k))}"><i style="background:${g.c}"></i>${t("fri_"+g.k)}<b>${g.names.length}</b>`
+      +`<button type="button" class="linklike friCopy" data-k="${g.k}" title="${esc(t("friCopyTip"))}">📋</button></summary>`
+      +Object.entries(byT).sort((a,b)=>b[1].length-a[1].length).map(([tm,ns])=>`<div class="drlWho"><b style="width:100%;font-size:.72rem">${esc(tm)}</b>`
+        +ns.sort().map(n=>`<span>${esc(n)}${stFri.has(n)?` <small>· ${esc(stFri.get(n))}</small>`:""}</span>`).join("")+`</div>`).join("")+`</details>`; }).join("");
+  box.innerHTML=html;
+  box.querySelectorAll(".friCopy").forEach(b=>b.addEventListener("click",e=>{ e.preventDefault(); e.stopPropagation();
+    const g=shown.find(x=>x.k===b.dataset.k); if(!g) return;
+    const byT={}; g.names.forEach(n=>{ const tm=metaOf(n).team||"—"; (byT[tm]=byT[tm]||[]).push(n); });
+    const txt=t("fri_"+g.k)+" — "+fmtD(fri)+"\n"+Object.entries(byT).map(([tm,ns])=>tm+"\n"+ns.sort().map(n=>"  "+n+(stFri.has(n)?" ("+stFri.get(n)+")":"")).join("\n")).join("\n\n");
+    navigator.clipboard&&navigator.clipboard.writeText(txt); showToast("📋 "+t("wfValCopied"),true); }));
+  // one sidur is loaded at a time: without last Friday in memory, last week's file adds only its Friday
+  if(!last){ box.insertAdjacentHTML("beforeend",`<div class="dropzone friDz" tabindex="0" role="button"><b>${t("friDropT")}</b><p class="mini">${t("friDropD")}</p><input type="file" accept=".csv,.tsv,.txt,.json,.xlsx,.xlsm,.xls" style="display:none"></div>`);
+    const z=box.querySelector(".friDz"), inp=z.querySelector("input");
+    ["dragenter","dragover"].forEach(ev=>z.addEventListener(ev,e=>{ e.preventDefault(); z.classList.add("hover"); }));
+    ["dragleave","drop"].forEach(ev=>z.addEventListener(ev,e=>{ e.preventDefault(); z.classList.remove("hover"); }));
+    z.addEventListener("drop",e=>{ const f=e.dataTransfer.files[0]; if(f) ingestFriFile(f); });
+    z.addEventListener("click",()=>inp.click()); z.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); inp.click(); } });
+    inp.addEventListener("change",()=>{ if(inp.files[0]) ingestFriFile(inp.files[0]); inp.value=""; }); }
+  const due=shown.find(g=>g.k==="due"||g.k==="dueE"), both=shown.find(g=>g.k==="both");
+  card.querySelector(".friSum").textContent=[empty?null:t("friSumNow",{n:now.size}),due?t("fri_"+due.k)+" "+due.names.length:null,both?"⚠ "+both.names.length:null].filter(Boolean).join(" · ");
+}
+async function ingestFriFile(f){
+  beginBusy(t("processingName",{n:f.name}));
+  try{ await nextPaint(); const got=await ingestFriOnly(f);
+    if(!got.length) showToast("⚠ "+t("friNone"),false);
+    else{ showToast("✅ "+t("friGot",{d:got.map(ds=>fmtD(ds).slice(0,5)).join(", ")}),true); renderWorkforce(); renderFriday(); }
+  }catch(e){ showToast("⚠ "+t("dropErrParse"),false); }
+  finally{ endBusy(); }
+}
 function computeWorkforce(){
-  const week=wfWeek()?new Set(weekDates(wfWeek())):new Set();
+  const wk0=wfWeek(), week=wk0?new Set(weekDates(wk0)):new Set();
   const dayF=state.wfFilter.day; // "" = whole week; "0".."5" = a single weekday
   const inWeek=r=>(week.has(r.ds)||(!r.ds&&r.di!=null))&&wfDayOK(r); // day-template rows count once
   let ironTotal=0;
@@ -3704,7 +4064,7 @@ function computeWorkforce(){
     for(const [name,e] of state.iron.emps){
       const meta=state.rosterMeta.get(name)||e;
       if(wfPass({team:meta.team||e.team,skill:meta.skill||e.skill,site:meta.site||e.site}))
-        ironTotal+=wfIronHours(e); // a specific day uses that weekday's hours; the week uses the total
+        ironTotal+=wfIronHours(e,name,wk0); // a specific day uses that weekday's hours; the week uses the total (Friday by rotation)
     }
   }else{
     const names=[...state.rosterMeta.keys()];
@@ -3791,7 +4151,7 @@ function renderTreemap(W){
 }
 /* treemap drill-down — same filter dimensions as the lists above (team J / skill N / site A) */
 function segHoursBy(seg,dim){
-  const week=wfWeek()?new Set(weekDates(wfWeek())):new Set();
+  const wk0=wfWeek(), week=wk0?new Set(weekDates(wk0)):new Set();
   const inWeek=r=>(week.has(r.ds)||(!r.ds&&r.di!=null))&&wfDayOK(r);
   const acc={};
   const add=(rec,h)=>{ const k=rec[dim]||"—"; acc[k]=(acc[k]||0)+h; };
@@ -3804,7 +4164,7 @@ function segHoursBy(seg,dim){
     if(state.iron) for(const [name,e] of state.iron.emps){
       const m=state.rosterMeta.get(name)||e;
       const rec={team:m.team||e.team,skill:m.skill||e.skill,site:m.site||e.site};
-      if(wfPass(rec)) iron[rec[dim]||"—"]=(iron[rec[dim]||"—"]||0)+wfIronHours(e);
+      if(wfPass(rec)) iron[rec[dim]||"—"]=(iron[rec[dim]||"—"]||0)+wfIronHours(e,name,wk0);
     }
     for(const r of state.schedRows) if(inWeek(r)&&wfPass(r)) alloc[r[dim]||"—"]=(alloc[r[dim]||"—"]||0)+r.h;
     for(const v of state.vacations) if(inWeek(v)&&wfPass(v)) alloc[v[dim]||"—"]=(alloc[v[dim]||"—"]||0)+v.hours;
@@ -3879,8 +4239,8 @@ function renderImpactMatrix(){
   if(metricEl) metricEl.textContent=t("wfImpactMetric",{m:primName()});
   const metaOf=name=>state.rosterMeta.get(name)||iron.get(name)||{};
   // WHOLE-CENTER iron base per weekday — never filtered: it is the constant baseline
-  const ironAllBy={};
-  for(const [,e] of iron) for(const di in e.days) ironAllBy[di]=(ironAllBy[di]||0)+e.days[di].h;
+  const ironAllBy={}, wkI=wfWeek(); // Friday iron = this Friday's rotation, not every eligible rep
+  for(const [n,e] of iron) for(const di in e.days) ironAllBy[di]=(ironAllBy[di]||0)+ironDayH(n,e,+di,wkI);
   // slice iron/actual hours per skill × weekday — the current filters define the slice
   const ironBy={}, skills=new Set();
   for(const [name,e] of iron){
@@ -3888,7 +4248,7 @@ function renderImpactMatrix(){
     if(!wfPass({team:m.team||e.team,skill:m.skill||e.skill,site:m.site||e.site})) continue;
     const sk=(m.skill||e.skill||"—");
     skills.add(sk);
-    for(const di in e.days) ironBy[sk+"|"+di]=(ironBy[sk+"|"+di]||0)+e.days[di].h;
+    for(const di in e.days) ironBy[sk+"|"+di]=(ironBy[sk+"|"+di]||0)+ironDayH(name,e,+di,wkI);
   }
   if(!skills.size){ tbl.innerHTML=`<tr><td class="mini">${t("wfImpactNone")}</td></tr>`; return; }
   const week=wfWeek()?new Set(weekDates(wfWeek())):new Set();
@@ -4031,7 +4391,8 @@ function renderValidation(){
 }
 /* modular filter-option source: distinct team(J)/skill(N)/site(A) values, drawn from
    the roster meta AND the iron employees so a list fills even when one source is sparse */
-const WF_FILTER_KEYS=[["wfTeam","team"],["wfSkill","skill"],["wfSite","site"]];
+/* team / site only — skills are the system 🎧 list (renderWfScope) */
+const WF_FILTER_KEYS=[["wfTeam","team"],["wfSite","site"]];
 function wfFilterValues(key){
   const vals=new Set();
   for(const m of state.rosterMeta.values()) if(m&&m[key]) vals.add(m[key]);
@@ -4279,6 +4640,7 @@ function renderWorkforce(){
   // iron-derived analytics stay visibly disabled until a real ברזל base exists
   ["wfImpactCard","wfValCard"].forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.toggle("ironGated",gated); });
   populateWfFilters(); // preserves current selection
+  renderWfScope();     // skills = the system 🎧 list
   renderWfDaySeg();     // day strip (הכל + Sun–Fri)
   const wwk=wfWeek(); // this page follows the uploaded sidur's week, not the browsed forecast week
   // context label makes the scope explicit: append the picked day so every KPI reads "for Sunday"
@@ -4311,6 +4673,8 @@ function renderWorkforce(){
   }
   if(W.tot>0){ const d2=W.dev/W.tot; setKpiBar("wfKpiDev",Math.min(1,d2),d2<=0.15?"good":d2<=0.3?"warn":"bad"); }
   renderTreemap(W);
+  renderIronDays();
+  renderFriday();
   renderImpactMatrix();
   renderValidation();
   renderInternalRoster();
@@ -4390,6 +4754,11 @@ function schedulerEmps(){
     .map(([name,e])=>({name,days:e.days}));
 }
 /* skill checkbox menu on the scheduler toolbar — same modular queue list as the matrix */
+/* Workforce: the same 🎧 list as everywhere — the page's KPIs, charts and lists follow it */
+function renderWfScope(){
+  renderScopeMenu("wfScopeWrap","wfScopeBtn","wfScopeMenu","wfScopeHint",
+    sc=>"🎧 "+(!sc||!sc.length?t("skillScopeAll"):(sc.length===1?sc[0]:t("skillScopeN",{n:sc.length}))));
+}
 function renderSchedSkills(){
   renderScopeMenu("schSkillWrap","schSkillBtn","schSkillMenu","schSkillHint",
     sc=>"🎧 "+(!sc||!sc.length?t("skillScopeAll"):(sc.length===1?sc[0]:t("skillScopeN",{n:sc.length}))));
@@ -4554,7 +4923,7 @@ async function runScheduler(){
    the Mode-1 optimizer; differs only in the SEARCH (build vs move).
    ============================================================ */
 function generateIronBaseline(){
-  const wk=weekDates(schWeek());
+  const wkS=schWeek(), wk=weekDates(wkS);
   const reqs=state.settings.skillReqs||[];
   const iron=validatedIron(); // iron emps whose sheet defines base days
   const metaOf=n=>state.rosterMeta.get(n)||iron.get(n)||{};
@@ -4575,7 +4944,7 @@ function generateIronBaseline(){
     if(c) c.rows.forEach(r=>{ if(r.rec&&!r.closed&&!r.exc&&!r.nodata) req[r.tm]=r.reqEff; });
     const tms=Object.keys(req).sort();
     if(!tms.length){ noFc++;
-      for(const [name,e] of iron){ const w=e.days&&e.days[di]; if(!w||!w.s||!w.e||off.has(name+"|"+ds)) continue;
+      for(const [name,e] of iron){ const w=e.days&&e.days[di]; if(!w||!w.s||!w.e||off.has(name+"|"+ds)||(di===5&&friW(name,wkS)===0)) continue;
         asg.push({name,ds,di,s:w.s,e:w.e,src:"base"}); }
       continue; }
     const dayStartM=mins(tms[0]), dayEndM=mins(tms[tms.length-1])+30;
@@ -4584,7 +4953,7 @@ function generateIronBaseline(){
     const units=[];
     for(const [name,e] of iron){
       const w=e.days&&e.days[di]; if(!w||!w.s||!w.e) continue;
-      if(off.has(name+"|"+ds)) continue;
+      if(off.has(name+"|"+ds)||(di===5&&friW(name,wkS)===0)) continue; // worked last Friday → off this one
       const sk=skillOf(name);
       if(!inScope(sk)){ asg.push({name,ds,di,s:w.s,e:w.e,src:"base"}); continue; } // other queues: not placed against this demand
       const dur=mins(w.e)-mins(w.s); if(dur<30) continue;
@@ -4641,7 +5010,7 @@ function adoptIronSidur(out){
     hByRep.set(a.name,(hByRep.get(a.name)||0)+hrs(a)); });
   state.rosterCap=cap; state.rosterCapSkill=capSk; state.rosterNamed=true;
   state.roster=(state.roster||[]).map(r=>({...r,scheduled:Math.round((hByRep.get(r.name)||0)*10)/10}));
-  rebuildRosterCoverage(); memo.clear();
+  rebuildRosterCoverage(); memo.clear(); recordFriHist();
   ["home","matrix","trends","workforce","recruit"].forEach(p=>dirtyPages.add(p));
   updatePortalStatus(); saveData();
 }
@@ -5400,6 +5769,7 @@ function renderScheduler(){
   ensureEmptyState("scheduler");
   renderSkillCoverage(); // step 1: rules + current-sidur standing, where they're enforced
   renderSchedSkills();
+  renderFriday(); // Friday rotation sits where the sidur is built
   // manual-entry autocomplete from the real agent list + name reconciliation panel
   const dl=document.getElementById("knownNames");
   if(dl){ const names=[...knownAgentNames()].sort();
@@ -6284,6 +6654,7 @@ function holidayLevel(dateObj){
 }
 /* display name of the holiday on a given ISO date (matches the holidays table) */
 function holidayName(ds){
+  const own=customHolOn(ds); if(own) return own.name||"";
   const d=fromISO(ds), mn=hebMonthName(d), p=hebParts(d); if(!p) return "";
   return (HOL_NAMES[mn]&&HOL_NAMES[mn][+p.day])||"";
 }
@@ -6300,6 +6671,15 @@ function computeHolidayDates(){
     cur=addDays(cur,1);
   }
   return out;
+}
+/* YOUR OWN holiday dates (elections, a company day, a local closure…): {id,from,to,name,lvl}. They win
+   over the Hebrew calendar on their dates and apply even with the auto calendar off; "work" turns an
+   auto holiday back into a regular day. Same levels, same learning rules as the table above. */
+function customHolOn(ds){ for(const c of state.settings.customHol||[]) if(c.from&&ds>=c.from&&ds<=(c.to||c.from)) return c; return null; }
+function applyCustomHol(map){
+  for(const c of state.settings.customHol||[]){ if(!c.from) continue;
+    for(let d=c.from,g=0;d<=(c.to||c.from)&&g<120;d=addDays(d,1),g++){ if(c.lvl==="work") map.delete(d); else map.set(d,c.lvl); } }
+  return map;
 }
 
 /* ================================================================
@@ -6376,7 +6756,7 @@ function rebuildLearningSeries(){
   /* auto-holiday calendar: known Israeli holidays. 'closed' → excluded like a
      painted exception; 'eve'/'chm' → held out of the normal series but used to
      learn a reduced-demand factor (applied when forecasting a future such date). */
-  state.holidayDates=(state.settings.autoHolidays!==false)?computeHolidayDates():new Map();
+  state.holidayDates=applyCustomHol((state.settings.autoHolidays!==false)?computeHolidayDates():new Map());
   // per-date user override: "iso|__keep" forces an auto-flagged day back INTO learning
   const kept=ds=>state.exceptions.has(ds+"|__keep");
   const holLvl=ds=>state.holidayDates.get(ds)||null;
@@ -6394,20 +6774,28 @@ function rebuildLearningSeries(){
     let tot=0; for(const r of state.days.get(ds).values()) tot+=r.volume;
     if(tot>0) dayTot.set(ds,tot);
   }
-  const byDi={};
-  for(const [ds,tot] of dayTot) if(!inBillWin(ds)){
-    const di=fromISO(ds).getDay(); (byDi[di]=byDi[di]||[]).push(tot);
-  }
-  const base={}; for(const di in byDi) base[di]=median(byDi[di]);
-  const domObs={};
-  for(const [ds,tot] of dayTot){
-    const di=fromISO(ds).getDay(); if(!base[di]) continue;
-    const d=+ds.slice(8,10); (domObs[d]=domObs[d]||[]).push(tot/base[di]);
-  }
-  const dom=new Array(32).fill(1);
-  for(let d=1;d<=31;d++){ const o=domObs[d];
-    if(o&&o.length>=2) dom[d]=Math.min(1.8,Math.max(0.7,median(o))); }
+  const calcDom=keep=>{
+    const byDi={};
+    for(const [ds,tot] of dayTot) if(keep(ds)&&!inBillWin(ds)){
+      const di=fromISO(ds).getDay(); (byDi[di]=byDi[di]||[]).push(tot);
+    }
+    const base={}; for(const di in byDi) base[di]=median(byDi[di]);
+    const domObs={};
+    for(const [ds,tot] of dayTot){ if(!keep(ds)) continue;
+      const di=fromISO(ds).getDay(); if(!base[di]) continue;
+      const d=+ds.slice(8,10); (domObs[d]=domObs[d]||[]).push(tot/base[di]);
+    }
+    const dom=new Array(32).fill(1);
+    for(let d=1;d<=31;d++){ const o=domObs[d];
+      if(o&&o.length>=2) dom[d]=Math.min(1.8,Math.max(0.7,median(o))); }
+    return dom;
+  };
+  const dom=calcDom(()=>true);
   state.domFactor=dom;
+  // ⚡ the fast lane measures the last 10 working days against a billing calendar learned BEFORE them —
+  // a surge on billing days must not be read as "billing" (that would hide the very shift it looks for)
+  { const ks=[...dayTot.keys()].sort(), cut=ks.length>10?ks[ks.length-10]:null;
+    state.domFactorPre=cut?calcDom(ds=>ds<cut):dom; }
   const domOf=ds=>dom[+ds.slice(8,10)]||1;
   /* day-level war/outage detection on billing-normalized totals */
   state.anomalyDates=(state.settings.autoAnomaly!==false)?detectAnomalies(dayTot,dom,median):new Map();
@@ -6437,12 +6825,12 @@ function rebuildLearningSeries(){
   /* per-slot learning series on calendar-NORMALIZED volumes. Excluded dates
      (painted / closed-holiday / anomaly) and FACTORED holiday days are all kept
      out of the normal series — factored days teach only their own level factor. */
-  const ser={};
+  const ser={}, learn={};
   for(const ds of keys){
     const di=fromISO(ds).getDay(); if(di>5) continue;
     if(!teachesNormal(ds)) continue;
     const f=domOf(ds);
-    ser[di]=ser[di]||{};
+    ser[di]=ser[di]||{}; (learn[di]=learn[di]||[]).push(ds); // the date behind each week of the series (⚡ fast lane)
     for(const [tm,rec] of state.days.get(ds)){
       if(state.exceptions.has(ds+"|"+tm)) continue;
       const s=ser[di][tm]=ser[di][tm]||{vols:[],ahts:[],ags:[],logins:[],answ:[],mpts:[]};
@@ -6470,7 +6858,7 @@ function rebuildLearningSeries(){
   };
   for(const di in ser) for(const tm in ser[di]){ winsor(ser[di][tm].vols); winsor(ser[di][tm].ahts); }
   state.cleanClipped=clipped;
-  state.series=ser; state.fcCache.clear();
+  state.series=ser; state.learnDates=learn; state._serVer=(state._serVer||0)+1; state.fcCache.clear();
   calibrateModel();  // fit the agent-scale that makes modeled AR match the file's measured AR
   computeSlotBias(); // then per-slot residual anchoring (Fridays/shoulders need their own level)
 }
@@ -6753,7 +7141,10 @@ function forecastDay(ds){
   // volCal: day-level pace calibration measured by the daily backtest (100±1% goal)
   // 📣 planned event: this day's share of the known extra calls (never on a closed day)
   const evX=hf>0?((evMap().get(ds)||{}).extra||0):0;
-  const dayForecast=Math.max(0,dailyNorm*cf*hf*(state.settings.volCal||1))+evX;
+  const baseDay=Math.max(0,dailyNorm*cf*hf*(state.settings.volCal||1));
+  // ⚡ fast lane: a sudden shift in the last days + callbacks of yesterday's extra abandons (fastFor)
+  const fx=hf>0?fastFor(ds,di,((state.domFactorPre||state.domFactor||[])[+ds.slice(8,10)]||1)*hf*(state.settings.volCal||1),baseDay):null;
+  const dayForecast=(fx?fx.day+fx.retry:baseDay)+evX;
 
   /* HOLIDAY-EVE = FRIDAY: a holiday eve is a short, morning-heavy day just like a
      Friday. So for eve targets we borrow FRIDAY's interval-share profile (and its
@@ -6828,6 +7219,84 @@ function forecastDay(ds){
   state.fcCache.set(ds,m);
   return m;
 }
+/* ================================================================
+   ⚡ FAST LANE — when demand shifts suddenly (a wave of claim-status calls, closures, an outage
+   aftermath), the weekday models catch up only week by week: each weekday learns from its own
+   weekday, Holt smooths, and the outlier guard clips the very surge days. The fast lane reads the
+   LAST 10 WORKING DAYS across all weekdays:
+     1) expected = the same daily model, fed only the history BEFORE that window (no peeking);
+     2) callbacks: a share (retryShare) of the EXTRA abandoned calls (over the usual abandon rate)
+        calls again — ¾ the next working day, ¼ the day after — so they are taken out first;
+     3) level L = recent fresh calls ÷ expected, recent days weighted most (×0.85 per day back).
+   L counts only when it is clear: ≥6% off AND the last 3 days on the same side. Then forecast
+   days start at "pre-window model × L" and fade back to the regular model by half every
+   fastHalf working days; the callbacks of the last actual days are added on top. Each new day
+   of data re-measures it — when the models catch up, L returns to 1 by itself.
+   ================================================================ */
+function dayTotalsDi(di){
+  const ser=state.series&&state.series[di]; if(!ser) return [];
+  const slots=Object.keys(ser), n=Math.max(0,...slots.map(tm=>ser[tm].vols.length)), out=[];
+  for(let w=0;w<n;w++){ let tot=0,seen=false; for(const tm of slots){ const v=ser[tm].vols[w]; if(v!=null){ tot+=v; seen=true; } } if(seen) out.push(tot); }
+  return out;
+}
+// the daily model on this weekday's history strictly before `from`, projected to the week of ds
+function preDaily(di,from,ds){
+  const ld=(state.learnDates||{})[di]||[], tot=dayTotalsDi(di);
+  let n=0; while(n<ld.length&&ld[n]<from) n++; n=Math.min(n,tot.length); if(n<2) return null; // a short file still has a level
+  const h=Math.max(1,Math.round((fromISO(sundayOf(ds))-fromISO(sundayOf(ld[n-1])))/(7*86400000)));
+  return ForecastEngines.volume(tot.slice(0,n),h,{weekday:di,interval:"day",allSeries:state.series});
+}
+function fastState(){
+  const S=state.settings;
+  if(S.fastAdapt===false||!state.series||!state.maxDate) return null;
+  const key=[state._serVer,state.maxDate,S.fastHalf,S.retryShare,S.volCal,S.modelVolume,JSON.stringify(S.demandEvents||[])].join("|");
+  if(state._fastKey===key) return state._fast;
+  state._fastKey=key; state._fast=null;
+  const domOf=d=>((state.domFactorPre||state.domFactor)||[])[+d.slice(8,10)]||1; // billing calendar from before the window
+  // working days with calls, newest last; closed holidays and painted exceptions say nothing
+  const all=[];
+  for(const ds of [...state.days.keys()].sort()){ const di=fromISO(ds).getDay(); if(di>5||state.exceptions.has(ds)) continue;
+    const lvl=state.holidayDates.get(ds); if(lvl==="closed") continue;
+    let vol=0,ab=0,vA=0; for(const r of state.days.get(ds).values()){ vol+=r.volume||0; if(r.answered>0){ ab+=Math.max(0,r.volume-r.answered); vA+=r.volume; } }
+    if(vol>0) all.push({ds,di,lvl,vol,ab,hasAns:vA>=0.6*vol}); }
+  const W=10; if(all.length<W+4) return null;
+  const win=all.slice(-W), from=win[0].ds;
+  // usual abandon rate: median over the 40 working days before the window
+  const pre=all.slice(Math.max(0,all.length-W-40),all.length-W).filter(x=>x.hasAns).map(x=>x.ab/x.vol).sort((a,b)=>a-b);
+  const hasAns=pre.length>=10&&win.every(x=>x.hasAns), ab0=hasAns?pre[pre.length>>1]:0, rho=hasAns?Math.max(0,Math.min(0.9,+S.retryShare||0)):0;
+  all.forEach(x=>{ x.X=hasAns&&x.hasAns?Math.max(0,x.ab-ab0*x.vol):0; });
+  const base=all.length-W; let num=0,den=0;
+  const days=win.map((x,i)=>{ const p1=all[base+i-1], p2=all[base+i-2];
+    const back=rho*(0.75*((p1&&p1.X)||0)+0.25*((p2&&p2.X)||0)), fresh=Math.max(0,x.vol-back);
+    const hf=x.lvl&&state.holidayFactor?(state.holidayFactor[x.lvl]||1):1, pd=preDaily(x.di,from,x.ds);
+    const ev=(evMap().get(x.ds)||{}).extra||0;
+    const exp=pd==null?null:pd*domOf(x.ds)*hf*(S.volCal||1)+ev;
+    return {ds:x.ds,di:x.di,act:x.vol,back,fresh,exp,ratio:exp>0?fresh/exp:null,X:x.X}; });
+  days.forEach((d,i)=>{ if(d.exp>0){ const w=Math.pow(0.85,W-1-i); num+=w*d.fresh; den+=w*d.exp; } });
+  let L=den>0?num/den:1; const last3=days.filter(d=>d.ratio!=null).slice(-3).map(d=>d.ratio);
+  const up=last3.length===3&&last3.every(r=>r>1.03), same=up||(last3.length===3&&last3.every(r=>r<0.97));
+  // the run: how many latest days sit on the same side — once it is clear, the level is the RUN's own
+  // (the calm days before it must not water down a shift that already happened)
+  let run=0; for(let i=days.length-1;i>=0;i--){ const r=days[i].ratio; if(r!=null&&(up?r>1.03:r<0.97)) run++; else break; }
+  if(same){ let n2=0,d2=0; days.slice(-run).forEach((d,i,a)=>{ const w=Math.pow(0.85,a.length-1-i); n2+=w*d.fresh; d2+=w*d.exp; }); if(d2>0) L=n2/d2; }
+  const active=same&&Math.abs(L-1)>=0.06;
+  const l1=all[all.length-1], l2=all[all.length-2];
+  const retry1=rho*(0.75*(l1.X||0)+0.25*((l2&&l2.X)||0)), retry2=rho*0.25*(l1.X||0);
+  state._fast={active,L,from,to:l1.ds,days,run,hasAns,ab0,rho,retry1,retry2,half:Math.max(1,+S.fastHalf||10),noBase:!den};
+  return state._fast;
+}
+// working days after the last actual day (closed holidays don't count)
+function workDaysAfter(a,b){ let k=0,d=a,g=0; while(d<b&&g++<500){ d=addDays(d,1); if(fromISO(d).getDay()<=5&&state.holidayDates.get(d)!=="closed") k++; } return k; }
+function fastFor(ds,di,mult,baseDay){
+  if(!state.maxDate||ds<=state.maxDate) return null;
+  const fs=fastState(); if(!fs) return null;
+  const k=workDaysAfter(state.maxDate,ds);
+  let day=baseDay, w=0;
+  if(fs.active){ w=Math.pow(0.5,(k-1)/fs.half); const pd=preDaily(di,fs.from,ds);
+    day=w*((pd!=null?pd*mult:baseDay)*fs.L)+(1-w)*baseDay; }
+  const retry=k===1?fs.retry1:k===2?fs.retry2:0;
+  return day!==baseDay||retry>0?{day,retry,w,k}:null;
+}
 function sourceDay(ds){
   if(state.days.has(ds)) return {src:state.days.get(ds),forecast:false};
   if(state.simDays.has(ds)) return {src:state.simDays.get(ds),forecast:true};
@@ -6857,11 +7326,16 @@ function renderWeekContext(dates){
   else if(lastAct<0&&hasFc&&n<=0) sub=t("wkNoAct");
   el.className="pill wkctx "+cls;
   el.innerHTML=txt+(sub?` <span class="sub2">· ${sub}</span>`:"");
+  // 📈 this week's forecast follows a sudden shift in demand — said only when there is one; click = why
+  { const fs=fastState(), sh=fastShift(fs);
+    if(sh&&hasFc&&dates.some(ds=>ds>state.maxDate&&ds<=addDays(state.maxDate,30))){
+      const f=document.createElement("span"); f.className="wkFast"; f.textContent="📈 "+sh; f.title=fastSentence(fs);
+      f.addEventListener("click",e=>{ e.stopPropagation(); openFast(); }); el.appendChild(document.createTextNode(" ")); el.appendChild(f); } }
   const sel=document.getElementById("weekSelect");
   const canJump=n!==0&&sel&&[...sel.options].some(o=>o.value===nowWk);
   el.classList.toggle("jump",canJump);
   // the chip reads as a button only when it IS one; otherwise its hover says why it can't jump
-  if(canJump) el.innerHTML+=` <span class="jmp">↩ ${t("wkJumpShort")}</span>`;
+  if(canJump) el.insertAdjacentHTML("beforeend",` <span class="jmp">↩ ${t("wkJumpShort")}</span>`); // keeps the 📈 listener
   el.title=canJump?t("wkJump"):(n!==0?t("wkNoJump",{d:state.horizonISO?fmtD(state.horizonISO):"—"}):"");
   el.onclick=canJump?()=>{ sel.value=nowWk; sel.dispatchEvent(new Event("change")); }:null;
   el.style.display="inline-block";
@@ -6966,7 +7440,7 @@ function readCustomWindows(){
 /* ---- Answering-skill scope (queues) ----
    The floor runs several queues (קו 1, בכיר, דיגיטל, מרפאות…). The matrix and its
    AR/TSF math count ONLY skills selected as answering capacity — by default the
-   קו-1 queue — while HR/workforce pages always include everyone. Fully modular:
+   קו-1 queue — and the Workforce page counts the same skills (one list app-wide). Fully modular:
    any skill can be toggled in or out (seniors convert to קו 1 on billing days,
    מרפאות usually answer קו 1, future queues just appear in the list). */
 /* answering skills = ONE persisted choice (settings.answerSkills), shared by the matrix, the
@@ -6994,7 +7468,7 @@ function setAnswerSkills(on){
   state.capSkills=on; state.schedSkills=on; state.settings.answerSkills=on;
   saveState(); capScopeChanged(); syncScopeMenus();
 }
-function syncScopeMenus(){ renderSkillScope(); renderRecruitScope(); renderSchedSkills(); renderSetSkills(); }
+function syncScopeMenus(){ renderSkillScope(); renderRecruitScope(); renderSchedSkills(); renderWfScope(); renderSetSkills(); }
 /* one menu builder for every 🎧 button (matrix / recruit / scheduler) — same list, same state */
 function renderScopeMenu(wrapId,btnId,menuId,hintKey,label){
   const wrap=document.getElementById(wrapId); if(!wrap) return;
@@ -7246,7 +7720,7 @@ function renderSkillScope(){
 function capScopeChanged(){
   memo.clear(); state.fcCache.clear(); saveData();
   renderMatrix(); // syncs the matrix 🎧 button + AR
-  dirtyPages.add("recruit"); dirtyPages.add("scheduler"); renderDirty(); // re-renders the recruit 🎧 + What-If
+  dirtyPages.add("recruit"); dirtyPages.add("scheduler"); dirtyPages.add("workforce"); renderDirty(); // recruit 🎧 + What-If, Workforce numbers
 }
 /* 🎧 answering-scope control on the recruit/What-If card — the SAME state.capSkills the
    matrix uses, surfaced here because it is what actually drives the simulator's capacity.
@@ -7701,6 +8175,137 @@ function trendDayStat(ds){
   return {ds,dayIdx,forecast:fc,vol,aht,ar,tsf,netProd,occ,tsf30,tsf60,met,holLvl,grossH,
     prodN,prodD:netHrs,occN:occWork,occD:occDen,netH:fc?0:loginHrs}; // "actual" net hours: measured days only, never a projection
 }
+/* ================================================================
+   DATE TRENDS DASHBOARD — the same periods the table shows (days / weeks / months, the same date
+   range), as small multiples: one metric per chart, ONE axis each, all on the same time axis.
+   Hover = every metric of that period (one crosshair across all charts); click = open the period
+   (a week/month → its days, like the table row; a day → its row). Chips pick which charts show
+   (remembered). "How they relate": a scatter of two metrics over the ACTUAL periods + fit line +
+   one plain sentence (forecast periods are the model's own numbers — never evidence).
+   ================================================================ */
+const TR_METRICS=[
+  {k:"vol",lk:"thVol",fmt:v=>Math.round(v).toLocaleString(),bar:true,zero:true},
+  {k:"ar",lk:"thAr",pct:true},
+  {k:"aht",lk:"thAht",fmt:v=>fmtSec(v),zero:true},
+  {k:"occ",lk:"thUtil",pct:true},
+  {k:"prod",lk:"thNetProd",fmt:v=>v.toFixed(1),zero:true},
+  {k:"tsf30",lk:"thTsf30",pct:true},
+  {k:"netH",lk:"thNetH",fmt:v=>Math.round(v).toLocaleString(),zero:true,needNet:true}];
+const TR_REL=[["vol","ar"],["netH","ar"],["aht","ar"],["occ","ar"],["vol","aht"]];
+function trPoints(list,G){
+  const dn=t("daysShort");
+  return list.filter(r=>!r.zero).map(r=>G==="day"
+    ?{key:r.ds,lab:fmtD(r.ds).slice(0,5),long:dn[r.dayIdx]+" "+fmtD(r.ds),fc:!!r.forecast,vol:r.vol,ar:r.ar,aht:r.aht,occ:r.occ,prod:r.netProd,tsf30:r.tsf30,netH:r.netH||0,src:r}
+    :{key:r.k,lab:G==="month"?r.label.split(" ")[0].slice(0,3)+" "+r.k.slice(2,4):"W"+isoWeek(r.k),long:r.label,fc:r.tag==="fc",mix:r.tag==="mix",vol:r.vol,ar:r.ar,aht:r.aht,occ:r.occ,prod:r.prod,tsf30:r.tsf30,netH:r.netH||0,src:r});
+}
+function niceStep(x){ if(!(x>0)) return 1; const p=Math.pow(10,Math.floor(Math.log10(x))), f=x/p; return (f<1.5?1:f<3.5?2:f<7.5?5:10)*p; }
+function renderTrendDash(list,G,onOpen){
+  const box=document.getElementById("trDash"); if(!box) return;
+  const S=state.settings, btn=document.getElementById("trDashBtn");
+  if(btn){ btn.setAttribute("aria-pressed",S.trDash!==false?"true":"false"); btn.classList.toggle("on",S.trDash!==false); }
+  box.hidden=S.trDash===false; if(box.hidden) return;
+  const pts=trPoints(list,G), hasNet=pts.some(p=>p.netH>0);
+  const mets=TR_METRICS.filter(m=>!m.needNet||hasNet);
+  const onSet=new Set((S.trCharts||[]).filter(k=>mets.some(m=>m.k===k)));
+  const showRel=(S.trCharts||[]).includes("rel");
+  const esc=v=>String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+  const chips=`<div class="trPick"><span class="mini">${t("trPickL")}</span>`+mets.map(m=>`<button type="button" class="trChip${onSet.has(m.k)?" on":""}" data-k="${m.k}">${t(m.lk)}</button>`).join("")
+    +`<button type="button" class="trChip${showRel?" on":""}" data-k="rel">🔗 ${t("relT")}</button><span class="mini trDashHint">${t("trDashHint")}</span></div>`;
+  if(pts.length<2){ box.innerHTML=chips+`<p class="mini">${t("trDashFew")}</p>`; wire(); return; }
+  const W=560, H=112, pl=44, pr=8, pt=12, pb=18, n=pts.length, step=(W-pl-pr)/n, X=i=>pl+step*(i+.5);
+  const fc0=pts.findIndex(p=>p.fc);
+  const tiles=mets.filter(m=>onSet.has(m.k)).map(m=>{
+    const vals=pts.map(p=>p[m.k]).filter(v=>v!=null&&isFinite(v)&&(!m.needNet||v>0));
+    if(!vals.length) return "";
+    const tgt=m.k==="ar"&&S.primaryMetric==="ar"?S.target/100:null;
+    let lo=m.zero?0:Math.min(...vals,tgt??Infinity), hi=Math.max(...vals,tgt??-Infinity);
+    if(!m.zero){ const pad=(hi-lo)*0.12||0.02; lo=Math.max(0,lo-pad); hi=hi+pad; }
+    if(m.pct) hi=Math.min(1,hi);
+    if(hi<=lo) hi=lo+1;
+    const Y=v=>pt+(H-pt-pb)*(1-(v-lo)/(hi-lo)), f=m.pct?v=>Math.round(v*100)+"%":m.fmt;
+    const ticks=[lo,(lo+hi)/2,hi];
+    let g=ticks.map(v=>`<line x1="${pl}" x2="${W-pr}" y1="${Y(v).toFixed(1)}" y2="${Y(v).toFixed(1)}" class="trGrid"/><text x="${pl-5}" y="${(Y(v)+3).toFixed(1)}" class="trTick" text-anchor="end">${esc(f(v))}</text>`).join("");
+    if(fc0>=0) g=`<rect x="${(pl+step*fc0).toFixed(1)}" y="${pt}" width="${(W-pr-pl-step*fc0).toFixed(1)}" height="${H-pt-pb}" class="trFcBand"/><text x="${(W-pr-3).toFixed(1)}" y="${pt+9}" class="trTick" text-anchor="end">${t("dTagFc")}</text>`+g;
+    if(tgt!=null) g+=`<line x1="${pl}" x2="${W-pr}" y1="${Y(tgt).toFixed(1)}" y2="${Y(tgt).toFixed(1)}" class="trTgt"/><text x="${pl+3}" y="${(Y(tgt)-3).toFixed(1)}" class="trTick">${t("trTarget",{t:S.target})}</text>`;
+    const lstep=Math.max(1,Math.ceil(n/8));
+    g+=pts.map((p,i)=>i%lstep===0?`<text x="${X(i).toFixed(1)}" y="${H-5}" class="trTick" text-anchor="middle">${esc(p.lab)}</text>`:"").join("");
+    if(m.bar){ const bw=Math.max(2,Math.min(18,step*0.7));
+      g+=pts.map((p,i)=>{ const v=p[m.k]; if(!(v>0)) return ""; const y=Y(v);
+        return `<rect x="${(X(i)-bw/2).toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(0,Y(lo)-y).toFixed(1)}" rx="2" class="trBar${p.fc?" fc":""}"/>`; }).join("");
+    }else{
+      const seg=(a,b,cls)=>{ const s=pts.slice(a,b).map((p,j)=>[X(a+j),p[m.k]]).filter(q=>q[1]!=null&&isFinite(q[1])&&(!m.needNet||q[1]>0));
+        return s.length>1?`<polyline points="${s.map(q=>q[0].toFixed(1)+","+Y(q[1]).toFixed(1)).join(" ")}" class="${cls}"/>`:""; };
+      g+=fc0>=0?seg(0,fc0+1,"trLine")+seg(Math.max(0,fc0-1),n,"trLine fc"):seg(0,n,"trLine");
+    }
+    const last=[...pts].reverse().find(p=>!p.fc&&p[m.k]!=null&&(!m.needNet||p[m.k]>0));
+    g+=`<line class="trXh" x1="-10" x2="-10" y1="${pt}" y2="${H-pb}"/><circle class="trDot" r="4" cx="-10" cy="-10"/>`;
+    g+=pts.map((p,i)=>`<rect class="trHit" data-i="${i}" x="${(pl+step*i).toFixed(1)}" y="0" width="${step.toFixed(1)}" height="${H}"/>`).join("");
+    return `<div class="trTile" data-k="${m.k}"><div class="trTileH"><b>${t(m.lk)}</b>${last?`<span>${esc(f(last[m.k]))} <small>${esc(last.lab)}</small></span>`:""}</div>`
+      +`<svg viewBox="0 0 ${W} ${H}" width="100%" data-lo="${lo}" data-hi="${hi}" data-k="${m.k}">${g}</svg></div>`;
+  }).join("");
+  box.innerHTML=chips+`<div class="trTiles">${tiles}${showRel?trRelTile(pts,mets):""}</div><div class="trTip" hidden></div>`;
+  wire();
+  // one crosshair across every chart + one tooltip with all the period's numbers
+  const tip=box.querySelector(".trTip");
+  const metaF=m=>m.pct?v=>pct(v):m.fmt;
+  const hover=i=>{ const p=pts[i];
+    box.querySelectorAll(".trTile svg").forEach(svg=>{ const xh=svg.querySelector(".trXh"), dot=svg.querySelector(".trDot"), m=TR_METRICS.find(x=>x.k===svg.dataset.k);
+      const x=X(i).toFixed(1); xh.setAttribute("x1",x); xh.setAttribute("x2",x);
+      const v=p[m.k], lo=+svg.dataset.lo, hi=+svg.dataset.hi;
+      if(v!=null&&isFinite(v)&&(!m.needNet||v>0)){ dot.setAttribute("cx",x); dot.setAttribute("cy",(pt+(H-pt-pb)*(1-(v-lo)/(hi-lo))).toFixed(1)); } else dot.setAttribute("cx",-10); });
+    tip.innerHTML=`<b>${esc(p.long)}</b>${p.fc?` <span class="grpTag fc">${t("grpTag_fc")}</span>`:p.mix?` <span class="grpTag mix">${t("grpTag_mix")}</span>`:""}`
+      +mets.map(m=>{ const v=p[m.k]; return v!=null&&isFinite(v)&&(!m.needNet||v>0)?`<div><span>${t(m.lk)}</span><b>${esc(metaF(m)(v))}</b></div>`:""; }).join("")
+      +`<div class="mini">${t(G==="day"?"trTipDay":"trTipOpen")}</div>`;
+    tip.hidden=false; };
+  box.querySelectorAll(".trHit").forEach(r=>{
+    r.addEventListener("mouseenter",()=>hover(+r.dataset.i));
+    r.addEventListener("mousemove",e=>{ const bb=box.getBoundingClientRect(); let x=e.clientX-bb.left+14; if(x+230>bb.width) x=e.clientX-bb.left-240;
+      tip.style.left=Math.max(0,x)+"px"; tip.style.top=(e.clientY-bb.top+12)+"px"; });
+    r.addEventListener("click",()=>onOpen(pts[+r.dataset.i].src)); });
+  box.querySelector(".trTiles").addEventListener("mouseleave",()=>{ tip.hidden=true;
+    box.querySelectorAll(".trXh").forEach(l=>{ l.setAttribute("x1",-10); l.setAttribute("x2",-10); }); box.querySelectorAll(".trDot").forEach(d=>d.setAttribute("cx",-10)); });
+  box.querySelectorAll(".relDot").forEach(c=>c.addEventListener("click",()=>onOpen(pts[+c.dataset.i].src)));
+  box.querySelectorAll(".relPick button").forEach(b=>b.addEventListener("click",()=>{ S.trRel=b.dataset.p; saveState(); renderTrendDash(list,G,onOpen); }));
+  function wire(){
+    box.querySelectorAll(".trChip").forEach(b=>b.addEventListener("click",()=>{ const k=b.dataset.k, cur=new Set(S.trCharts||[]);
+      if(cur.has(k)) cur.delete(k); else cur.add(k); S.trCharts=[...cur]; saveState(); renderTrendDash(list,G,onOpen); }));
+  }
+}
+/* how two metrics move together over the ACTUAL periods: dots + least-squares line + one sentence */
+function trRelTile(pts,mets){
+  const S=state.settings, esc=v=>String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+  const ok=k=>mets.some(m=>m.k===k);
+  const pairs=TR_REL.filter(([a,b])=>ok(a)&&ok(b));
+  let cur=(S.trRel||"vol|ar").split("|"); if(!pairs.some(p=>p[0]===cur[0]&&p[1]===cur[1])) cur=pairs[0];
+  const mx=TR_METRICS.find(m=>m.k===cur[0]), my=TR_METRICS.find(m=>m.k===cur[1]);
+  const pick=`<div class="relPick">`+pairs.map(([a,b])=>`<button type="button" class="${a===cur[0]&&b===cur[1]?"on":""}" data-p="${a}|${b}">${t(TR_METRICS.find(m=>m.k===a).lk)} → ${t(TR_METRICS.find(m=>m.k===b).lk)}</button>`).join("")+`</div>`;
+  const pp=pts.map((p,i)=>({i,x:p[mx.k],y:p[my.k],p})).filter(q=>!q.p.fc&&isFinite(q.x)&&isFinite(q.y)&&q.x!=null&&q.y!=null&&(!mx.needNet||q.x>0));
+  const head=`<div class="trTileH"><b>🔗 ${t("relT")}</b></div>`;
+  if(pp.length<6) return `<div class="trTile trRel">${head}${pick}<p class="mini">${t("relNeed")}</p></div>`;
+  const N=pp.length, mxv=pp.reduce((s,q)=>s+q.x,0)/N, myv=pp.reduce((s,q)=>s+q.y,0)/N;
+  let sxy=0,sxx=0,syy=0; pp.forEach(q=>{ sxy+=(q.x-mxv)*(q.y-myv); sxx+=(q.x-mxv)**2; syy+=(q.y-myv)**2; });
+  const b=sxx>0?sxy/sxx:0, a=myv-b*mxv, r=sxx>0&&syy>0?sxy/Math.sqrt(sxx*syy):0;
+  const W=560,H=210,pl=48,pr=10,pt=10,pb=30;
+  const xs=pp.map(q=>q.x), ys=pp.map(q=>q.y);
+  let x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys);
+  const px=(x1-x0)*0.06||1, py=(y1-y0)*0.1||0.01; x0-=px; x1+=px; y0-=py; y1+=py;
+  const X=v=>pl+(W-pl-pr)*(v-x0)/(x1-x0), Y=v=>pt+(H-pt-pb)*(1-(v-y0)/(y1-y0));
+  const fx=mx.pct?v=>Math.round(v*100)+"%":mx.fmt, fy=my.pct?v=>Math.round(v*100)+"%":my.fmt;
+  let g="";
+  [y0,(y0+y1)/2,y1].forEach(v=>{ g+=`<line x1="${pl}" x2="${W-pr}" y1="${Y(v).toFixed(1)}" y2="${Y(v).toFixed(1)}" class="trGrid"/><text x="${pl-5}" y="${(Y(v)+3).toFixed(1)}" class="trTick" text-anchor="end">${esc(fy(v))}</text>`; });
+  [x0,(x0+x1)/2,x1].forEach((v,i)=>{ g+=`<text x="${X(v).toFixed(1)}" y="${H-14}" class="trTick" text-anchor="${["start","middle","end"][i]}">${esc(fx(v))}</text>`; });
+  g+=`<text x="${(W-pr).toFixed(1)}" y="${H-2}" class="trTick" text-anchor="end">${esc(t(mx.lk))} →</text>`;
+  g+=`<line x1="${X(x0).toFixed(1)}" y1="${Y(a+b*x0).toFixed(1)}" x2="${X(x1).toFixed(1)}" y2="${Y(a+b*x1).toFixed(1)}" class="relFit"/>`;
+  g+=pp.map(q=>`<g class="relDot" data-i="${q.i}"><circle cx="${X(q.x).toFixed(1)}" cy="${Y(q.y).toFixed(1)}" r="12" class="relHit"/><circle cx="${X(q.x).toFixed(1)}" cy="${Y(q.y).toFixed(1)}" r="4.5" class="relPt"/><title>${esc(q.p.long)}: ${esc(fx(q.x))} · ${esc(fy(q.y))}</title></g>`).join("");
+  // the sentence: a round step of X (≈ a fifth of its spread) and what Y does over it
+  const dx=niceStep((Math.max(...xs)-Math.min(...xs))/4), dy=b*dx, ar=Math.abs(r);
+  const str=ar<0.3?"relWeak":ar<0.6?"relMod":"relStrong";
+  const dxs=mx.pct?"+"+Math.round(dx*100)+" "+t("relPts"):"+"+(mx.k==="aht"?fmtSec(dx):Math.round(dx).toLocaleString())+(mx.k==="netH"?" "+t("relHrs"):"");
+  const dys=my.pct?(dy>=0?"+":"−")+Math.abs(dy*100).toFixed(1)+" "+t("relPts"):(dy>=0?"+":"−")+(my.k==="aht"?fmtSec(Math.abs(dy)):Math.abs(dy).toFixed(1));
+  const sent=ar<0.3?t("relNone",{x:t(mx.lk),y:t(my.lk),r:r.toFixed(2)})
+    :t("relSent",{s:t(str),r:r.toFixed(2),dx:dxs,x:t(mx.lk),dy:dys,y:t(my.lk)});
+  return `<div class="trTile trRel">${head}${pick}<svg viewBox="0 0 ${W} ${H}" width="100%">${g}</svg><p class="relSentence">${esc(sent)}</p><p class="mini">${t("relFoot",{n:N})}</p></div>`;
+}
 function renderTrends(){
   const tbl=document.getElementById("trendsTable"); tbl.innerHTML="";
   if(ensureEmptyState("trends")) return;
@@ -7781,7 +8386,7 @@ function renderTrends(){
       for(let i=0;i<NCOL-3;i++){ const td=document.createElement("td"); td.textContent=t("noData"); tr.appendChild(td); }
       return tr;
     }
-    const tr=document.createElement("tr");
+    const tr=document.createElement("tr"); tr.dataset.ds=ds;
     if(d.forecast) tr.className="fcast";
     const dth=document.createElement("th");
     dateCell(dth,ds,(d.forecast?t("forecastTag"):"")+(state.simDays.has(ds)?" ✎":""));
@@ -7860,16 +8465,23 @@ function renderTrends(){
     const ts=document.createElement("td"); ts.className=g.metAgg?"tier-good":"tier-bad";
     ts.textContent=g.metAgg?t("slaMet"):t("slaMissed"); tr.appendChild(ts);
     tr.dataset.k=g.k;
-    tr.addEventListener("click",()=>{ // drill: the period's own days; the breadcrumb leads back
-      state._trCrumb={G,from:state.trendFrom,to:state.trendTo,k:g.k,label:g.label};
+    tr.addEventListener("click",()=>drill(g));
+    return tr;
+  };
+  const drill=g=>{ // drill: the period's own days; the breadcrumb leads back
+    { state._trCrumb={G,from:state.trendFrom,to:state.trendTo,k:g.k,label:g.label};
       state.settings.trendGroup="day"; saveState();
       state.trendFrom=g.from; state.trendTo=g.to;
       document.getElementById("trFrom").value=g.from; document.getElementById("trTo").value=g.to;
       document.querySelectorAll("#trGroup button").forEach(b=>b.classList.toggle("active",b.dataset.g==="day"));
-      renderTrends(); window.scrollTo(0,0); });
-    return tr;
+      renderTrends(); window.scrollTo(0,0); }
   };
   const list=G==="day"?rowsData:groupTrendRows(rowsData,G), builder=G==="day"?buildRow:buildGroupRow;
+  // 📊 the same periods as charts: click a period = open it (week/month → its days; a day → its row)
+  renderTrendDash(list,G,src=>{ if(G!=="day"){ drill(src); return; }
+    const row=document.querySelector(`#trendsTable tr[data-ds="${src.ds}"]`);
+    if(row){ row.classList.remove("flash"); void row.offsetWidth; row.classList.add("flash"); row.scrollIntoView({block:"center",behavior:"smooth"}); }
+    else if(src.forecast) openIntraday(src.ds); });
   { const cb=document.getElementById("trCrumb"), c=state._trCrumb;
     if(cb){ cb.hidden=!(c&&G==="day"); cb.innerHTML="";
       if(c&&G==="day"){ const back=document.createElement("button"); back.className="linklike";
@@ -7910,6 +8522,11 @@ function renderTrends(){
         const a=document.createElement("button"); a.className="linklike"; a.textContent=t("trHintLink");
         a.addEventListener("click",()=>{ showPage("settings"); openEvents(); });
         h.appendChild(a); } } }
+  { const el=document.getElementById("trFast"), fs=fastState();
+    const show=!!(fs&&fs.active&&rowsData.some(r=>r.forecast&&r.ds<=addDays(state.maxDate,30)));
+    el.hidden=!show;
+    if(show){ el.textContent=fastSentence(fs)+" ";
+      const a=document.createElement("button"); a.className="linklike"; a.textContent=t("faMore"); a.addEventListener("click",openFast); el.appendChild(a); } }
   // the pinned סיכום row sits exactly under the pinned header, whatever its height
   { const w=document.getElementById("trendsWrap"); const h=thead.getBoundingClientRect().height; if(w&&h>0) w.style.setProperty("--trHeadH",h+"px"); }
   // page-scoped reset visibility: any forecast edits inside the selected range?
@@ -8527,15 +9144,29 @@ function renderInternalRoster(){
     return;
   }
   const hasContract=state.roster.some(e=>e.contracted>0);
-  // manager-first view: ONLY reps below their contracted base, largest recovery first,
+  const wk=wfWeek(), wkSet=new Set(wk?weekDates(wk):[]), dShort=t("daysShort"), dFull=t("days");
+  const fri=wk?addDays(wk,5):null, onFri=new Set(state.schedRows.filter(r=>r.ds===fri&&r.h>0).map(r=>r.name));
+  // Friday per person: the rotation decides when last Friday is known; unknown → this Friday counts
+  // only if the rep works it (never a "missing" Friday on a guess)
+  const friP=name=>{ const w=friW(name,wk); return w===0.5?(onFri.has(name)?1:0):w; };
+  // manager-first view: ONLY reps below their contracted base, emptiest first,
   // headline = the total hours (and FTE) recoverable before any external hiring
-  // each rep's true base: roster contract column → else their IRON weekly hours →
-  // else the full-time default (an honest base, not a one-size 42h yardstick)
+  // each rep's true base: roster contract column → else their IRON weekly hours (Friday by
+  // rotation) → else the full-time default (an honest base, not a one-size 42h yardstick)
   const baseOf=e=>{
     if(e.contracted>0) return e.contracted;
     const ir=state.iron&&state.iron.emps.get(e.name);
-    return ir&&ir.contracted>0?Math.round(ir.contracted*10)/10:fullTimeWeeklyHours();
+    if(!ir||!(ir.contracted>0)) return fullTimeWeeklyHours();
+    let s=0; for(let di=0;di<6;di++) s=s+((ir.days[di]&&ir.days[di].h)||0)*(di===5?friP(e.name):1);
+    return Math.round(s*10)/10;
   };
+  // WHY each rep is below: the sidur's own words this week — absence types, typed statuses, empty cells
+  const stOrder=[...new Set((state.unallocRows||[]).filter(u=>wkSet.has(u.ds)).map(u=>u.status))];
+  const why=new Map(); // name → Map(key → {label,color,days:Set})
+  const addWhy=(name,key,label,color,di)=>{ const m=why.get(name)||new Map(); why.set(name,m);
+    const o=m.get(key)||{key,label,color,days:new Set()}; o.days.add(di); m.set(key,o); };
+  for(const v of state.vacations||[]) if(wkSet.has(v.ds)) addWhy(v.name,"t:"+v.type,t("wf_"+v.type),WF_COLORS[v.type]||"#999",v.di);
+  for(const u of state.unallocRows||[]) if(wkSet.has(u.ds)) addWhy(u.name,"s:"+u.status,u.status||t("wfNoStatus"),statusColor(u.status,stOrder),u.di);
   const under=state.roster
     .map(e=>{ const base=baseOf(e); return {...e,base,def:Math.round((base-e.scheduled)*10)/10}; })
     .filter(e=>e.def>0.4)
@@ -8543,6 +9174,8 @@ function renderInternalRoster(){
     // sorted by the BAR: emptiest fill first (lowest scheduled/base ratio), so the
     // visual order and the priority order are the same thing
     .sort((a,b)=>(a.scheduled/a.base)-(b.scheduled/b.base)||b.def-a.def);
+  under.forEach(e=>{ const m=why.get(e.name); e.why=m?[...m.values()].sort((a,b)=>b.days.size-a.days.size)
+    :[{key:"none",label:t("rrNoWhy"),color:"#b9c4d0",days:new Set()}]; });
   if(!under.length){
     rw.innerHTML=`<div class="banner good" style="display:block">${t("rosterAllOk")}</div>`;
     return;
@@ -8555,38 +9188,52 @@ function renderInternalRoster(){
     <span class="mini">${t("rosterRecov",{n:under.length,f:fte})}</span>
     <button class="linklike" id="rosterCopyBtn" style="margin-inline-start:auto">📋 ${t("rosterCopyBtn")}</button>`;
   rw.appendChild(head);
+  // the reasons, one chip each (reps per reason) — click = only those reps; again = everyone
+  const esc=x=>String(x).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+  const byWhy=new Map(); under.forEach(e=>e.why.forEach(w=>{ const o=byWhy.get(w.key)||{...w,n:0}; o.n++; byWhy.set(w.key,o); }));
+  if(state._rrWhy&&!byWhy.has(state._rrWhy)) state._rrWhy=null;
+  const chips=document.createElement("div"); chips.className="rrWhyBar";
+  chips.innerHTML=`<span class="mini">${t("rrWhyL")}</span>`+[...byWhy.values()].sort((a,b)=>b.n-a.n).map(w=>
+    `<button type="button" class="rrWhy${state._rrWhy===w.key?" on":""}" data-k="${esc(w.key)}" title="${esc(t("rrWhyTip",{n:w.n}))}"><i style="background:${w.color}"></i>${esc(w.label)} <b>${w.n}</b></button>`).join("");
+  chips.querySelectorAll(".rrWhy").forEach(b=>b.addEventListener("click",()=>{ state._rrWhy=state._rrWhy===b.dataset.k?null:b.dataset.k; renderInternalRoster(); }));
+  rw.appendChild(chips);
+  const list=state._rrWhy?under.filter(e=>e.why.some(w=>w.key===state._rrWhy)):under;
   // per rep, iron vs sidur hours by weekday → WHERE the missing hours can go back
-  const wk=wfWeek(), wkSet=new Set(wk?weekDates(wk):[]), dShort=t("daysShort"), dFull=t("days");
   const dayStrip=e=>{
     const ir=state.iron&&state.iron.emps.get(e.name), sch={};
     for(const r of state.schedRows) if(r.name===e.name&&wkSet.has(r.ds)) sch[r.di]=(sch[r.di]||0)+(r.h||0);
-    const miss=[], cells=[];
+    const miss=[], cells=[], whyDay={};
+    (e.why||[]).forEach(w=>w.days.forEach(di=>{ (whyDay[di]=whyDay[di]||[]).push(w.label); }));
     for(let di=0;di<6;di++){
-      const ih=ir&&ir.days&&ir.days[di]?ir.days[di].h||0:0, sh=Math.round((sch[di]||0)*10)/10;
+      const raw=ir&&ir.days&&ir.days[di]?ir.days[di].h||0:0, rot=di===5&&raw>0&&friP(e.name)===0;
+      const ih=rot?0:raw, sh=Math.round((sch[di]||0)*10)/10;
       if(ih>0&&sh<0.1) miss.push(dFull[di]);
-      const cls=!ih&&!sh?"":sh>=ih-0.1?"tier-good":sh>0?"tier-warn":"tier-bad";
-      cells.push(`<span class="rrd ${cls}" title="${dFull[di]}: ${t("rosterDayTip",{s:sh,i:ih})}">${dShort[di]}<b>${ih||sh?sh+"/"+ih:"—"}</b></span>`);
+      const cls=rot?"rot":!ih&&!sh?"":sh>=ih-0.1?"tier-good":sh>0?"tier-warn":"tier-bad";
+      const tip=dFull[di]+": "+(rot?t("rrFriOff"):t("rosterDayTip",{s:sh,i:ih}))+(whyDay[di]?" · "+whyDay[di].join(", "):"");
+      cells.push(`<span class="rrd ${cls}" title="${esc(tip)}">${dShort[di]}<b>${rot?"↻":ih||sh?sh+"/"+ih:"—"}</b>${whyDay[di]?`<small>${esc(whyDay[di][0])}</small>`:""}</span>`);
     }
     return `<div class="rrDays">${cells.join("")}</div><p class="mini" style="margin:2px 0 8px">${
       !ir?t("rosterNoIron"):miss.length?"➜ "+t("rosterMissing",{d:miss.join(", ")}):t("rosterSpread")}</p>`;
   };
-  const LIMIT=14, shown=state._rosterAll?under:under.slice(0,LIMIT);
+  const LIMIT=25, shown=state._rosterAll?list:list.slice(0,LIMIT);
   shown.forEach(e=>{
     const meta=state.rosterMeta.get(e.name)||{};
     const det=document.createElement("details"); det.className="drl";
     const fill=Math.min(100,e.scheduled/e.base*100);
-    det.innerHTML=`<summary title="${t("rosterRowTip")}"><span style="min-width:150px;font-weight:600">${e.name}</span>
-      <span class="mini" style="min-width:88px">${meta.team||""}</span>
-      <div style="flex:1;background:var(--sky-soft);border-radius:5px;height:16px;position:relative;direction:ltr" title="${e.scheduled}h / ${e.base}h">
+    const whyHtml=e.why.slice(0,3).map(w=>`<span class="rrTag"><i style="background:${w.color}"></i>${esc(w.label)}${w.days.size>1?" ×"+w.days.size:""}</span>`).join("");
+    det.innerHTML=`<summary title="${t("rosterRowTip")}"><span style="min-width:150px;font-weight:600">${esc(e.name)}</span>
+      <span class="mini" style="min-width:88px">${esc(meta.team||"")}</span>
+      <span class="rrTags">${whyHtml}</span>
+      <div style="flex:1;min-width:90px;background:var(--sky-soft);border-radius:5px;height:16px;position:relative;direction:ltr" title="${e.scheduled}h / ${e.base}h">
         <div style="width:${fill.toFixed(0)}%;background:${e.def>=8?"#c94f2e":"#e3a72f"};height:16px;border-radius:5px"></div>
       </div>
       <span style="min-width:56px;direction:ltr;font-weight:700;color:${e.def>=8?"var(--crimson)":"#8a6d1a"}">+${e.def}h</span></summary>`;
     det.addEventListener("toggle",()=>{ if(det.open&&!det._filled){ det._filled=true; det.insertAdjacentHTML("beforeend",dayStrip(e)); } }, {once:false});
     rw.appendChild(det);
   });
-  if(under.length>LIMIT){
+  if(list.length>LIMIT){
     const more=document.createElement("button"); more.className="linklike"; more.style.marginTop="4px";
-    more.textContent=state._rosterAll?t("rosterLess"):t("rosterAll",{n:under.length});
+    more.textContent=state._rosterAll?t("rosterLess"):t("rosterAll",{n:list.length});
     more.addEventListener("click",()=>{ state._rosterAll=!state._rosterAll; renderInternalRoster(); });
     rw.appendChild(more);
   }
@@ -8595,8 +9242,8 @@ function renderInternalRoster(){
   rw.appendChild(note);
   document.getElementById("rosterCopyBtn").addEventListener("click",e2=>{
     e2.stopPropagation();
-    const byTeam={}; under.forEach(x=>{ const tm=(state.rosterMeta.get(x.name)||{}).team||"—"; (byTeam[tm]=byTeam[tm]||[]).push(x); });
-    const txt=Object.entries(byTeam).map(([tm,xs])=>tm+"\n"+xs.map(x=>`  ${x.name}: ${x.scheduled}h/${x.base}h (+${x.def}h)`).join("\n")).join("\n\n");
+    const byTeam={}; list.forEach(x=>{ const tm=(state.rosterMeta.get(x.name)||{}).team||"—"; (byTeam[tm]=byTeam[tm]||[]).push(x); });
+    const txt=Object.entries(byTeam).map(([tm,xs])=>tm+"\n"+xs.map(x=>`  ${x.name}: ${x.scheduled}h/${x.base}h (+${x.def}h) · ${x.why.map(w=>w.label).join(", ")}`).join("\n")).join("\n\n");
     navigator.clipboard&&navigator.clipboard.writeText(txt);
     showToast("📋 "+t("wfValCopied"),true);
   });
@@ -8645,6 +9292,9 @@ function loadState(){
     if(!Array.isArray(state.settings.skillReqs)) state.settings.skillReqs=[];
     if(!Array.isArray(state.settings.demandEvents)) state.settings.demandEvents=[];
     if(!state.settings.profileEdits||typeof state.settings.profileEdits!=="object") state.settings.profileEdits={};
+    if(!state.settings.friHist||typeof state.settings.friHist!=="object") state.settings.friHist={};
+    if(!Array.isArray(state.settings.customHol)) state.settings.customHol=[];
+    if(!Array.isArray(state.settings.trCharts)) state.settings.trCharts=["vol","ar","aht","occ"];
     // migration: an early build seeded Av|9=work as an override — it is now the
     // table default, so drop it (otherwise it shows a permanent "changed" tag)
     if(state.settings.holOverride["Av|9"]==="work") delete state.settings.holOverride["Av|9"];
@@ -9153,6 +9803,7 @@ $sh("shAhead").addEventListener("change",e=>setShareOpt("ahead",Math.max(0,Math.
 $sh("shIns").addEventListener("change",e=>setShareOpt("ins",e.target.checked));
 { let tmr; $sh("shNote").addEventListener("input",e=>{ clearTimeout(tmr); tmr=setTimeout(()=>setShareOpt("note",e.target.value.trim()),250); }); }
 document.getElementById("trShareBtn").addEventListener("click",openShare);
+document.getElementById("trDashBtn").addEventListener("click",()=>{ state.settings.trDash=state.settings.trDash===false; saveState(); renderTrends(); });
 $sh("shPng").addEventListener("click",()=>{ const a=document.createElement("a");
   a.href=state._share.cv.toDataURL("image/png"); a.download="wfm_monthly_summary.png"; a.click(); });
 $sh("shCopyImg").addEventListener("click",()=>{
@@ -9290,6 +9941,7 @@ function syncCleanUI(){
   if(h) h.checked=state.settings.autoHolidays!==false;
   if(a) a.checked=state.settings.autoAnomaly!==false;
   if(p) p.value=state.settings.profileMode||"adaptive";
+  { const fsw=document.getElementById("setFastAdapt"); if(fsw) fsw.checked=state.settings.fastAdapt!==false; }
   if(typeof renderEvents==="function") renderEvents(); // 📣 list + counts follow language/state
 }
 document.getElementById("setAutoHol").addEventListener("change",e=>{
@@ -9298,6 +9950,54 @@ document.getElementById("setAutoAnom").addEventListener("change",e=>{
   state.settings.autoAnomaly=e.target.checked; rebuildLearningSeries(); saveState(); saveData(); renderAll(); });
 document.getElementById("setProfile").addEventListener("change",e=>{
   state.settings.profileMode=e.target.value; state.fcCache.clear(); saveState(); renderAll(); });
+/* ---- ⚡ fast lane: one sentence, a 10-day picture (fresh calls vs the model), two knobs ---- */
+const faPanel=document.getElementById("faPanel"), $fa=id=>faPanel.querySelector("#"+id);
+/* pages speak ONLY when demand really shifted (never "all is fine" / "missing data" lines — they read as
+   something broken). The panel, opened on purpose, also says what the callbacks add. */
+function fastShift(fs){ return fs&&fs.active?(fs.L>=1?"+":"−")+Math.round(Math.abs(fs.L-1)*100)+"%":""; }
+function fastSentence(fs){
+  if(!fs||fs.noBase) return t(state.settings.fastAdapt===false?"faOff":"faCalm");
+  const p=Math.round(Math.abs(fs.L-1)*100);
+  return fs.active?t(fs.L>=1?"faUp":"faDown",{p,n:fs.run,h:t("faH"+fs.half)}):t("faCalm");
+}
+function fastDetail(fs){
+  if(!fs) return "";
+  return fs.retry1>=1?t("faRetryNow",{n:Math.round(fs.retry1).toLocaleString()}):fs.hasAns?"":t("faNoAns");
+}
+function fastChanged(){ state._fastKey=null; state.fcCache.clear(); memo.clear(); saveState(); renderAll(); renderFast(); }
+function renderFast(){
+  const S=state.settings, fs=fastState();
+  const fsw=document.getElementById("setFastAdapt"); if(fsw) fsw.checked=S.fastAdapt!==false;
+  $fa("faOn").checked=S.fastAdapt!==false;
+  faPanel.querySelectorAll("#faHalf button").forEach(b=>b.classList.toggle("active",+b.dataset.h===(+S.fastHalf||10)));
+  $fa("faRetry").value=Math.round((+S.retryShare||0)*100); $fa("faRetryV").textContent=Math.round((+S.retryShare||0)*100)+"%";
+  $fa("faNow").textContent=[fastSentence(fs),fastDetail(fs)].filter(Boolean).join(" ");
+  const box=$fa("faChart"); box.innerHTML="";
+  $fa("faFoot").textContent=fs?t("faFoot",{a:fmtD(fs.from).slice(0,5),b:fmtD(fs.to).slice(0,5),r:fs.hasAns?Math.round(fs.ab0*100)+"%":"—"}):"";
+  if(!fs) return;
+  // diverging columns around the model (0): above = more fresh calls than the model expected
+  const ds=fs.days.filter(d=>d.ratio!=null), H=60, mx=Math.max(0.05,...ds.map(d=>Math.abs(d.ratio-1))), dn=t("daysShort");
+  box.innerHTML=`<div class="faCols">`+ds.map(d=>{ const v=d.ratio-1, h=Math.abs(v)/mx*H, p=(v>=0?"+":"−")+Math.round(Math.abs(v)*100)+"%";
+    const tip=fmtD(d.ds)+"\n"+t("faTipAct",{n:Math.round(d.act).toLocaleString()})+"\n"+t("faTipExp",{n:Math.round(d.exp).toLocaleString()})+(d.back>=1?"\n"+t("faTipBack",{n:Math.round(d.back).toLocaleString()}):"");
+    return `<span class="faCol" title="${tip.replace(/"/g,"&quot;")}"><span class="faUp" style="height:${H}px">${v>=0?`<i style="height:${h.toFixed(1)}px"></i>`:""}</span><span class="faDn" style="height:${H}px">${v<0?`<i style="height:${h.toFixed(1)}px"></i>`:""}</span><b>${p}</b><small>${dn[d.di]} ${+d.ds.slice(8)}/${+d.ds.slice(5,7)}</small></span>`; }).join("")+`</div>`
+    +`<div class="legend rdyLeg"><span><i style="background:#d9822b"></i>${t("faLgUp")}</span><span><i style="background:#3fa9f5"></i>${t("faLgDn")}</span></div>`;
+}
+function openFast(){
+  document.getElementById("mTitle").textContent=t("faTitle");
+  document.getElementById("mCore").textContent=t("faIntro");
+  document.getElementById("mMsg").textContent="";
+  const mL=document.getElementById("mList"); mL.innerHTML="";
+  mL.parentNode.insertBefore(faPanel,mL); faPanel.hidden=false;
+  document.getElementById("mExport").style.display="none";
+  document.getElementById("modalBg").classList.add("show");
+  renderFast();
+}
+document.getElementById("faBtn").addEventListener("click",e=>{ e.preventDefault(); openFast(); });
+document.getElementById("setFastAdapt").addEventListener("change",e=>{ state.settings.fastAdapt=e.target.checked; fastChanged(); });
+$fa("faOn").addEventListener("change",e=>{ state.settings.fastAdapt=e.target.checked; fastChanged(); });
+faPanel.querySelector("#faHalf").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return; state.settings.fastHalf=+b.dataset.h; fastChanged(); });
+$fa("faRetry").addEventListener("input",e=>{ $fa("faRetryV").textContent=e.target.value+"%"; });
+$fa("faRetry").addEventListener("change",e=>{ state.settings.retryShare=(+e.target.value||0)/100; fastChanged(); });
 /* ---- 📣 Planned demand events: list, live preview, add/remove ---- */
 const evPanel=document.getElementById("evPanel"), $ev=id=>evPanel.querySelector("#"+id); // panel moves into the shared modal
 function evFormVals(){
@@ -9509,6 +10209,8 @@ document.getElementById("holTableBtn").addEventListener("click",()=>{
   document.getElementById("mExport").style.display="none";
   const mL=document.getElementById("mList"); mL.innerHTML="";
   const ov=state.settings.holOverride||(state.settings.holOverride={});
+  renderCustomHol(mL);
+  { const hd=document.createElement("li"); hd.className="holSec"; hd.textContent=t("holAutoSec"); mL.appendChild(hd); }
   for(const mn of HOL_MONTH_ORDER){
     for(const day of Object.keys(HEB_HOLIDAYS[mn]||{}).map(Number).sort((a,b)=>a-b)){
       const key=mn+"|"+day, def=HEB_HOLIDAYS[mn][day];
@@ -9535,6 +10237,37 @@ document.getElementById("holTableBtn").addEventListener("click",()=>{
   }
   document.getElementById("modalBg").classList.add("show");
 });
+/* your own dates: a list (✕ removes) + one add row — name · from · to · level. A change recomputes at once. */
+function holChanged(){ saveState(); state.fcCache.clear(); memo.clear(); rebuildLearningSeries(); renderAll(); }
+function renderCustomHol(mL){
+  const list=state.settings.customHol||(state.settings.customHol=[]);
+  const sec=document.createElement("li"); sec.className="holSec"; sec.textContent=t("holOwnSec"); mL.appendChild(sec);
+  const lvlSel=v=>{ const s=document.createElement("select"); s.style.fontSize=".8rem";
+    HOL_LEVELS.forEach(([k,lk])=>{ const o=document.createElement("option"); o.value=k; o.textContent=t(lk); if(k===v) o.selected=true; s.appendChild(o); }); return s; };
+  list.slice().sort((a,b)=>a.from<b.from?-1:1).forEach(c=>{
+    const li=document.createElement("li"); li.className="insight holOwn";
+    const nm=document.createElement("b"); nm.textContent=c.name||t("holOwnNoName");
+    const dt=document.createElement("span"); dt.className="mini"; dt.style.direction="ltr"; dt.textContent=fmtD(c.from)+(c.to&&c.to!==c.from?" – "+fmtD(c.to):"");
+    const sel=lvlSel(c.lvl); sel.addEventListener("change",()=>{ c.lvl=sel.value; holChanged(); });
+    const x=document.createElement("button"); x.className="xbtn"; x.textContent="✕"; x.title=t("holOwnDel");
+    x.addEventListener("click",()=>{ state.settings.customHol=list.filter(o=>o!==c); holChanged(); li.remove(); });
+    li.append(nm,dt,sel,x); mL.appendChild(li);
+  });
+  const li=document.createElement("li"); li.className="holOwn holAdd";
+  const nm=document.createElement("input"); nm.type="text"; nm.placeholder=t("holOwnName"); nm.style.width="150px";
+  const f=document.createElement("input"); f.type="date"; const to=document.createElement("input"); to.type="date"; to.title=t("holOwnTo");
+  f.addEventListener("change",()=>{ if(!to.value||to.value<f.value) to.value=f.value; });
+  const sel=lvlSel("closed");
+  const add=document.createElement("button"); add.className="btn navy applymini"; add.textContent=t("holOwnAdd");
+  add.addEventListener("click",()=>{
+    if(!f.value){ showToast("⚠ "+t("holOwnNeed"),false); f.focus(); return; }
+    const c={id:Date.now(),from:f.value,to:to.value&&to.value>=f.value?to.value:f.value,name:nm.value.trim(),lvl:sel.value};
+    list.push(c); holChanged();
+    showToast("✅ "+t("holOwnAdded",{n:c.name||fmtD(c.from),l:t(HOL_LEVELS.find(x=>x[0]===c.lvl)[1])}),true);
+    document.getElementById("holTableBtn").click(); // redraw the list in place
+  });
+  li.append(nm,f,to,sel,add); mL.appendChild(li);
+}
 /* ---- day-level backtest of the REAL pipeline (daily-total model) + pace calibration ---- */
 function backtestDaily(){
   if(!state.series) return null;
@@ -9793,6 +10526,12 @@ wireDropzone("dzCourses","crsInput",ingestCourseFile);
    decides where errors are shown; a roster dropped on the forecast box still works */
 wireDropzone("dzForecast","fcInput",f=>ingestFile(f,"forecast"));
 wireDropzone("dzRoster","roInput",f=>ingestFile(f,"roster"));
+// Friday rotation switch (in both Friday cards' titles): a click must not fold the card
+document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest(".friEverySeg button"); if(!b) return; e.preventDefault();
+  state.settings.friEvery=+b.dataset.v; saveState(); renderWorkforce(); renderFriday(); });
+// folding cards: one click on the title; the choice is remembered (settings.fold)
+document.querySelectorAll("details.foldCard").forEach(d=>{
+  d.addEventListener("toggle",()=>{ (state.settings.fold=state.settings.fold||{})[d.id]=d.open; saveState(); }); });
 document.getElementById("btnSample").addEventListener("click",e=>{ e.stopPropagation(); loadSample(); });
 
 /* drop-anywhere: any file dropped on any page is auto-classified and ingested.
@@ -9895,7 +10634,7 @@ function loadData(){
     // non-data preferences that belong to this dataset: chosen week, workforce
     // filters and manually entered constraints all survive a refresh
     if(s.week) state._restoredWeek=s.week;
-    if(s.wfFilter){ state.wfFilter={day:"",...s.wfFilter}; // day key may be absent in older saves
+    if(s.wfFilter){ state.wfFilter={day:"",...s.wfFilter,skill:[]}; // day key may be absent in older saves; skills = the 🎧 list now
       // older saves hold one string per list → the multi-select array form
       for(const k of ["team","skill","site"]){ const v=state.wfFilter[k]; state.wfFilter[k]=Array.isArray(v)?v:(v?[v]:[]); } }
     if(Array.isArray(s.cons)) state.weeklyConstraints=s.cons;
@@ -9953,6 +10692,7 @@ if(typeof MutationObserver!=="undefined"){
   document.querySelectorAll(".seg button").forEach(syncSeg);
 }
 const savedWs=loadState();
+{ const f=state.settings.fold||{}; document.querySelectorAll("details.foldCard").forEach(d=>{ if(f[d.id]===false) d.open=false; }); } // folded cards stay folded
 buildTimes(); // restored window settings reshape the grid skeleton
 // re-sync inputs with the restored workspace (bindings were initialized from defaults)
 [["setTarget","target"],["setTsfT","tsfT"],["setAttr","attrition"],
@@ -9965,7 +10705,8 @@ buildDayWins();
 // item 11: cached datasets re-populate the workspace (sidur-only restores without touching forecast state)
 // no auto-demo: a fresh workspace starts EMPTY so real uploads are unmistakable —
 // sample data loads only via the explicit button on the Home page
-if(loadData()){ if(state.days.size) afterForecastLoad(); else { applyDataWeek(); updatePortalStatus(); renderAll(); } }
+if(loadData()){ recordFriHist(); // a sidur saved before the Friday memory existed joins it once
+  if(state.days.size) afterForecastLoad(); else { applyDataWeek(); updatePortalStatus(); renderAll(); } }
 else renderAll();
 document.getElementById("polEnable").checked=state.policy.enabled;
 document.getElementById("polFields").disabled=!state.policy.enabled;

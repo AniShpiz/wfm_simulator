@@ -49,6 +49,24 @@ Fix:
 - Confirm Iron or fallback employee source exists
 - Re-check optional constraints file for parse issues
 
+## Friday utilization looks off / the Friday card asks for last week's file
+
+Cause:
+Each rep works every other Friday. Until last Friday is in memory, Friday iron counts half.
+
+Fix:
+- Upload last week's sidur once (or drop it in the Friday card — only its Friday is read)
+- A center where everyone works every Friday: switch the card to "Every Friday"
+
+## No 📈 on the matrix even though a campaign started
+
+Cause:
+The fast lane speaks only when the shift is clear: ≥6% and the last 3 working days on the same
+side. A one-day spike is noise; a planned surge belongs in 📣 Planned demand events.
+
+Fix:
+- Advanced Settings → Forecasting models → 📈 ⚙ shows the last 10 days against the forecast
+
 ## Language switch looks partial
 
 Cause:

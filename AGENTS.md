@@ -40,6 +40,10 @@ Companion docs (read the one matching your task before editing):
 
 ## Non-negotiable rules
 
+- Meet the owner's bar in `DESGIN.md` → "The bar every change must clear": low cognitive load,
+  power features one click deep, follow the user's journey, one applicative design, fewest clicks,
+  value with minimum friction, **silence when all is well** (no notice that makes a healthy state
+  feel broken), root cause over warnings, every secondary area folds.
 - Keep the project single-file and offline-capable. Do not add dependencies.
 - Never send user data to external services. Parsing and analytics remain in-browser.
 - Maintain bilingual behavior. Any new user-facing string must be added to both EN and HE in `I18N` and wired via `data-i18n`/`t()`.
@@ -107,14 +111,26 @@ workforce filter lists legitimately show only "(all)" for this file.
 
 ## Workforce and scheduler data flow
 
-- Workforce filters are populated from both roster metadata and Iron data:
+- Skills are ONE list app-wide: the 🎧 answering skills (`settings.answerSkills` → `state.capSkills`
+  = `state.schedSkills`), one menu builder `renderScopeMenu` for every 🎧 button (matrix, recruit,
+  scheduler, Workforce `renderWfScope`) + Settings chips. `wfPass` applies it on the Workforce page
+  (untagged reps always count). Never add a second skill filter.
+- Workforce team/site filters are populated from both roster metadata and Iron data:
   - `wfFilterValues`
   - `populateWfFilters`
 - Workforce KPIs and visuals:
   - `computeWorkforce`
   - `renderTreemap`
+  - `renderIronDays` (iron vs sidur by day, people; folds)
   - `renderImpactMatrix`
   - `renderValidation`
+  - `renderInternalRoster` ("Below their iron — who and why": reasons from the sidur, chip filter)
+- Friday rotation (each rep works every other Friday; `settings.friEvery`): every iron total reads
+  Friday through `friW` → `ironDayH`/`ironWeekH` (worked last Friday → 0, didn't → 1, unknown → ½).
+  The Friday memory `settings.friHist` (names only, last 12 Fridays) is filled by `recordFriHist`
+  on each sidur upload, or by `ingestFriOnly` (last week's file, Friday only). `renderFriday`
+  draws every `.friCard` (Auto-Scheduler under step ① with `schWeek()`; inside the Iron validation
+  card with `wfWeek()`). `repLeft` = the sidur says resigned / left / not active.
 - Scheduler:
   - Mode 1 `optimizeSidur` (move-only: slides existing shifts ±2h) and Mode 2
     `generateIronBaseline` (greedy build from the iron base); toggle via `applySchedMode`
@@ -122,6 +138,16 @@ workforce filter lists legitimately show only "(all)" for this file.
     `tests/unit/scheduler.test.js` (the live engines have no unit tests yet)
   - `runScheduler` and `renderSchedulerResults`
   - Optional constraints ingestion via `parseConstraintsGrid`
+
+## Forecast extras
+
+- 📈 Fast lane for sudden demand changes: `fastState` (memoized on `_serVer` + settings) /
+  `fastFor` inside `forecastDay`; `preDaily` = the daily model on history before the window;
+  `domFactorPre` = billing calendar learned before the window. UI: only during a real shift —
+  `.wkFast` inside the matrix week pill, `#trFast` in Date Trends; panel `openFast` (⚙ folded).
+- Your own holidays: `settings.customHol` → `applyCustomHol` (wins over the Hebrew calendar,
+  works with it off) and `customHolOn` (names); edited in the holidays table (`renderCustomHol`).
+- Date Trends charts: `renderTrendDash` + `trRelTile`, fed by the same rows as the table.
 
 ## Persistence and reset behavior
 

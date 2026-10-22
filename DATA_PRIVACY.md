@@ -22,6 +22,8 @@ Stored categories may include:
 - user settings and preferences
 - ingested dataset snapshots
 - derived scheduling/forecast structures
+- the Friday memory: who worked each of the last 12 Fridays (rep names only, no hours or IDs),
+  kept with the workspace settings so next week's sidur can be compared; cleared by workspace reset
 
 ## Operator Guidance
 

@@ -19,6 +19,12 @@ This project is a single-file web app. Most code changes happen in index.html.
 - Do not commit directly to main
 - Open pull requests into main
 
+## Product Bar
+
+Read `DESGIN.md` → "The bar every change must clear" before designing UI. In short: low cognitive
+load, depth one click away, put features on the user's journey, reuse existing components, merge
+instead of adding buttons, silence when all is well, fix root causes, let secondary areas fold.
+
 ## Change Style
 
 - Make focused changes with minimal footprint

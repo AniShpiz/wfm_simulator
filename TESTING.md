@@ -11,6 +11,10 @@ Zero-dependency unit tests — they extract functions straight out of `index.htm
 node --test tests/unit/*.test.js
 ```
 
+(60 tests: page integrity — the whole script parses + EN/HE key parity —, dates/times, ingestion, real .xls,
+Erlang, scheduler, Friday rotation + own holidays. Run them after EVERY edit: a stray `//` that
+comments out a brace breaks the whole app and only the page-integrity test sees it.)
+
 Use the glob: passing the bare `tests/unit` directory fails on Windows.
 
 Headless-browser scripts (load the real page, drive it, report `ok`/`not ok`):
@@ -88,6 +92,21 @@ real browser, in both languages.
 2. Validate team/skill/site filter population.
 3. Verify KPI updates when filters change.
 4. Verify validation matrix content and exports.
+5. Iron vs sidur by day: 6 columns, % under each, a day click opens its hours; fold → one-line
+   summary, still folded after refresh.
+6. Below their iron: reason chips (vacation / empty / no status…) filter the list.
+7. Friday rotation (week-27 file): with no memory of the week before, Friday iron counts half
+   and the Friday card offers last week's file; after a previous week's sidur (or its file in the
+   drop box) the groups appear: two in a row / their turn / on / off / no longer active.
+
+## Forecast & Trends Tests
+
+1. Calm history → no 📈 anywhere (matrix week pill, Date Trends). Silence is the expected state.
+2. A sustained jump in the last days (see `tests/unit/rotation-holidays.test.js` for the pure
+   parts; the controlled surge CSV in the PR notes) → "📈 +N%" in the week pill and one line in
+   Date Trends; the next working day ≈ model × level + callbacks; far days back to the model.
+3. Date Trends 📊: hover shows one tooltip for all charts; clicking a week opens its days.
+4. Holidays table → your own date (closed) → that forecast day is 0 and carries its name.
 
 ## Scheduler Tests
 

@@ -20,6 +20,7 @@ node tests/browser/smoke.js     # E2E in headless Edge (needs puppeteer-core)
 | 3 | Binary ingestion | `xlsToGrid` against the real week-27 BIFF8 workbook: sheet count, names, header row, string-formula cells, serials | `tests/unit/xls-real-file.test.js` |
 | 4 | Queue math | `evalInterval` / `requiredAgents`: monotonicity in agents, bounds (0..1), zero-volume, huge-volume, AR vs TSF ordering | `tests/unit/erlang.test.js` |
 | 5 | Scheduler | `schedulerCore`: coverage vs demand, vacation/partial/unavailable constraints, pool swaps, gap accounting; `tikshuvRow` structure | `tests/unit/scheduler.test.js` |
+| 5b | Friday rotation & own holidays | `friW`/`ironDayH`/`ironWeekH` (0 / 1 / ½ by last Friday, every-Friday centers), `applyCustomHol`/`customHolOn`, `niceStep` | `tests/unit/rotation-holidays.test.js` |
 | 6 | E2E (browser) | dual upload orders, week persistence, filter lists, gating, impact matrix, drill-down, scheduler run, calibration note, audit banner | `tests/browser/smoke.js` |
 
 ## Manual checklist (no automation possible)
