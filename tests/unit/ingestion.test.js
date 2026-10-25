@@ -69,30 +69,26 @@ test("colIdx: A→0, Z→25, AA→26", () => {
   assert.equal(S.colIdx("N"), 13); // מיומנות column in the real workbook
 });
 
-// parseCoursesGrid needs state/t/toNum/normDateAny/fromISO in scope
-const C = sandbox(
-  ["parseCoursesGrid", "normDateAny", "fromISO", "toNum", "pad", "iso"],
-  [],
-  { state: { cohorts: [] }, t: () => "קורס" }
-);
+// parseCoursesGrid returns the courses (the caller adds them); more layouts in courses.test.js
+const C = sandbox(["parseCoursesGrid", "normDateAny", "fromISO", "toNum", "pad", "iso"], [], { t: () => "קורס" });
 test("parseCoursesGrid: forgiving headers, serial dates, bad rows skip", () => {
   const grid = [
     ["שם קורס", "תאריך התחלה", "סיום", "כמות חניכים", "אחוז הסמכה"],
     ["קורס א", "20/07/2026", "10/08/2026", "12", "0.8"],
-    ["קורס ב", "46600", "", "8", ""],          // serial date, missing yield→85
+    ["קורס ב", "46600", "", "8", ""],          // serial date; the rate typed above carries down (merged-cell style)
     ["קורס ג", "לא תאריך", "", "5", ""],       // bad date row skips, not fatal
   ];
-  assert.equal(C.parseCoursesGrid(grid), 2);
+  const r = C.parseCoursesGrid(grid, { yield: 85 });
+  assert.equal(r.length, 2);
+  assert.equal(r[1].yield, 80);
 });
-test("parseCoursesGrid: pushed rows carry computed duration and normalized yield", () => {
-  const st = { cohorts: [] };
-  const C2 = sandbox(["parseCoursesGrid", "normDateAny", "fromISO", "toNum", "pad", "iso"], [], { state: st, t: () => "קורס" });
-  C2.parseCoursesGrid([
+test("parseCoursesGrid: rows carry computed duration and normalized yield", () => {
+  const r = C.parseCoursesGrid([
     ["course", "start", "end", "trainees", "yield"],
     ["July", "2026-07-20", "2026-08-10", "12", "0.8"],
   ]);
-  assert.equal(st.cohorts.length, 1);
-  assert.equal(st.cohorts[0].duration, 21);   // end − start in days
-  assert.equal(st.cohorts[0].yield, 80);      // 0.8 → 80%
-  assert.equal(st.cohorts[0].count, 12);
+  assert.equal(r.length, 1);
+  assert.equal(r[0].duration, 16);   // working days (Sun–Thu) from start to end
+  assert.equal(r[0].yield, 80);      // 0.8 → 80%
+  assert.equal(r[0].count, 12);
 });
