@@ -74,8 +74,9 @@ input.sw:disabled{opacity:.45;cursor:default}
 .btn.sw{display:inline-flex;align-items:center;gap:8px}
 .btn.sw::after{content:"";flex:none;width:28px;height:16px;border-radius:999px;background:radial-gradient(circle at 8px 50%,#fff 5.5px,transparent 6px),#c3cddb}
 [dir=rtl] .btn.sw::after{background:radial-gradient(circle at calc(100% - 8px) 50%,#fff 5.5px,transparent 6px),#c3cddb}
-.btn.sw.on::after{background:radial-gradient(circle at calc(100% - 8px) 50%,#fff 5.5px,transparent 6px),rgba(255,255,255,.45)}
-[dir=rtl] .btn.sw.on::after{background:radial-gradient(circle at 8px 50%,#fff 5.5px,transparent 6px),rgba(255,255,255,.45)}
+.btn.sw.on::after{background:radial-gradient(circle at calc(100% - 8px) 50%,#fff 5.5px,transparent 6px),var(--navy)}
+[dir=rtl] .btn.sw.on::after{background:radial-gradient(circle at 8px 50%,#fff 5.5px,transparent 6px),var(--navy)}
+.btn.ghost.sw.on{border-color:var(--navy);color:var(--navy)}
 .btn{background:var(--sky);color:#06233f;border:none;padding:8px 15px;border-radius:7px;font-weight:600;font-size:.86rem;cursor:pointer}
 .btn:hover{filter:brightness(1.07)}
 .btn.navy{background:var(--navy);color:#fff}
@@ -189,7 +190,7 @@ li.insight{border-inline-start:4px solid var(--sky);background:var(--sky-soft)}
 .wkctx{font-size:.74rem;padding:3px 10px;font-weight:600}
 .wkctx.now{background:var(--navy);color:#fff}.wkctx.past{background:#eef1f5;color:#4a5a6e}.wkctx.fut{background:#efe8fb;color:#6b46c1}
 .wkctx.jump{cursor:pointer}.wkctx.jump:hover{filter:brightness(.95)}
-.wkctx .jmp{margin-inline-start:6px;padding:1px 7px;border-radius:999px;background:var(--navy);color:#fff;font-weight:600}.wkctx .sub2{font-weight:400;opacity:.85}
+.wkctx .jmp{margin-inline-start:8px;padding-inline-start:8px;border-inline-start:1px solid currentColor;font-weight:600;opacity:.85}.wkctx.jump:hover .jmp{text-decoration:underline;opacity:1}
 /* per-day source tag under each matrix day header (actual / forecast / today) */
 .dtag{display:block;font-size:.6rem;font-weight:600;letter-spacing:.2px;margin-top:1px;opacity:.9}
 .dtag.act{color:#a8e6c3}.dtag.fc{color:#d6c6ff}.dtag.today{color:#7cc8ff}
@@ -272,6 +273,8 @@ tr.msum td,tr.msum th{background:var(--sky-soft);border-bottom:2px solid var(--n
 tr.msum .v{font-weight:700}
 tr.msum .sub{font-size:.58rem;opacity:.75;direction:ltr;unicode-bidi:isolate}
 #excModeBtn.on{background:var(--magenta);color:#fff;border-color:var(--magenta)}
+#excModeBtn.on::after{background:radial-gradient(circle at calc(100% - 8px) 50%,#fff 5.5px,transparent 6px),rgba(255,255,255,.45)}
+[dir=rtl] #excModeBtn.on::after{background:radial-gradient(circle at 8px 50%,#fff 5.5px,transparent 6px),rgba(255,255,255,.45)}
 .soft-disabled{opacity:.45;cursor:not-allowed}
 @keyframes flashbg{0%,60%{background:var(--amber-bg);border-radius:6px}100%{background:transparent}}
 label.flash{animation:flashbg 1.6s}
@@ -427,6 +430,50 @@ td.gapCell.closed{background:#d6f3e2!important;color:#0f6a3f;font-weight:700}
 .friG summary b{margin-inline-start:auto;font-variant-numeric:tabular-nums}
 .friG .drlWho span small{opacity:.7;margin-inline-start:3px}
 .friDz{margin-top:10px;padding:10px}
+/* courses: edited in place */
+.cohT input.cohIn{border:1px solid transparent;background:transparent;border-radius:5px;padding:2px 4px;font:inherit;font-size:.8rem;width:100%;min-width:0;color:var(--ink)}
+.cohT input.cohIn:hover{border-color:var(--border)} .cohT input.cohIn:focus{border-color:var(--sky);background:#fff;outline:none}
+.cohT input.cohIn.n{width:58px;text-align:center} .cohT input[type=date].cohIn{width:128px}
+.cohT td{padding:2px 4px} .cohT .cohFl{font-size:.76rem;color:var(--muted);white-space:nowrap;direction:ltr}
+/* 🎯 how many to recruit */
+.hirePlan{margin:10px 0 4px;padding:10px 12px;border:1px solid var(--border);border-radius:9px;background:#fbfdff}
+.hirePlan:empty{display:none}
+.crsBar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:0 0 8px}
+.trnMenu{min-width:320px;font-size:.8rem} .trnMenu label{white-space:nowrap}
+.trnMenu .trnRow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:6px 0}
+.trnPre{display:inline-flex;gap:4px;flex-wrap:wrap}
+.trnPre label{border:1px solid var(--border);border-radius:12px;padding:2px 9px;cursor:pointer;font-size:.76rem;color:var(--muted);direction:ltr}
+.trnPre input{display:none} .trnPre label:has(input:checked){border-color:var(--navy);background:var(--navy);color:#fff;font-weight:600}
+.hpChart{margin:6px 0 2px} .hpLim{margin-top:8px} .hpLim>summary{cursor:pointer;font-size:.78rem;color:var(--muted)}
+.hpLimRow{display:flex;flex-wrap:wrap;gap:12px;margin-top:6px}
+.cohT select.cohSite{border:1px solid transparent;background:transparent;font:inherit;font-size:.78rem;padding:2px}
+.cohT select.cohSite:hover{border-color:var(--border)}
+.trnLbl{font-weight:600;color:var(--navy);margin:2px 0 4px}
+.trnGrid{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-bottom:6px}
+.trnGrid label{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.72rem;color:var(--muted)}
+.trnGrid input{width:100%;min-width:0;text-align:center;font:inherit;font-size:.8rem;padding:3px 2px;border:1px solid var(--border);border-radius:6px} .trnDays label{display:inline-flex;align-items:center;gap:2px;cursor:pointer}
+.trnMenu .trnActs{display:flex;align-items:center;gap:12px;margin-top:6px}
+.splitbtn .menu .trnActs .btn.navy{display:inline-block;width:auto;background:var(--navy);color:#fff;padding:6px 14px;border-radius:7px;font-weight:600}
+.splitbtn .menu .trnActs .linklike{display:inline;width:auto;padding:0;background:none;color:var(--sky);text-decoration:underline}
+#trnWrap > button::after{content:none} #trnBtn.on{border-color:var(--navy);color:var(--navy);font-weight:700}
+.crsBar .crsHint{color:var(--muted)}
+.crsSample{margin:6px auto 4px;font-size:.72rem;border-collapse:collapse;background:#fff;direction:inherit}
+.crsSample th{background:var(--navy);color:#fff;padding:3px 8px;font-weight:600;white-space:nowrap}
+.crsSample td{border:1px solid var(--border);padding:3px 8px;white-space:nowrap;color:var(--muted)}
+.hpTitle{font-size:.8rem;font-weight:700;color:var(--muted)}
+.hpCtrl{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:.8rem;color:var(--navy);margin-top:8px;padding-top:8px;border-top:1px dashed var(--border)}
+.hpIn{font:inherit;font-size:.78rem;padding:2px 6px;border:1px solid var(--border);border-radius:6px;width:84px}
+input[type=date].hpIn{width:130px}
+.hpHero{margin-top:8px;font-weight:700;color:var(--navy)} .hpHero .hpN{font-size:1.6rem} .hpHero.ok{color:var(--emerald)}
+.hpSub{font-size:.76rem;color:var(--muted);margin:2px 0 6px}
+.hpBars{display:flex;flex-direction:column;gap:4px;margin:6px 0 8px}
+.hpBar{display:grid;grid-template-columns:minmax(150px,auto) 1fr 40px;gap:8px;align-items:center;font-size:.76rem;color:var(--ink)}
+.hpBar i{height:12px;border-radius:0 4px 4px 0;display:block} [dir=rtl] .hpBar i{border-radius:4px 0 0 4px}
+.hpBar i.need{background:var(--navy)} .hpBar i.ok{background:#1e9e5a} .hpBar i.short{background:#c8372d}
+.hpBar b{font-variant-numeric:tabular-nums}
+.hpList{display:flex;flex-direction:column;gap:3px;margin:4px 0 8px}
+.hpRow{display:grid;grid-template-columns:minmax(110px,1.2fr) 1.5fr auto;gap:8px;align-items:center;font-size:.8rem;padding:3px 6px;border-radius:6px;background:#f2f6fa}
+.hpRow.sug{background:var(--sky-soft)} .hpNm{font-weight:600} .hpPlus{color:var(--emerald);font-weight:700}
 details.foldCard>summary{list-style:none;cursor:pointer}
 details.foldCard>summary::-webkit-details-marker{display:none}
 details.foldCard>summary h2{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0}
@@ -666,8 +713,18 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <button class="btn ghost wknav" id="wkNext" title="▶">›</button>
         <!-- where is this week vs TODAY (past / current / future) + where actual ends -->
         <span class="pill wkctx" id="wkCtx" style="display:none"></span>
+        <!-- 🎓 trainees answering this week (the instructor's number) — counted at a share inside a window you set -->
+        <div class="splitbtn" id="trnWrap"><button class="btn ghost" id="trnBtn" type="button" data-i18n-title="trnTip">🎓</button>
+          <div class="menu pad trnMenu" id="trnMenu">
+            <div class="trnRow"><label data-i18n="trnHours">Hours</label><span id="trnPre" class="trnPre"></span></div>
+            <div class="trnRow" id="trnCustom"><span></span><span><select id="trnS" class="hpIn" style="width:76px"></select> – <select id="trnE" class="hpIn" style="width:76px"></select></span></div>
+            <div class="trnLbl" data-i18n="trnN">Trainees answering each day</div>
+            <div id="trnDays" class="trnGrid"></div>
+            <div class="trnRow"><label for="trnPct" data-i18n="trnPct">Counted as</label><span><input type="number" id="trnPct" min="10" max="100" step="5" class="hpIn" style="width:56px"> %</span></div>
+            <p class="mini" id="trnSum"></p>
+            <div class="trnActs"><button type="button" class="btn navy" id="trnSave" data-i18n="trnSave">✓ Save</button><button type="button" class="linklike" id="trnClear" data-i18n="trnClear">Remove</button></div>
+          </div></div>
         <span id="mxFlags" style="display:contents"></span>
-        <span class="info" id="horizonInfo" data-tip="" tabindex="0">i</span>
         <span class="pill" id="editBadge" style="display:none"></span>
         <button class="linklike" id="wiExport" style="display:none" data-i18n="wiExport">⬇ What-if changes</button>
         <button class="linklike" id="resetEdits" style="display:none" data-i18n="resetEdits">↺ Reset to Original Forecast</button>
@@ -686,8 +743,9 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
           <button data-view="optimized" data-i18n="mxViewOpt">Optimized</button>
         </div>
         <span style="margin-inline-start:auto;display:inline-flex;align-items:center;gap:4px">
-          <button class="btn ghost sw" id="excModeBtn" aria-pressed="false" data-i18n="excBtn">🗓 Holiday / Exception Control</button>
-          <span class="info" data-tipkey="tipExc" tabindex="0">i</span></span>
+          <!-- ONE switch for forecast weeks without a sidur (off = today's team) — same place as on Date Trends (syncLens) -->
+          <button type="button" class="btn ghost sw lensBtn" aria-pressed="false" hidden data-i18n="lensBtn">Include attrition &amp; courses</button>
+          <button class="btn ghost sw" id="excModeBtn" aria-pressed="false" data-i18n="excBtn" data-i18n-title="tipExc">🗓 Holiday / Exception Control</button></span>
         <div class="splitbtn" id="expWrap">
           <button class="btn ghost" id="expToggle" data-i18n="exportDemand">⬇ Export Demand Profile</button>
           <div class="menu pad">
@@ -714,11 +772,11 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
       <div class="legend">
         <!-- three words, not seven swatches: on target · close · below (darker = look first).
              The live cut-offs live in the hover of the gradient, not on screen. -->
-        <span style="display:inline-flex;align-items:center;gap:5px">
+        <span style="display:inline-flex;align-items:center;gap:5px" data-i18n-title="tipScale">
           <i style="background:var(--emerald-bg)"></i><span data-i18n="legOn">on target</span>
           <i style="background:#eef3c6;margin-inline-start:6px"></i><span data-i18n="legNear">close</span>
           <i class="lgGrad" id="mxScale"></i><span data-i18n="legBelow">below — darker = look first</span>
-          <span class="info" data-tipkey="tipScale" tabindex="0">i</span></span>
+          </span>
         <span><i style="background:#c22;border-radius:50%"></i><span data-i18n="legShort">understaffed — fewer scheduled than the target needs</span></span>
         <span><i style="background:transparent;border-radius:50%;box-shadow:inset 0 0 0 1.5px #c22"></i><span data-i18n="legShortSoft">fewer than the model sizes for — yet service is on target</span></span>
         <span><i style="background:#8a63d2"></i><span data-i18n="legOver">overstaffed — more than the target needs (answer rate won't be 100% — that's normal)</span></span>
@@ -770,7 +828,8 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <label data-i18n="trFromL">Start Date</label><input type="date" id="trFrom">
         <label data-i18n="trToL">End Date</label><input type="date" id="trTo">
         <button class="linklike" id="resetTrends" style="display:none" data-i18n="resetEdits">↺ Reset to Original Forecast</button>
-        <button class="btn ghost sw" id="trDashBtn" type="button" aria-pressed="true" style="margin-inline-start:auto" data-i18n="trDashBtn">📊 Charts</button>
+        <!-- the charts / summary controls, together: attrition & courses · charts (the group holds its place) -->
+        <span style="margin-inline-start:auto;display:inline-flex;gap:8px;align-items:center"><button type="button" class="btn ghost sw lensBtn" aria-pressed="false" hidden data-i18n="lensBtn">Include attrition &amp; courses</button><button class="btn ghost sw" id="trDashBtn" type="button" aria-pressed="true" data-i18n="trDashBtn">📊 Charts</button></span>
         <button class="btn navy" id="trShareBtn" data-i18n="trShare">📤 Monthly summary</button>
         <button class="btn ghost" id="exportTrends" data-i18n="exportCsv">⬇ Download CSV</button>
       </div>
@@ -875,21 +934,23 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
       </div>
       <div class="card">
         <h2><span data-i18n="trainTitle">Training &amp; Onboarding Pipeline</span> <span class="info" data-tipkey="tipTrain" tabindex="0">i</span></h2>
-        <div id="cohortList"></div>
-        <div class="f2" style="margin-top:6px">
-          <div class="frow"><label data-i18n="cohName">Course name</label><input type="text" id="cohName" style="width:120px"></div>
-          <div class="frow"><label data-i18n="cohCount">Trainees</label><input type="number" id="cohCount" min="1" max="200" value="10" style="width:70px"></div>
-          <div class="frow"><label data-i18n="cohStart">Course start</label><input type="date" id="cohDate" style="width:150px"></div>
-          <div class="frow"><label><span data-i18n="cohDur">Duration (days)</span> <span class="info" data-tipkey="tipDur" tabindex="0">i</span></label><input type="number" id="cohDur" min="1" max="120" value="21" style="width:70px"></div>
-          <div class="frow"><label><span data-i18n="cohYield">Yield rate (%)</span> <span class="info" data-tipkey="tipYield" tabindex="0">i</span></label><input type="number" id="cohYield" min="10" max="100" value="85" style="width:70px"></div>
-          <div class="frow"><label data-i18n="cohSkill">Queue (skill)</label><select id="cohSkill" style="width:130px"></select></div>
-          <div class="frow" style="border:none"><button class="btn ghost" id="cohAdd" data-i18n="cohAdd">Add course</button></div>
+        <!-- courses live in ONE place — the table, edited in place. "+ course" adds a ready row -->
+        <div class="crsBar">
+          <button class="btn ghost applymini" id="cohNew" type="button" data-i18n="cohNew">+ Course</button>
+          <label class="mini"><span data-i18n="cohDefY">Hire % for new courses</span> <input type="number" id="cohYield" min="10" max="100" value="85" class="hpIn" style="width:56px"> <span class="info" data-tipkey="tipYield" tabindex="0">i</span></label>
+          <label class="mini"><span data-i18n="setAttr">Monthly attrition (%)</span> <input type="number" id="cohAttr" min="0" max="30" step="0.5" class="hpIn" style="width:56px"> <span class="info" data-tipkey="tipHpAttr" tabindex="0">i</span></label>
+          <span class="mini crsHint" data-i18n="crsDropLine">or drop a course file anywhere on the page</span>
+          <button class="linklike crsTpl" type="button" data-i18n="crsTpl">⬇ Excel template</button>
         </div>
-        <div class="dropzone" id="dzCourses" style="margin-top:10px">
-          <h3 data-i18n="crsTitle">Course Gantt Upload</h3>
-          <p class="mini" data-i18n="crsHint">Drop a course plan file — columns (any order, Hebrew or English): course name (קורס), start date (תאריך התחלה), duration in days or end date (סיום), trainees (כמות), yield % (הסמכה). Dates accept dd/mm/yyyy, ISO or Excel serials; missing yield defaults to 85%.</p>
+        <!-- first step, while there are no courses yet -->
+        <div class="dropzone" id="dzCourses" style="margin-top:8px">
+          <h3 data-i18n="crsTitle">Drop the course plan here</h3>
+          <div id="crsSample"></div>
           <input type="file" id="crsInput" accept=".csv,.tsv,.txt,.json,.xlsx,.xlsm,.xls" style="display:none">
         </div>
+        <div id="cohortList"></div>
+        <!-- 🎯 how many to recruit and into which course (renderHirePlan) -->
+        <div id="hirePlan" class="hirePlan"></div>
       </div>
     </div>
   </section>
@@ -1433,8 +1494,8 @@ en:{
   resetNote:"Clears saved settings, policies, courses, simulations and cached datasets from this browser.",
   weekLabel:"Week:", thInterval:"Interval",
   weekOpt:"Week {w} | {a} – {b}", forecastTag:" (forecast)",
-  wkNow:"📍 This week", wkPast1:"⏮ Last week", wkPast:"⏮ Past · {n} weeks ago", wkFut1:"⏭ Next week", wkFut:"⏭ Future · in {n} weeks",
-  wkActUntil:"actual through {d}, forecast after", wkNoAct:"no actual data yet — forecast", wkJump:"Jump to the current week", wkJumpShort:"this week", wkNoJump:"The current week is outside your data — the forecast reaches {d}. Load a newer forecast file to view it.",
+  wkNow:"This week", wkPast1:"Last week", wkPast:"{n} weeks ago", wkFut1:"Next week", wkFut:"In {n} weeks",
+  wkActUntil:"actual through {d}, forecast after", wkNoAct:"no actual data yet — forecast", wkJump:"Jump to the current week", wkJumpShort:"↩ this week", wkNoJump:"The current week is outside your data — the forecast reaches {d}. Load a newer forecast file to view it.",
   dTagAct:"actual", dTagFc:"forecast", dTagToday:"today",
   horizonTip:"{d} days of history let you forecast up to {m} ahead. 2+ years of history unlocks 12 months.",
   m3:"3 months", m12:"12 months",
@@ -1520,8 +1581,8 @@ en:{
   saDeltaHint:"row-level detail: the table above, Status column",
   saTlSend:"Send",
   schNoGaps:"No uncovered demand — the Iron base covers the full forecast. 🎯",
-  crsTitle:"Course Gantt Upload", crsHint:"Drop a course plan file — columns (any order, Hebrew or English): course name (קורס), start date (תאריך התחלה), duration in days or end date (סיום), trainees (כמות), yield % (הסמכה). Dates accept dd/mm/yyyy, ISO or Excel serials; missing yield defaults to 85%.",
-  crsOk:"{n} courses loaded into the training pipeline.", crsErr:"No course rows recognized — need at least a name/date column.",
+  crsTitle:"Drop the course plan here", crsHint:"Any layout — or + Course",
+  crsOk:"{n} courses loaded into the training pipeline.", crsErr:"No course rows found — a course needs at least a start date.",
   wfDrillTitle:"Drill-down: {seg} by {dim}", wfDrillBy:"Drill by", wfDrillHint:"Click a treemap tile to break it down.", wfDrillBack:"✕ Close drill-down", wfDrillWho:"{n} reps — click to list them",
   roIronNote:"Iron base: {n} employees",
   rosterRecov:"extendable across {n} reps ≈ {f} FTE — recover these hours before hiring externally",
@@ -1648,7 +1709,7 @@ en:{
   tipOutlook:"Headcount over the next 60 days: today's headcount + course graduates − attrition + active simulations.",
   trajTitle:"Trajectory Insights", trajAllQueues:"All queues", wiScopeAll:"Whole center",
   trajShift:"{m} trajectory: expected {x}% shift within 30 days under the current hiring rate.",
-  trajHire:"Optimal hiring: Add {n} Full-Time Roles to sustain your {t}% {m} target through the forecast period (until {d}).",
+  trajHire:"Optimal hiring: Add {n} Full-Time Roles to sustain your {t}% {m} target through the forecast period (until {d}).", trajHireN:"Recruit {n} more trainees {g}.", trajHireM:"Recruit {n} more trainees to hold {m} {t}% every month — by course in the training pipeline.", trajOkM:"On track: your courses hold {m} {t}% every month through {d}.", trajOkN:"On track: your courses are enough {g}.",
   trajHireBig:"You're projected at {p}% {m}; the {t}% target is {n} full-time roles away ({pct}% of the workforce) if hired UNIFORMLY — the most expensive path. Peak-hour gaps are usually the real culprit: try the shift-extension offers on the scheduler page, or revisit the target.",
   trajUnreach:"The {t}% {m} target is out of reach at any reasonable hiring level — the projection tops out around {p}%. This calls for a target or demand conversation, not mass hiring.",
   trajOk:"On track: the current recruitment pace sustains your {t}% {m} target through the forecast period (until {d}).",
@@ -1737,12 +1798,12 @@ en:{
   injActive:"Active Staffing Simulations", injNone:"No active staffing simulations yet.",
   injLine:"{n} × {prof}", remove:"Remove",
   profNames:{student:"Student Afternoon",fullMorning:"Full-Time Morning",fullDay:"Full-Time",custom:"Custom per-day"},
-  trainTitle:"Training & Onboarding Pipeline",
+  trainTitle:"Training pipeline",
   tipTrain:"Enter a course's start and length; graduates join on start + duration, by the certification rate.",
   cohName:"Course name", cohCount:"Trainees", cohStart:"Course start", cohDur:"Duration (days)", cohYield:"Yield rate (%)", cohAdd:"Add course",
   courseDefault:"Course",
-  tipDur:"Course length in calendar days. Floor entry = start + duration.",
-  tipYield:"Share of trainees expected to certify and start working.",
+  tipDur:"Course length in working days (Sun–Thu); closed holidays don't count.",
+  tipYield:"Share of trainees expected to certify and start working. Also the default for course files that don't give one.",
   cohLine:"{name} — {n} trainees × {y}% yield → ~{m} reps starting {d}",
   cohFloor:"Floor entry", cohReps:"~Reps on floor",
   rosterTitle:"Below their iron — who and why",
@@ -1814,7 +1875,7 @@ en:{
   insMoM:"{P} in {m}: {v} ({d} pts vs {p}).", insOne:"{P} in {m}: {v}.", insBest:"Strongest month: {m} — {a}/{n} days on target.",
   insRisk:"Forecast: {m} at {v} — below the {t}% target.", insOk:"Forecast: on target in the next {n} month(s).",
   insCourse:"Course \"{c}\" joins on {d} (+{n} reps) — already in the forecast.",
-  trHint:"Forecast rows: click the calls number to adjust a single day. Know of an upcoming surge (campaign, vendor change)?",
+  trHint:"Forecast rows: click the calls number to adjust a single day. Know of an upcoming surge (campaign, vendor change)?", lensBtn:"Include attrition & courses", trnTip:"Trainees answering this week (from the instructor)", trnN:"Trainees answering each day", trnHours:"Hours", trnDays:"Days", trnPct:"Counted as", trnSave:"✓ Save", trnClear:"Remove", trnSumTxt:"Adds up to ~{a} reps, {s}–{e}", trnCell:"incl. {t} trainees ({n} × {p}%)", tipLens:"Off: your team as it is today (the iron). On: minus monthly attrition, plus course graduates. Only for weeks without a sidur.", lensWeekTip:"This week vs today: +{g} course graduates · −{l} leaving",
   tipEv:"For a known surge history can't predict: total extra calls and working days. Front-loaded = most calls early, then fading.",
   cleanNote:"🧹 {k} outlier points auto-clipped (billing peaks kept)",
   trShowMore:"Show {k} more days ({r} remaining) ▼",
@@ -1843,7 +1904,14 @@ en:{
   trDashBtn:"📊 Charts", trPickL:"Show:", relT:"How they relate", trDashHint:"hover = the period's numbers · click = open it", trDashFew:"Pick a longer range to see trends.", trTarget:"target {t}%",
   trTipDay:"click = its row in the table", trTipOpen:"click = open its days", relNeed:"Needs at least 6 actual periods — pick days or a longer range.",
   relWeak:"Weakly", relMod:"Moderately", relStrong:"Strongly", relSent:"{s} related (r = {r}): every {dx} ({x}) ≈ {dy} ({y}).", relNone:"{x} and {y} barely move together here (r = {r}).",
-  ibSum:"{p}% of the iron in the sidur", faTune:"⚙ Fine-tune", friSumNow:"{n} on this Friday",
+  ibSum:"{p}% of the iron in the sidur",
+  cohDurS:"Work days", cohSite:"Location", hpOkMonths:"Yes — every month through {m}", hpMoreCourses:" · {k} more courses", hpMoreCourse1:" · and one more course", hpNoFc:"Needs a forecast for the coming months — yours ends {d}.", hpTarget:"Target: {m} {t}% · by the forecast, month by month", hpLgPlan:"Expected with your courses", hpLgWith:"With the additions", hpLgNeed:"Needed", hpTipMo:"Needed {n} · expected {a}{b}", hpLateMo:"{m}: {x} short — the earliest course to add graduates {d}", hpFull:"(full)", hpOther:"Other", hpLimits:"⚙ Class size by location", trnOther:"Other", crsTpl:"⬇ Excel template", crsTplFile:"courses-template.csv", crsSampleCap:"Columns in any order, any name · days and hire % are optional", cohNew:"+ Course", cohDefY:"Hire % for new courses", crsDropLine:"or drop a course file anywhere on the page", cohYieldS:"Hire %", dropCourses:"📂 Drop the course plan anywhere — any layout",
+  hpT:"How many to recruit", hpQ:"Are your courses enough?", tipHp:"Month by month, by the forecast: do your courses bring enough reps to hold the answer-rate target? If not — how many more trainees, into which course (the earliest first, up to its class size), and whether to open another.", hpBarAr:"Needed for {m} {t}% by {d}", hpBarHc:"Target headcount by {d}", hpBarHave:"Your courses bring by then", hpBarWith:"With the extra trainees", hpModeHc:"Headcount", hpBy:"by", tipHpAttr:"Staff who leave each month — the same value as Advanced Settings → Workforce dynamics. It erodes today's headcount and course graduates.",
+  hpUnreach:"Adding people alone won't reach {m} {t}% with today's demand and handle time.",
+  hpGoalAr:"to reach {m} {t}% by {d}", hpGoalHc:"to reach {n} reps by {d}", hpRecruits:"more trainees to recruit",
+  hpNeed:"needs {n} on the floor · the plan brings {b}", hpOk:"Yes — no extra recruiting needed",
+  hpNew:"New course", hpLate:"graduates after the date", hpApply:"✓ Update the courses",
+  hpAfter:"→ {m} ≈ {v}% by {d}", hpApplied:"+{n} trainees added to the courses", faTune:"⚙ Fine-tune", friSumNow:"{n} on this Friday",
   relPts:"pts", relHrs:"h", relFoot:"{n} actual periods · forecast periods are left out (they are the model's own numbers) · a relation, not proof of cause"
 },
 he:{
@@ -1976,8 +2044,8 @@ he:{
   resetNote:"מוחק הגדרות, מדיניות, קורסים, סימולציות ומערכי נתונים שנשמרו בדפדפן זה.",
   weekLabel:"שבוע:", thInterval:"אינטרוואל",
   weekOpt:"שבוע {w} | {a} – {b}", forecastTag:" (תחזית)",
-  wkNow:"📍 השבוע הנוכחי", wkPast1:"⏮ שבוע שעבר", wkPast:"⏮ עבר · לפני {n} שבועות", wkFut1:"⏭ שבוע הבא", wkFut:"⏭ עתיד · בעוד {n} שבועות",
-  wkActUntil:"בפועל עד יום {d}, משם תחזית", wkNoAct:"אין עדיין נתוני אמת — תחזית", wkJump:"מעבר לשבוע הנוכחי", wkJumpShort:"לשבוע הנוכחי", wkNoJump:"השבוע הנוכחי מחוץ לטווח הנתונים — התחזית מגיעה עד {d}. טענו קובץ תחזית עדכני כדי לראות אותו.",
+  wkNow:"השבוע", wkPast1:"שבוע שעבר", wkPast:"לפני {n} שבועות", wkFut1:"שבוע הבא", wkFut:"בעוד {n} שבועות",
+  wkActUntil:"בפועל עד יום {d}, משם תחזית", wkNoAct:"אין עדיין נתוני אמת — תחזית", wkJump:"מעבר לשבוע הנוכחי", wkJumpShort:"↩ להשבוע", wkNoJump:"השבוע הנוכחי מחוץ לטווח הנתונים — התחזית מגיעה עד {d}. טענו קובץ תחזית עדכני כדי לראות אותו.",
   dTagAct:"בפועל", dTagFc:"תחזית", dTagToday:"היום",
   horizonTip:"{d} ימי היסטוריה מאפשרים תחזית עד {m} קדימה. שנתיים ומעלה פותחות 12 חודשים.",
   m3:"3 חודשים", m12:"12 חודשים",
@@ -2063,8 +2131,8 @@ he:{
   saDeltaHint:"פירוט ברמת משמרת: בטבלה למעלה, עמודת סטאטוס",
   saTlSend:"שלח",
   schNoGaps:"אין ביקוש לא מכוסה — בסיס הברזל מכסה את כל התחזית. 🎯",
-  crsTitle:"העלאת גאנט קורסים", crsHint:"גררו קובץ תוכנית קורסים — עמודות (בכל סדר, עברית או אנגלית): שם קורס, תאריך התחלה, משך בימים או תאריך סיום, כמות חניכים, אחוז הסמכה. תאריכים בכל פורמט (dd/mm/yyyy, ISO, סריאלי של אקסל); אחוז הסמכה חסר יקבל 85%.",
-  crsOk:"{n} קורסים נטענו לצנרת ההכשרה.", crsErr:"לא זוהו שורות קורס — נדרשת לפחות עמודת שם/תאריך.",
+  crsTitle:"גררו לכאן את תוכנית הקורסים", crsHint:"בכל מבנה — או + קורס",
+  crsOk:"{n} קורסים נטענו לצנרת ההכשרה.", crsErr:"לא נמצאו קורסים — לכל קורס צריך לפחות תאריך פתיחה.",
   wfDrillTitle:"פילוח: {seg} לפי {dim}", wfDrillBy:"פילוח לפי", wfDrillHint:"לחצו על אריח במפת החום לפילוח.", wfDrillBack:"✕ סגירת פילוח", wfDrillWho:"{n} נציגים — לחצו להצגה",
   roIronNote:"בסיס ברזל: {n} עובדים",
   rosterRecov:"ניתנות להרחבה אצל {n} נציגים ≈ {f} משרות — לאתר את השעות האלה לפני גיוס חיצוני",
@@ -2181,7 +2249,7 @@ he:{
   kpiShortW:"אינטרוולים בתת־איוש (שבוע {w})",
   tipShort:"נספרים כאן אינטרוולים שאינם עומדים ביעדי ה־SLA עבור השבוע שנבחר בתפריט הראשי. כמו מדד הפער המרבי, זהו שיקוף של השבוע האמיתי המעוגן במענה המדוד — שינויי שחיקה/היעדרות נבלעים כאן בכיול ופועלים על תחזיות התכנון שמתחת.",
   spark1:"עקומת איוש חזויה (מבט ל־30 יום)",
-  tipSpark1:"מקור הנתונים: המצבה הנוכחית מההגדרות, בניכוי נטישה חודשית המוחלת יומית, בתוספת בוגרי קורסים שמועד כניסתם למשמרות בתוך חלון 30 הימים (מותאם לאחוז ההסמכה).",
+  tipSpark1:"מקור הנתונים: המצבה הנוכחית מההגדרות, בניכוי עזיבה חודשית המוחלת יומית, בתוספת בוגרי קורסים שמועד כניסתם למשמרות בתוך חלון 30 הימים (מותאם לאחוז ההסמכה).",
   spark2:"מגמת אחוזי הסמכה בקורסים",
   tipSpark2:"אחוז ההסמכה של כל קורס, לפי סדר הכניסה למשמרות.",
   spark3:"פער גיוס — יעד מול בפועל",
@@ -2191,7 +2259,7 @@ he:{
   tipOutlook:"מצבה ל־60 הימים הקרובים: המצבה היום + בוגרי קורסים − עזיבה + סימולציות פעילות.",
   trajTitle:"תובנות מגמה", trajAllQueues:"כל התורים", wiScopeAll:"כל המוקד",
   trajShift:"מגמת {m}: צפוי שינוי של ‎{x}%‎ בתוך 30 יום בקצב הגיוס הנוכחי.",
-  trajHire:"גיוס מומלץ: עוד ‎{n}‎ משרות מלאות יחזיקו {m} של ‎{t}%‎ עד סוף תקופת התחזית ({d}).",
+  trajHire:"גיוס מומלץ: עוד ‎{n}‎ משרות מלאות יחזיקו {m} של ‎{t}%‎ עד סוף תקופת התחזית ({d}).", trajHireN:"לגייס עוד {n} חניכים {g}.", trajHireM:"לגייס עוד {n} חניכים כדי להחזיק {m} {t}% בכל חודש — הפירוט לפי קורס בצנרת ההכשרה.", trajOkM:"במסלול: הקורסים מחזיקים {m} {t}% בכל חודש עד {d}.", trajOkN:"במסלול: הקורסים מספיקים {g}.",
   trajHireBig:"אתם צפויים ל-{m} של ‎{p}%‎; היעד ‎{t}%‎ רחוק ‎{n}‎ משרות (‎{pct}%‎ מהמצבה) — אבל רק אם מגייסים אחיד, וזו הדרך היקרה. לרוב הבעיה היא שעות שיא: נסו קודם את הצעות הרחבת המשמרות בעמוד השיבוץ, או בחנו מחדש את היעד.",
   trajUnreach:"יעד {m} של ‎{t}%‎ אינו בר-השגה בשום היקף גיוס סביר — התחזית נעצרת סביב ‎{p}%‎. זו שיחה על היעד או על הביקוש, לא על גיוס המוני.",
   trajOk:"במסלול: קצב הגיוס הנוכחי מחזיק {m} של ‎{t}%‎ עד סוף תקופת התחזית ({d}).",
@@ -2267,7 +2335,7 @@ he:{
   tipWi:"הזיזו את המחוונים כדי לראות לאן מגיע השירות ומתי תעמדו ביעד. נציגים נוספים מגיעים מהקורסים והסימולציות למטה. סביבת ניסוי — ההגדרות האמיתיות לא משתנות. חל על העונים לפי כפתור 🎧.",
   cohEditTip:"לחצו לעריכת הקורס",
   wiZeroBase:"הערך 0 בהגדרות מתקדמות — אין מה להפחית. הגדירו ערך שם כדי לדמות הפחתה.",
-  wiAht:"קיצור משך שיחה", wiAttr:"הפחתת נטישה", wiShrink:"הפחתת זמן לא-זמין", wiAbsence:"הפחתת הברזות",
+  wiAht:"קיצור משך שיחה", wiAttr:"פחות עזיבה", wiShrink:"הפחתת זמן לא-זמין", wiAbsence:"הפחתת הברזות",
   wiAgentsNote:"➕ תוספת נציגים מגיעה מהקורסים ומפרופילי האיוש שמתחת.",
   wiReset:"↺ חזרה למצב הנוכחי",
   wiTargetN:"יעד {t}", wiTargetTick:"יעד {t}", wiWk:"שב'",
@@ -2280,12 +2348,12 @@ he:{
   injActive:"סימולציות נציגים פעילות", injNone:"אין עדיין סימולציות נציגים פעילות.",
   injLine:"{n} × {prof}", remove:"הסרה",
   profNames:{student:"סטודנטים אחה\"צ",fullMorning:"משרה מלאה בוקר",fullDay:"משרה מלאה",custom:"מותאם לפי יום"},
-  trainTitle:"צנרת הכשרות — ערוץ גיוס והכשרה",
+  trainTitle:"צנרת הכשרות",
   tipTrain:"הזינו פתיחה ומשך של קורס; הבוגרים מצטרפים בפתיחה + משך, לפי אחוז ההסמכה.",
   cohName:"שם קורס", cohCount:"חניכים", cohStart:"פתיחת קורס", cohDur:"משך (ימים)", cohYield:"אחוז הסמכה (%)", cohAdd:"הוספת קורס",
   courseDefault:"קורס",
-  tipDur:"אורך הקורס בימים קלנדריים. כניסה למשמרות = פתיחה + משך.",
-  tipYield:"אחוז החניכים הצפויים לעבור הסמכה ולהתחיל לעבוד.",
+  tipDur:"אורך הקורס בימי עבודה (א׳–ה׳); חגים סגורים לא נספרים.",
+  tipYield:"אחוז החניכים הצפויים לעבור הסמכה ולהתחיל לעבוד. גם ברירת המחדל לקובצי קורסים בלי אחוז.",
   cohLine:"{name} — {n} חניכים × {y}% הסמכה → ~{m} נציגים מתחילים {d}",
   cohFloor:"כניסה למשמרות", cohReps:"נציגים בפועל ~",
   rosterTitle:"מתחת לברזל — מי ולמה",
@@ -2306,7 +2374,7 @@ he:{
   setTarget:"יעד עמידה (%)", tipTarget:"הציון שכל אינטרוול ויום נמדדים מולו.",
   setTsfT:"חלון מהירות מענה (TSF, שניות)",
   tsfBenchNote:"‏TSF 30 ו־TSF 60 במגמות התאריכים הם מדדי ייחוס קבועים ואינם משתנים עם חלון זה.",
-  wfTitle:"דינמיקת כוח אדם", setAttr:"נטישה חודשית (%)",
+  wfTitle:"דינמיקת כוח אדם", setAttr:"עזיבה חודשית (%)",
   setHc:"מצבת נציגים נוכחית",
   tipHc:"משמש לתחזיות קדימה. איפה שסידור טעון, האיוש שלו משמש במקום.",
   queueTitle:"התנהגות תור (מתקדם)", setMode:"סוג תור",
@@ -2357,7 +2425,7 @@ he:{
   insMoM:"{P} ב{m}: {v} ({d} נק׳ מול {p}).", insOne:"{P} ב{m}: {v}.", insBest:"החודש החזק: {m} — {a}/{n} ימים ביעד.",
   insRisk:"צפי: {m} ב־{v} — מתחת ליעד {t}%.", insOk:"צפי: עמידה ביעד ב־{n} החודשים הקרובים.",
   insCourse:"קורס \"{c}\" מצטרף ב־{d} (+{n} נציגים) — כבר כלול בצפי.",
-  trHint:"בשורות התחזית: לחיצה על מספר השיחות מתקנת יום בודד. יודעים על גל צפוי (קמפיין, החלפת ספק)?",
+  trHint:"בשורות התחזית: לחיצה על מספר השיחות מתקנת יום בודד. יודעים על גל צפוי (קמפיין, החלפת ספק)?", lensBtn:"כולל עזיבה וקורסים", trnTip:"חניכים במענה השבוע (לפי המדריכה)", trnN:"כמה חניכים עונים בכל יום", trnHours:"שעות", trnDays:"ימים", trnPct:"נספרים כ־", trnSave:"✓ שמירה", trnClear:"הסרה", trnSumTxt:"מוסיף עד ~{a} נציגים, {s}–{e}", trnCell:"כולל {t} חניכים ({n} × {p}%)", tipLens:"כבוי: הצוות שלך כמו היום (הברזל). דולק: פחות עזיבה חודשית, ועוד בוגרי קורסים. רק לשבועות בלי סידור.", lensWeekTip:"השבוע מול היום: +{g} בוגרי קורסים · −{l} עוזבים",
   tipEv:"לגל ידוע שההיסטוריה לא יכולה לחזות: סה״כ שיחות נוספות וימי עבודה. מרוכז בהתחלה = רוב השיחות בהתחלה ואז דועכות.",
   cleanNote:"🧹 {k} נקודות חריגות נוקו אוטומטית (שיאי ימי חיוב נשמרו)",
   trShowMore:"הצג עוד {k} ימים (נותרו {r}) ▼",
@@ -2386,7 +2454,14 @@ he:{
   trDashBtn:"📊 גרפים", trPickL:"הצגה:", relT:"קשר בין מדדים", trDashHint:"ריחוף = נתוני התקופה · לחיצה = פתיחה", trDashFew:"בחרו טווח ארוך יותר כדי לראות מגמה.", trTarget:"יעד {t}%",
   trTipDay:"לחיצה = השורה בטבלה", trTipOpen:"לחיצה = פתיחת הימים", relNeed:"נדרשות לפחות 6 תקופות בפועל — בחרו ימים או טווח ארוך יותר.",
   relWeak:"קשר חלש", relMod:"קשר בינוני", relStrong:"קשר חזק", relSent:"{s} (r = {r}): כל {dx} ({x}) ≈ {dy} ({y}).", relNone:"{x} ו־{y} כמעט לא זזים יחד כאן (r = {r}).",
-  ibSum:"{p}% מהברזל בסידור", faTune:"⚙ כוונון", friSumNow:"{n} בשישי הזה",
+  ibSum:"{p}% מהברזל בסידור",
+  cohDurS:"ימי עבודה", cohSite:"מיקום", hpOkMonths:"כן — כל חודש עד {m}", hpMoreCourses:" · {k} קורסים נוספים", hpMoreCourse1:" · ועוד קורס אחד", hpNoFc:"צריך תחזית לחודשים הקרובים — התחזית שלך מסתיימת ב־{d}.", hpTarget:"יעד: {m} {t}% · לפי התחזית, חודש אחרי חודש", hpLgPlan:"צפי לפי הקורסים", hpLgWith:"עם התוספות", hpLgNeed:"נדרשים", hpTipMo:"נדרשים {n} · צפי {a}{b}", hpLateMo:"{m}: חסרים {x} — הקורס הנוסף המוקדם ביותר מסיים ב־{d}", hpFull:"(מלא)", hpOther:"אחר", hpLimits:"⚙ גודל כיתה לפי מיקום", trnOther:"אחר", crsTpl:"⬇ תבנית Excel", crsTplFile:"תבנית קורסים.csv", crsSampleCap:"עמודות בכל סדר ובכל שם · ימים ו־% הסמכה לא חובה", cohNew:"+ קורס", cohDefY:"% הסמכה לקורס חדש", crsDropLine:"או גררו קובץ קורסים לכל מקום בעמוד", cohYieldS:"% הסמכה", dropCourses:"📂 גררו את תוכנית הקורסים לכל מקום — בכל מבנה",
+  hpT:"כמה לגייס", hpQ:"הקורסים מספיקים?", tipHp:"חודש אחרי חודש, לפי התחזית: האם הקורסים מביאים מספיק נציגים כדי להחזיק את יעד המענה? אם לא — כמה חניכים להוסיף, לאיזה קורס (המוקדם קודם, עד גודל הכיתה), והאם לפתוח קורס נוסף.", hpBarAr:"נדרשים ל{m} {t}% עד {d}", hpBarHc:"יעד מצבה עד {d}", hpBarHave:"הקורסים שלך מביאים עד אז", hpBarWith:"עם החניכים הנוספים", hpModeHc:"מצבה", hpBy:"עד", tipHpAttr:"כמה עובדים עוזבים בחודש — אותו ערך כמו בהגדרות מתקדמות ← דינמיקת כוח אדם. מקטין את המצבה של היום ואת בוגרי הקורסים.",
+  hpUnreach:"הוספת אנשים לבדה לא תביא ל{m} {t}% בביקוש ובמשך השיחה של היום.",
+  hpGoalAr:"כדי להגיע ל{m} {t}% עד {d}", hpGoalHc:"כדי להגיע ל־{n} נציגים עד {d}", hpRecruits:"חניכים נוספים לגייס",
+  hpNeed:"נדרשים {n} על המשמרות · התוכנית מביאה {b}", hpOk:"כן — אין צורך לגייס עוד",
+  hpNew:"קורס חדש", hpLate:"מסיים אחרי התאריך", hpApply:"✓ לעדכן את הקורסים",
+  hpAfter:"← {m} ≈ {v}% עד {d}", hpApplied:"+{n} חניכים נוספו לקורסים", faTune:"⚙ כוונון", friSumNow:"{n} בשישי הזה",
   relPts:"נק׳", relHrs:"ש׳", relFoot:"{n} תקופות בפועל · תקופות תחזית לא נכללות (אלה מספרי המודל עצמו) · קשר, לא הוכחה לסיבה"
 }};
 let lang="en";
@@ -2411,14 +2486,13 @@ function setLang(l){
 function refreshDynamicLabels(){
   const S=state.settings;
   document.getElementById("btnTsf").textContent=t("metricTsfDyn",{s:S.tsfT});
-  document.getElementById("horizonInfo").dataset.tip=
+  document.getElementById("weekSelect").title= // the forecast horizon: the hover of the week picker
     t("horizonTip",{d:Math.max(0,state.dataDepthDays||0),m:t(state.horizonDays===365?"m12":"m3")});
   { const qa=document.getElementById("qaMsg"); if(qa) qa.placeholder=t("qaPh"); }
   document.getElementById("ceVolL").textContent=t("tipVolume");
   document.getElementById("ceAhtL").textContent=t("tipAht");
   document.getElementById("ceAgL").textContent=t("tipSched");
   document.getElementById("ceFutL").textContent=t("ceFutL");
-  document.getElementById("cohName").placeholder=t("cohName");
   document.querySelectorAll("#dayWins .dl").forEach(el=>{ el.textContent=t("days")[+el.dataset.day]; });
   if(typeof syncMptUI==="function") syncMptUI();
   if(typeof syncHcUI==="function") syncHcUI();
@@ -2820,7 +2894,11 @@ const state={
             fastHalf:10,     // ⚡ the adjustment fades by half every N working days
             retryShare:0.4,  // share of EXTRA abandoned callers who call again (next 2 working days)
             trDash:true,     // Date Trends: charts above the table
-            trCharts:["vol","ar","aht","occ"], trRel:"vol|ar"}, // which trend charts + the relationship pair
+            trCharts:["vol","ar","aht","occ"], trRel:"vol|ar",
+            defYield:85,     // course hire rate when a course file doesn't give one (= the form's field)
+            siteMax:{}, // class size per course location (defaults: ב"ש 12 · רחובות 7 · בית 12 · other 20)
+            capLens:"today",
+            trnPct:50, trnWin:{s:"08:00",e:"13:00",days:[0,1,2,3,4]}}, // 🎓 trainees answering: the share they count at + their window (remembered) // forecast weeks without a sidur: "today" (today's team) | "real" (− attrition + course graduates) // 🎯 how-many-to-recruit: target = answer rate | headcount, by date // which trend charts + the relationship pair
   edits:new Set(), undoStack:[], pristine:new Map(),
   volAdj:[],                     // forward-propagated volume edits: {ds,di,tm,factor}
   domFactor:null, cleanClipped:0, // calendar uplift factors + outlier-guard audit count
@@ -7161,13 +7239,7 @@ function forecastDay(ds){
      by (projected headcount at that date ÷ current headcount) — same hcAtDay() the
      Recruitment outlook uses, so the two pages never diverge. Course graduates raise it,
      attrition lowers it. What-if injections are added later in capacityFor (not here). */
-  let hcScale=1;
-  { const S=state.settings;
-    if(S.headcount>0){
-      const daysAhead=Math.max(0,Math.round((fromISO(ds)-fromISO(iso(new Date())))/86400000));
-      const proj=hcAtDay(daysAhead,false); // false: exclude what-if sims (added in capacityFor)
-      if(proj>0) hcScale=proj/S.headcount;
-    } }
+  const hcScale=lensScale(ds); // 1 "as today"; projected ÷ today's headcount on the "realistic" lens
   const m=new Map();
   for(const tm of slots){
     const s0=state.series[di][tm];
@@ -7309,6 +7381,17 @@ function sourceDay(ds){
 
 /* week-vs-today chip: past / current / future at a glance, plus where measured data
    ends inside the week. Not on "now"? The chip becomes a one-click jump to this week. */
+/* the lens switch: shown only where it changes something (a forecast day without a sidur); ONE state, both pages */
+function syncLens(page,show){
+  const root=document.getElementById("page-"+page); if(!root) return;
+  const real=state.settings.capLens==="real", b=root.querySelector(".lensBtn"); if(!b) return;
+  b.hidden=!show; b.classList.toggle("on",real); b.setAttribute("aria-pressed",String(real));
+  // the hover says what it does, in people, for the week on screen
+  const wk=page==="matrix"?state.week:null, d=wk?lensWeekDelta(wk):null;
+  b.title=t("tipLens")+(d?"\n"+t("lensWeekTip",{g:d.g,l:d.l}):"");
+}
+document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest(".lensBtn"); if(!b) return;
+  state.settings.capLens=state.settings.capLens==="real"?"today":"real"; state.fcCache.clear(); memo.clear(); saveState(); renderAll(); });
 function renderWeekContext(dates){
   const el=document.getElementById("wkCtx"); if(!el) return;
   if(!state.week){ el.style.display="none"; return; }
@@ -7325,7 +7408,7 @@ function renderWeekContext(dates){
   if(lastAct>=0&&hasFc) sub=t("wkActUntil",{d:t("daysShort")[lastAct]});
   else if(lastAct<0&&hasFc&&n<=0) sub=t("wkNoAct");
   el.className="pill wkctx "+cls;
-  el.innerHTML=txt+(sub?` <span class="sub2">· ${sub}</span>`:"");
+  el.textContent=txt; // actual / forecast per day lives in the day headers — the hover repeats it
   // 📈 this week's forecast follows a sudden shift in demand — said only when there is one; click = why
   { const fs=fastState(), sh=fastShift(fs);
     if(sh&&hasFc&&dates.some(ds=>ds>state.maxDate&&ds<=addDays(state.maxDate,30))){
@@ -7335,8 +7418,8 @@ function renderWeekContext(dates){
   const canJump=n!==0&&sel&&[...sel.options].some(o=>o.value===nowWk);
   el.classList.toggle("jump",canJump);
   // the chip reads as a button only when it IS one; otherwise its hover says why it can't jump
-  if(canJump) el.insertAdjacentHTML("beforeend",` <span class="jmp">↩ ${t("wkJumpShort")}</span>`); // keeps the 📈 listener
-  el.title=canJump?t("wkJump"):(n!==0?t("wkNoJump",{d:state.horizonISO?fmtD(state.horizonISO):"—"}):"");
+  if(canJump) el.insertAdjacentHTML("beforeend",` <span class="jmp">${t("wkJumpShort")}</span>`); // keeps the 📈 listener
+  el.title=[sub,canJump?t("wkJump"):(n!==0?t("wkNoJump",{d:state.horizonISO?fmtD(state.horizonISO):"—"}):"")].filter(Boolean).join("\n");
   el.onclick=canJump?()=>{ sel.value=nowWk; sel.dispatchEvent(new Event("change")); }:null;
   el.style.display="inline-block";
 }
@@ -7540,6 +7623,80 @@ function capCounted(key,total){
   if(!by) return total; // aggregate/anonymous rosters carry no skill info
   return capCountedFrom(by);
 }
+/* TWO LENSES for a forecast week without a sidur (one shared switch, matrix + Date Trends; settings.capLens):
+   "as today"  — today's team as it is: the iron (no one leaves, no new graduates);
+   "realistic" — the same team × (projected headcount ÷ today's): monthly attrition out, course graduates in —
+                 the same hcAtDay() the Recruitment page uses. A week WITH a sidur always shows the sidur. */
+function lensScale(ds){
+  const S=state.settings; if(S.capLens!=="real"||!(S.headcount>0)) return 1;
+  const daysAhead=Math.max(0,Math.round((fromISO(ds)-fromISO(iso(new Date())))/86400000));
+  const proj=hcAtDay(daysAhead,false); // false: what-if sims are added in capacityFor
+  return proj>0?proj/S.headcount:1;
+}
+/* today's team for a forecast half-hour = the reps whose IRON window covers it that weekday — Friday by that
+   week's rotation, only the answering skills (🎧; untagged always count). Cached per week / skills / iron. */
+function ironCapAt(ds,dayIdx,tm){
+  const wk=sundayOf(ds), sc=state.capSkills, S=state.settings;
+  const key=[wk,JSON.stringify(sc||null),S.friEvery,JSON.stringify((S.friHist||{})[addDays(wk,-2)]||null),state.iron.emps.size,state.iron.total].join("|");
+  let c=state._ironCap; if(!c||c.key!==key) c=state._ironCap={key,by:{}};
+  let day=c.by[dayIdx];
+  if(!day){ day=c.by[dayIdx]={};
+    for(const [n,e] of state.iron.emps){ const w=e.days&&e.days[dayIdx]; if(!w||!w.s||!w.e) continue;
+      const m=state.rosterMeta.get(n)||{}, sk=String(m.skill||e.skill||"").trim();
+      if(sc&&sc.length&&sk&&!sc.includes(sk)) continue;
+      const k=dayIdx===5?friW(n,wk):1; if(!k) continue;
+      for(const h of halfHoursBetween(w.s,w.e)) day[h]=(day[h]||0)+k; } }
+  return day[tm]||0;
+}
+/* what the realistic lens changes in a week, in people (for its hover): graduates in, leavers out */
+function lensWeekDelta(wk){
+  const S=state.settings, today=iso(new Date()), end=addDays(wk,5);
+  const d=Math.max(0,Math.round((fromISO(end)-fromISO(today))/86400000));
+  const g=state.cohorts.filter(c=>{ const f=cohortFloorDate(c); return f>today&&f<=end; }).reduce((a,c)=>a+cohortEffective(c),0);
+  return {g:Math.round(g),l:Math.round((S.headcount||0)*S.attrition/100*d/30)};
+}
+/* 🎓 TRAINEES ANSWERING DURING THE COURSE — the instructor's weekly number, counted at a share (productivity +
+   who actually shows up; default 50%, remembered) inside a window you set. Per week: state.trainees[Sunday].
+   Matrix + Date Trends only; the scheduler's suggestions and the What-If don't count them. */
+function trnByDay(o){ if(!o) return {}; if(o.byDay) return o.byDay; const b={}; (o.days||[]).forEach(d=>{ if(o.n>0) b[d]=o.n; }); return b; }
+function traineeN(ds,dayIdx){ return +(trnByDay((state.trainees||{})[sundayOf(ds)])[dayIdx]||0); }
+function traineeAt(ds,dayIdx,tm){
+  const o=(state.trainees||{})[sundayOf(ds)], n=traineeN(ds,dayIdx); if(!o||!(n>0)) return 0;
+  if(tm<o.s||tm>=o.e) return 0;
+  return Math.round(n*o.pct/100);
+}
+function renderTrainees(){ // the chip: the busiest day's number; its hover lists every day
+  const b=document.getElementById("trnBtn"); if(!b||!state.week) return;
+  const by=trnByDay((state.trainees||{})[state.week]), ds=Object.keys(by).filter(d=>by[d]>0).sort();
+  const mx=ds.length?Math.max(...ds.map(d=>by[d])):0, dn=t("daysShort");
+  b.textContent="🎓"+(mx?" "+mx:""); b.classList.toggle("on",mx>0);
+  b.title=mx?t("trnTip")+"\n"+ds.map(d=>dn[d]+" "+by[d]).join(" · "):t("trnTip");
+}
+function trnFill(){ // the box opens on this week's entry, else the remembered window and share
+  const S=state.settings, o=(state.trainees||{})[state.week], w=S.trnWin||{s:"08:00",e:"13:00",days:[0,1,2,3,4]};
+  const v=o?{...o,byDay:trnByDay(o)}:{byDay:{},s:w.s,e:w.e,pct:S.trnPct||50};
+  // half-hours, 24h — the same grain as the matrix
+  const hh=[]; for(let h=6;h<=22;h++){ hh.push(pad(h)+":00"); if(h<22) hh.push(pad(h)+":30"); }
+  ["trnS","trnE"].forEach(id=>{ document.getElementById(id).innerHTML=hh.map(x=>`<option>${x}</option>`).join(""); });
+  document.getElementById("trnS").value=v.s; document.getElementById("trnE").value=v.e;
+  const PRE=[["08:00","13:00"],["12:00","17:00"],["08:00","17:00"]], cur=PRE.findIndex(x=>x[0]===v.s&&x[1]===v.e);
+  document.getElementById("trnPre").innerHTML=PRE.map((x,i)=>`<label><input type="radio" name="trnPre" value="${i}"${i===cur?" checked":""}>${x[0].slice(0,2)}–${x[1].slice(0,2)}</label>`).join("")
+    +`<label><input type="radio" name="trnPre" value="c"${cur<0?" checked":""}>${t("trnOther")}</label>`;
+  document.getElementById("trnCustom").style.display=cur<0?"":"none";
+  document.getElementById("trnPre").onchange=e=>{ const k=e.target.value, x=PRE[+k];
+    if(x){ document.getElementById("trnS").value=x[0]; document.getElementById("trnE").value=x[1]; }
+    document.getElementById("trnCustom").style.display=x?"none":""; trnSumUpd(); };
+  document.getElementById("trnPct").value=v.pct;
+  document.getElementById("trnDays").innerHTML=t("daysShort").slice(0,6).map((d,i)=>`<label><span>${d}</span><input type="number" min="0" max="300" data-d="${i}" value="${v.byDay[i]||""}"></label>`).join("");
+  document.getElementById("trnClear").style.display=o?"":"none";
+  trnSumUpd();
+}
+function trnRead(){ const byDay={};
+  document.querySelectorAll("#trnDays input").forEach(x=>{ const n=Math.max(0,Math.round(+x.value||0)); if(n) byDay[x.dataset.d]=n; });
+  return {byDay,s:document.getElementById("trnS").value||"08:00",e:document.getElementById("trnE").value||"13:00",
+    pct:Math.min(100,Math.max(10,+document.getElementById("trnPct").value||50))}; }
+function trnSumUpd(){ const v=trnRead(), ns=Object.values(v.byDay);
+  document.getElementById("trnSum").textContent=ns.length&&v.e>v.s?t("trnSumTxt",{a:Math.round(Math.max(...ns)*v.pct/100),s:v.s,e:v.e}):""; }
 function capacityFor(ds,dayIdx,tm,rec){
   const dk=ds+"|"+tm;
   // optimized-schedule PREVIEW (matrix only, render-scoped flag): recompute coverage
@@ -7557,6 +7714,8 @@ function capacityFor(ds,dayIdx,tm,rec){
   const wk=dayIdx+"|"+tm;
   if(state.rosterCapWeekly.has(wk)) return capCounted(wk,state.rosterCapWeekly.get(wk));
   if(state.rosterDays.has(String(dayIdx))) return 0;
+  // a forecast week with no sidur: today's team = the iron (× the realistic lens); no iron → the file's history
+  if(state.iron&&state.maxDate&&ds>state.maxDate) return Math.round(ironCapAt(ds,dayIdx,tm)*lensScale(ds));
   return rec.agents;
 }
 function rebuildRosterCoverage(){
@@ -7589,7 +7748,7 @@ function computeDay(ds){
     }
     const rec=sd.src.get(tm);
     if(!rec){ rows.push({tm,nodata:true}); continue; }
-    const sched=capacityFor(ds,dayIdx,tm,rec)+injectionAgents(dayIdx,tm);
+    const sched=capacityFor(ds,dayIdx,tm,rec)+injectionAgents(dayIdx,tm)+traineeAt(ds,dayIdx,tm); // 🎓 this week's trainees, at their share
     // effective agents into the queue math = scheduled × (1−shrinkage) × κ
     const agents=Math.max(0,Math.round(sched*effShare));
     // נדרשים displayed in SCHEDULED units so sched-vs-req compare like-for-like
@@ -7731,6 +7890,8 @@ function renderRecruitScope(){
     sc=>"🎧 "+(!sc||!sc.length?t("rcScopeAll"):t("rcScopePfx")+(sc.length===1?sc[0]:t("skillScopeN",{n:sc.length}))));
 }
 function renderMatrix(){
+  { const seg=document.getElementById("metricSeg"), prim=seg&&seg.querySelector(`button[data-metric="${state.settings.primaryMetric==="tsf"?"tsf":"ar"}"]`);
+    if(prim&&seg.firstElementChild!==prim) seg.insertBefore(prim,seg.firstElementChild); }
   // optimized preview is offered only for the week that was optimized; else force original.
   // _optView is render-scoped so the substituted capacity never leaks to other pages.
   const canOpt=!!state.optimizedCapSkill&&state.optimizedWeek===state.week;
@@ -7793,6 +7954,8 @@ function renderMatrixBody(){
     hr.appendChild(hth);
   });
   renderWeekContext(dates);
+  renderTrainees();
+  syncLens("matrix",dates.some(ds=>state.maxDate&&ds>state.maxDate&&!state.rosterDates.has(ds)));
   thead.appendChild(hr); tbl.appendChild(thead);
   const comp=dates.map(ds=>computeDay(ds));
   const B=mxBands(comp);
@@ -7876,7 +8039,7 @@ function renderMatrixBody(){
         const soft=short&&v*100>=state.settings.target;
         // optimized view: how many reps this interval gained/lost vs the current sidur
         let mv="";
-        if(state._optView){ state._optView=false; const base=capacityFor(ds,fromISO(ds).getDay(),tm,row.rec)+injectionAgents(fromISO(ds).getDay(),tm); state._optView=true;
+        if(state._optView){ state._optView=false; const base=capacityFor(ds,fromISO(ds).getDay(),tm,row.rec)+injectionAgents(fromISO(ds).getDay(),tm)+traineeAt(ds,fromISO(ds).getDay(),tm); state._optView=true;
           const dlt=row.sched-base; if(dlt) mv=`<span class="mvd ${dlt>0?"up":"dn"}" title="${t("exCellTip",{b:base,a:row.sched})}">${dlt>0?"▲":"▼"}${Math.abs(dlt)}</span>`; }
         td.innerHTML=`<div class="v">${pct(v)}${mv}${row.dropped?'<span class="decay">▼</span>':''}${short?`<span class="short${soft?" soft":""}"></span>`:''}${over?'<span class="overm"></span>':''}${edited?'<span class="edmark">✎</span>':''}</div>
           <div class="sub">${row.sched}/${row.reqEff} • ${Math.round(row.rec.volume)}</div>`;
@@ -7905,6 +8068,7 @@ function renderMatrixBody(){
         td.title=t("mxTipHead",{m:mName,v:pct(v),src:t(measured?"mxSrcMeas":"mxSrcFc")})+"\n"
           +(cu.vol>0?t("mxCum",{a:cu.from,b:tm,v:pct(cu.acc/cu.vol),n:Math.round(cu.vol).toLocaleString()})+"\n":"")
           +t("mxTipBody",{t:tgt,s:row.sched,r:row.reqEff})+"\n"+verd
+          +(()=>{ const tr=traineeAt(ds,di,tm), o=(state.trainees||{})[sundayOf(ds)]; return tr>0?"\n🎓 "+t("trnCell",{t:tr,n:traineeN(ds,di),p:o.pct}):""; })()
           +(offPrim&&(short||over)?"\n"+t("mxVerdMetric",{p:primName()}):"");
         td.addEventListener("click",e=>openEditor(e,ds,tm,di));
       }
@@ -8109,7 +8273,7 @@ function trendDayStat(ds){
   let ansL=0,workL=0,volL=0,workVL=0,occFileWL=0,occFileL=0;
   for(const [tm,rec] of sd.src){
     if(state.exceptions.has(ds+"|"+tm)) continue;
-    const sched=capacityFor(ds,dayIdx,tm,rec)+injectionAgents(dayIdx,tm);
+    const sched=capacityFor(ds,dayIdx,tm,rec)+injectionAgents(dayIdx,tm)+traineeAt(ds,dayIdx,tm); // 🎓 same as the matrix
     // same effective-agent basis as the matrix (availability × κ) — the two views must agree
     const agents=Math.max(0,Math.round(sched*availShare(S)*(state.calib||1)));
     let perf=evalInterval(rec.volume,rec.aht,agents,S,rec.mpt);
@@ -8153,8 +8317,10 @@ function trendDayStat(ds){
     // CLOSED holiday reads explicitly as 0 demand + a 🕎 badge, not a silent gap)
     return (fc&&state.simDays.has(ds))||holLvl?{ds,dayIdx,forecast:fc,zero:true,holLvl}:null;
   }
-  // actual answer rate from the file (שיחות נענות ÷ נכנסות) beats the model on history
-  const ar=answered>0?Math.min(1,answered/vol):arW/vol;
+  // actual answer rate from the file (שיחות נענות ÷ נכנסות) beats the model on history; a FORECAST day's rate is
+  // the matrix's (staffing → Erlang + slot anchor) — so courses, a sidur or a what-if move it here too, and the
+  // two pages show the same number (the carried-forward answered calls only feed productivity / occupancy)
+  const ar=!fc&&answered>0?Math.min(1,answered/vol):arW/vol;
   const tsf=tsfW/vol,tsf30=tsf30W/vol,tsf60=tsf60W/vol;
   const aht=ahtW/vol;
   // when the file carries actual floor data (net login hours + answered calls),
@@ -8210,7 +8376,7 @@ function renderTrendDash(list,G,onOpen){
   const showRel=(S.trCharts||[]).includes("rel");
   const esc=v=>String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
   const chips=`<div class="trPick"><span class="mini">${t("trPickL")}</span>`+mets.map(m=>`<button type="button" class="trChip${onSet.has(m.k)?" on":""}" data-k="${m.k}">${t(m.lk)}</button>`).join("")
-    +`<button type="button" class="trChip${showRel?" on":""}" data-k="rel">🔗 ${t("relT")}</button><span class="mini trDashHint">${t("trDashHint")}</span></div>`;
+    +`<button type="button" class="trChip${showRel?" on":""}" data-k="rel">🔗 ${t("relT")}</button></div>`;
   if(pts.length<2){ box.innerHTML=chips+`<p class="mini">${t("trDashFew")}</p>`; wire(); return; }
   const W=560, H=112, pl=44, pr=8, pt=12, pb=18, n=pts.length, step=(W-pl-pr)/n, X=i=>pl+step*(i+.5);
   const fc0=pts.findIndex(p=>p.fc);
@@ -8522,6 +8688,7 @@ function renderTrends(){
         const a=document.createElement("button"); a.className="linklike"; a.textContent=t("trHintLink");
         a.addEventListener("click",()=>{ showPage("settings"); openEvents(); });
         h.appendChild(a); } } }
+  syncLens("trends",rowsData.some(r=>r.forecast&&!state.rosterDates.has(r.ds)));
   { const el=document.getElementById("trFast"), fs=fastState();
     const show=!!(fs&&fs.active&&rowsData.some(r=>r.forecast&&r.ds<=addDays(state.maxDate,30)));
     el.hidden=!show;
@@ -8612,7 +8779,22 @@ function applyTrendEdit(ds,newVol,newAht){
 }
 
 /* ---------------- Cohorts / capacity model ---------------- */
-function cohortFloorDate(c){ return addDays(c.start,c.duration); }
+/* a course day = a working day (Sun–Thu) that isn't a closed holiday (Hebrew calendar or your own dates) */
+function courseDayOK(ds){ const di=fromISO(ds).getDay(); if(di>4) return false;
+  const own=customHolOn(ds); if(own) return own.lvl!=="closed"; return holidayLevel(fromISO(ds))!=="closed"; }
+const _floorCache=new Map();
+function cohortFloorDate(c){
+  const k=c.start+"|"+c.duration+"|"+(state._holVer||0);
+  let f=_floorCache.get(k); if(f) return f;
+  // a course runs on WORKING days (Sun–Thu); closed holidays — the Hebrew calendar and your own dates — don't
+  // count, so a holiday pushes the floor date. Floor = the first working day after the last course day.
+  let d=c.start, n=0, g=0;
+  while(!courseDayOK(d)&&g++<40) d=addDays(d,1);
+  while(n<Math.max(1,+c.duration||1)&&g++<500){ if(courseDayOK(d)) n++; d=addDays(d,1); }
+  while(!courseDayOK(d)&&g++<540) d=addDays(d,1);
+  if(_floorCache.size>3000) _floorCache.clear();
+  _floorCache.set(k,d); return d;
+}
 function cohortEffective(c){
   const attr=state.settings.attrition;
   return c.count*(c.yield/100)*(1-Math.min(0.9,attr*1.5/100));
@@ -9029,7 +9211,6 @@ function renderRecruit(){
     }
   }
 
-  syncCohSkillUI(); // course-form queue options track the loaded skill list
   // scope badge: these insights follow the queue filter above (contrast with the
   // whole-center What-If simulator) — the division of labour, shown not told
   { const sb=document.getElementById("trajScope");
@@ -9042,13 +9223,11 @@ function renderRecruit(){
     const vars={t:S.target,d:fmtD(state.horizonISO),m:primName()}; // copy adapts to the Primary Target Metric
     // TWO primary insights max — the decision line and the WHERE-to-hire line;
     // trend + model transparency fold into a details row (cognitive load ceiling)
-    if(!traj.reachable)
-      add(t("trajUnreach",{p:(traj.in30*100).toFixed(0),...vars}),"alert");
-    else if(traj.need<=0) add(t("trajOk",vars),"ok");
-    else if(traj.need>Math.max(8,plan.hc*0.25))
-      add(t("trajHireBig",{n:traj.need,pct:Math.round(traj.need/Math.max(1,plan.hc)*100),
-        p:(traj.nowP*100).toFixed(0),...vars}),"alert");
-    else add(t("trajHire",{n:traj.need,...vars}),"alert");
+    // the decision line = the training pipeline's answer (hirePlan): ONE number for "how many to recruit"
+    const hp=hirePlan();
+    if(hp&&hp.months&&hp.months.length){ // the same answer as "are your courses enough?" — every month, by the forecast
+      const loc=lang==="he"?"he-IL":"en-GB", lm=hp.months[hp.months.length-1].m, mon=new Date(+lm.slice(0,4),+lm.slice(5,7)-1,1).toLocaleDateString(loc,{month:"long"});
+      add(hp.total>0?t("trajHireM",{n:hp.total,m:primName(),t:S.target}):t("trajOkM",{m:primName(),t:S.target,d:mon}),hp.total>0?"alert":"ok"); }
     // WHAT PROFILE to hire: the pain-hours window carrying most of the weekly deficit
     const prof=hiringProfile();
     if(prof) add("🧲 "+t("trajProfile",prof),"insight");
@@ -9097,41 +9276,7 @@ function renderRecruit(){
     li.appendChild(x); il.appendChild(li);
   });
 
-  const cl=document.getElementById("cohortList"); cl.innerHTML="";
-  if(state.cohorts.length){
-    /* real <table> markup → clean Ctrl+C copy into Excel / Google Sheets (item 8) */
-    const tblc=document.createElement("table");
-    const h=document.createElement("thead"); const hrow=document.createElement("tr");
-    [t("cohName"),t("cohCount"),t("cohYield"),t("cohFloor"),t("cohReps"),""].forEach(x=>hrow.appendChild(th(x)));
-    h.appendChild(hrow); tblc.appendChild(h);
-    const b=document.createElement("tbody");
-    // nearest floor-entry (כניסה למשמרות) first
-    [...state.cohorts.entries()].sort((x,y)=>cohortFloorDate(x[1])<cohortFloorDate(y[1])?-1:1)
-      .forEach(([i,c])=>{
-      const tr=document.createElement("tr");
-      // click a course row to edit it — same gesture as clicking a cell on Date Trends
-      tr.style.cursor="pointer"; tr.title=t("cohEditTip");
-      tr.addEventListener("click",()=>{
-        document.getElementById("cohName").value=c.name;
-        document.getElementById("cohCount").value=c.count;
-        document.getElementById("cohDate").value=c.start;
-        document.getElementById("cohDur").value=c.duration;
-        document.getElementById("cohYield").value=c.yield;
-        const cs=document.getElementById("cohSkill"); if(cs&&c.skill!=null) cs.value=c.skill;
-        state.cohorts.splice(i,1); state.fcCache.clear(); renderAll();
-        document.getElementById("cohName").focus();
-      });
-      [c.name,c.count,c.yield+"%",fmtD(cohortFloorDate(c)),Math.round(cohortEffective(c))].forEach(v=>{
-        const td=document.createElement("td"); td.textContent=v; tr.appendChild(td); });
-      const tdx=document.createElement("td");
-      const x=document.createElement("button"); x.className="xbtn"; x.textContent="✕";
-      x.addEventListener("click",e=>{ e.stopPropagation(); state.cohorts.splice(i,1); state.fcCache.clear(); renderAll(); });
-      tdx.appendChild(x); tr.appendChild(tdx);
-      b.appendChild(tr);
-    });
-    tblc.appendChild(b);
-    cl.appendChild(tblc);
-  }
+  renderCohortTable(); renderHirePlan(); // 🎯 RECRUIT_PLAN_SPEC.md
 
 }
 /* roster table — honest columns: contracted/Δ only when the file provides them.
@@ -9303,7 +9448,9 @@ function loadState(){
     if(!state.settings.modelUserSet&&state.settings.modelVolume==="holt_damped")
       state.settings.modelVolume="ensemble5";
     if(!Models.volume[state.settings.modelVolume]) state.settings.modelVolume="ensemble5";
-    if(Array.isArray(s.cohorts)) state.cohorts=s.cohorts;
+    if(Array.isArray(s.cohorts)) state.cohorts=s.cohorts.map(c=>{ const o={...c,skill:""}; // every course = new hires to קו 1
+      if(!o.wd&&o.start&&o.duration>0){ let n=0; for(let k=0;k<o.duration;k++) if(fromISO(addDays(o.start,k)).getDay()<=4) n++; o.duration=Math.max(1,n); o.wd=true; }
+      return o; });
     if(Array.isArray(s.injections)) state.injections=s.injections;
     if(s.metric) state.metric=s.metric;
     return s;
@@ -10238,7 +10385,7 @@ document.getElementById("holTableBtn").addEventListener("click",()=>{
   document.getElementById("modalBg").classList.add("show");
 });
 /* your own dates: a list (✕ removes) + one add row — name · from · to · level. A change recomputes at once. */
-function holChanged(){ saveState(); state.fcCache.clear(); memo.clear(); rebuildLearningSeries(); renderAll(); }
+function holChanged(){ state._holVer=(state._holVer||0)+1; saveState(); state.fcCache.clear(); memo.clear(); rebuildLearningSeries(); renderAll(); }
 function renderCustomHol(mL){
   const list=state.settings.customHol||(state.settings.customHol=[]);
   const sec=document.createElement("li"); sec.className="holSec"; sec.textContent=t("holOwnSec"); mL.appendChild(sec);
@@ -10425,25 +10572,192 @@ const winBind=(id,key)=>{ const el=document.getElementById(id); el.value=state.s
   }); };
 winBind("setDayStart","dayStart"); winBind("setDayEnd","dayEnd"); winBind("setFriEnd","friEnd");
 
-/* course queue select: filled from the roster's skill list; default = קו 1 (new hires start there) */
-function syncCohSkillUI(){
-  const sel=document.getElementById("cohSkill"); if(!sel) return;
-  const skills=state.skillList||[];
-  const cur=sel.value;
-  sel.innerHTML=`<option value="">${t("cohSkillDef")}</option>`+skills.map(s=>`<option>${s}</option>`).join("");
-  if(skills.includes(cur)) sel.value=cur;
+/* the courses, edited in place: name · trainees · start · days · hire % → floor date · reps on the floor */
+function cohortsChanged(){ state.fcCache.clear(); saveState(); renderAll(); }
+/* what to bring: the course file's basic shape — a mini table in the drop box + a ready template to fill */
+function crsTemplateRows(){
+  const d=iso(new Date());
+  return [[t("cohName"),t("cohStart"),t("cohDurS"),t("cohCount"),t("cohYieldS")],
+    [t("courseDefault")+" ב\"ש 1",fmtD(addDays(d,14)),12,12,85],[t("courseDefault")+" רחובות 2",fmtD(addDays(d,42)),12,7,80]];
 }
-document.getElementById("cohAdd").addEventListener("click",()=>{
-  const name=document.getElementById("cohName").value.trim()||(t("courseDefault")+" "+(state.cohorts.length+1));
-  const count=+document.getElementById("cohCount").value||0;
-  const start=document.getElementById("cohDate").value;
-  const duration=+document.getElementById("cohDur").value||21;
-  const yld=Math.min(100,Math.max(10,+document.getElementById("cohYield").value||85));
-  const skill=(document.getElementById("cohSkill")||{}).value||"";
-  if(count>0&&start){ state.cohorts.push({name,count,start,duration,yield:yld,skill});
-    state.fcCache.clear(); // course graduates scale forecast-day agents → refresh forecasts
-    document.getElementById("cohName").value=""; renderAll(); }
+function renderCrsSample(){
+  const box=document.getElementById("crsSample"); if(!box) return;
+  const r=crsTemplateRows(), esc=v=>String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+  box.innerHTML=`<table class="crsSample"><thead><tr>${r[0].map(h=>`<th>${esc(h)}</th>`).join("")}</tr></thead><tbody><tr>${r[1].map(v=>`<td>${esc(v)}</td>`).join("")}</tr></tbody></table>`
+    +`<p class="mini">${t("crsSampleCap")} · <button class="linklike crsTpl" type="button">${t("crsTpl")}</button></p>`;
+}
+document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest(".crsTpl"); if(!b) return; e.preventDefault(); e.stopPropagation();
+  downloadFile(t("crsTplFile"),crsTemplateRows().map(r=>r.map(csvQuote).join(",")).join("\n")); });
+function renderCohortTable(){
+  const cl=document.getElementById("cohortList"); if(!cl) return; cl.innerHTML="";
+  const dz=document.getElementById("dzCourses"); if(dz) dz.style.display=state.cohorts.length?"none":"";
+  renderCrsSample();
+  { const tb=document.querySelector(".crsBar .crsTpl"); if(tb) tb.style.display=state.cohorts.length?"":"none"; } // empty: the drop box carries it
+  { const y=document.getElementById("cohYield"); if(y&&document.activeElement!==y) y.value=state.settings.defYield||85;
+    const a=document.getElementById("cohAttr"); if(a&&document.activeElement!==a) a.value=state.settings.attrition; }
+  if(!state.cohorts.length) return;
+  const esc=v=>String(v??"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");
+  const rows=[...state.cohorts.entries()].sort((x,y)=>cohortFloorDate(x[1])<cohortFloorDate(y[1])?-1:1); // nearest floor entry first
+  cl.innerHTML=`<div class="tablewrap"><table class="cohT"><thead><tr><th>${t("cohName")}</th><th>${t("cohSite")}</th><th>${t("cohCount")}</th><th>${t("cohStart")}</th><th>${t("cohDurS")}</th><th>${t("cohYieldS")}</th><th>${t("cohFloor")}</th><th>${t("cohReps")}</th><th></th></tr></thead><tbody>`
+    +rows.map(([i,c])=>`<tr data-i="${i}"><td><input class="cohIn" data-k="name" value="${esc(c.name)}"></td>`
+      +`<td><select class="cohIn cohSite" data-k="site">${[""].concat(SITES.map(s=>s[0])).map(s=>`<option value="${esc(s)}"${courseSite(c)===s?" selected":""}>${esc(s||t("hpOther"))}</option>`).join("")}</select></td>`
+      +`<td><input class="cohIn n" type="number" min="1" max="500" data-k="count" value="${c.count}"></td>`
+      +`<td><input class="cohIn" type="date" data-k="start" value="${c.start}"></td>`
+      +`<td><input class="cohIn n" type="number" min="1" max="180" data-k="duration" value="${c.duration}"></td>`
+      +`<td><input class="cohIn n" type="number" min="10" max="100" data-k="yield" value="${c.yield}"></td>`
+      +`<td class="cohFl">${fmtD(cohortFloorDate(c)).slice(0,5)}</td><td><b>${Math.round(cohortEffective(c))}</b></td>`
+      +`<td><button class="xbtn" type="button" data-x="${i}" title="${esc(t("remove"))}">✕</button></td></tr>`).join("")+`</tbody></table></div>`;
+  cl.querySelectorAll(".cohIn").forEach(inp=>inp.addEventListener("change",()=>{
+    const c=state.cohorts[+inp.closest("tr").dataset.i]; if(!c) return; const k=inp.dataset.k, v=inp.value;
+    if(k==="name"){ if(v.trim()) c.name=v.trim(); }
+    else if(k==="site") c.site=v;
+    else if(k==="start"){ if(v) c.start=v; }
+    else if(+v>0) c[k]=k==="yield"?Math.min(100,Math.max(10,Math.round(+v))):Math.round(+v);
+    cohortsChanged(); }));
+  cl.querySelectorAll("[data-x]").forEach(b=>b.addEventListener("click",()=>{ state.cohorts.splice(+b.dataset.x,1); cohortsChanged(); }));
+}
+/* 🎯 HOW MANY TO RECRUIT — and into which course. Target = the answer-rate target (or a headcount) by a date.
+   Same math as the What-If curve beside it (projMetric on the latest measured week): the headcount that
+   reaches the target vs the headcount the plan already brings (today − attrition + graduates). Each course
+   tops the floor up to that headcount on its graduation day and holds it until the next course (attrition
+   included); with no course before the date, a new one is offered. */
+/* COURSE LOCATION — read from the course name (בית / ב"ש / רחובות), or the table's own pick */
+const SITES=[["ב\"ש",/ב["״׳']ש|באר.?שבע|beer.?sheva/i],["רחובות",/רחובות|rehovot/i],["בית",/בית|מהבית|home|remote/i]];
+const SITE_MAX={"ב\"ש":12,"רחובות":7,"בית":12};
+function courseSite(c){ if(c.site) return c.site; const nm=String(c.name||""); for(const [s,re] of SITES) if(re.test(nm)) return s; return ""; }
+function siteMax(s){ const m=state.settings.siteMax||{}; return Math.max(1,+(m[s]??SITE_MAX[s]??20)); }
+// a location's usual course length: the median of its courses, else 12 working days
+function siteLen(s){ const d=state.cohorts.filter(c=>courseSite(c)===s).map(c=>+c.duration).filter(x=>x>0).sort((a,b)=>a-b);
+  return d.length?d[d.length>>1]:12; }
+/* 🎯 ARE YOUR COURSES ENOUGH — EVERY MONTH. For each month the forecast covers (up to 6):
+   needed reps = today's reps × (staffing the forecast needs for the target ÷ today's team's staffing) — the
+   month's own demand, so it moves with the forecast; expected reps = today's reps − attrition + the graduates on
+   the floor by mid-month (a new rep ramps from half to full within a month). Short months are filled from the
+   EARLIEST course that still graduates in time, never above its location's class size; still short → an extra
+   course at the earliest free slot of a location (a location runs one course at a time; holidays push it). */
+function hirePlan(){
+  const S=state.settings, H0=S.headcount;
+  if(!state.days.size||!state.maxDate||!state.horizonISO||!(H0>0)) return null;
+  const today=iso(new Date()), dd=(a,b)=>Math.round((fromISO(b)-fromISO(a))/86400000);
+  const early=1-Math.min(0.9,S.attrition*1.5/100), ramp=x=>x<0?0:Math.min(1,0.5+0.5*x/30);
+  const months=[]; // needs are measured against TODAY's team (the iron, or the file's history without the lens scale)
+  {
+    for(let k=0;k<6;k++){
+      const d0=new Date(fromISO(today)); d0.setDate(1); d0.setMonth(d0.getMonth()+k);
+      const m=iso(d0).slice(0,7), from=k?m+"-01":today, last=iso(new Date(d0.getFullYear(),d0.getMonth()+1,0));
+      if(from>state.horizonISO) break;
+      let need=0,cap=0;
+      for(let ds=from;ds<=last&&ds<=state.horizonISO;ds=addDays(ds,1)){
+        const di=fromISO(ds).getDay(); if(di>5||ds<=state.maxDate) continue;
+        const c=computeDay(ds); if(!c) continue;
+        for(const r of c.rows){ if(!r.rec||r.closed||r.exc||r.nodata) continue;
+          const base=state.iron?ironCapAt(ds,di,r.tm):(r.rec.agents||0)/lensScale(ds);
+          need+=r.reqEff; cap+=base; }
+      }
+      if(cap>0) months.push({m,mid:m+"-15"<from?from:m+"-15",N:Math.ceil(H0*need/cap)});
+    }
+  }
+  if(!months.length) return {months:[],noFc:true};
+  const yOf=c=>(+c.yield||S.defYield||85)/100;
+  const courses=state.cohorts.map((c,i)=>({i,c,site:courseSite(c),start:c.start,floor:cohortFloorDate(c),count:+c.count||0,y:yOf(c)}))
+    .filter(x=>x.start>=today).sort((a,b)=>a.start<b.start?-1:1);
+  const add=new Map(), sug=[];
+  const contrib=(x,n,mid)=>n*x.y*early*ramp(dd(x.floor,mid));
+  const expected=(mid,withPlan)=>{ const d=Math.max(0,dd(today,mid));
+    let e=H0*(1-S.attrition/100*d/30);
+    for(const x of courses){ e+=contrib(x,x.count,mid); if(withPlan) e+=contrib(x,add.get(x.i)||0,mid); }
+    if(withPlan) for(const s of sug) e+=contrib(s,s.count,mid);
+    return e; };
+  // the next free slot of a location: the working day after its last course (planned or suggested) ends
+  const nextSlot=site=>{ let s=today; for(const x of courses.concat(sug)) if(x.site===site&&x.floor>s) s=x.floor;
+    while(!courseDayOK(s)) s=addDays(s,1); return s; };
+  const siteList=[...new Set(SITES.map(s=>s[0]).concat(courses.map(x=>x.site).filter(Boolean)))];
+  for(const mo of months){
+    mo.E0=expected(mo.mid,false);
+    let G=mo.N-expected(mo.mid,true);
+    if(G<=0.05) continue;
+    for(const x of courses.concat(sug)){ // the earliest course first, up to its class size
+      if(x.floor>mo.mid) continue;
+      const room=siteMax(x.site)-x.count-(add.get(x.i)||0); if(room<=0) continue;
+      const ph=x.y*early*ramp(dd(x.floor,mo.mid)); if(ph<=0) continue;
+      const k=Math.min(room,Math.ceil(G/ph));
+      if(x.sugg) x.count+=k; else add.set(x.i,(add.get(x.i)||0)+k);
+      G-=k*ph; if(G<=0.05) break;
+    }
+    let guard=0;
+    while(G>0.05&&guard++<6&&sug.length<12){ // still short → an extra course where it graduates soonest
+      const opts=siteList.map(site=>{ const start=nextSlot(site), duration=siteLen(site);
+        return {site,start,duration,floor:cohortFloorDate({start,duration})}; }).sort((a,b)=>a.floor<b.floor?-1:1);
+      const o=opts[0]; if(!o||o.floor>mo.mid){ mo.late=o?o.floor:null; break; }
+      const y=(S.defYield||85)/100, ph=y*early*ramp(dd(o.floor,mo.mid));
+      const s={...o,y,sugg:true,count:Math.min(siteMax(o.site),Math.max(1,Math.ceil(G/ph)))};
+      sug.push(s); G-=s.count*ph;
+    }
+  }
+  months.forEach(mo=>{ mo.E1=expected(mo.mid,true); if(mo.E0==null) mo.E0=expected(mo.mid,false); });
+  const total=[...add.values()].reduce((a,b)=>a+b,0)+sug.reduce((a,s)=>a+s.count,0);
+  return {months,courses,add,sug,total};
+}
+function renderHirePlan(){
+  const box=document.getElementById("hirePlan"); if(!box) return;
+  const S=state.settings, p=hirePlan();
+  if(!p){ box.innerHTML=""; return; }
+  if(!p.months.length){ // the forecast stops before the coming months: the box says so, quietly
+    box.innerHTML=`<div class="hpTitle">🎯 ${t("hpQ")}</div><p class="hpSub">${t("hpNoFc",{d:state.horizonISO?fmtD(state.horizonISO):"—"})}</p>`; return; }
+  const esc=v=>String(v??"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");
+  const loc=lang==="he"?"he-IL":"en-GB", mLbl=m=>new Date(+m.slice(0,4),+m.slice(5,7)-1,1).toLocaleDateString(loc,{month:"short"});
+  const d5=ds=>fmtD(ds).slice(0,5), last=p.months[p.months.length-1];
+  let html=`<div class="hpTitle">🎯 ${t("hpQ")} <span class="info" data-tip="${esc(t("tipHp"))}" tabindex="0">i</span></div>`;
+  html+=p.total>0
+    ?`<div class="hpHero"><span class="hpN">+${p.total}</span> <span>${t("hpRecruits")}${p.sug.length===1?t("hpMoreCourse1"):p.sug.length?t("hpMoreCourses",{k:p.sug.length}):""}</span></div>`
+    :`<div class="hpHero ok">✓ ${t("hpOkMonths",{m:mLbl(last.m)})}</div>`;
+  html+=`<p class="hpSub">${t("hpTarget",{m:primName(),t:S.target})}</p>`;
+  // one picture: per month, the reps needed (tick) vs the reps expected — with the additions when there are any
+  const anyAdd=p.total>0;
+  const cols=p.months.map(mo=>{ const gap=Math.ceil(mo.N-mo.E1-0.05);
+    return {key:mo.m,label:mLbl(mo.m),iron:anyAdd?mo.E0:0,sched:mo.E1,need:mo.N,foot:gap>0?"−"+gap:"✓",cls:gap>0?"bad":"good",
+      tip:t("hpTipMo",{n:mo.N,a:Math.round(mo.E0),b:anyAdd?" → "+Math.round(mo.E1):""})}; });
+  const leg=(anyAdd?[["ir",t("hpLgPlan")],["sd",t("hpLgWith")]]:[["sd",t("hpLgPlan")]]).concat([["nd",t("hpLgNeed")]]);
+  html+=`<div class="hpChart">${ironBars(cols,70)}</div><div class="legend rdyLeg">${leg.map(([k,l])=>`<span><i class="lg-${k}"></i>${l}</span>`).join("")}</div>`;
+  // months the courses can't reach in time — said with the date they first can
+  p.months.filter(mo=>mo.N-mo.E1>0.5&&mo.late).forEach(mo=>{ html+=`<p class="hpSub">${t("hpLateMo",{m:mLbl(mo.m),x:Math.ceil(mo.N-mo.E1),d:d5(mo.late)})}</p>`; });
+  const rows=p.courses.filter(x=>p.add.get(x.i)).map(x=>{ const n=p.add.get(x.i), full=x.count+n>=siteMax(x.site);
+    return `<div class="hpRow"><span class="hpNm">${esc(x.c.name)}</span><span class="mini">${esc(x.site||t("hpOther"))} · ${t("cohFloor")} ${d5(x.floor)}</span><span>${x.count} → <b>${x.count+n}</b> <span class="hpPlus">+${n}</span>${full?` <span class="mini">${t("hpFull")}</span>`:""}</span></div>`; });
+  p.sug.forEach(s=>rows.push(`<div class="hpRow sug"><span class="hpNm">➕ ${t("hpNew")} · ${esc(s.site)}</span><span class="mini">${t("cohStart")} ${d5(s.start)} → ${t("cohFloor")} ${d5(s.floor)}</span><span><b>${s.count}</b> ${t("cohCount")}</span></div>`));
+  if(rows.length) html+=`<div class="hpList">${rows.join("")}</div><button type="button" class="btn navy applymini" id="hpApply">${t("hpApply")}</button>`;
+  // the one limit you may want to change: class size per location (length comes from the courses themselves)
+  const sites=[...new Set(SITES.map(s=>s[0]).concat(state.cohorts.map(courseSite).filter(Boolean)))];
+  html+=`<details class="hpLim"><summary>${t("hpLimits")}</summary><div class="hpLimRow">${sites.map(s=>`<label class="mini">${esc(s)} <input type="number" min="1" max="60" class="hpIn" style="width:52px" data-site="${esc(s)}" value="${siteMax(s)}"></label>`).join("")}</div></details>`;
+  box.innerHTML=html;
+  const ap=box.querySelector("#hpApply"); if(ap) ap.addEventListener("click",()=>{
+    p.add.forEach((n,i)=>{ if(state.cohorts[i]) state.cohorts[i].count+=n; });
+    p.sug.forEach(s=>state.cohorts.push({name:t("courseDefault")+" "+s.site+" "+d5(s.start),site:s.site,count:s.count,start:s.start,duration:s.duration,yield:S.defYield||85,skill:"",wd:true}));
+    showToast("✅ "+t("hpApplied",{n:p.total}),true); cohortsChanged(); });
+  box.querySelectorAll("[data-site]").forEach(inp=>inp.addEventListener("change",()=>{
+    (S.siteMax=S.siteMax||{})[inp.dataset.site]=Math.max(1,Math.min(60,+inp.value||20)); saveState(); renderHirePlan(); }));
+}
+/* the course form's hire rate = the default for files that don't say (remembered) */
+function courseDefaults(){
+  return {yield:state.settings.defYield||85,count:10,dur:12}; // 12 working days
+}
+/* same course again (name + start) replaces itself — dropping an updated plan never doubles it */
+function addCourses(list){
+  let n=0; for(const c of list){ const i=state.cohorts.findIndex(x=>x.name===c.name&&x.start===c.start);
+    if(i>=0) state.cohorts[i]={...state.cohorts[i],...c}; else state.cohorts.push({...c,skill:""}); n++; }
+  return n;
+}
+document.getElementById("cohNew").addEventListener("click",()=>{
+  const d=courseDefaults();
+  state.cohorts.push({name:t("courseDefault")+" "+(state.cohorts.length+1),count:d.count,start:addDays(iso(new Date()),14),duration:d.dur,yield:d.yield,skill:"",wd:true});
+  cohortsChanged(); // courses = new hires to קו 1; graduates scale forecast-day agents
+  const inp=document.querySelector(`.cohT tr[data-i="${state.cohorts.length-1}"] [data-k="name"]`); if(inp){ inp.focus(); inp.select(); }
 });
+// the form's hire rate is also the default for course files that don't give one (remembered)
+// monthly attrition: the SAME setting as Advanced Settings → Workforce dynamics (one value, two doors)
+document.getElementById("cohAttr").addEventListener("change",e=>{ const v=Math.max(0,Math.min(30,+e.target.value||0));
+  state.settings.attrition=v; const sa=document.getElementById("setAttr"); if(sa) sa.value=v; cohortsChanged(); });
+document.getElementById("cohYield").addEventListener("change",e=>{
+  state.settings.defYield=Math.min(100,Math.max(10,+e.target.value||85)); saveState(); });
 
 document.getElementById("injProfile").addEventListener("change",e=>{
   document.getElementById("customProf").style.display=(e.target.value==="custom")?"block":"none";
@@ -10466,35 +10780,104 @@ document.getElementById("wiReset").addEventListener("click",()=>{ _wiTouched=fal
 
 /* Course Gantt ingestion — deliberately forgiving: fuzzy headers (HE/EN), any date
    format via normDateAny, duration from end-date or days column, sane defaults */
-function parseCoursesGrid(grid){
-  const KEYS={name:/קורס|course|שם/i,start:/התחל|start|תאריך|date/i,end:/סיום|end/i,
-    dur:/משך|ימים|duration|days/i,count:/כמות|חניכ|נציג|trainee|count/i,yield:/הסמכ|yield|אחוז/i,
-    skill:/מיומנות|תור|skill|queue/i};
-  let hd=null;
-  for(let r=0;r<Math.min(15,grid.length);r++){
-    const map={};
-    (grid[r]||[]).forEach((c,i)=>{ for(const k in KEYS) if(map[k]==null&&KEYS[k].test(String(c??""))) map[k]=i; });
-    if(map.start!=null&&(map.name!=null||map.count!=null)){ hd={row:r,map}; break; }
-  }
-  if(!hd) return 0;
-  const m=hd.map; let n=0;
-  for(let r=hd.row+1;r<grid.length;r++){
-    const row=grid[r]; if(!row) continue;
-    const start=normDateAny(row[m.start]); if(!start) continue; // forgiving: bad-date rows just skip
-    const name=(m.name!=null?String(row[m.name]??"").trim():"")||(t("courseDefault")+" "+(state.cohorts.length+1));
-    const count=Math.max(1,toNum(m.count!=null?row[m.count]:10)||10);
-    let duration=m.dur!=null?Math.round(toNum(row[m.dur])||0):0;
-    if(!duration&&m.end!=null){ const end=normDateAny(row[m.end]);
-      if(end&&end>start) duration=Math.round((fromISO(end)-fromISO(start))/86400000); }
-    if(!duration) duration=21;
-    let yld=m.yield!=null?toNum(row[m.yield]):NaN;
-    if(isFinite(yld)&&yld<=1) yld*=100; // 0.85 and 85 both mean 85%
-    if(!isFinite(yld)||yld<=0) yld=85;
-    const skill=m.skill!=null?String(row[m.skill]??"").trim():"";
-    state.cohorts.push({name,count,start,duration,yield:Math.min(100,Math.round(yld)),skill});
-    n++;
-  }
-  return n;
+function parseCoursesGrid(grid,def){
+  def=def||{};
+  const DY=Math.min(100,Math.max(10,+def.yield||85)), DC=Math.max(1,+def.count||10), DD=Math.max(1,+def.dur||12);
+  // header words (HE/EN), matched anywhere in a cell. "תאריך הסמכה" is a date (end), "אחוז הסמכה" a rate:
+  // a column's CONTENT (dates / fractions / whole numbers / text) settles what an odd header can't
+  const K={name:/קורס|מחזור|כית|קבוצ|שם|course|cohort|class|group|name|wave/i,
+    start:/התחל|פתיח|תחיל|מתאריך|start|begin|open|from|kick/i,
+    end:/סיום|סוף|עד|הסמכ|end|finish|graduat|until|cert/i,
+    dur:/משך|ימים|שבוע|duration|days|weeks|length/i,
+    count:/כמות|חניכ|נציג|משתתפ|מגויס|מתגייס|גיוס|מקומות|אנשים|ראשים|trainee|count|hire|recruit|seat|people|head|qty/i,
+    yield:/הסמכ|אחוז|עוברים|מסיימ|הצלח|שיעור|yield|pass|success|rate|%/i};
+  const str=v=>String(v??"").trim(), num=v=>toNum(v);
+  const nx=d=>{ const x=fromISO(d); x.setDate(x.getDate()+1); return iso(x); };
+  const wd=(a,b)=>{ let n=0; for(let d=a,g=0;d<=b&&g<800;d=nx(d),g++) if(fromISO(d).getDay()<=4) n++; return n; }; // working days a..b
+  const isDate=v=>{ const d=normDateAny(v); return d&&d>="2000"&&d<"2100"?d:null; };
+  const TOTAL=/סה"?כ|סה״כ|סיכום|total|sum/i;
+  const tryGrid=g=>{
+    g=g.filter(r=>r&&r.some(c=>str(c)!==""));
+    if(g.length<2) return [];
+    const W=Math.max(...g.map(r=>r.length));
+    // header row: the early row whose TEXT cells hit the most header words
+    let hr=-1, best=0;
+    for(let r=0;r<Math.min(20,g.length);r++){
+      let s=0, dc=0; for(let j=0;j<W;j++){ const c=str(g[r][j]); if(isDate(g[r][j])) dc++; if(c&&!isFinite(+c)&&!isDate(c)) for(const k in K) if(K[k].test(c)){ s++; break; } }
+      if(dc>=3) s+=2; // a row of dates = the header of a timeline Gantt
+      if(s>best){ best=s; hr=r; }
+    }
+    if(best<2) hr=-1; // no real header → read by content from the first row
+    const head=j=>hr>=0?str(g[hr][j]):"";
+    const rows=g.slice(hr+1).filter(r=>!r.some(c=>TOTAL.test(str(c))));
+    // TIMELINE GANTT: dates across the header row, one course per row, marked cells = the course's weeks
+    if(hr>=0){
+      const dcols=[]; for(let j=0;j<W;j++){ const d=isDate(g[hr][j]); if(d) dcols.push({j,d}); }
+      if(dcols.length>=3){
+        const steps=dcols.slice(1).map((c,i)=>(fromISO(c.d)-fromISO(dcols[i].d))/86400000).filter(x=>x>0).sort((a,b)=>a-b);
+        const step=steps.length?steps[steps.length>>1]:7;
+        const other=[...Array(W).keys()].filter(j=>!dcols.some(c=>c.j===j));
+        const nameC=other.find(j=>K.name.test(head(j)))??other.find(j=>rows.some(r=>str(r[j])&&!isFinite(num(r[j]))));
+        const cntC=other.find(j=>K.count.test(head(j))&&!K.yield.test(head(j)));
+        const yC=other.find(j=>K.yield.test(head(j))&&!K.end.test(head(j))||/%/.test(head(j)));
+        const out=[];
+        for(const r of rows){
+          const on=dcols.filter(c=>{ const v=str(r[c.j]); return v&&v!=="0"; }); if(!on.length) continue;
+          const vals=on.map(c=>num(r[c.j])).filter(x=>isFinite(x)&&x>1);
+          out.push({name:nameC!=null?str(r[nameC]):"",start:on[0].d,
+            duration:Math.max(1,wd(on[0].d,(()=>{ const x=fromISO(on[on.length-1].d); x.setDate(x.getDate()+Math.round(step)-1); return iso(x); })())),
+            count:cntC!=null&&num(r[cntC])>0?num(r[cntC]):(vals.length?Math.max(...vals):DC),yRaw:yC!=null?r[yC]:""});
+        }
+        if(out.length) return finish(out);
+      }
+    }
+    // TABLE: profile every column by its content, then let the header break ties
+    const prof=[...Array(W).keys()].map(j=>{
+      const vs=rows.map(r=>r[j]).filter(v=>str(v)!=="");
+      const n=vs.length||1, dates=vs.map(isDate).filter(Boolean);
+      const nums=vs.map(num).filter(x=>isFinite(x)&&!isDate(x));
+      return {j,h:head(j),n:vs.length,date:dates.length/n,num:nums.length/n,
+        frac:nums.filter(x=>x>0&&x<=1).length/n,pct:vs.filter(v=>/%/.test(str(v))).length/n,
+        int:nums.filter(x=>Number.isInteger(x)).length/n,text:vs.filter(v=>!isDate(v)&&!isFinite(num(v))).length/n,
+        med:dates.length?dates.sort()[dates.length>>1]:"",
+        avg:nums.length?nums.reduce((a,b)=>a+b,0)/nums.length:0};
+    }).filter(p=>p.n);
+    const used=new Set(), pick=fn=>{ const p=prof.find(q=>!used.has(q.j)&&fn(q)); if(p) used.add(p.j); return p||null; };
+    const dateCols=prof.filter(p=>p.date>=0.6);
+    let start=pick(p=>p.date>=0.6&&K.start.test(p.h)&&!K.end.test(p.h))
+      ||pick(p=>p.date>=0.6&&!K.end.test(p.h))||(dateCols.length?pick(p=>p.date>=0.6&&p.med===dateCols.map(q=>q.med).sort()[0]):null);
+    if(!start) return [];
+    const end=pick(p=>p.date>=0.6);
+    const RATE=/%|rate|אחוז|הסמכ|yield/i;
+    const yld=pick(p=>p.num>=0.6&&(K.yield.test(p.h)&&!K.dur.test(p.h)&&(!K.count.test(p.h)||RATE.test(p.h))||p.pct>=0.5))
+      ||pick(p=>p.num>=0.6&&p.frac>=0.8&&p.int<1);
+    const dur=pick(p=>p.num>=0.6&&K.dur.test(p.h));
+    const cnt=pick(p=>p.num>=0.6&&K.count.test(p.h))||pick(p=>p.num>=0.6&&p.int>=0.8&&p.avg>=1&&p.avg<=500&&!K.dur.test(p.h));
+    const name=pick(p=>p.text>=0.5&&K.name.test(p.h))||pick(p=>p.text>=0.5);
+    const weeks=dur&&/שבוע|week/i.test(dur.h);
+    const out=[];
+    for(const r of rows){
+      const s=isDate(r[start.j]); if(!s) continue;
+      let d=dur?num(r[dur.j]):NaN; if(isFinite(d)&&weeks) d*=5; // a week = 5 working days
+      if(!(d>0)&&end){ const e=isDate(r[end.j]); if(e&&e>s) d=wd(s,e); }
+      out.push({name:name?str(r[name.j]):"",start:s,duration:d>0?Math.round(d):null,
+        count:cnt&&num(r[cnt.j])>0?num(r[cnt.j]):null,yRaw:yld?r[yld.j]:""});
+    }
+    return finish(out);
+  };
+  // a hire rate or a length given once (or in a merged cell) carries down to the rows below it
+  const finish=out=>{ let lastY=null, lastD=null;
+    return out.map((c,i)=>{
+      let y=toNum(c.yRaw); if(isFinite(y)&&y>0&&y<=1) y*=100;
+      if(!(isFinite(y)&&y>=1&&y<=100)) y=lastY; else lastY=y;
+      let d=c.duration; if(!(d>0)) d=lastD; else lastD=d;
+      return {name:c.name||(t("courseDefault")+" "+(i+1)),start:c.start,duration:d||DD,wd:true,
+        count:Math.max(1,Math.round(c.count||DC)),yield:Math.round(y||DY)}; }); };
+  // courses as rows (usual) — or as columns (transposed sheet)
+  let res=tryGrid(grid);
+  if(!res.length){ const W=Math.max(0,...grid.map(r=>r?r.length:0));
+    res=tryGrid([...Array(W).keys()].map(j=>grid.map(r=>r?r[j]:""))); }
+  return res;
 }
 function ingestCourseFile(f){
   beginBusy(t("processingName",{n:f.name}));
@@ -10508,12 +10891,12 @@ function ingestCourseFile(f){
         const heads=Object.keys(res.json[0]||{});
         grids=[[heads,...res.json.map(o=>heads.map(h=>o[h]))]];
       }
-      let n=0;
-      for(const g of grids){ n+=parseCoursesGrid((g||[]).filter(x=>x&&x.length)); if(n) break; }
-      if(!n){ showToast("⚠ "+t("crsErr"),false); return; }
-      state.fcCache.clear(); // course graduates scale forecast agents
+      let list=[];
+      for(const g of grids){ list=parseCoursesGrid((g||[]).filter(x=>x&&x.length),courseDefaults()); if(list.length) break; }
+      if(!list.length){ showToast("⚠ "+t("crsErr"),false); return; }
+      const n=addCourses(list);
       showToast("✅ "+t("crsOk",{n}),true);
-      renderAll();
+      cohortsChanged(); // course graduates scale forecast agents
     }catch(err){ showToast("⚠ "+t("dropErrParse"),false); }
     finally{ endBusy(); }
   })(); };
@@ -10526,6 +10909,15 @@ wireDropzone("dzCourses","crsInput",ingestCourseFile);
    decides where errors are shown; a roster dropped on the forecast box still works */
 wireDropzone("dzForecast","fcInput",f=>ingestFile(f,"forecast"));
 wireDropzone("dzRoster","roInput",f=>ingestFile(f,"roster"));
+// 🎓 trainees: fill the box as it opens; save / remove; the line under the fields follows the typing
+document.getElementById("trnBtn").addEventListener("click",trnFill);
+document.getElementById("trnMenu").addEventListener("input",trnSumUpd);
+document.getElementById("trnMenu").addEventListener("change",trnSumUpd);
+document.getElementById("trnSave").addEventListener("click",()=>{ const v=trnRead(), S=state.settings;
+  state.trainees=state.trainees||{};
+  if(Object.keys(v.byDay).length&&v.e>v.s) state.trainees[state.week]=v; else delete state.trainees[state.week];
+  S.trnPct=v.pct; S.trnWin={s:v.s,e:v.e,days:[0,1,2,3,4]}; saveState(); saveData(); memo.clear(); renderAll(); });
+document.getElementById("trnClear").addEventListener("click",()=>{ if(state.trainees) delete state.trainees[state.week]; saveData(); memo.clear(); renderAll(); });
 // Friday rotation switch (in both Friday cards' titles): a click must not fold the card
 document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest(".friEverySeg button"); if(!b) return; e.preventDefault();
   state.settings.friEvery=+b.dataset.v; saveState(); renderWorkforce(); renderFriday(); });
@@ -10544,6 +10936,7 @@ document.addEventListener("dragenter",e=>{
   if(state._dragInternal) return;
   if(!e.dataTransfer||![...(e.dataTransfer.types||[])].includes("Files")) return;
   dragDepth++;
+  { const bx=document.querySelector("#dropOverlay .box"); if(bx) bx.textContent=t(document.getElementById("page-recruit").classList.contains("active")?"dropCourses":"dropAnywhere"); }
   // over a portal the zone's own highlight speaks — the full-screen overlay would cover it
   document.getElementById("dropOverlay").classList.toggle("show",
     !e.target.closest||!e.target.closest(".dropzone"));
@@ -10558,6 +10951,8 @@ document.addEventListener("drop",e=>{
   if(state._dragInternal){ state._dragInternal=false; return; }
   document.getElementById("dropOverlay").classList.remove("show");
   if(e.target.closest&&e.target.closest(".dropzone")) return; // portal handlers own these
+  // on the recruitment page every dropped file is a course plan (same as its own drop box)
+  if(document.getElementById("page-recruit").classList.contains("active")){ [...(e.dataTransfer&&e.dataTransfer.files||[])].forEach(ingestCourseFile); return; }
   // multi-file drops ingest EVERY file (forecast + sidur together in one gesture)
   [...(e.dataTransfer&&e.dataTransfer.files||[])].forEach(f=>ingestFile(f,null));
 });
@@ -10604,7 +10999,7 @@ function saveData(){
       capSkills:state.capSkills, capSkillMap:state.rosterCapSkill, skillList:state.skillList,
       un:state.unallocRows, schedSkills:state.schedSkills, ironDraft:state.ironDraft||null, emptyUn:state._emptyUn||null, emptyVac:state._emptyVac||null,
       week:state.week, wfFilter:state.wfFilter, cons:state.weeklyConstraints,
-      schedOut:state._schedOut, schedExt:state.appliedExtensions, schedLocks:[...(state.schedLocks||[])], schedLockTL:[...(state.schedLockTL||[])], schedDeclined:state.schedDeclined||{}, agWhatIf:[...state.agWhatIf] }));
+      schedOut:state._schedOut, schedExt:state.appliedExtensions, schedLocks:[...(state.schedLocks||[])], schedLockTL:[...(state.schedLockTL||[])], schedDeclined:state.schedDeclined||{}, agWhatIf:[...state.agWhatIf], trainees:state.trainees||{} }));
   }catch(e){} // quota exceeded on huge files → data simply stays transient
 }
 function loadData(){
@@ -10640,6 +11035,7 @@ function loadData(){
     if(Array.isArray(s.cons)) state.weeklyConstraints=s.cons;
     rebuildRosterCoverage(); // NB: this clears any optimized preview AND what-ifs — restore both AFTER
     state.agWhatIf=new Map(Array.isArray(s.agWhatIf)?s.agWhatIf:[]);
+    state.trainees=s.trainees&&typeof s.trainees==="object"?s.trainees:{};
     // a persisted optimizer result: the sidur + matrix "Optimized" toggle survive a refresh
     state.appliedExtensions=Array.isArray(s.schedExt)?s.schedExt:[];
     state.schedLocks=new Set(Array.isArray(s.schedLocks)?s.schedLocks:[]); state.schedLockTL=new Set(Array.isArray(s.schedLockTL)?s.schedLockTL:[]); state.schedDeclined=s.schedDeclined||{};

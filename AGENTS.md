@@ -149,6 +149,29 @@ workforce filter lists legitimately show only "(all)" for this file.
   works with it off) and `customHolOn` (names); edited in the holidays table (`renderCustomHol`).
 - Date Trends charts: `renderTrendDash` + `trRelTile`, fed by the same rows as the table.
 
+## Forecast-week capacity (matrix + Date Trends)
+
+- `capacityFor` order: optimized preview → what-if cell → sidur (dated, then weekly template) →
+  for a forecast date with an iron: `ironCapAt` (today's team) × `lensScale` → else the file's
+  history `rec.agents` (scaled by `lensScale` inside `forecastDay`).
+- `settings.capLens`: "today" (default) | "real" — the single `.lensBtn` switch, rendered by
+  `syncLens` on both pages, shown only for forecast days without a sidur.
+- 🎓 `traineeAt(ds,di,tm)` from `state.trainees[Sunday]` ({n,s,e,days,pct}, saved with the data) is
+  added in `computeDay` and `trendDayStat` only — never in the scheduler or the What-If.
+
+## Recruitment & training
+
+- Courses (`state.cohorts`, persisted with the workspace) live in ONE editable table
+  (`renderCohortTable`); `addCourses` replaces a course with the same name + start.
+- `parseCoursesGrid(grid, defaults)` returns the courses (any layout; carried-down hire rate /
+  length; `courseDefaults()` = the remembered "hire % for new courses"). Files dropped anywhere on
+  the page go to `ingestCourseFile`. `crsTemplateRows` = the template + the drop box's mini table.
+- `hirePlan` / `renderHirePlan` ("are your courses enough?") implement `RECRUIT_PLAN_SPEC.md` —
+  read it before touching them. Course calendar: `courseDayOK` + `cohortFloorDate` (working days,
+  closed holidays push; cached by `state._holVer`, bumped in `holChanged`). Locations: `SITES`,
+  `courseSite`, `siteMax`, `siteLen`. The Trajectory decision line reads `hirePlan` — keep one source.
+- Courses move forecast-day capacity via `hcScale` in `forecastDay` (only for dates after today).
+
 ## Persistence and reset behavior
 
 - `saveState`/`loadState` persist settings/policy/courses/injections/language.

@@ -48,6 +48,13 @@ them is not done.
     included). Two numbers for the same thing must match exactly, at the same precision.
 11. **Explanations are short.** An "i" or a panel intro is two plain sentences at most: what
     happened / what it does, and what the user gets.
+12. **One word per concept.** Staff who leave = "עזיבה"; "נטישה" is only for abandoned calls.
+    A tool answers the user's question in its title ("Are your courses enough?"), the answer comes
+    first, the knobs last.
+13. **Same control, same place, same look.** A control that appears on several pages sits in the same spot on
+    each ("Include attrition & courses" is at the far end of the toolbar, by the holidays / charts controls, on
+    the matrix and on Date Trends) and every on/off switch is the same `.btn.sw` (gray off, navy on).
+14. **No "i" icons on crowded pages** (the matrix): the explanation is the hover of the control it explains.
 
 ## Product Design Principles
 

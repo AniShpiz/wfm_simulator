@@ -4,6 +4,53 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Forecast weeks: today's team vs "include attrition & courses"; trainees answering; uniform toggles
+
+- Root cause: a forecast week without a sidur showed neither the iron nor today's team — it used the
+  forecast file's historical staffing, silently scaled by attrition and courses. Now one switch,
+  "Include attrition & courses" (off by default), on the matrix and on Date Trends (same state, same
+  place — the far end of the toolbar): off = today's team = the iron (Friday by the rotation, the 🎧
+  skills; no iron → the file's history); on = the same × projected headcount (− attrition + course
+  graduates). Its hover says the week's change in people. Weeks with a sidur always show the sidur.
+- 🎓 Trainees answering during their course (the instructor's weekly number): a chip in the matrix week
+  bar opens a small box — how many, hours, days, counted as 50% (productivity + who shows up;
+  remembered). The matrix and Date Trends count them; the scheduler's suggestions and the What-If
+  don't. The cell hover says "incl. 6 trainees (12 × 50%)".
+- One on/off look app-wide (gray track off, navy track on — the knob vanished on white buttons); only
+  the holiday paint mode stays loud. The target metric (Settings) comes first in the matrix toggle.
+- Matrix: no "i" icons — each explanation is the hover of its control. The week pill reads "Next week ·
+  ↩ this week" (actual / forecast per day is already in the day headers; the hover repeats it).
+- Date Trends: the "hover = … · click = …" line is gone.
+
+### Recruitment & training: course files, editable courses, "are your courses enough?"
+
+- Fix (root cause): a hire rate typed once (or in a merged cell) reached only the first course — the
+  rows below were empty and fell to 85%. It now carries down; a file with no rate uses the "hire %
+  for new courses" field (remembered), not a hard-coded 85.
+- Course files read in any layout: odd HE/EN headers anywhere in the first 20 rows, any column order,
+  a title row above, days / weeks / an end date, Excel serials, totals rows ignored, a timeline
+  Gantt (dates across the top, marked weeks), courses as columns, or no header at all (by content).
+  The same course again (name + start) replaces itself. The drop box shows the file it wants (a mini
+  table) + "⬇ Excel template"; a file dropped ANYWHERE on the page is a course plan.
+- One place for courses: the table, edited in place (name, trainees, start, days, hire %);
+  "+ Course" adds a ready row. The separate 5-field form and the per-course skill list are gone —
+  every course is new hires to קו 1.
+- "🎯 Are your courses enough?" — rebuilt from `RECRUIT_PLAN_SPEC.md` (the first, one-date version
+  could put a whole gap into one course): every month by the forecast's demand, needed vs expected
+  reps (attrition, hire rate, a month's ramp-up); short months filled from the earliest course up to
+  its location's class size (ב"ש 12 · רחובות 7 · בית 12, editable), then an extra course at the
+  earliest free slot of a location. "Trajectory insights" shows the same answer.
+- Course length = working days (Sun–Thu); closed holidays — the Hebrew calendar and your own dates —
+  push the floor date. Saved courses convert once from calendar days. Location (בית / ב"ש / רחובות)
+  is read from the course name, changeable in the table. Files: "weeks" = 5 working days.
+- 🎓 Trainees answering: a number per day (a day left empty = none); hours by preset (08–13 /
+  12–17 / 08–17) or your own.
+- Monthly attrition sits next to the courses too — the same setting as Advanced Settings. Hebrew:
+  staff who leave = "עזיבה" everywhere (was "נטישה", the word for abandoned calls).
+- Fix (root cause): Date Trends showed a forecast day's answer rate as the historical rate carried
+  forward — staffing (courses, a sidur, what-ifs) never moved it, and it disagreed with the matrix.
+  Forecast days now use the matrix's rate (verified: courses lift a future day 73% → 93% on both).
+
 ### Friday rotation, why-not-scheduled, iron by day, trend charts, own holidays, fast forecast
 
 - Fix (root cause): each rep works **every other Friday**, but the iron lists Friday for everyone

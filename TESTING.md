@@ -11,8 +11,8 @@ Zero-dependency unit tests — they extract functions straight out of `index.htm
 node --test tests/unit/*.test.js
 ```
 
-(60 tests: page integrity — the whole script parses + EN/HE key parity —, dates/times, ingestion, real .xls,
-Erlang, scheduler, Friday rotation + own holidays. Run them after EVERY edit: a stray `//` that
+(68 tests: page integrity — the whole script parses + EN/HE key parity —, dates/times, ingestion, real .xls,
+Erlang, scheduler, Friday rotation + own holidays, course files (any layout + template). Run them after EVERY edit: a stray `//` that
 comments out a brace breaks the whole app and only the page-integrity test sees it.)
 
 Use the glob: passing the bare `tests/unit` directory fails on Windows.
