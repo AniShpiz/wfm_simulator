@@ -121,7 +121,9 @@ real browser, in both languages.
    placed / reps and the day's answer rate; quiet hours get the places first.
 2. Cap 3 (⚙) → a red tile + option tiles; click one → green, "↶ Back to 3 per slot" restores it.
 3. Friday → last break 12:00; no slot or option outside the center's hours (Settings).
-4. Export: PDF opens print; Word (.doc) and Excel (.xlsx) list names per slot + catch-up lines (RTL in Hebrew).
+4. Export menu: 📋 Template (blank names) and 👤 Auto-assigned (names; hidden when the reps have no names).
+   Word / PDF = 3 pages (board · owed-break queue · flowchart), landscape, RTL; Excel = the board
+   (blocked grey, catch-up yellow, merged place headers) — it reads back through the app's own parser.
 
 ## Persistence Tests
 

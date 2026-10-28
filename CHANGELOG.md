@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### ☕ The center's own break sheet; template or auto-assigned
+
+- Export = the floor's format (landscape, RTL): ① the board — a row per slot, "place 1…N" columns of
+  name + minutes, unused places "blocked" (grey), catch-up places yellow; date + opening / closing
+  supervisor lines; ② the owed-break queue (#, name, priority 1 / 2, placed at); ③ the delayed-break
+  flowchart. Word and PDF carry all three pages; Excel (.xlsx) carries the board with its colors and merges.
+- The export menu splits in two: 📋 Template (places per slot, blank names — the supervisor fills them)
+  and 👤 Auto-assigned (names from the sidur, short shifts first, minutes per break; shown only when the
+  reps have names) — each as PDF / Word / Excel (+ text for the assigned one).
+- Long + short break = 60 / 40 of the break time in 5-minute steps: 7h → 20 + 15, 8h → 25 + 15,
+  10h → 30 + 20; under 6h → one break. Break time = whole working hours × 5 (clean minutes on the sheet).
+
 ### ☕ Breaks tab; course reload never doubles; an honest, modular "are your courses enough?"
 
 - New tab "Breaks": a break plan for the day. Every rep on shift (the sidur, else today's team from the

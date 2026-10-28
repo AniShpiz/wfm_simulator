@@ -297,6 +297,10 @@ tr.r-ok td{background:var(--emerald-bg)}
 .splitbtn .menu button:hover{background:var(--sky-soft)}
 .splitbtn .menu.pad{padding:12px}
 .splitbtn .menu.pad button:hover{background:var(--navy)}
+.splitbtn .menu.brkExpM{min-width:340px} .brkExpM .brkExpH{font-size:.82rem;font-weight:700;color:var(--navy)} .brkExpM .mini{display:block;margin:1px 0 6px}
+.brkExpM .brkExpF{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.splitbtn .menu .brkExpF button{display:inline-block;width:auto;border:1px solid var(--border);border-radius:7px;padding:6px 11px}
+.splitbtn .menu.pad .brkExpF button:hover{background:var(--navy);color:#fff}
 .splitbtn.open .menu{display:block}
 /* iron-dependent features are visibly disabled until a סידור ברזל is loaded */
 .ironGated{opacity:.45;pointer-events:none;filter:grayscale(.6);position:relative}
@@ -1208,7 +1212,11 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <span style="margin-inline-start:auto;display:inline-flex;gap:8px">
           <div class="splitbtn" id="brkSetWrap"><button class="btn ghost" type="button" data-i18n="brkSetT">⚙ Slots and rules</button><div class="menu pad brkSetM" id="brkSet"></div></div>
           <div class="splitbtn" id="brkExpWrap"><button class="btn navy" type="button" data-i18n="brkExp">⬇ Export</button>
-            <div class="menu" id="brkExpMenu"><button type="button" data-fmt="pdf" data-i18n="brkPdf">🖨 PDF / print</button><button type="button" data-fmt="word" data-i18n="brkWord">📄 Word</button><button type="button" data-fmt="xlsx" data-i18n="brkXls">📊 Excel (.xlsx)</button><button type="button" data-fmt="text" data-i18n="brkTxt">📋 Copy as text (WhatsApp)</button></div></div></span>
+            <div class="menu pad brkExpM" id="brkExpMenu">
+              <div class="brkExpH" data-i18n="brkExpTpl">📋 Template — places per slot</div><div class="mini" data-i18n="brkExpTplS">Blank names; the supervisor fills them in</div>
+              <div class="brkExpF"><button type="button" data-mode="tpl" data-fmt="pdf">🖨 PDF</button><button type="button" data-mode="tpl" data-fmt="word">📄 Word</button><button type="button" data-mode="tpl" data-fmt="xlsx">📊 Excel</button></div>
+              <div id="brkExpN"><div class="brkExpH" data-i18n="brkExpNames">👤 Auto-assigned — who goes when</div><div class="mini" data-i18n="brkExpNamesS">Names from the sidur, short shifts first</div>
+              <div class="brkExpF"><button type="button" data-mode="names" data-fmt="pdf">🖨 PDF</button><button type="button" data-mode="names" data-fmt="word">📄 Word</button><button type="button" data-mode="names" data-fmt="xlsx">📊 Excel</button><button type="button" data-mode="names" data-fmt="text" data-i18n="brkFTxt">📋 Text</button></div></div></div></div></span>
       </div>
       <div id="brkBox"></div>
     </div>
@@ -1592,7 +1600,7 @@ en:{
   /* ===== WFM 2.0 ===== */
   tabWorkforce:"Workforce & Iron", tabScheduler:"Auto-Scheduler", tabBreaks:"Breaks", brkTitle:"Breaks by slot", brkAdj:"Attendance today", brkAdjTip:"Each slot counts who is on shift at that hour in the sidur (start times, short shifts, splits). Type the day's change: no-shows −3, backups +2.", brkAdjS:"Change from the sidur", brkPresent:"Reps present today", brkPresentTip:"No sidur for this day: how many reps came in — spread over the hours like today's team (the iron).", brkAuto:"auto", brkPrev:"Previous day", brkNext:"Next day",
   brkNoFc:"No forecast for this day — by the procedure: {c} places per slot.", brkPlacesOnly:"Room for {p} breaks today.",
-  brkHeroOk:"A break place for every one of the {n} reps — more places in the quiet hours", brkHeroOkNoFc:"A break place for every one of the {n} reps (no forecast for this day — spread evenly)", brkLen:"5 min per working hour (avg {m}) · a long + a short break, inside the shift", brkHoursHint:"Within the center's hours (Settings → day start / end, Friday end)", brkCovL:"Breaks for every rep", brkSpareW:"spare", brkOutside:"{n} reps on shift outside the break window aren't counted", brkArL:"for the day, with this break plan", brkArTip:"No planning {f} · no breaks at all {b} · red line = target", brkPts:"pts vs an even spread (no planning)", brkPtsEq:"≈ same as an even spread", brkTryL:"Option", brkAltAll:"a place for everyone", brkAltStart:"First break {s}", brkBackTm:"Back to {v}", brkBackCap:"Back to {v} per slot", brkLastFri:"Last break on Friday", brkLegOn:"place for a break", brkLegOff:"blocked for breaks", brkLegT:"breaks take it under the need", brkLegSp:"catch-up (missed yours)", brkSpLine:"catch-up — for whoever missed theirs", brkHeroAll:"A break place for every one of the {n} reps + {s} spare", brkHeroSpare:"A break place for every one of the {n} reps · spare {g} of {s}", brkHeroNo:"{x} reps have no break place in the window — {r} places for {n} reps", brkAltL:"Ways out:", brkAltEnd:"Last break {e}", brkAltCap:"{c} per slot", brkArDay:"{m} for the day with these breaks: {a} · without breaks {b} — each place sits where it costs the fewest answered calls", brkSpare:"Spare (%)", brkUnder:"The breaks take this slot under the need — still the cheapest place", brkExp:"⬇ Export", brkTxt:"📋 Copy as text (WhatsApp)", brkCopied:"Copied — paste it in WhatsApp or an email", brkHeroShort:"{x} of the {n} reps have no place — every slot is full ({c} each)",
+  brkHeroOk:"A break place for every one of the {n} reps — more places in the quiet hours", brkHeroOkNoFc:"A break place for every one of the {n} reps (no forecast for this day — spread evenly)", brkLen:"5 min per working hour (avg {m}) · a long + a short break (7h → 20 + 15, 10h → 30 + 20), inside the shift", brkExpTpl:"📋 Template — places per slot", brkExpTplS:"Blank names; the supervisor fills them in", brkExpNames:"👤 Auto-assigned — who goes when", brkExpNamesS:"Names from the sidur, short shifts first", brkFTxt:"📋 Text", brkFNames:"assigned", brkBoardT:"Break management on shift", brkDateL:"Date", brkSupO:"Opening supervisor", brkSupC:"Closing supervisor", brkPlaceN:"Place {n}", brkEmp:"Employee", brkDur:"Min", brkBlk:"Blocked", brkCatch:"Catch-up", brkBoardNote:"Min = break minutes · whoever went is marked with a highlighter · a yellow place = only for someone whose break was pushed", brkQT:"Owed a break — queue", brkQN1:"Circle the priority: 1 = a call / an earlier delay · 2 = no reason", brkQN2:"First every 1 not yet placed, then the 2s. A 2 who waited 40 minutes becomes a 1", brkQN3:"Don't reorder — add a line. When placing, write the time under Placed at", brkQPri:"Priority", brkQSlot:"Placed at", brkFT:"Delayed break: flowchart", brkF1:"The rep didn't go on break on time", brkF2:"More than 5 minutes late?", brkF2b:"No = no change, the rep goes as usual", brkF3:"Yes", brkF4:"On the board: one line through their name, in the cell they missed", brkF4b:"(don't erase — so you can see where they were due)", brkF5:"Why the delay?", brkF6a:"Priority 1", brkF6ab:"a call / an earlier delay (not their fault)", brkF6b:"Priority 2", brkF6bb:"no reason (their fault)", brkF7a:"In the queue: write the name, circle 1", brkF7b:"In the queue: write the name, circle 2", brkF8a:"On the board: the nearest free place, this slot or the next. None free? add a place (+1) in the next slot", brkF8b:"On the board: a free place, only after every 1 got one. Waited over 40 minutes? becomes a 1", brkF9:"The rep goes", brkF9b:"Board: mark the new cell · Queue: the time under Placed at", brkHoursHint:"Within the center's hours (Settings → day start / end, Friday end)", brkCovL:"Breaks for every rep", brkSpareW:"spare", brkOutside:"{n} reps on shift outside the break window aren't counted", brkArL:"for the day, with this break plan", brkArTip:"No planning {f} · no breaks at all {b} · red line = target", brkPts:"pts vs an even spread (no planning)", brkPtsEq:"≈ same as an even spread", brkTryL:"Option", brkAltAll:"a place for everyone", brkAltStart:"First break {s}", brkBackTm:"Back to {v}", brkBackCap:"Back to {v} per slot", brkLastFri:"Last break on Friday", brkLegOn:"place for a break", brkLegOff:"blocked for breaks", brkLegT:"breaks take it under the need", brkLegSp:"catch-up (only for a pushed break)", brkSpLine:"catch-up — for whoever missed theirs", brkHeroAll:"A break place for every one of the {n} reps + {s} spare", brkHeroSpare:"A break place for every one of the {n} reps · spare {g} of {s}", brkHeroNo:"{x} reps have no break place in the window — {r} places for {n} reps", brkAltL:"Ways out:", brkAltEnd:"Last break {e}", brkAltCap:"{c} per slot", brkArDay:"{m} for the day with these breaks: {a} · without breaks {b} — each place sits where it costs the fewest answered calls", brkSpare:"Spare (%)", brkUnder:"The breaks take this slot under the need — still the cheapest place", brkExp:"⬇ Export", brkTxt:"📋 Copy as text (WhatsApp)", brkCopied:"Copied — paste it in WhatsApp or an email", brkHeroShort:"{x} of the {n} reps have no place — every slot is full ({c} each)",
   brkTip:"Scheduled {on} · needed {need} → {p} can go on break", brkTipT:"Today's team {on} · needed {need} → {p} can go on break", brkTipNo:"No forecast at this hour", brkExc:"exceptions",
   brkPlaces:"Places", brkTime:"Time", brkName:"Name", brkSheetT:"Break sheet — {d}", brkSheetSub:"Each rep has their own times (minutes in brackets) · missed yours? take a catch-up place, later", brkFile:"breaks",
   brkPdf:"🖨 PDF / print", brkWord:"📄 Word", brkXls:"📊 Excel (.xlsx)", brkPopup:"The browser blocked the print window — allow pop-ups for this page", brkSetT:"⚙ Slots and rules",
@@ -2148,7 +2156,7 @@ he:{
   /* ===== WFM 2.0 ===== */
   tabWorkforce:"כוח אדם וברזל", tabScheduler:"שיבוץ אוטומטי", tabBreaks:"הפסקות", brkTitle:"הפסקות לפי משבצת", brkAdj:"נוכחות היום", brkAdjTip:"כל משבצת סופרת מי במשמרת באותה שעה בסידור (שעות התחלה, משמרות קצרות, פיצולים). כתבו את השינוי של היום: הברזות −3, גיבויים +2.", brkAdjS:"שינוי מהסידור", brkPresent:"נוכחים היום", brkPresentTip:"אין סידור ליום הזה: כמה נציגים הגיעו — מתחלק על השעות כמו הצוות של היום (הברזל).", brkAuto:"אוטו׳", brkPrev:"היום הקודם", brkNext:"היום הבא",
   brkNoFc:"אין תחזית ליום הזה — לפי הנוהל: {c} מקומות בכל משבצת.", brkPlacesOnly:"מקום ל־{p} הפסקות היום.",
-  brkHeroOk:"מקום הפסקה לכל {n} הנציגים — יותר מקומות בשעות השקטות", brkHeroOkNoFc:"מקום הפסקה לכל {n} הנציגים (אין תחזית ליום הזה — חלוקה שווה)", brkLen:"5 דק׳ לכל שעת עבודה (ממוצע {m}) · הפסקה ארוכה + קצרה, בתוך המשמרת", brkHoursHint:"בתוך שעות הפעילות של המוקד (הגדרות ← תחילת / סוף יום, סוף שישי)", brkCovL:"הפסקות לכל נציג", brkSpareW:"ספייר", brkOutside:"{n} נציגים במשמרת מחוץ לחלון ההפסקות לא נספרו", brkArL:"יומי, עם תכנון ההפסקות", brkArTip:"בלי תכנון {f} · בלי הפסקות בכלל {b} · הקו האדום = היעד", brkPts:"נק׳ מול חלוקה שווה (בלי תכנון)", brkPtsEq:"≈ כמו חלוקה שווה", brkTryL:"חלופה", brkAltAll:"מקום לכולם", brkAltStart:"הפסקה ראשונה {s}", brkBackTm:"חזרה ל־{v}", brkBackCap:"חזרה ל־{v} בכל משבצת", brkLastFri:"הפסקה אחרונה בשישי", brkLegOn:"מקום להפסקה", brkLegOff:"חסום להפסקה", brkLegT:"ההפסקות מורידות מתחת לנדרש", brkLegSp:"השלמה (למי שפספס)", brkSpLine:"השלמה — למי שפספס", brkHeroAll:"מקום הפסקה לכל {n} הנציגים + {s} ספייר", brkHeroSpare:"מקום הפסקה לכל {n} הנציגים · ספייר {g} מתוך {s}", brkHeroNo:"ל־{x} נציגים אין מקום הפסקה בחלון — {r} מקומות ל־{n} נציגים", brkAltL:"חלופות:", brkAltEnd:"הפסקה אחרונה {e}", brkAltCap:"{c} בכל משבצת", brkArDay:"{m} יומי צפוי עם ההפסקות: {a} · בלי הפסקות {b} — כל מקום ממוקם היכן שהוא עולה הכי מעט שיחות", brkSpare:"ספייר (%)", brkUnder:"כאן ההפסקות מורידות מתחת לנדרש — עדיין המקום הזול ביותר", brkExp:"⬇ ייצוא", brkTxt:"📋 העתקה כטקסט (וואטסאפ)", brkCopied:"הועתק — הדביקו בוואטסאפ או במייל", brkHeroShort:"ל־{x} מתוך {n} הנציגים אין מקום — כל המשבצות מלאות ({c} בכל משבצת)",
+  brkHeroOk:"מקום הפסקה לכל {n} הנציגים — יותר מקומות בשעות השקטות", brkHeroOkNoFc:"מקום הפסקה לכל {n} הנציגים (אין תחזית ליום הזה — חלוקה שווה)", brkLen:"5 דק׳ לכל שעת עבודה (ממוצע {m}) · הפסקה ארוכה + קצרה (7 שעות ← 20 + 15, 10 שעות ← 30 + 20), בתוך המשמרת", brkExpTpl:"📋 תבנית — כמה מקומות בכל משבצת", brkExpTplS:"בלי שמות; האחמ״ש ממלא", brkExpNames:"👤 שיבוץ אוטומטי — מי יוצא מתי", brkExpNamesS:"שמות מהסידור, משמרות קצרות קודם", brkFTxt:"📋 טקסט", brkFNames:"משובץ", brkBoardT:"ניהול הפסקות במשמרת", brkDateL:"תאריך", brkSupO:"אחמ״ש פתיחה", brkSupC:"אחמ״ש סגירה", brkPlaceN:"מקום {n}", brkEmp:"שם עובד", brkDur:"משך", brkBlk:"חסום", brkCatch:"השלמה", brkBoardNote:"משך = דקות ההפסקה · מי שיצא מסומן במרקר · מקום צהוב = רק למי שההפסקה שלו נדחתה", brkQT:"תור חייבים הפסקה", brkQN1:"מסמנים בעיגול עדיפות: 1 = שיחה / עיכוב קודם · 2 = סתם", brkQN2:"קודם כל ה־1 שעוד לא שובצו, אחר כך ה־2. 2 שחיכה 40 דקות הופך ל־1", brkQN3:"לא מסדרים מחדש: מוסיפים שורה. כשמשבצים, כותבים את השעה בעמודת ״שובץ לסלוט״", brkQPri:"עדיפות", brkQSlot:"שובץ לסלוט", brkFT:"נוהל עיכוב בהפסקה: תרשים זרימה", brkF1:"הנציג לא יצא להפסקה בזמן", brkF2:"עברו יותר מ־5 דקות?", brkF2b:"לא = אין שינוי, הנציג יוצא כרגיל", brkF3:"כן", brkF4:"בלוח: קו אחד על שמו, בתא שבו התעכב", brkF4b:"(לא מוחקים — כך רואים איפה הוא היה אמור לצאת)", brkF5:"למה התעכב?", brkF6a:"עדיפות 1", brkF6ab:"שיחה / עיכוב קודם (לא באשמתו)", brkF6b:"עדיפות 2", brkF6bb:"סתם (באשמתו)", brkF7a:"בתור: רושמים שם, מסמנים עדיפות 1", brkF7b:"בתור: רושמים שם, מסמנים עדיפות 2", brkF8a:"בלוח: המקום הפנוי הקרוב, בסלוט הנוכחי או הבא. אין פנוי? מוסיפים מקום (+1) בסלוט הבא", brkF8b:"בלוח: מקום פנוי, רק אחרי שכל ה־1 קיבלו. חיכה מעל 40 דקות? הופך ל־1", brkF9:"הנציג יוצא", brkF9b:"בלוח: מסמנים בתא החדש · בתור: שעה בעמודת ״שובץ לסלוט״", brkHoursHint:"בתוך שעות הפעילות של המוקד (הגדרות ← תחילת / סוף יום, סוף שישי)", brkCovL:"הפסקות לכל נציג", brkSpareW:"ספייר", brkOutside:"{n} נציגים במשמרת מחוץ לחלון ההפסקות לא נספרו", brkArL:"יומי, עם תכנון ההפסקות", brkArTip:"בלי תכנון {f} · בלי הפסקות בכלל {b} · הקו האדום = היעד", brkPts:"נק׳ מול חלוקה שווה (בלי תכנון)", brkPtsEq:"≈ כמו חלוקה שווה", brkTryL:"חלופה", brkAltAll:"מקום לכולם", brkAltStart:"הפסקה ראשונה {s}", brkBackTm:"חזרה ל־{v}", brkBackCap:"חזרה ל־{v} בכל משבצת", brkLastFri:"הפסקה אחרונה בשישי", brkLegOn:"מקום להפסקה", brkLegOff:"חסום להפסקה", brkLegT:"ההפסקות מורידות מתחת לנדרש", brkLegSp:"השלמה (רק למי שההפסקה נדחתה)", brkSpLine:"השלמה — למי שפספס", brkHeroAll:"מקום הפסקה לכל {n} הנציגים + {s} ספייר", brkHeroSpare:"מקום הפסקה לכל {n} הנציגים · ספייר {g} מתוך {s}", brkHeroNo:"ל־{x} נציגים אין מקום הפסקה בחלון — {r} מקומות ל־{n} נציגים", brkAltL:"חלופות:", brkAltEnd:"הפסקה אחרונה {e}", brkAltCap:"{c} בכל משבצת", brkArDay:"{m} יומי צפוי עם ההפסקות: {a} · בלי הפסקות {b} — כל מקום ממוקם היכן שהוא עולה הכי מעט שיחות", brkSpare:"ספייר (%)", brkUnder:"כאן ההפסקות מורידות מתחת לנדרש — עדיין המקום הזול ביותר", brkExp:"⬇ ייצוא", brkTxt:"📋 העתקה כטקסט (וואטסאפ)", brkCopied:"הועתק — הדביקו בוואטסאפ או במייל", brkHeroShort:"ל־{x} מתוך {n} הנציגים אין מקום — כל המשבצות מלאות ({c} בכל משבצת)",
   brkTip:"משובצים בסידור {on} · נדרשים {need} ← אפשר להוציא {p} להפסקה", brkTipT:"בצוות של היום {on} · נדרשים {need} ← אפשר להוציא {p} להפסקה", brkTipNo:"אין תחזית בשעה הזו", brkExc:"חריגים",
   brkPlaces:"מקומות", brkTime:"שעה", brkName:"שם", brkSheetT:"דף הפסקות — {d}", brkSheetSub:"לכל נציג הזמנים שלו (דקות בסוגריים) · פספסת? קח מקום השלמה, בהמשך", brkFile:"הפסקות",
   brkPdf:"🖨 PDF / הדפסה", brkWord:"📄 Word", brkXls:"📊 Excel (.xlsx)", brkPopup:"הדפדפן חסם את חלון ההדפסה — אפשרו חלונות קופצים לדף הזה", brkSetT:"⚙ משבצות וכללים",
@@ -9487,18 +9495,19 @@ function xlsxBytes(rows,opt){
   opt=opt||{};
   const esc=v=>String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
   const col=i=>{ let s=""; i++; while(i){ const m=(i-1)%26; s=String.fromCharCode(65+m)+s; i=Math.floor((i-1)/26); } return s; };
+  const XS={hd:1,c:2,blk:3,sp:4,lb:5,ttl:6,txt:7,tm:8}; // named cell styles
   const NS='xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"', X='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
   const sheet=X+`<worksheet ${NS}><sheetViews><sheetView workbookViewId="0"${opt.rtl?' rightToLeft="1"':""}/></sheetViews>`
     +(opt.widths?`<cols>${opt.widths.map((w,i)=>`<col min="${i+1}" max="${i+1}" width="${w}" customWidth="1"/>`).join("")}</cols>`:"")
-    +`<sheetData>`+rows.map((r,ri)=>`<row r="${ri+1}">`+r.map((v,ci)=>{ const ref=col(ci)+(ri+1), st=ri===0&&opt.header?' s="1"':' s="2"';
+    +`<sheetData>`+rows.map((r,ri)=>`<row r="${ri+1}">`+r.map((v0,ci)=>{ const o=v0&&typeof v0==="object", v=o?v0.v:v0, ref=col(ci)+(ri+1), st=' s="'+(o?XS[v0.s]??2:ri===0&&opt.header?1:2)+'"';
       return typeof v==="number"?`<c r="${ref}"${st}><v>${v}</v></c>`:`<c r="${ref}"${st} t="inlineStr"><is><t>${esc(v)}</t></is></c>`; }).join("")+`</row>`).join("")
     +`</sheetData>`+(opt.merges&&opt.merges.length?`<mergeCells count="${opt.merges.length}">${opt.merges.map(m=>`<mergeCell ref="${m}"/>`).join("")}</mergeCells>`:"")+`</worksheet>`;
-  const styles=X+`<styleSheet ${NS}><fonts count="2"><font><sz val="11"/><name val="Arial"/></font><font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="Arial"/></font></fonts>`
-    +`<fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF0D2A4D"/><bgColor indexed="64"/></patternFill></fill></fills>`
+  const styles=X+`<styleSheet ${NS}><fonts count="4"><font><sz val="11"/><name val="Arial"/></font><font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="Arial"/></font><font><b/><sz val="11"/><name val="Arial"/></font><font><b/><sz val="14"/><name val="Arial"/></font></fonts>`
+    +`<fills count="7"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill>${["0D2A4D","BFBFBF","FFF2CC","B4C6E7","EDEDED"].map(c=>`<fill><patternFill patternType="solid"><fgColor rgb="FF${c}"/><bgColor indexed="64"/></patternFill></fill>`).join("")}</fills>`
     +`<borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FF9AA9B9"/></left><right style="thin"><color rgb="FF9AA9B9"/></right><top style="thin"><color rgb="FF9AA9B9"/></top><bottom style="thin"><color rgb="FF9AA9B9"/></bottom><diagonal/></border></borders>`
-    +`<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="3"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>`
+    +`<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="9"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>`
     +`<xf numFmtId="0" fontId="1" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>`
-    +`<xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf></cellXfs>`
+    +`<xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>${[[0,3,1],[0,4,1],[2,5,1],[3,0,0],[0,0,0],[2,6,1]].map(([f,fi,b])=>`<xf numFmtId="0" fontId="${f}" fillId="${fi}" borderId="${b}" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="${b?"center":"general"}" vertical="center"/></xf>`).join("")}</cellXfs>`
     +`<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>`;
   const R='xmlns="http://schemas.openxmlformats.org/package/2006/relationships"', T="http://schemas.openxmlformats.org/officeDocument/2006/relationships";
   return zipStore({
@@ -9571,10 +9580,10 @@ function breakPlan(ds,over){
   /* each rep's break time (5 min per working hour of their shift) in a long + a short break — 7h → 20 + 15 —
      each its own place, at least 1½ h apart (1 h when that can't fit), inside the shift: not in its first hour or
      last half-hour when it can be helped. A short shift (≤ one slot + 10 min) → one break */
-  const parts=d=>{ if(d-step<10) return [d]; const n=Math.ceil(d/step); return [step,...Array(n-1).fill(Math.round((d-step)/(n-1)))]; };
+  const parts=d=>{ if(d<30) return [d]; const L=Math.round(d*0.6/5)*5; return [L,d-L]; }; // 7h → 20 + 15 · 10h → 30 + 20 · under 6h → one
   const fits=(r,s,d,strict)=>r.iv.some(([a,b])=>s.m>=a+(strict?60:0)&&s.m+d<=b-(strict?30:0));
   const okFor=r=>r.p.map(d=>{ const st=slots.filter(s=>fits(r,s,d,true)); return st.length?st:slots.filter(s=>fits(r,s,d,false)); });
-  for(const r of reps){ r.d=Math.max(5,Math.round(r.h*5)); r.p=parts(r.d); r.ok=okFor(r);
+  for(const r of reps){ r.d=Math.max(5,Math.round(r.h)*5); /* whole working hours × 5: clean minutes on the sheet */ r.p=parts(r.d); r.ok=okFor(r);
     if(r.p.length>1&&!r.ok.every(o=>o.length)){ r.p=[r.d]; r.ok=okFor(r); } } // two don't fit the shift → one
   const inW=reps.filter(r=>r.ok.every(o=>o.length)), outside=reps.length-inW.length; // a shift outside the window: its break isn't on this sheet
   inW.sort((a,b)=>Math.min(...a.ok.map(o=>o.length))-Math.min(...b.ok.map(o=>o.length))||b.d-a.d); // the tightest shifts first
@@ -9661,6 +9670,7 @@ function renderBreaks(){
   const anyTight=rows.includes(' tight"'), anySp=bp.slots.some(s=>s.spare), anyOff=bp.slots.some(s=>s.places<bp.cap);
   box.innerHTML=hero+`<p class="brkLeg"><span class="brkSeats"><i class="on"></i></span> ${t("brkLegOn")}${anySp?` <span class="brkSeats"><i class="sp"></i></span> ${t("brkLegSp")}`:""}${anyOff?` <span class="brkSeats"><i></i></span> ${t("brkLegOff")}`:""}${anyTight?` <span class="lgT"></span> ${t("brkLegT")}`:""}</p><div class="brkGrid" style="--brkRows:${Math.ceil(bp.slots.length/Math.max(1,Math.min(4,Math.floor(((box.clientWidth||1100)+14)/264))))}">${rows}</div>`;
   state._brkPlan=bp; // what the exports print
+  const en=document.getElementById("brkExpN"); if(en) en.style.display=bp.slots.some(s=>s.names.length)?"":"none"; // names only when the reps have names
   box.querySelectorAll("[data-alt]").forEach(b=>b.addEventListener("click",()=>{ const o=state.settings.brk=state.settings.brk||{};
     const k=b.dataset.alt==="end"&&fromISO(ds).getDay()===5?"friEnd":b.dataset.alt, was=k==="cap"?bp.cap:k==="start"?c.start:c.end;
     state._brkUndo={prev:JSON.stringify(o),lab:t(k==="cap"?"brkBackCap":"brkBackTm",{v:was})};
@@ -9668,38 +9678,70 @@ function renderBreaks(){
   const un=box.querySelector("#brkUndo"); if(un) un.addEventListener("click",()=>{ state.settings.brk=JSON.parse(state._brkUndo.prev); state._brkUndo=null;
     saveState(); renderBreaks(); brkSettings(); });
 }
-/* a slot's lines on the sheet: who goes (their minutes), blank lines for the rest, the catch-up places, "—" when closed */
-function brkLines(s){ const L=s.names.map(([n,d])=>n+" ("+d+")"); while(L.length<s.places-s.spare) L.push("");
-  for(let i=0;i<s.spare;i++) L.push(t("brkSpLine")); return L.length?L:["—"]; }
-/* the floor sheet — time · places · who goes; RTL in Hebrew. Word (.doc), PDF (print), Excel (.xlsx) */
-function brkSheetHtml(bp){
-  const dn=t("days")[fromISO(bp.ds).getDay()], rtl=lang==="he", esc=v=>String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;");
-  const head=`<tr><th>${t("brkTime")}</th><th>${t("brkPlaces")}</th><th class="nm">${t("brkName")}</th></tr>`;
-  const body=bp.slots.map(s=>{ const L=brkLines(s), n=L.length;
-    return L.map((x,i)=>`<tr>${i?"":`<th rowspan="${n}">${s.tm}</th><td class="p" rowspan="${n}">${s.places}</td>`}<td${s.places?"":' class="x"'}>${esc(x)}</td></tr>`).join(""); }).join("");
-  return `<!doctype html><html dir="${rtl?"rtl":"ltr"}"><head><meta charset="utf-8"><title>${esc(t("brkSheetT",{d:dn+" "+fmtD(bp.ds)}))}</title><style>
-    body{font-family:Arial,sans-serif;margin:24px;color:#15263a} h2{font-size:18px;margin:0 0 4px} p{font-size:12px;color:#6b7c90;margin:0 0 12px}
-    table{border-collapse:collapse;width:100%} th,td{border:1px solid #9aa9b9;padding:6px;font-size:13px;text-align:center} th.nm{width:60%}
-    thead th{background:#0d2a4d;color:#fff} tbody th{background:#f2f5f9;white-space:nowrap} td.p{font-weight:700} td.x{color:#c3cddb;background:#f8f9fb}
-    tr.exc th,tr.exc td{border-style:dashed}</style></head><body>
-    <h2>${esc(t("brkSheetT",{d:dn+" "+fmtD(bp.ds)}))}</h2><p>${esc(t("brkSheetSub",{s:bp.step,c:bp.cap}))}</p>
-    <table><thead>${head}</thead><tbody>${body}</tbody></table></body></html>`;
+/* the center's floor format, page by page (landscape, RTL in Hebrew):
+   ① the board — a row per slot, "place 1…cap" columns of name + minutes; unused places "blocked" (grey),
+     catch-up places yellow (only for someone whose break was pushed). mode "tpl" = blank names, "names" = filled.
+   ② the owed-break queue  ③ the delayed-break flowchart — the procedure, printed with it */
+function brkCell(s,i,named){ const nN=s.places-s.spare;
+  if(i<nN){ const x=named&&s.names[i]; return {k:"ok",n:x?x[0]:"",d:x?x[1]:""}; }
+  return i<s.places?{k:"sp"}:{k:"blk"}; }
+function brkSheetHtml(bp,mode){
+  const named=mode==="names", rtl=lang==="he", cap=bp.cap, dn=t("days")[fromISO(bp.ds).getDay()], esc=v=>String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;");
+  const ln=`<p class="ln">${t("brkDateL")}: <b>${dn} ${fmtD(bp.ds)}</b> &nbsp;&nbsp;&nbsp; ${t("brkSupO")}: ____________ &nbsp;&nbsp;&nbsp; ${t("brkSupC")}: ____________</p>`;
+  const bg=c=>` style="background:${c}"`, P=i=>i%2?"#8FAADC":"#B4C6E7", Q=i=>i%2?"#BDD0EC":"#DAE3F3";
+  let h1=`<tr><th rowspan="2"${bg("#B4C6E7")}>${t("brkTime")}</th>`, h2="<tr>";
+  for(let i=0;i<cap;i++){ h1+=`<th colspan="2"${bg(P(i))}>${t("brkPlaceN",{n:i+1})}</th>`; h2+=`<th${bg(Q(i))}>${t("brkEmp")}</th><th class="du"${bg(Q(i))}>${t("brkDur")}</th>`; }
+  const board=bp.slots.map((s,ri)=>{ const a=ri%2; let r=`<tr><th class="tm"${bg(a?"#BDD7EE":"#EDEDED")}>${s.tm}</th>`;
+    for(let i=0;i<cap;i++){ const c=brkCell(s,i,named), f=a?"#DDEBF7":"#FFFFFF";
+      r+=c.k==="ok"?`<td class="nm"${bg(f)}>${esc(c.n)}</td><td${bg(f)}>${c.d}</td>`
+        :c.k==="sp"?`<td class="sp"${bg("#FFF2CC")}></td><td class="sp"${bg("#FFF2CC")}></td>`:`<td class="blk" colspan="2"${bg("#BFBFBF")}>${t("brkBlk")}</td>`; }
+    return r+"</tr>"; }).join("");
+  const q=Array.from({length:12},(_,i)=>`<tr><td${bg(i%2?"#DDEBF7":"#FFFFFF")}>${i+1}</td><td class="nm"${bg(i%2?"#DDEBF7":"#FFFFFF")}></td><td${bg(i%2?"#DDEBF7":"#FFFFFF")}>1 / 2</td><td${bg(i%2?"#DDEBF7":"#FFFFFF")}></td></tr>`).join("");
+  const box=(a,b,c,span)=>`<tr><td class="fb" colspan="${span||2}"${bg(c)}><b>${a}</b>${b?"<br>"+b:""}</td></tr>`, ar=v=>`<tr><td class="ar" colspan="2">${v||"▼"}</td></tr>`;
+  const flow=box(t("brkF1"),"","#B4C6E7")+ar()+box(t("brkF2"),t("brkF2b"),"#FFF2CC")+ar("▼ "+t("brkF3"))+box(t("brkF4"),t("brkF4b"),"#DDEBF7")+ar()
+    +box(t("brkF5"),"","#FFF2CC")+`<tr><td class="ar">▼</td><td class="ar">▼</td></tr>`
+    +`<tr><td class="fb"${bg("#C6E0B4")}><b>${t("brkF6a")}</b><br>${t("brkF6ab")}</td><td class="fb"${bg("#F8CBAD")}><b>${t("brkF6b")}</b><br>${t("brkF6bb")}</td></tr>`
+    +`<tr><td class="ar">▼</td><td class="ar">▼</td></tr><tr><td class="fb"${bg("#E2EFDA")}>${t("brkF7a")}</td><td class="fb"${bg("#FCE4D6")}>${t("brkF7b")}</td></tr>`
+    +`<tr><td class="ar">▼</td><td class="ar">▼</td></tr><tr><td class="fb"${bg("#E2EFDA")}>${t("brkF8a")}</td><td class="fb"${bg("#FCE4D6")}>${t("brkF8b")}</td></tr>`
+    +ar()+box(t("brkF9"),t("brkF9b"),"#B4C6E7");
+  return `<!doctype html><html dir="${rtl?"rtl":"ltr"}" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><title>${esc(t("brkBoardT"))} — ${dn} ${fmtD(bp.ds)}</title><style>
+    @page{size:A4 landscape;margin:10mm} @page WordSection1{size:841.9pt 595.3pt;mso-page-orientation:landscape;margin:28pt} div.WordSection1{page:WordSection1}
+    body{font-family:Arial,sans-serif;color:#15263a;margin:0} h2{font-size:17px;margin:0 0 4px;text-align:center} .ln{font-size:12px;margin:0 0 8px;text-align:center}
+    table{border-collapse:collapse;width:100%} th,td{border:1px solid #8a9bb0;padding:4px 3px;font-size:11px;text-align:center} th.tm{white-space:nowrap;width:44px} th.du{width:30px}
+    td.blk{color:#555} td.sp{color:#8a6d00;border:1px dashed #c9a227} .note{font-size:11px;color:#444;margin:6px 0 2px} .pb{page-break-before:always}
+    table.q{width:70%;margin:0 auto} table.fl{width:62%;margin:0 auto} table.fl td{font-size:12px;padding:7px} td.ar{border:none;padding:1px;font-size:13px;color:#4a6a95}
+    </style></head><body><div class="WordSection1">
+    <h2>${t("brkBoardT")}</h2>${ln}<table><thead>${h1}</tr>${h2}</tr></thead><tbody>${board}</tbody></table><p class="note">${t("brkBoardNote")}</p>
+    <div class="pb"></div><h2>${t("brkQT")}</h2>${ln}<p class="note" style="text-align:center">${t("brkQN1")}<br>${t("brkQN2")}<br>${t("brkQN3")}</p>
+    <table class="q"><thead><tr><th${bg("#B4C6E7")}>#</th><th${bg("#B4C6E7")}>${t("brkEmp")}</th><th${bg("#B4C6E7")}>${t("brkQPri")}</th><th${bg("#B4C6E7")}>${t("brkQSlot")}</th></tr></thead><tbody>${q}</tbody></table>
+    <div class="pb"></div><h2>${t("brkFT")}</h2><table class="fl">${flow}</table></div></body></html>`;
 }
-function brkExport(kind){
-  const bp=state._brkPlan; if(!bp) return;
-  const name=t("brkFile")+" "+bp.ds;
-  if(kind==="word") downloadFile(name+".doc",brkSheetHtml(bp),"application/msword");
-  else if(kind==="xlsx"){ const R=[[t("brkTime"),t("brkPlaces"),t("brkName")]], M=[];
-    bp.slots.forEach(s=>{ const L=brkLines(s), n=L.length, r0=R.length+1;
-      L.forEach((x,i)=>R.push(i?["","",x]:[s.tm,s.places,x]));
-      if(n>1){ M.push("A"+r0+":A"+(r0+n-1)); M.push("B"+r0+":B"+(r0+n-1)); } });
-    downloadBytes(name+".xlsx",xlsxBytes(R,{name:t("brkFile")+" "+fmtD(bp.ds).slice(0,5).replace("/","-"),rtl:lang==="he",widths:[12,10,34],merges:M,header:true}),
+function brkExport(kind,mode){
+  const bp=state._brkPlan; if(!bp) return; mode=mode||"tpl";
+  const named=mode==="names", name=t("brkFile")+" "+bp.ds+(named?" — "+t("brkFNames"):"");
+  if(kind==="word") downloadFile(name+".doc",brkSheetHtml(bp,mode),"application/msword");
+  else if(kind==="xlsx"){ // the board as a worksheet: same columns, colors and merges
+    const cap=bp.cap, W=1+2*cap, col=i=>{ let s=""; i++; while(i){ const m=(i-1)%26; s=String.fromCharCode(65+m)+s; i=Math.floor((i-1)/26); } return s; };
+    const dn=t("days")[fromISO(bp.ds).getDay()], blank=()=>Array(W).fill(""), R=[], M=[], mr=(r,a,b)=>M.push(col(a)+r+":"+col(b)+r);
+    let r=blank(); r[0]={v:t("brkBoardT"),s:"ttl"}; R.push(r); mr(1,0,W-1);
+    r=blank(); r[0]={v:`${t("brkDateL")}: ${dn} ${fmtD(bp.ds)}    ${t("brkSupO")}: ____________    ${t("brkSupC")}: ____________`,s:"txt"}; R.push(r); mr(2,0,W-1);
+    const h1=[{v:t("brkTime"),s:"lb"}], h2=[{v:"",s:"lb"}];
+    for(let i=0;i<cap;i++){ h1.push({v:t("brkPlaceN",{n:i+1}),s:"lb"},{v:"",s:"lb"}); h2.push({v:t("brkEmp"),s:"lb"},{v:t("brkDur"),s:"lb"}); mr(3,1+2*i,2+2*i); }
+    R.push(h1,h2); M.push("A3:A4");
+    bp.slots.forEach(s=>{ const row=[{v:s.tm,s:"tm"}], rn=R.length+1;
+      for(let i=0;i<cap;i++){ const c=brkCell(s,i,named);
+        if(c.k==="ok") row.push({v:c.n,s:"c"},c.d===""?{v:"",s:"c"}:{v:c.d,s:"c"});
+        else if(c.k==="sp") row.push({v:"",s:"sp"},{v:"",s:"sp"});
+        else{ row.push({v:t("brkBlk"),s:"blk"},{v:"",s:"blk"}); mr(rn,1+2*i,2+2*i); } }
+      R.push(row); });
+    r=blank(); r[0]={v:t("brkBoardNote"),s:"txt"}; R.push(r); mr(R.length,0,W-1);
+    downloadBytes(name+".xlsx",xlsxBytes(R,{name:t("brkFile")+" "+fmtD(bp.ds).slice(0,5).replace("/","-"),rtl:lang==="he",widths:[8,...Array(cap).fill(0).flatMap(()=>[16,6])],merges:M}),
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"); }
   else if(kind==="text"){ const dn=t("days")[fromISO(bp.ds).getDay()];
-    const txt=t("brkSheetT",{d:dn+" "+fmtD(bp.ds)})+"\n"+bp.slots.map(s=>s.tm+" — "+(s.names.length?s.names.map(x=>x[0]).join(", "):s.places+" "+t("brkPlaces"))+(s.spare?" (+"+s.spare+" "+t("brkSpareW")+")":"")).join("\n");
+    const txt=t("brkSheetT",{d:dn+" "+fmtD(bp.ds)})+"\n"+bp.slots.map(s=>s.tm+" — "+(s.names.length?s.names.map(x=>x[0]+" ("+x[1]+")").join(", "):s.places+" "+t("brkPlaces"))+(s.spare?" (+"+s.spare+" "+t("brkCatch")+")":"")).join("\n");
     navigator.clipboard&&navigator.clipboard.writeText(txt); showToast("📋 "+t("brkCopied"),true); }
   else{ const w=window.open("","_blank"); if(!w){ showToast("⚠ "+t("brkPopup"),false); return; }
-    w.document.write(brkSheetHtml(bp)); w.document.close(); w.focus(); setTimeout(()=>w.print(),250); }
+    w.document.write(brkSheetHtml(bp,mode)); w.document.close(); w.focus(); setTimeout(()=>w.print(),250); }
 }
 function brkSettings(){ // ⚙ the procedure's rules: first / last break (Friday's too), slot length, cap, spare
   const c=brkCfg(), box=document.getElementById("brkSet"); if(!box) return;
@@ -11259,7 +11301,7 @@ document.getElementById("trnClear").addEventListener("click",()=>{ if(state.trai
   const step=k=>{ let d=brkDay(), g=0; do{ d=addDays(d,k); }while(fromISO(d).getDay()===6&&g++<3); go(d); };
   document.getElementById("brkPrev").addEventListener("click",()=>step(-1));
   document.getElementById("brkNext").addEventListener("click",()=>step(1));
-  document.getElementById("brkExpMenu").addEventListener("click",e=>{ const b=e.target.closest("[data-fmt]"); if(b) brkExport(b.dataset.fmt); }); }
+  document.getElementById("brkExpMenu").addEventListener("click",e=>{ const b=e.target.closest("[data-fmt]"); if(b) brkExport(b.dataset.fmt,b.dataset.mode); }); }
 // Friday rotation switch (in both Friday cards' titles): a click must not fold the card
 document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest(".friEverySeg button"); if(!b) return; e.preventDefault();
   state.settings.friEvery=+b.dataset.v; saveState(); renderWorkforce(); renderFriday(); });
