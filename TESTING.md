@@ -125,6 +125,18 @@ real browser, in both languages.
    Word / PDF = 3 pages (board · owed-break queue · flowchart), landscape, RTL; Excel = the board
    (blocked grey, catch-up yellow, merged place headers) — it reads back through the app's own parser.
 
+## Lost-day catch-up
+
+Automated: `node tests/browser/forecast-events.js` — 13 synthetic datasets with a known true demand (clean,
+trend, noise, billing, a level shift, an outage week, a spike, and lost days with / without a comeback), the
+forecast with the layer off vs on. Pass = clean sets unchanged, comeback sets improve, no-comeback history steps aside.
+
+1. History where yesterday is ~15% of a normal day → next days ≈ 121% · 110% · 105% · 102%, then 100%;
+   the week pill says "↩ +N returning calls"; a click → 100% (the regular model), again → back.
+2. The event a week back with a real comeback in the data → next week flat 100% (the comeback didn't teach),
+   no chip (only a trace is left).
+3. `rebuildLearningSeries()` several times → the event stays flagged every time.
+
 ## Persistence Tests
 
 1. Load data and change settings.

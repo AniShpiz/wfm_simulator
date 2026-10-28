@@ -141,6 +141,11 @@ workforce filter lists legitimately show only "(all)" for this file.
 
 ## Forecast extras
 
+- ↩ Catch-up layer: learned in `rebuildLearningSeries` (`state.cuParam` {c,q}, `state.cuEvents`, `state.cuDays`
+  kept out of learning) → `catchUpAt(ds,force)` added in `forecastDay` and taken out in `fastState`; `cuInfo` /
+  `cuToggle` drive the matrix chip and `#trCu`; `state.cuCheck` (error without/with on past lost days) + the switch
+  live in the backtest window. `settings.cuOn` (on unless false). 0 on a regular week.
+- `settings.volCal` is retired (forced to 1 on load; no UI) — the fast lane owns level corrections.
 - 📈 Fast lane for sudden demand changes: `fastState` (memoized on `_serVer` + settings) /
   `fastFor` inside `forecastDay`; `preDaily` = the daily model on history before the window;
   `domFactorPre` = billing calendar learned before the window. UI: only during a real shift —
@@ -154,6 +159,7 @@ workforce filter lists legitimately show only "(all)" for this file.
 - `capacityFor` order: optimized preview → what-if cell → sidur (dated, then weekly template) →
   for a forecast date with an iron: `ironCapAt` (today's team) × `lensScale` → else the file's
   history `rec.agents` (scaled by `lensScale` inside `forecastDay`).
+- `lensFrom()` = the projection's day 0: today, or the first forecast day when the file ends before today.
 - `settings.capLens`: "today" (default) | "real" — the single `.lensBtn` switch, rendered by
   `syncLens` on both pages, shown only for forecast days without a sidur.
 - 🎓 `traineeAt(ds,di,tm)` from `state.trainees[Sunday]` ({n,s,e,days,pct}, saved with the data) is
@@ -171,6 +177,12 @@ workforce filter lists legitimately show only "(all)" for this file.
   closed holidays push; cached by `state._holVer`, bumped in `holChanged`). Locations: `SITES`,
   `courseSite`, `siteMax`, `siteLen`. The Trajectory decision line reads `hirePlan` — keep one source.
 - Courses move forecast-day capacity via `hcScale` in `forecastDay` (only for dates after today).
+- Undo: `crsSnap(msg)` / `state._crsUndo` ({prev, msg}) before a file drop, a ✕ or the plan's apply; the bar
+  `#crsUndo` (in `renderCohortTable`); any other edit clears it (`cohortsChanged()`). `hirePlan().addFor` /
+  `sug[].for` = the month each addition is for. Rules: `settings.siteMax` / `siteLen` (per location;
+  `siteLen(s)` falls back to the median) and `settings.crsNoOverlap` → `siteLane` (ב"ש + רחובות share a lane).
+- What-If / trajectory measure `wiSun()` (the first forecast week, else the last measured) via `wiRows`.
+- Page order is CSS `order` on `#page-recruit` (kpis → `#trajCard` → `#whatIfCard` → `#crsCard` → the rest).
 
 ## ☕ Breaks tab
 

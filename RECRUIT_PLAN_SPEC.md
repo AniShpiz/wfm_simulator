@@ -44,5 +44,7 @@ Per month in the forecast (from this month, up to 6):
 "🎯 הקורסים מספיקים?" → the answer ("✓ כן — כל חודש עד ינואר" / "+12 חניכים נוספים לגייס · ועוד קורס
 אחד") → per month: needed (tick) vs expected (bars — as planned and with the additions), short months
 in red → the courses to top up (count → new count, "(מלא)" at the class size) and the suggested courses
-→ "✓ לעדכן את הקורסים" → ⚙ class size by location. Without a forecast for the coming months the box
+→ "✓ לעדכן את הקורסים המסומנים" (each row has a tick and "→ month" it serves) → ⚙ class size by location.
+Months no course can reach in time: one red line under the number, with the earliest graduation date.
+Every change to the courses (file, ✕, apply) can be undone from the bar above the table. Without a forecast for the coming months the box
 says so in one line. The Recruitment page's "Trajectory insights" line shows the same answer.

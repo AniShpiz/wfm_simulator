@@ -4,6 +4,54 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### ↩ Calls come back after a lost day (elections, a closure, an outage)
+
+- New layer on top of the forecast models (they stay as they were): after a closed day or a day far under
+  normal, part of its calls come back over the next working days, fading — the share and the fade learned from
+  your own history (½ · ½ while it is short); a short day (Friday) takes back in its own size. On a regular
+  week it adds exactly 0. The comeback days no longer teach the normal week (next Wednesday stopped inheriting
+  last Wednesday's bounce), and the 📈 fast lane no longer reads a comeback as a level shift.
+- Nothing to know or switch on: when it is at work, the matrix week pill says "↩ +1,335 returning calls"
+  (hover: the date and the first days) and Date Trends says it in one line; one click shows the forecast
+  without them (the regular model), again = back. No switch to find in Settings; the backtest (⚙ Models & checks) shows it on your own history — the
+  next days' error after past lost days without / with it — with its on/off (off = the old models exactly).
+  Honest note: off also puts the comeback days back into learning, so "on" is not zero on a regular week.
+- Fix (root cause): the anomaly check ran on the days the PREVIOUS rebuild had excluded, so a flagged day
+  (an election day) dropped out of its own check, came back un-flagged and taught the series — on every other
+  rebuild. Each rebuild now measures fresh.
+- The week-pill chips (📈 / ↩) take the pill's own color — they were navy on the navy "this week" pill.
+
+### ⚙ Settings: the manual forecast calibration is retired; the model machinery folds
+
+- The backtest's "⚙ Apply N% calibration" (a hidden multiplier on every forecast) is gone: the 📈 fast lane
+  already follows a real shift in the demand level, so the two double-corrected. A saved calibration goes back
+  to 100% on load. The backtest still shows the daily pace, with one line pointing at the fast lane.
+- Forecasting Models card: in view = the holiday calendar, 📈 follow sudden changes, the holidays table,
+  planned events. Folded under "⚙ Models & checks" = the three model picks, the interval profile window,
+  war/outage detection, the backtest and the excluded days.
+
+### 🎓 Training pipeline: the page's decision, honest, every change undoable
+
+- Recruitment page order: trajectory insights (fold, remembered) → What-If → the training pipeline (full
+  width: the courses table and "are your courses enough?" side by side) → the recruitment simulation with the
+  capacity outlook beside it — the courses sit between the two charts they feed.
+- ⚙ Course rules (under the plan): class size and course length per location — a shorter course applies to
+  that location's upcoming courses at once (undoable) and to every course the plan suggests; "ב״ש and
+  רחובות never at the same time" makes the two share one course lane.
+- Fix (root cause): a course file with the app's own header "ימי עבודה" lost every course's length (all
+  became 12) — the length header now matches.
+- Fix (root cause): the What-If and the trajectory measured the last week in the forecast file, whose agents
+  are who answered (no skill split) — the 🎧 answering scope moved nothing. They now measure the first forecast
+  week with today's team from the iron, in the scope, like the matrix (with the slot anchor — the same number).
+- Fix (root cause): "Include attrition & courses" changed nothing when the forecast file ends before today
+  (e.g. data to June, forecast July–September): the projection counted days from today, so those months were
+  "0 days ahead". It now counts from the first forecast day when that is before today (`lensFrom`).
+- One undo for every change to the courses — a course file dropped (new + updated), a course removed (✕),
+  the plan applied: "✓ what changed · ↶ Undo" above the table brings the courses back exactly.
+- The plan says what each addition is for ("→ Dec") and, in one red line under the number, the months no
+  course can reach in time with the earliest graduation date. The trajectory line no longer promises
+  "every month" when some months can't be reached.
+
 ### ☕ The center's own break sheet; template or auto-assigned
 
 - Export = the floor's format (landscape, RTL): ① the board — a row per slot, "place 1…N" columns of
