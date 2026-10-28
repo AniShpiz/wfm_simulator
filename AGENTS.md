@@ -172,6 +172,19 @@ workforce filter lists legitimately show only "(all)" for this file.
   `courseSite`, `siteMax`, `siteLen`. The Trajectory decision line reads `hirePlan` — keep one source.
 - Courses move forecast-day capacity via `hcScale` in `forecastDay` (only for dates after today).
 
+## ☕ Breaks tab
+
+- `breakPlan(ds,over)`: reps from `schedRows` (else the iron's weekday, Friday via `friW`), each with
+  their shift(s) and `5 × hours` minutes split into a long (= slot) + short break (`parts`), each in its
+  own slot ≥ 90 min apart (60 / one slot when needed), inside the shift (`fits`). Tightest shifts first;
+  each pair goes where the marginal loss of answered calls is smallest (`cost` = `evalInterval` +
+  `slotBias`, interpolated). Spare = catch-up places (`s.spare`): inside short shifts first, then late.
+  `over.flat` = the same breaks spread evenly (the "no planning" comparison).
+- Bounds: `brkCfg(di)` (`settings.brk`: start, end, friEnd = 12:00, step 20, cap 6, spare 10 %) and
+  `brkOpen(di)` = Settings `dayStart` / `dayEnd` / `friEnd` — no slot outside opening hours.
+- `renderBreaks`: tiles, `brkAlts` (option tiles), `state._brkUndo` (the ↶ pill); `brkSheetHtml` /
+  `brkLines` (names) → `brkExport("pdf"|"word"|"xlsx"|"text")` (`xlsxBytes` + `zipStore`).
+
 ## Persistence and reset behavior
 
 - `saveState`/`loadState` persist settings/policy/courses/injections/language.

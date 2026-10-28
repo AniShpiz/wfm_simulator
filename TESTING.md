@@ -115,6 +115,14 @@ real browser, in both languages.
 3. Validate overstaffing pool and uncovered demand sections.
 4. Export optimized CSV.
 
+## Breaks Tests
+
+1. Breaks tab, a forecast day: every rep gets two places (7h → 20 + 15) inside their shift; the tiles show
+   placed / reps and the day's answer rate; quiet hours get the places first.
+2. Cap 3 (⚙) → a red tile + option tiles; click one → green, "↶ Back to 3 per slot" restores it.
+3. Friday → last break 12:00; no slot or option outside the center's hours (Settings).
+4. Export: PDF opens print; Word (.doc) and Excel (.xlsx) list names per slot + catch-up lines (RTL in Hebrew).
+
 ## Persistence Tests
 
 1. Load data and change settings.

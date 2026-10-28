@@ -4,6 +4,34 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### ☕ Breaks tab; course reload never doubles; an honest, modular "are your courses enough?"
+
+- New tab "Breaks": a break plan for the day. Every rep on shift (the sidur, else today's team from the
+  iron; answering skills) gets a long + a short break (5 min per working hour of their own shift — 7h →
+  20 + 15), each in its own slot, 1½ h apart, inside their shift. Each break sits where it costs the
+  fewest answered calls (Erlang, the matrix's math), at most 6 per slot (default slots: 20 min, 09:40 →
+  15:40; Friday → 12:00), never outside the center's hours (Settings). Short shifts are placed first.
+- At a glance: one tile "breaks for every rep" (a square per rep: green = placed, red = no place,
+  outlined = catch-up), one tile for the day's answer rate with this plan (bar + target line, ▲ vs the
+  same breaks spread evenly). When not everyone fits, option tiles (earlier first break / later last
+  break / more per slot) each show their answer rate — one click applies, a clear "↶ Back to …" undoes.
+- Seats: a green cup = a break place, hatched = blocked for breaks, an outlined cup = a catch-up place
+  (late in the day, and inside a short shift) for whoever missed theirs; an amber edge = the breaks take
+  that slot under the need (in the legend only when it happens). Hovers are one short line.
+- The sheet lists who goes when (name + minutes) plus the catch-up lines — no sign-up, no queue. Export
+  (one button): PDF / print, Word (.doc), Excel (.xlsx, opens cleanly in Excel 2016), copy as text.
+  ⚙ (in the toolbar): first / last break, Friday's last, slot length, cap, spare % — 24-hour lists.
+- The course planner's undo is the same clear button.
+- Fix (root cause): a quote inside a CSV field (ב"ש, סה"כ, חו"ל) opened a quoted field and swallowed
+  the row — every course named ב"ש vanished from a course file. A quote opens a field only at its start.
+- Course files: the same course again is recognized (name aside from spaces / quote marks / case, or
+  the same location + start + length) — re-dropping a plan says "N already loaded — updated, not
+  doubled".
+- "Are your courses enough?": "yes" only when EVERY month reaches the target (it said "yes" when the
+  short months were simply out of reach); each suggested change has its own tick; "↶ Undo" restores
+  the courses exactly; "? How it is worked out" in three steps; a month click shows its numbers
+  (needed · today − leaving + graduates). The Trajectory line follows the same rule.
+
 ### Forecast weeks: today's team vs "include attrition & courses"; trainees answering; uniform toggles
 
 - Root cause: a forecast week without a sidur showed neither the iron nor today's team — it used the
