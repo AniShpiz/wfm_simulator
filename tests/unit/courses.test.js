@@ -77,3 +77,10 @@ test("course calendar: working days, a closed holiday pushes the floor date", ()
   st.settings.customHol = [{ from: "2026-11-04", to: "2026-11-04", lvl: "closed" }]; st._holVer = 1;
   assert.strictEqual(C.cohortFloorDate({ start: "2026-11-01", duration: 12 }), "2026-11-18"); // one day later
 });
+
+test("the app's own template header \"ימי עבודה\" keeps each course's length (root cause: 16 → 12)", () => {
+  const r = P([["שם קורס", "פתיחת קורס", "ימי עבודה", "חניכים", "% הסמכה"],
+    ["קורס ב\"ש 1", "04/11/2026", 12, 8, 90], ["קורס בית 1", "11/11/2026", 16, 6, ""]]);
+  assert.deepStrictEqual(pick(r, "duration"), [12, 16]);
+  assert.deepStrictEqual(pick(r, "count"), [8, 6]);
+});
