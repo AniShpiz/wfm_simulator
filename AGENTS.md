@@ -182,8 +182,10 @@ workforce filter lists legitimately show only "(all)" for this file.
   `over.flat` = the same breaks spread evenly (the "no planning" comparison).
 - Bounds: `brkCfg(di)` (`settings.brk`: start, end, friEnd = 12:00, step 20, cap 6, spare 10 %) and
   `brkOpen(di)` = Settings `dayStart` / `dayEnd` / `friEnd` — no slot outside opening hours.
-- `renderBreaks`: tiles, `brkAlts` (option tiles), `state._brkUndo` (the ↶ pill); `brkSheetHtml` /
-  `brkLines` (names) → `brkExport("pdf"|"word"|"xlsx"|"text")` (`xlsxBytes` + `zipStore`).
+- `renderBreaks`: tiles, `brkAlts` (option tiles), `state._brkUndo` (the ↶ pill). The floor format:
+  `brkSheetHtml(bp,mode)` (board · queue · flowchart; mode "tpl" blank | "names" filled) with `brkCell`;
+  `brkExport(fmt,mode)` → pdf | word | xlsx (`xlsxBytes` cells may be `{v,s}` named styles) | text.
+- Split: `parts(d)` = 60 / 40 in 5-minute steps (7h → 20 + 15, 10h → 30 + 20; < 30 min → one).
 
 ## Persistence and reset behavior
 
