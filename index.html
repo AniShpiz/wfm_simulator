@@ -439,12 +439,45 @@ td.gapCell.closed{background:#d6f3e2!important;color:#0f6a3f;font-weight:700}
 .hirePlan{margin:10px 0 4px;padding:10px 12px;border:1px solid var(--border);border-radius:9px;background:#fbfdff}
 .hirePlan:empty{display:none}
 .crsBar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:0 0 8px}
+/* ☕ breaks */
+.brkDay{color:var(--navy)} .brkAdj{display:inline-flex;align-items:center;gap:4px;font-size:.8rem;color:var(--muted)}
+.brkAdj .btn{padding:2px 9px} .brkAdj b{min-width:24px;text-align:center;color:var(--navy);direction:ltr}
+.brkSum{display:flex;flex-wrap:wrap;align-items:stretch;gap:10px;margin:4px 0 10px}
+.brkTile{display:flex;flex-direction:column;gap:3px;min-width:170px;max-width:340px;border:1px solid var(--border);border-radius:10px;padding:8px 12px;background:#fff;text-align:start;font:inherit;color:var(--navy)}
+.brkTile.ok{border-color:#bfe5cf;background:#f2fbf5} .brkTile.warn{border-color:#f0d9a6;background:#fdf8ec} .brkTile.bad{border-color:#f1c0bb;background:#fdf1f0}
+.brkTile.alt{cursor:pointer;border:1.5px solid var(--navy);box-shadow:0 1px 3px rgba(13,42,77,.14)} .brkTile.alt:hover{background:#eef3fa}
+.brkBig{font-size:1.2rem;font-weight:800;white-space:nowrap} .brkTile.ok .brkBig{color:var(--emerald)} .brkTile.bad .brkBig{color:var(--crimson)} .brkTile.warn .brkBig{color:#b7791f}
+.brkCov{display:flex;flex-wrap:wrap;gap:2px;max-width:316px;margin-top:2px} .brkCov i{width:7px;height:10px;border-radius:2px;background:#1e9e5a;box-sizing:border-box}
+.brkCov i.no{background:var(--crimson)} .brkCov i.sp{background:none;border:1px solid #1e9e5a}
+.brkBar{position:relative;height:10px;border-radius:5px;background:#e7edf4;overflow:hidden;margin-top:4px;min-width:150px} .brkBar b{position:absolute;top:0;bottom:0;inset-inline-start:0;border-radius:5px}
+.brkBar b.g{background:#c3cfdd} .brkBar b.a{background:var(--navy)} .brkBar u{position:absolute;top:0;bottom:0;width:2px;background:var(--crimson)}
+.brkLeg{display:flex;align-items:center;gap:6px;font-size:.75rem;color:var(--muted,#6b7c90);margin:0 0 6px} .brkLeg .brkSeats{margin-inline-start:8px}
+.undoPill{align-self:center;display:inline-flex;align-items:center;gap:6px;border:1px solid #c3cddb;background:#fff;color:var(--navy);border-radius:999px;padding:6px 14px;font:inherit;font-size:.82rem;font-weight:600;cursor:pointer;box-shadow:0 1px 2px rgba(13,42,77,.08)}
+.undoPill:hover{background:#f2f5f9;border-color:#9aa9b9}
+.brkSetM{min-width:250px} .brkSetM label.mini{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 8px}
+.brkSetM .hpHint{margin:4px 0 0;font-size:.72rem;color:var(--muted)}
+.brkGrid{display:grid;grid-template-rows:repeat(var(--brkRows,7),auto);grid-auto-flow:column;grid-auto-columns:minmax(250px,1fr);gap:6px 14px}
+@media (max-width:760px){ .brkGrid{grid-template-rows:none;grid-auto-flow:row;grid-auto-columns:auto} }
+.brkRow{display:flex;align-items:center;gap:10px;border:1px solid var(--border);border-radius:8px;padding:6px 10px;background:#fff}
+.brkRow.exc{border-style:dashed} .brkRow.none{background:#fdf1f0}
+.brkT{font-weight:700;font-variant-numeric:tabular-nums;min-width:62px;direction:ltr;color:var(--navy)} .brkT small{font-weight:400;color:var(--muted)}
+.brkSeats{display:inline-flex;gap:3px} .brkSeats i{width:var(--seat,16px);height:16px;border-radius:4px;background:repeating-linear-gradient(135deg,#eef2f6 0 3px,#dde4ec 3px 5px);box-sizing:border-box;flex:none}
+.brkSeats i.on{border:none;background:#1e9e5a url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 5.5h7.5v3.5a3 3 0 0 1-3 3h-1.5a3 3 0 0 1-3-3z M10.5 6.5h1a1.6 1.6 0 0 1 0 3.2h-1' fill='none' stroke='white' stroke-width='1.5'/%3E%3C/svg%3E") center/12px no-repeat}
+.brkRow.tight{border-inline-start:4px solid #e3a72f} .brkRow.tight .brkN{color:#b7791f}
+.brkLeg .lgT{display:inline-block;width:4px;height:14px;background:#e3a72f;border-radius:2px;margin-inline-start:8px}
+.brkSeats i.sp{background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 5.5h7.5v3.5a3 3 0 0 1-3 3h-1.5a3 3 0 0 1-3-3z M10.5 6.5h1a1.6 1.6 0 0 1 0 3.2h-1' fill='none' stroke='%231e9e5a' stroke-width='1.5'/%3E%3C/svg%3E") center/12px no-repeat;border:1.5px solid #1e9e5a}
+.brkN{font-size:1.05rem;min-width:18px;text-align:center;color:var(--ink)}
 .trnMenu{min-width:320px;font-size:.8rem} .trnMenu label{white-space:nowrap}
 .trnMenu .trnRow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:6px 0}
 .trnPre{display:inline-flex;gap:4px;flex-wrap:wrap}
 .trnPre label{border:1px solid var(--border);border-radius:12px;padding:2px 9px;cursor:pointer;font-size:.76rem;color:var(--muted);direction:ltr}
 .trnPre input{display:none} .trnPre label:has(input:checked){border-color:var(--navy);background:var(--navy);color:#fff;font-weight:600}
-.hpChart{margin:6px 0 2px} .hpLim{margin-top:8px} .hpLim>summary{cursor:pointer;font-size:.78rem;color:var(--muted)}
+.hpChart{margin:6px 0 2px} .hpHero.warn{color:var(--crimson)}
+.hpUndo{font-size:.78rem;color:var(--emerald);background:#eef8f1;border-radius:6px;padding:4px 8px;margin:4px 0}
+.hpMonth{font-size:.78rem;color:var(--ink);background:#f4f7fa;border-radius:6px;padding:5px 8px;margin:4px 0} .hpHint{text-align:center;margin:2px 0}
+label.hpRow{grid-template-columns:auto minmax(110px,1.2fr) 1.5fr auto;cursor:pointer} .hpRow input{margin:0}
+.hpSteps{margin:6px 0 2px;padding-inline-start:18px;font-size:.76rem;color:var(--ink)} .hpSteps li{margin:2px 0}
+#hpApply:disabled{opacity:.45;cursor:default} .hpLim{margin-top:8px} .hpLim>summary{cursor:pointer;font-size:.78rem;color:var(--muted)}
 .hpLimRow{display:flex;flex-wrap:wrap;gap:12px;margin-top:6px}
 .cohT select.cohSite{border:1px solid transparent;background:transparent;font:inherit;font-size:.78rem;padding:2px}
 .cohT select.cohSite:hover{border-color:var(--border)}
@@ -667,6 +700,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
     <button id="tab-trends" data-i18n="tabTrends">Date Trends</button>
     <button id="tab-workforce" data-i18n="tabWorkforce">Workforce &amp; Iron</button>
     <button id="tab-scheduler" data-i18n="tabScheduler">Auto-Scheduler</button>
+    <button id="tab-breaks" data-i18n="tabBreaks">Breaks</button>
     <button id="tab-recruit" data-i18n="tabRecruit">Recruitment &amp; Training</button>
     <button id="tab-settings" data-i18n="tabSettings">Advanced Settings</button>
   </nav>
@@ -1162,6 +1196,24 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
 
   </section>
 
+  <!-- ============ ☕ BREAKS: how many can be on break in each slot, by the day's forecast ============ -->
+  <section class="page" id="page-breaks">
+    <div class="card">
+      <div class="toolbar">
+        <button class="btn ghost wknav" id="brkPrev" type="button" data-i18n-title="brkPrev">‹</button>
+        <input type="date" id="brkDate">
+        <button class="btn ghost wknav" id="brkNext" type="button" data-i18n-title="brkNext">›</button>
+        <b id="brkDayName" class="brkDay"></b>
+        <div class="splitbtn" id="brkScopeWrap" style="display:none"><button class="btn ghost" id="brkScopeBtn"></button><div class="menu pad" id="brkScopeMenu" style="min-width:240px"></div></div>
+        <span style="margin-inline-start:auto;display:inline-flex;gap:8px">
+          <div class="splitbtn" id="brkSetWrap"><button class="btn ghost" type="button" data-i18n="brkSetT">⚙ Slots and rules</button><div class="menu pad brkSetM" id="brkSet"></div></div>
+          <div class="splitbtn" id="brkExpWrap"><button class="btn navy" type="button" data-i18n="brkExp">⬇ Export</button>
+            <div class="menu" id="brkExpMenu"><button type="button" data-fmt="pdf" data-i18n="brkPdf">🖨 PDF / print</button><button type="button" data-fmt="word" data-i18n="brkWord">📄 Word</button><button type="button" data-fmt="xlsx" data-i18n="brkXls">📊 Excel (.xlsx)</button><button type="button" data-fmt="text" data-i18n="brkTxt">📋 Copy as text (WhatsApp)</button></div></div></span>
+      </div>
+      <div id="brkBox"></div>
+    </div>
+  </section>
+
   <section class="page" id="page-settings">
     <div class="grid2">
       <div class="card">
@@ -1538,7 +1590,13 @@ en:{
   tipAttain:"Met when the day's {m}, weighted by calls, reaches {t}%.",
   slaMet:"Met", slaMissed:"Missed",
   /* ===== WFM 2.0 ===== */
-  tabWorkforce:"Workforce & Iron", tabScheduler:"Auto-Scheduler",
+  tabWorkforce:"Workforce & Iron", tabScheduler:"Auto-Scheduler", tabBreaks:"Breaks", brkTitle:"Breaks by slot", brkAdj:"Attendance today", brkAdjTip:"Each slot counts who is on shift at that hour in the sidur (start times, short shifts, splits). Type the day's change: no-shows −3, backups +2.", brkAdjS:"Change from the sidur", brkPresent:"Reps present today", brkPresentTip:"No sidur for this day: how many reps came in — spread over the hours like today's team (the iron).", brkAuto:"auto", brkPrev:"Previous day", brkNext:"Next day",
+  brkNoFc:"No forecast for this day — by the procedure: {c} places per slot.", brkPlacesOnly:"Room for {p} breaks today.",
+  brkHeroOk:"A break place for every one of the {n} reps — more places in the quiet hours", brkHeroOkNoFc:"A break place for every one of the {n} reps (no forecast for this day — spread evenly)", brkLen:"5 min per working hour (avg {m}) · a long + a short break, inside the shift", brkHoursHint:"Within the center's hours (Settings → day start / end, Friday end)", brkCovL:"Breaks for every rep", brkSpareW:"spare", brkOutside:"{n} reps on shift outside the break window aren't counted", brkArL:"for the day, with this break plan", brkArTip:"No planning {f} · no breaks at all {b} · red line = target", brkPts:"pts vs an even spread (no planning)", brkPtsEq:"≈ same as an even spread", brkTryL:"Option", brkAltAll:"a place for everyone", brkAltStart:"First break {s}", brkBackTm:"Back to {v}", brkBackCap:"Back to {v} per slot", brkLastFri:"Last break on Friday", brkLegOn:"place for a break", brkLegOff:"blocked for breaks", brkLegT:"breaks take it under the need", brkLegSp:"catch-up (missed yours)", brkSpLine:"catch-up — for whoever missed theirs", brkHeroAll:"A break place for every one of the {n} reps + {s} spare", brkHeroSpare:"A break place for every one of the {n} reps · spare {g} of {s}", brkHeroNo:"{x} reps have no break place in the window — {r} places for {n} reps", brkAltL:"Ways out:", brkAltEnd:"Last break {e}", brkAltCap:"{c} per slot", brkArDay:"{m} for the day with these breaks: {a} · without breaks {b} — each place sits where it costs the fewest answered calls", brkSpare:"Spare (%)", brkUnder:"The breaks take this slot under the need — still the cheapest place", brkExp:"⬇ Export", brkTxt:"📋 Copy as text (WhatsApp)", brkCopied:"Copied — paste it in WhatsApp or an email", brkHeroShort:"{x} of the {n} reps have no place — every slot is full ({c} each)",
+  brkTip:"Scheduled {on} · needed {need} → {p} can go on break", brkTipT:"Today's team {on} · needed {need} → {p} can go on break", brkTipNo:"No forecast at this hour", brkExc:"exceptions",
+  brkPlaces:"Places", brkTime:"Time", brkName:"Name", brkSheetT:"Break sheet — {d}", brkSheetSub:"Each rep has their own times (minutes in brackets) · missed yours? take a catch-up place, later", brkFile:"breaks",
+  brkPdf:"🖨 PDF / print", brkWord:"📄 Word", brkXls:"📊 Excel (.xlsx)", brkPopup:"The browser blocked the print window — allow pop-ups for this page", brkSetT:"⚙ Slots and rules",
+  brkFirst:"First break", brkLast:"Last break", brkExcL:"Exception slot", brkStep:"Slot (min)", brkCap:"Most places per slot", brkPerHour:"Break min per working hour",
   wfNoIron:"No Iron sheet loaded — drop one multi-sheet Tikshuv workbook (סידור עבודה + סידור ברזל). Falling back to manual contracted hours per rep.",
   wfTeamL:"Team", wfSkillL:"Skill", wfSiteL:"Site", wfAll:"(all)", skTitle:"🎧 Answering skills", tipSk:"Skills that answer the queue the matrix measures. Same choice as the 🎧 buttons; kept when you reload a sidur. Reps without a skill always count.",
   skEmpty:"The list appears after you load your first sidur. Until then every rep counts as answering.", skNotInSidur:"Not in the current sidur — your choice is kept for when it returns.",
@@ -1582,7 +1640,7 @@ en:{
   saTlSend:"Send",
   schNoGaps:"No uncovered demand — the Iron base covers the full forecast. 🎯",
   crsTitle:"Drop the course plan here", crsHint:"Any layout — or + Course",
-  crsOk:"{n} courses loaded into the training pipeline.", crsErr:"No course rows found — a course needs at least a start date.",
+  crsOk:"{n} courses loaded into the training pipeline.", crsNew:"{n} new courses", crsUpd:"{n} already loaded — updated, not doubled", crsErr:"No course rows found — a course needs at least a start date.",
   wfDrillTitle:"Drill-down: {seg} by {dim}", wfDrillBy:"Drill by", wfDrillHint:"Click a treemap tile to break it down.", wfDrillBack:"✕ Close drill-down", wfDrillWho:"{n} reps — click to list them",
   roIronNote:"Iron base: {n} employees",
   rosterRecov:"extendable across {n} reps ≈ {f} FTE — recover these hours before hiring externally",
@@ -1905,12 +1963,12 @@ en:{
   trTipDay:"click = its row in the table", trTipOpen:"click = open its days", relNeed:"Needs at least 6 actual periods — pick days or a longer range.",
   relWeak:"Weakly", relMod:"Moderately", relStrong:"Strongly", relSent:"{s} related (r = {r}): every {dx} ({x}) ≈ {dy} ({y}).", relNone:"{x} and {y} barely move together here (r = {r}).",
   ibSum:"{p}% of the iron in the sidur",
-  cohDurS:"Work days", cohSite:"Location", hpOkMonths:"Yes — every month through {m}", hpMoreCourses:" · {k} more courses", hpMoreCourse1:" · and one more course", hpNoFc:"Needs a forecast for the coming months — yours ends {d}.", hpTarget:"Target: {m} {t}% · by the forecast, month by month", hpLgPlan:"Expected with your courses", hpLgWith:"With the additions", hpLgNeed:"Needed", hpTipMo:"Needed {n} · expected {a}{b}", hpLateMo:"{m}: {x} short — the earliest course to add graduates {d}", hpFull:"(full)", hpOther:"Other", hpLimits:"⚙ Class size by location", trnOther:"Other", crsTpl:"⬇ Excel template", crsTplFile:"courses-template.csv", crsSampleCap:"Columns in any order, any name · days and hire % are optional", cohNew:"+ Course", cohDefY:"Hire % for new courses", crsDropLine:"or drop a course file anywhere on the page", cohYieldS:"Hire %", dropCourses:"📂 Drop the course plan anywhere — any layout",
+  cohDurS:"Work days", cohSite:"Location", hpOkMonths:"Yes — every month through {m}", hpShortN:"Not every month: {n} months stay short", hpShortMo:"{m}: {x} short", hpDone:"Added {n} trainees to the courses.", hpUndo:"Undo", hpUndone:"The courses are back as they were", hpPickHint:"Click a month — its numbers", hpCalc:"needed {n} · expected {e} = {h} today − {l} leaving + {g} graduates (a new rep is at full speed within a month)", hpCalcAdd:"· with the additions +{a}", hpHow:"? How it is worked out", hpStep1:"Every month, by the forecast: the reps needed to hold the answer-rate target, against the reps you will have — today's, minus those who leave, plus course graduates.", hpStep2:"A short month: trainees go into the earliest course that graduates in time, up to its class size.", hpStep3:"Still short: one more course at the location that can graduate soonest (one course at a time per location; holidays push it).", hpMoreCourses:" · {k} more courses", hpMoreCourse1:" · and one more course", hpNoFc:"Needs a forecast for the coming months — yours ends {d}.", hpTarget:"Target: {m} {t}% · by the forecast, month by month", hpLgPlan:"Expected with your courses", hpLgWith:"With the additions", hpLgNeed:"Needed", hpTipMo:"Needed {n} · expected {a}{b}", hpLateMo:"{m}: {x} short — the earliest course to add graduates {d}", hpFull:"(full)", hpOther:"Other", hpLimits:"⚙ Class size by location", trnOther:"Other", crsTpl:"⬇ Excel template", crsTplFile:"courses-template.csv", crsSampleCap:"Columns in any order, any name · days and hire % are optional", cohNew:"+ Course", cohDefY:"Hire % for new courses", crsDropLine:"or drop a course file anywhere on the page", cohYieldS:"Hire %", dropCourses:"📂 Drop the course plan anywhere — any layout",
   hpT:"How many to recruit", hpQ:"Are your courses enough?", tipHp:"Month by month, by the forecast: do your courses bring enough reps to hold the answer-rate target? If not — how many more trainees, into which course (the earliest first, up to its class size), and whether to open another.", hpBarAr:"Needed for {m} {t}% by {d}", hpBarHc:"Target headcount by {d}", hpBarHave:"Your courses bring by then", hpBarWith:"With the extra trainees", hpModeHc:"Headcount", hpBy:"by", tipHpAttr:"Staff who leave each month — the same value as Advanced Settings → Workforce dynamics. It erodes today's headcount and course graduates.",
   hpUnreach:"Adding people alone won't reach {m} {t}% with today's demand and handle time.",
   hpGoalAr:"to reach {m} {t}% by {d}", hpGoalHc:"to reach {n} reps by {d}", hpRecruits:"more trainees to recruit",
   hpNeed:"needs {n} on the floor · the plan brings {b}", hpOk:"Yes — no extra recruiting needed",
-  hpNew:"New course", hpLate:"graduates after the date", hpApply:"✓ Update the courses",
+  hpNew:"New course", hpLate:"graduates after the date", hpApply:"✓ Update the ticked courses",
   hpAfter:"→ {m} ≈ {v}% by {d}", hpApplied:"+{n} trainees added to the courses", faTune:"⚙ Fine-tune", friSumNow:"{n} on this Friday",
   relPts:"pts", relHrs:"h", relFoot:"{n} actual periods · forecast periods are left out (they are the model's own numbers) · a relation, not proof of cause"
 },
@@ -2088,7 +2146,13 @@ he:{
   tipAttain:"עומד כשה{m} היומי, משוקלל בשיחות, מגיע ל־{t}%.",
   slaMet:"עומד", slaMissed:"חריגה",
   /* ===== WFM 2.0 ===== */
-  tabWorkforce:"כוח אדם וברזל", tabScheduler:"שיבוץ אוטומטי",
+  tabWorkforce:"כוח אדם וברזל", tabScheduler:"שיבוץ אוטומטי", tabBreaks:"הפסקות", brkTitle:"הפסקות לפי משבצת", brkAdj:"נוכחות היום", brkAdjTip:"כל משבצת סופרת מי במשמרת באותה שעה בסידור (שעות התחלה, משמרות קצרות, פיצולים). כתבו את השינוי של היום: הברזות −3, גיבויים +2.", brkAdjS:"שינוי מהסידור", brkPresent:"נוכחים היום", brkPresentTip:"אין סידור ליום הזה: כמה נציגים הגיעו — מתחלק על השעות כמו הצוות של היום (הברזל).", brkAuto:"אוטו׳", brkPrev:"היום הקודם", brkNext:"היום הבא",
+  brkNoFc:"אין תחזית ליום הזה — לפי הנוהל: {c} מקומות בכל משבצת.", brkPlacesOnly:"מקום ל־{p} הפסקות היום.",
+  brkHeroOk:"מקום הפסקה לכל {n} הנציגים — יותר מקומות בשעות השקטות", brkHeroOkNoFc:"מקום הפסקה לכל {n} הנציגים (אין תחזית ליום הזה — חלוקה שווה)", brkLen:"5 דק׳ לכל שעת עבודה (ממוצע {m}) · הפסקה ארוכה + קצרה, בתוך המשמרת", brkHoursHint:"בתוך שעות הפעילות של המוקד (הגדרות ← תחילת / סוף יום, סוף שישי)", brkCovL:"הפסקות לכל נציג", brkSpareW:"ספייר", brkOutside:"{n} נציגים במשמרת מחוץ לחלון ההפסקות לא נספרו", brkArL:"יומי, עם תכנון ההפסקות", brkArTip:"בלי תכנון {f} · בלי הפסקות בכלל {b} · הקו האדום = היעד", brkPts:"נק׳ מול חלוקה שווה (בלי תכנון)", brkPtsEq:"≈ כמו חלוקה שווה", brkTryL:"חלופה", brkAltAll:"מקום לכולם", brkAltStart:"הפסקה ראשונה {s}", brkBackTm:"חזרה ל־{v}", brkBackCap:"חזרה ל־{v} בכל משבצת", brkLastFri:"הפסקה אחרונה בשישי", brkLegOn:"מקום להפסקה", brkLegOff:"חסום להפסקה", brkLegT:"ההפסקות מורידות מתחת לנדרש", brkLegSp:"השלמה (למי שפספס)", brkSpLine:"השלמה — למי שפספס", brkHeroAll:"מקום הפסקה לכל {n} הנציגים + {s} ספייר", brkHeroSpare:"מקום הפסקה לכל {n} הנציגים · ספייר {g} מתוך {s}", brkHeroNo:"ל־{x} נציגים אין מקום הפסקה בחלון — {r} מקומות ל־{n} נציגים", brkAltL:"חלופות:", brkAltEnd:"הפסקה אחרונה {e}", brkAltCap:"{c} בכל משבצת", brkArDay:"{m} יומי צפוי עם ההפסקות: {a} · בלי הפסקות {b} — כל מקום ממוקם היכן שהוא עולה הכי מעט שיחות", brkSpare:"ספייר (%)", brkUnder:"כאן ההפסקות מורידות מתחת לנדרש — עדיין המקום הזול ביותר", brkExp:"⬇ ייצוא", brkTxt:"📋 העתקה כטקסט (וואטסאפ)", brkCopied:"הועתק — הדביקו בוואטסאפ או במייל", brkHeroShort:"ל־{x} מתוך {n} הנציגים אין מקום — כל המשבצות מלאות ({c} בכל משבצת)",
+  brkTip:"משובצים בסידור {on} · נדרשים {need} ← אפשר להוציא {p} להפסקה", brkTipT:"בצוות של היום {on} · נדרשים {need} ← אפשר להוציא {p} להפסקה", brkTipNo:"אין תחזית בשעה הזו", brkExc:"חריגים",
+  brkPlaces:"מקומות", brkTime:"שעה", brkName:"שם", brkSheetT:"דף הפסקות — {d}", brkSheetSub:"לכל נציג הזמנים שלו (דקות בסוגריים) · פספסת? קח מקום השלמה, בהמשך", brkFile:"הפסקות",
+  brkPdf:"🖨 PDF / הדפסה", brkWord:"📄 Word", brkXls:"📊 Excel (.xlsx)", brkPopup:"הדפדפן חסם את חלון ההדפסה — אפשרו חלונות קופצים לדף הזה", brkSetT:"⚙ משבצות וכללים",
+  brkFirst:"הפסקה ראשונה", brkLast:"הפסקה אחרונה", brkExcL:"משבצת חריגים", brkStep:"משבצת (דק׳)", brkCap:"מקסימום מקומות", brkPerHour:"דק׳ הפסקה לכל שעת עבודה",
   wfNoIron:"לא נטען גיליון ברזל — גררו קובץ תקשוב רב-גיליוני אחד (סידור עבודה + סידור ברזל). בינתיים חישוב לפי שעות חוזיות ידניות לנציג.",
   wfTeamL:"מנהל צוות", wfSkillL:"מיומנות", wfSiteL:"מוקד", wfAll:"(הכול)", skTitle:"🎧 מיומנויות עונות", tipSk:"המיומנויות שעונות לתור שהמטריצה מודדת. אותה בחירה כמו בכפתורי 🎧; נשמרת בטעינת סידור. נציגים ללא מיומנות תמיד נספרים.",
   skEmpty:"הרשימה תופיע אחרי טעינת סידור העבודה הראשון. עד אז כל הנציגים נספרים כעונים.", skNotInSidur:"לא בסידור הנוכחי — הבחירה שלכם נשמרת לפעם שיחזור.",
@@ -2132,7 +2196,7 @@ he:{
   saTlSend:"שלח",
   schNoGaps:"אין ביקוש לא מכוסה — בסיס הברזל מכסה את כל התחזית. 🎯",
   crsTitle:"גררו לכאן את תוכנית הקורסים", crsHint:"בכל מבנה — או + קורס",
-  crsOk:"{n} קורסים נטענו לצנרת ההכשרה.", crsErr:"לא נמצאו קורסים — לכל קורס צריך לפחות תאריך פתיחה.",
+  crsOk:"{n} קורסים נטענו לצנרת ההכשרה.", crsNew:"{n} קורסים חדשים", crsUpd:"{n} כבר היו — עודכנו, בלי כפילות", crsErr:"לא נמצאו קורסים — לכל קורס צריך לפחות תאריך פתיחה.",
   wfDrillTitle:"פילוח: {seg} לפי {dim}", wfDrillBy:"פילוח לפי", wfDrillHint:"לחצו על אריח במפת החום לפילוח.", wfDrillBack:"✕ סגירת פילוח", wfDrillWho:"{n} נציגים — לחצו להצגה",
   roIronNote:"בסיס ברזל: {n} עובדים",
   rosterRecov:"ניתנות להרחבה אצל {n} נציגים ≈ {f} משרות — לאתר את השעות האלה לפני גיוס חיצוני",
@@ -2455,12 +2519,12 @@ he:{
   trTipDay:"לחיצה = השורה בטבלה", trTipOpen:"לחיצה = פתיחת הימים", relNeed:"נדרשות לפחות 6 תקופות בפועל — בחרו ימים או טווח ארוך יותר.",
   relWeak:"קשר חלש", relMod:"קשר בינוני", relStrong:"קשר חזק", relSent:"{s} (r = {r}): כל {dx} ({x}) ≈ {dy} ({y}).", relNone:"{x} ו־{y} כמעט לא זזים יחד כאן (r = {r}).",
   ibSum:"{p}% מהברזל בסידור",
-  cohDurS:"ימי עבודה", cohSite:"מיקום", hpOkMonths:"כן — כל חודש עד {m}", hpMoreCourses:" · {k} קורסים נוספים", hpMoreCourse1:" · ועוד קורס אחד", hpNoFc:"צריך תחזית לחודשים הקרובים — התחזית שלך מסתיימת ב־{d}.", hpTarget:"יעד: {m} {t}% · לפי התחזית, חודש אחרי חודש", hpLgPlan:"צפי לפי הקורסים", hpLgWith:"עם התוספות", hpLgNeed:"נדרשים", hpTipMo:"נדרשים {n} · צפי {a}{b}", hpLateMo:"{m}: חסרים {x} — הקורס הנוסף המוקדם ביותר מסיים ב־{d}", hpFull:"(מלא)", hpOther:"אחר", hpLimits:"⚙ גודל כיתה לפי מיקום", trnOther:"אחר", crsTpl:"⬇ תבנית Excel", crsTplFile:"תבנית קורסים.csv", crsSampleCap:"עמודות בכל סדר ובכל שם · ימים ו־% הסמכה לא חובה", cohNew:"+ קורס", cohDefY:"% הסמכה לקורס חדש", crsDropLine:"או גררו קובץ קורסים לכל מקום בעמוד", cohYieldS:"% הסמכה", dropCourses:"📂 גררו את תוכנית הקורסים לכל מקום — בכל מבנה",
+  cohDurS:"ימי עבודה", cohSite:"מיקום", hpOkMonths:"כן — כל חודש עד {m}", hpShortN:"לא בכל חודש: {n} חודשים נשארים חסרים", hpShortMo:"{m}: חסרים {x}", hpDone:"נוספו {n} חניכים לקורסים.", hpUndo:"ביטול", hpUndone:"הקורסים חזרו למצבם הקודם", hpPickHint:"לחיצה על חודש — המספרים שלו", hpCalc:"נדרשים {n} · צפי {e} = {h} היום − {l} עוזבים + {g} בוגרים (נציג חדש מגיע לפריון מלא תוך חודש)", hpCalcAdd:"· עם התוספות +{a}", hpHow:"? איך זה מחושב", hpStep1:"כל חודש, לפי התחזית: כמה נציגים צריך כדי להחזיק את יעד המענה, מול כמה יהיו — היום, פחות מי שעוזב, ועוד בוגרי קורסים.", hpStep2:"חודש חסר: מוסיפים חניכים לקורס המוקדם שמסיים בזמן, עד גודל הכיתה.", hpStep3:"עדיין חסר: קורס נוסף במיקום שיכול לסיים הכי מוקדם (קורס אחד בכל פעם במיקום; חגים דוחים).", hpMoreCourses:" · {k} קורסים נוספים", hpMoreCourse1:" · ועוד קורס אחד", hpNoFc:"צריך תחזית לחודשים הקרובים — התחזית שלך מסתיימת ב־{d}.", hpTarget:"יעד: {m} {t}% · לפי התחזית, חודש אחרי חודש", hpLgPlan:"צפי לפי הקורסים", hpLgWith:"עם התוספות", hpLgNeed:"נדרשים", hpTipMo:"נדרשים {n} · צפי {a}{b}", hpLateMo:"{m}: חסרים {x} — הקורס הנוסף המוקדם ביותר מסיים ב־{d}", hpFull:"(מלא)", hpOther:"אחר", hpLimits:"⚙ גודל כיתה לפי מיקום", trnOther:"אחר", crsTpl:"⬇ תבנית Excel", crsTplFile:"תבנית קורסים.csv", crsSampleCap:"עמודות בכל סדר ובכל שם · ימים ו־% הסמכה לא חובה", cohNew:"+ קורס", cohDefY:"% הסמכה לקורס חדש", crsDropLine:"או גררו קובץ קורסים לכל מקום בעמוד", cohYieldS:"% הסמכה", dropCourses:"📂 גררו את תוכנית הקורסים לכל מקום — בכל מבנה",
   hpT:"כמה לגייס", hpQ:"הקורסים מספיקים?", tipHp:"חודש אחרי חודש, לפי התחזית: האם הקורסים מביאים מספיק נציגים כדי להחזיק את יעד המענה? אם לא — כמה חניכים להוסיף, לאיזה קורס (המוקדם קודם, עד גודל הכיתה), והאם לפתוח קורס נוסף.", hpBarAr:"נדרשים ל{m} {t}% עד {d}", hpBarHc:"יעד מצבה עד {d}", hpBarHave:"הקורסים שלך מביאים עד אז", hpBarWith:"עם החניכים הנוספים", hpModeHc:"מצבה", hpBy:"עד", tipHpAttr:"כמה עובדים עוזבים בחודש — אותו ערך כמו בהגדרות מתקדמות ← דינמיקת כוח אדם. מקטין את המצבה של היום ואת בוגרי הקורסים.",
   hpUnreach:"הוספת אנשים לבדה לא תביא ל{m} {t}% בביקוש ובמשך השיחה של היום.",
   hpGoalAr:"כדי להגיע ל{m} {t}% עד {d}", hpGoalHc:"כדי להגיע ל־{n} נציגים עד {d}", hpRecruits:"חניכים נוספים לגייס",
   hpNeed:"נדרשים {n} על המשמרות · התוכנית מביאה {b}", hpOk:"כן — אין צורך לגייס עוד",
-  hpNew:"קורס חדש", hpLate:"מסיים אחרי התאריך", hpApply:"✓ לעדכן את הקורסים",
+  hpNew:"קורס חדש", hpLate:"מסיים אחרי התאריך", hpApply:"✓ לעדכן את הקורסים המסומנים",
   hpAfter:"← {m} ≈ {v}% עד {d}", hpApplied:"+{n} חניכים נוספו לקורסים", faTune:"⚙ כוונון", friSumNow:"{n} בשישי הזה",
   relPts:"נק׳", relHrs:"ש׳", relFoot:"{n} תקופות בפועל · תקופות תחזית לא נכללות (אלה מספרי המודל עצמו) · קשר, לא הוכחה לסיבה"
 }};
@@ -3263,7 +3327,7 @@ function csvToGrid(text){
     const out=[]; let cur="",q=false;
     for(let i=0;i<line.length;i++){ const ch=line[i];
       if(q){ if(ch==='"'){ if(line[i+1]==='"'){cur+='"';i++;} else q=false; } else cur+=ch; }
-      else if(ch==='"') q=true;
+      else if(ch==='"'&&cur==="") q=true; // a quote opens a field only at its start — ב"ש / סה"כ mid-field are letters
       else if(ch===delim){ out.push(cur); cur=""; }
       else cur+=ch; }
     out.push(cur); return out;
@@ -7551,7 +7615,7 @@ function setAnswerSkills(on){
   state.capSkills=on; state.schedSkills=on; state.settings.answerSkills=on;
   saveState(); capScopeChanged(); syncScopeMenus();
 }
-function syncScopeMenus(){ renderSkillScope(); renderRecruitScope(); renderSchedSkills(); renderWfScope(); renderSetSkills(); }
+function syncScopeMenus(){ renderSkillScope(); renderRecruitScope(); renderSchedSkills(); renderWfScope(); renderSetSkills(); if(document.getElementById("page-breaks").classList.contains("active")) renderBreaks(); }
 /* one menu builder for every 🎧 button (matrix / recruit / scheduler) — same list, same state */
 function renderScopeMenu(wrapId,btnId,menuId,hintKey,label){
   const wrap=document.getElementById(wrapId); if(!wrap) return;
@@ -7879,7 +7943,7 @@ function renderSkillScope(){
 function capScopeChanged(){
   memo.clear(); state.fcCache.clear(); saveData();
   renderMatrix(); // syncs the matrix 🎧 button + AR
-  dirtyPages.add("recruit"); dirtyPages.add("scheduler"); dirtyPages.add("workforce"); renderDirty(); // recruit 🎧 + What-If, Workforce numbers
+  dirtyPages.add("recruit"); dirtyPages.add("scheduler"); dirtyPages.add("workforce"); dirtyPages.add("breaks"); renderDirty(); // recruit 🎧 + What-If, Workforce numbers, breaks
 }
 /* 🎧 answering-scope control on the recruit/What-If card — the SAME state.capSkills the
    matrix uses, surfaced here because it is what actually drives the simulator's capacity.
@@ -9227,7 +9291,8 @@ function renderRecruit(){
     const hp=hirePlan();
     if(hp&&hp.months&&hp.months.length){ // the same answer as "are your courses enough?" — every month, by the forecast
       const loc=lang==="he"?"he-IL":"en-GB", lm=hp.months[hp.months.length-1].m, mon=new Date(+lm.slice(0,4),+lm.slice(5,7)-1,1).toLocaleDateString(loc,{month:"long"});
-      add(hp.total>0?t("trajHireM",{n:hp.total,m:primName(),t:S.target}):t("trajOkM",{m:primName(),t:S.target,d:mon}),hp.total>0?"alert":"ok"); }
+      const shortN=hp.months.filter(x=>x.N-x.E1>0.5).length; // "on track" only when EVERY month reaches the target
+      add(hp.total>0?t("trajHireM",{n:hp.total,m:primName(),t:S.target}):shortN?t("hpShortN",{n:shortN}):t("trajOkM",{m:primName(),t:S.target,d:mon}),hp.total>0||shortN?"alert":"ok"); }
     // WHAT PROFILE to hire: the pain-hours window carrying most of the weekly deficit
     const prof=hiringProfile();
     if(prof) add("🧲 "+t("trajProfile",prof),"insight");
@@ -9400,17 +9465,261 @@ function renderInternalRoster(){
    garbage and made the browser tab hoard RAM. */
 const dirtyPages=new Set();
 const pageRenderers={matrix:()=>renderMatrix(),trends:()=>renderTrends(),recruit:()=>renderRecruit(),
-  workforce:()=>{renderWorkforce();renderScheduler();},scheduler:()=>renderScheduler()};
+  workforce:()=>{renderWorkforce();renderScheduler();},scheduler:()=>renderScheduler(),breaks:()=>{renderBreaks();brkSettings();}};
 function renderDirty(){
   for(const p of [...dirtyPages]){
     const el=document.getElementById("page-"+p);
     if(el&&el.classList.contains("active")){ pageRenderers[p](); dirtyPages.delete(p); }
   }
 }
+/* ☕ BREAKS BY SLOT — a break place for every rep on shift (+ a spare), placed where it costs the fewest answered
+   calls. Slots every 20 min, 09:40 → 15:40 (Friday → 12:00), at most 6 per slot. Each rep's break = 5 min per working
+   hour of their own shift, inside that shift (not in its first hour / last half-hour when it can be helped). */
+function brkCfg(di){ const b=state.settings.brk||{}, c={start:"09:40",end:"15:40",step:20,cap:6,...b,perHour:5}; delete c.exc; delete c.friEnd;
+  if(di===5) c.end=b.friEnd||"12:00"; return c; } // always 5 min per working hour; Friday ends early
+function brkOpen(di){ const S=state.settings; return [Math.round((+S.dayStart||8)*60),Math.round((di===5?+S.friEnd||13:+S.dayEnd||18)*60)]; } // the center's hours (Settings)
+function brkMin(s){ const [a,b]=String(s||"0:0").split(":").map(Number); return a*60+(b||0); }
+function brkTm(m){ return pad(Math.floor(m/60))+":"+pad(m%60); }
+/* a real .xlsx (opens cleanly in Excel 2016+, no "format doesn't match" warning): one sheet, inline strings,
+   right-to-left when asked, a navy bold header, borders, merged cells. Zero dependencies — the parts are zipped
+   "stored" (no compression), which the format allows. rows: [[cell…]…]; opt: {name, rtl, widths, merges, header} */
+function xlsxBytes(rows,opt){
+  opt=opt||{};
+  const esc=v=>String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  const col=i=>{ let s=""; i++; while(i){ const m=(i-1)%26; s=String.fromCharCode(65+m)+s; i=Math.floor((i-1)/26); } return s; };
+  const NS='xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"', X='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
+  const sheet=X+`<worksheet ${NS}><sheetViews><sheetView workbookViewId="0"${opt.rtl?' rightToLeft="1"':""}/></sheetViews>`
+    +(opt.widths?`<cols>${opt.widths.map((w,i)=>`<col min="${i+1}" max="${i+1}" width="${w}" customWidth="1"/>`).join("")}</cols>`:"")
+    +`<sheetData>`+rows.map((r,ri)=>`<row r="${ri+1}">`+r.map((v,ci)=>{ const ref=col(ci)+(ri+1), st=ri===0&&opt.header?' s="1"':' s="2"';
+      return typeof v==="number"?`<c r="${ref}"${st}><v>${v}</v></c>`:`<c r="${ref}"${st} t="inlineStr"><is><t>${esc(v)}</t></is></c>`; }).join("")+`</row>`).join("")
+    +`</sheetData>`+(opt.merges&&opt.merges.length?`<mergeCells count="${opt.merges.length}">${opt.merges.map(m=>`<mergeCell ref="${m}"/>`).join("")}</mergeCells>`:"")+`</worksheet>`;
+  const styles=X+`<styleSheet ${NS}><fonts count="2"><font><sz val="11"/><name val="Arial"/></font><font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="Arial"/></font></fonts>`
+    +`<fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF0D2A4D"/><bgColor indexed="64"/></patternFill></fill></fills>`
+    +`<borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FF9AA9B9"/></left><right style="thin"><color rgb="FF9AA9B9"/></right><top style="thin"><color rgb="FF9AA9B9"/></top><bottom style="thin"><color rgb="FF9AA9B9"/></bottom><diagonal/></border></borders>`
+    +`<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="3"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>`
+    +`<xf numFmtId="0" fontId="1" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>`
+    +`<xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf></cellXfs>`
+    +`<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>`;
+  const R='xmlns="http://schemas.openxmlformats.org/package/2006/relationships"', T="http://schemas.openxmlformats.org/officeDocument/2006/relationships";
+  return zipStore({
+    "[Content_Types].xml":X+`<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>`,
+    "_rels/.rels":X+`<Relationships ${R}><Relationship Id="rId1" Type="${T}/officeDocument" Target="xl/workbook.xml"/></Relationships>`,
+    "xl/workbook.xml":X+`<workbook ${NS} xmlns:r="${T}"><sheets><sheet name="${esc(String(opt.name||"Sheet1").replace(/[\\/?*[\]:]/g," ").slice(0,31))}" sheetId="1" r:id="rId1"/></sheets></workbook>`,
+    "xl/_rels/workbook.xml.rels":X+`<Relationships ${R}><Relationship Id="rId1" Type="${T}/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="${T}/styles" Target="styles.xml"/></Relationships>`,
+    "xl/worksheets/sheet1.xml":sheet,"xl/styles.xml":styles});
+}
+/* a ZIP of "stored" entries (no compression) with CRC-32 — enough for .xlsx */
+function zipStore(files){
+  const enc=new TextEncoder(), T=zipStore._t||(zipStore._t=(()=>{ const t=new Uint32Array(256);
+    for(let n=0;n<256;n++){ let c=n; for(let k=0;k<8;k++) c=c&1?0xEDB88320^(c>>>1):c>>>1; t[n]=c>>>0; } return t; })());
+  const crc=b=>{ let c=0xFFFFFFFF; for(let i=0;i<b.length;i++) c=T[(c^b[i])&255]^(c>>>8); return (c^0xFFFFFFFF)>>>0; };
+  const parts=[], central=[]; let off=0;
+  for(const [name,txt] of Object.entries(files)){
+    const nb=enc.encode(name), db=enc.encode(txt), cr=crc(db);
+    const lh=new DataView(new ArrayBuffer(30));
+    [[0,0x04034b50,4],[4,20,2],[6,0x0800,2],[8,0,2],[10,0,2],[12,0x21,2],[14,cr,4],[18,db.length,4],[22,db.length,4],[26,nb.length,2],[28,0,2]]
+      .forEach(([o,v,s])=>s===4?lh.setUint32(o,v,true):lh.setUint16(o,v,true));
+    parts.push(new Uint8Array(lh.buffer),nb,db);
+    const ch=new DataView(new ArrayBuffer(46));
+    [[0,0x02014b50,4],[4,20,2],[6,20,2],[8,0x0800,2],[10,0,2],[12,0,2],[14,0x21,2],[16,cr,4],[20,db.length,4],[24,db.length,4],[28,nb.length,2],
+     [30,0,2],[32,0,2],[34,0,2],[36,0,2],[38,0,4],[42,off,4]].forEach(([o,v,s])=>s===4?ch.setUint32(o,v,true):ch.setUint16(o,v,true));
+    central.push(new Uint8Array(ch.buffer),nb); off+=30+nb.length+db.length;
+  }
+  const n=Object.keys(files).length, cd=central.reduce((x,b)=>x+b.length,0), end=new DataView(new ArrayBuffer(22));
+  [[0,0x06054b50,4],[8,n,2],[10,n,2],[12,cd,4],[16,off,4]].forEach(([o,v,s])=>s===4?end.setUint32(o,v,true):end.setUint16(o,v,true));
+  const all=parts.concat(central,[new Uint8Array(end.buffer)]), out=new Uint8Array(all.reduce((x,b)=>x+b.length,0));
+  let p=0; for(const b of all){ out.set(b,p); p+=b.length; } return out;
+}
+function downloadBytes(name,bytes,mime){
+  const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([bytes],{type:mime}));
+  a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),500);
+}
+function breakPlan(ds,over){
+  const di=fromISO(ds).getDay(), c={...brkCfg(di),...(over||{})}, day=computeDay(ds), wk=sundayOf(ds), S=state.settings;
+  const sidur=state.rosterDates.has(ds)||state.schedRows.some(r=>r.ds===ds&&r.h>0);
+  const present=null; // nothing to type: the sidur per half-hour, else today's team (the iron)
+  const rows={}; if(day) day.rows.forEach(r=>{ if(r.rec&&!r.closed&&!r.exc&&!r.nodata) rows[r.tm]=r; });
+  const hasFc=Object.keys(rows).length>0, step=Math.max(5,+c.step||20), cap=Math.max(1,+c.cap||6);
+  const sc=state.capSkills, inSc=sk=>{ sk=String(sk||"").trim(); return !sc||!sc.length||!sk||sc.includes(sk); };
+  // the reps on shift (answering skills) — each with their shift(s): the sidur, else today's team (the iron's weekday)
+  const span=(s,e)=>{ const a=toMinW(s), b=toMinW(e); return [a,b>a?b:b+1440]; };
+  let reps=[];
+  const sr=state.schedRows.filter(r=>r.ds===ds&&r.h>0&&inSc(r.skill||(state.rosterMeta.get(r.name)||{}).skill));
+  if(sr.length){ const by=new Map(); for(const r of sr){ const o=by.get(r.name)||{name:r.name,h:0,iv:[]}; o.h+=r.h; o.iv.push(span(r.s,r.e)); by.set(r.name,o); } reps=[...by.values()]; }
+  else if(state.iron){ let half=0; for(const [n,e] of state.iron.emps){ const w=e.days&&e.days[di];
+    if(!w||!w.h||!inSc((state.rosterMeta.get(n)||{}).skill||e.skill)) continue;
+    const k=di===5?friW(n,wk):1; if(!k||(k<1&&half++%2)) continue; reps.push({name:n,h:w.h,iv:[span(w.s,w.e)]}); } } // Friday ½ → every other one
+  if(!reps.length){ const n=Math.round(Object.values(rows).reduce((x,r)=>x+r.sched*0.5,0)/8); reps=Array.from({length:n},()=>({h:8,iv:[[0,2880]]})); } // no names: the file's staffing ÷ 8h
+  const base=reps.length; if(present!=null&&present>=0&&base) reps=Array.from({length:Math.round(present)},(_,i)=>({...reps[i%base],name:null})); // no sidur + "present today"
+  const scale=base?reps.length/base:1;
+  /* the day's answered calls with b reps on the phones in half-hour h — the matrix's math (Erlang + the slot's
+     measured anchor), b fractional → interpolated between whole agents */
+  const eff=Math.max(0.05,availShare(S)*(state.calib||1)), useAr=S.primaryMetric!=="tsf";
+  const H={}; for(const r of Object.values(rows)) H[r.tm]={r,B:r.sched*scale,R:0,m:new Map(),bias:((state.slotBias||{})[di+"|"+r.tm]||{})};
+  const val=(h,b)=>{ const e=Math.max(0,b*eff), a=Math.floor(e), f=e-a;
+    const g=k=>{ let v=h.m.get(k); if(v==null){ const p=evalInterval(h.r.rec.volume,h.r.rec.aht,k,S,h.r.rec.mpt);
+      const x=Math.min(1,Math.max(0,useAr?p.ar+(h.bias.ar||0):p.tsf+(S.tsfT===30?(h.bias.t30||0):0))); v=x*h.r.rec.volume; h.m.set(k,v); } return v; };
+    return f?g(a)*(1-f)+g(a+1)*f:g(a); };
+  const [op,cl]=brkOpen(di), slots=[]; // never before opening; the last break ends by closing
+  for(let m=Math.max(brkMin(c.start),op),g=0;m<=Math.min(brkMin(c.end),cl-step)&&g<80;m+=step,g++) slots.push({m,tm:brkTm(m),places:0,spare:0,names:[]});
+  // a break of d minutes starting at m leaves the half-hours it touches, for that share of each
+  const W=new Map(), wts=(m,d)=>{ const k=m+"|"+d; let v=W.get(k); if(!v){ v=[];
+    for(let h=Math.floor(m/30)*30;h<m+d;h+=30){ const x=H[brkTm(h%1440)]; if(!x) continue; const ov=Math.min(m+d,h+30)-Math.max(m,h); if(ov>0) v.push([x,ov/30]); }
+    W.set(k,v); } return v; };
+  const cost=(s,d)=>{ const v=wts(s.m,d); return v.length?v.reduce((x,[h,w])=>x+val(h,h.B-h.R)-val(h,h.B-h.R-w),0):Infinity; };
+  const take=(s,d,sg)=>{ s.places+=sg; wts(s.m,d).forEach(([h,w])=>{ h.R+=sg*w; }); };
+  /* each rep's break time (5 min per working hour of their shift) in a long + a short break — 7h → 20 + 15 —
+     each its own place, at least 1½ h apart (1 h when that can't fit), inside the shift: not in its first hour or
+     last half-hour when it can be helped. A short shift (≤ one slot + 10 min) → one break */
+  const parts=d=>{ if(d-step<10) return [d]; const n=Math.ceil(d/step); return [step,...Array(n-1).fill(Math.round((d-step)/(n-1)))]; };
+  const fits=(r,s,d,strict)=>r.iv.some(([a,b])=>s.m>=a+(strict?60:0)&&s.m+d<=b-(strict?30:0));
+  const okFor=r=>r.p.map(d=>{ const st=slots.filter(s=>fits(r,s,d,true)); return st.length?st:slots.filter(s=>fits(r,s,d,false)); });
+  for(const r of reps){ r.d=Math.max(5,Math.round(r.h*5)); r.p=parts(r.d); r.ok=okFor(r);
+    if(r.p.length>1&&!r.ok.every(o=>o.length)){ r.p=[r.d]; r.ok=okFor(r); } } // two don't fit the shift → one
+  const inW=reps.filter(r=>r.ok.every(o=>o.length)), outside=reps.length-inW.length; // a shift outside the window: its break isn't on this sheet
+  inW.sort((a,b)=>Math.min(...a.ok.map(o=>o.length))-Math.min(...b.ok.map(o=>o.length))||b.d-a.d); // the tightest shifts first
+  // each break goes where it costs the FEWEST answered calls (losses grow with each extra break in a slot, so this
+  // keeps the day's answer rate as high as it can be); no forecast → spread evenly
+  const smart=hasFc&&!c.flat, free=s=>s.places<cap, cst=(s,d)=>smart?cost(s,d):s.places; // flat = no planning: spread evenly
+  const pick=(ok,d)=>{ let best=null,bc=Infinity; for(const s of ok){ if(!free(s)) continue; const v=cst(s,d); if(v<bc-1e-9){ bc=v; best=s; } } return best; };
+  const place=r=>{ const got=[];
+    if(r.p.length===1){ const s=pick(r.ok[0],r.p[0]); if(!s) return false; take(s,r.p[0],1); r.got=[[s,r.p[0]]]; return true; }
+    const A=r.ok[0].filter(free).map(s=>[s,cst(s,r.p[0])]), B=r.ok[1].filter(free).map(s=>[s,cst(s,r.p[1])]);
+    for(const gap of [90,60,step]){ let best=null,bc=Infinity; // the cheapest long + short pair far enough apart
+      for(const [a,ca] of A) for(const [b,cb] of B){ if(a===b||Math.abs(a.m-b.m)<gap) continue; if(ca+cb<bc-1e-9){ bc=ca+cb; best=[a,b]; } }
+      if(best){ take(best[0],r.p[0],1); take(best[1],r.p[1],1); got.push([best[0],r.p[0]],[best[1],r.p[1]]); break; } }
+    if(!got.length) return false;
+    for(let i=2;i<r.p.length;i++){ const s=pick(r.ok[i].filter(s=>got.every(([g])=>Math.abs(g.m-s.m)>=60)),r.p[i]);
+      if(!s){ got.forEach(([g,d])=>take(g,d,-1)); return false; } take(s,r.p[i],1); got.push([s,r.p[i]]); }
+    r.got=got; return true; };
+  let placed=0; for(const r of inW) if(place(r)){ placed++; if(r.name) r.got.forEach(([s,d])=>s.names.push([r.name,d])); }
+  slots.forEach(s=>s.names.sort((a,b)=>a[0].localeCompare(b[0],"he")));
+  let vol=0,ans=0,ans0=0; for(const h of Object.values(H)){ vol+=h.r.rec.volume; ans+=val(h,h.B-h.R); ans0+=val(h,h.B); }
+  const people=inW.length, avgD=people?Math.round(inW.reduce((x,r)=>x+r.d,0)/people):40, nP=inW.reduce((x,r)=>x+r.p.length,0);
+  const spare=Math.max(0,+(c.spare??10)), spareWant=Math.ceil(nP*spare/100); // + a spare (the sidur keeps moving)
+  // the spare: extra places where they cost least — room for changes, so the answer rate above doesn't count them
+  const late=slots.slice(Math.floor(slots.length/2)); // a break that slipped (a long call) moves later, never earlier
+  let extra=0; const sp=[], put=s=>{ take(s,step,1); s.spare++; sp.push(s); extra++; };
+  // a short shift first: a catch-up place later inside its own shift (its only other chance), then late in the day
+  for(const r of inW){ if(extra>=spareWant) break; if(!r.got||Math.min(...r.ok.map(o=>o.length))>3) continue;
+    const last=Math.max(...r.got.map(([s])=>s.m)), mine=r.ok.flat().filter(s=>s.m>last);
+    if(!mine.some(s=>s.spare)){ const s=pick(mine,step); if(s) put(s); } }
+  while(extra<spareWant){ const s=pick(late,step)||pick(slots,step); if(!s) break; put(s); }
+  sp.forEach(s=>wts(s.m,step).forEach(([h,w])=>{ h.R-=w; }));
+  slots.forEach(s=>{ const t=wts(s.m,step).reduce((a,[h])=>!a||h.B-h.R<a.B-a.R?h:a,null); s.known=!!t; s.on=t?t.B:null; s.left=t?t.B-t.R:null; s.need=t?t.r.reqEff:null; });
+  return {ds,c,cap,step,spare,slots,hasFc,present,sidur,people,placed,outside,nP,spareWant,extra,room:slots.length*cap,avgMin:avgD,
+    arDay:vol?ans/vol:null,arNoBrk:vol?ans0/vol:null};
+}
+/* when not every rep fits: the smallest change that fits everyone — an earlier first break, a later last
+   break, or more per slot — each with the day's answer rate it gives */
+function brkAlts(ds,bp){
+  const c=bp.c, out=[], ok=p=>p.placed>=p.people, [op,cl]=brkOpen(fromISO(ds).getDay());
+  for(let k=1;k<=6;k++){ const v=brkTm(brkMin(c.start)-k*bp.step); if(brkMin(v)<op) break; const p=breakPlan(ds,{start:v}); if(ok(p)){ out.push({k:"start",v,icon:"🕘",lab:t("brkAltStart",{s:v}),p}); break; } }
+  for(let k=1;k<=12;k++){ const v=brkTm(brkMin(c.end)+k*bp.step); if(brkMin(v)>cl-bp.step) break; const p=breakPlan(ds,{end:v}); if(ok(p)){ out.push({k:"end",v,icon:"🕓",lab:t("brkAltEnd",{e:v}),p}); break; } }
+  for(let v=bp.cap+1;v<=30;v++){ const p=breakPlan(ds,{cap:v}); if(ok(p)){ out.push({k:"cap",v,icon:"👥",lab:t("brkAltCap",{c:v}),p}); break; } }
+  return out;
+}
+function brkDay(){ // the day on screen: the one you picked, else today, else the sidur's first day
+  if(state.brkDate) return state.brkDate;
+  const today=iso(new Date()); if(computeDay(today)) return today;
+  const w=wfWeek()||state.week; return w||today;
+}
+function renderBreaks(){
+  const box=document.getElementById("brkBox"); if(!box) return;
+  if(ensureEmptyState("breaks")){ box.innerHTML=""; return; }
+  const ds=brkDay(), bp=breakPlan(ds), c=bp.c, esc=v=>String(v??"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");
+  document.getElementById("brkDate").value=ds;
+  document.getElementById("brkDayName").textContent=t("days")[fromISO(ds).getDay()];
+  renderScopeMenu("brkScopeWrap","brkScopeBtn","brkScopeMenu","wfScopeHint",
+    sc=>"🎧 "+(!sc||!sc.length?t("skillScopeAll"):(sc.length===1?sc[0]:t("skillScopeN",{n:sc.length}))));
+  // the day's answer at a glance: who has a place · the day's answer rate; red → the ways out, one click each
+  const pc=v=>v==null?"—":(v*100).toFixed(1)+"%", S=state.settings;
+  let hero="";
+  if(bp.people){
+    const st=bp.placed<bp.people?"bad":bp.extra<bp.spareWant?"warn":"ok", ex=bp.extra;
+    const cells=Array.from({length:bp.people},(_,i)=>`<i class="${i<bp.placed?"":"no"}"></i>`).join("")+Array.from({length:ex},()=>'<i class="sp"></i>').join("");
+    const covTip=t("brkLen",{m:bp.avgMin})+(bp.outside?"\n"+t("brkOutside",{n:bp.outside}):"");
+    hero=`<div class="brkSum"><div class="brkTile ${st}" title="${esc(covTip)}"><span class="brkBig">${st==="bad"?"✗":"✓"} ${bp.placed}/${bp.people}</span>`
+      +`<span class="mini">☕ ${t("brkCovL")}${ex?` · +${ex} ${t("brkSpareW")}`:""}</span><span class="brkCov">${cells}</span></div>`;
+    if(bp.hasFc&&bp.arDay!=null){ const x=v=>Math.max(0,Math.min(100,(v*100-50)*2)), fl=breakPlan(ds,{flat:true}); // the bar runs 50% → 100%
+      const gain=fl.arDay!=null?(bp.arDay-fl.arDay)*100:0;
+      hero+=`<div class="brkTile" title="${esc(t("brkArTip",{a:pc(bp.arDay),f:pc(fl.arDay),b:pc(bp.arNoBrk)}))}"><span class="brkBig">${pc(bp.arDay)}</span><span class="mini">${primName()} · ${t("brkArL")}</span>`
+        +`<span class="brkBar"><b class="a" style="width:${x(bp.arDay)}%"></b><u style="inset-inline-start:${x(S.target/100)}%"></u></span>`
+        +`<span class="mini">${gain>=0.05?"▲ +"+gain.toFixed(1)+" "+t("brkPts"):t("brkPtsEq")}</span></div>`; }
+    if(st==="bad") hero+=brkAlts(ds,bp).map(a=>`<button type="button" class="brkTile alt" data-alt="${a.k}" data-v="${a.v}"><span class="mini">${t("brkTryL")}</span>`
+      +`<span class="brkBig">${a.icon} ${a.lab}</span><span class="mini">${a.p.placed>=a.p.people?"✓ "+t("brkAltAll"):""}${a.p.hasFc&&a.p.arDay!=null?" · "+pc(a.p.arDay):""}</span></button>`).join("");
+    if(state._brkUndo) hero+=`<button type="button" class="undoPill" id="brkUndo">↶ ${esc(state._brkUndo.lab)}</button>`;
+    hero+=`</div>`;
+  }
+  // the sheet: a row per slot — its seats (filled = places), fewer than the procedure tinted, none = everyone answers
+  const seat=bp.cap<=8?16:Math.max(5,Math.floor(140/bp.cap)-3); // any cap fits the row
+  const rows=bp.slots.map(s=>{ const left=s.known?Math.round(s.left):null, under=s.known&&s.on>=s.need&&left<s.need;
+    const tip=s.known?t(bp.sidur?"brkTip":"brkTipT",{on:Math.round(s.on),p:s.places,l:left,need:s.need})+(under?"\n"+t("brkUnder"):""):t("brkTipNo");
+    const cls=(s.places>=bp.cap?"full":s.places>0?"some":"none")+(under?" tight":"");
+    return `<div class="brkRow ${cls}" title="${esc(tip)}"><span class="brkT">${s.tm}</span>`
+      +`<span class="brkSeats" style="--seat:${seat}px">${Array.from({length:bp.cap},(_,i)=>`<i class="${i<s.places-s.spare?"on":i<s.places?"sp":""}"></i>`).join("")}</span><b class="brkN">${s.places}</b></div>`; }).join("");
+  const anyTight=rows.includes(' tight"'), anySp=bp.slots.some(s=>s.spare), anyOff=bp.slots.some(s=>s.places<bp.cap);
+  box.innerHTML=hero+`<p class="brkLeg"><span class="brkSeats"><i class="on"></i></span> ${t("brkLegOn")}${anySp?` <span class="brkSeats"><i class="sp"></i></span> ${t("brkLegSp")}`:""}${anyOff?` <span class="brkSeats"><i></i></span> ${t("brkLegOff")}`:""}${anyTight?` <span class="lgT"></span> ${t("brkLegT")}`:""}</p><div class="brkGrid" style="--brkRows:${Math.ceil(bp.slots.length/Math.max(1,Math.min(4,Math.floor(((box.clientWidth||1100)+14)/264))))}">${rows}</div>`;
+  state._brkPlan=bp; // what the exports print
+  box.querySelectorAll("[data-alt]").forEach(b=>b.addEventListener("click",()=>{ const o=state.settings.brk=state.settings.brk||{};
+    const k=b.dataset.alt==="end"&&fromISO(ds).getDay()===5?"friEnd":b.dataset.alt, was=k==="cap"?bp.cap:k==="start"?c.start:c.end;
+    state._brkUndo={prev:JSON.stringify(o),lab:t(k==="cap"?"brkBackCap":"brkBackTm",{v:was})};
+    o[k]=k==="cap"?+b.dataset.v:b.dataset.v; saveState(); renderBreaks(); brkSettings(); }));
+  const un=box.querySelector("#brkUndo"); if(un) un.addEventListener("click",()=>{ state.settings.brk=JSON.parse(state._brkUndo.prev); state._brkUndo=null;
+    saveState(); renderBreaks(); brkSettings(); });
+}
+/* a slot's lines on the sheet: who goes (their minutes), blank lines for the rest, the catch-up places, "—" when closed */
+function brkLines(s){ const L=s.names.map(([n,d])=>n+" ("+d+")"); while(L.length<s.places-s.spare) L.push("");
+  for(let i=0;i<s.spare;i++) L.push(t("brkSpLine")); return L.length?L:["—"]; }
+/* the floor sheet — time · places · who goes; RTL in Hebrew. Word (.doc), PDF (print), Excel (.xlsx) */
+function brkSheetHtml(bp){
+  const dn=t("days")[fromISO(bp.ds).getDay()], rtl=lang==="he", esc=v=>String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;");
+  const head=`<tr><th>${t("brkTime")}</th><th>${t("brkPlaces")}</th><th class="nm">${t("brkName")}</th></tr>`;
+  const body=bp.slots.map(s=>{ const L=brkLines(s), n=L.length;
+    return L.map((x,i)=>`<tr>${i?"":`<th rowspan="${n}">${s.tm}</th><td class="p" rowspan="${n}">${s.places}</td>`}<td${s.places?"":' class="x"'}>${esc(x)}</td></tr>`).join(""); }).join("");
+  return `<!doctype html><html dir="${rtl?"rtl":"ltr"}"><head><meta charset="utf-8"><title>${esc(t("brkSheetT",{d:dn+" "+fmtD(bp.ds)}))}</title><style>
+    body{font-family:Arial,sans-serif;margin:24px;color:#15263a} h2{font-size:18px;margin:0 0 4px} p{font-size:12px;color:#6b7c90;margin:0 0 12px}
+    table{border-collapse:collapse;width:100%} th,td{border:1px solid #9aa9b9;padding:6px;font-size:13px;text-align:center} th.nm{width:60%}
+    thead th{background:#0d2a4d;color:#fff} tbody th{background:#f2f5f9;white-space:nowrap} td.p{font-weight:700} td.x{color:#c3cddb;background:#f8f9fb}
+    tr.exc th,tr.exc td{border-style:dashed}</style></head><body>
+    <h2>${esc(t("brkSheetT",{d:dn+" "+fmtD(bp.ds)}))}</h2><p>${esc(t("brkSheetSub",{s:bp.step,c:bp.cap}))}</p>
+    <table><thead>${head}</thead><tbody>${body}</tbody></table></body></html>`;
+}
+function brkExport(kind){
+  const bp=state._brkPlan; if(!bp) return;
+  const name=t("brkFile")+" "+bp.ds;
+  if(kind==="word") downloadFile(name+".doc",brkSheetHtml(bp),"application/msword");
+  else if(kind==="xlsx"){ const R=[[t("brkTime"),t("brkPlaces"),t("brkName")]], M=[];
+    bp.slots.forEach(s=>{ const L=brkLines(s), n=L.length, r0=R.length+1;
+      L.forEach((x,i)=>R.push(i?["","",x]:[s.tm,s.places,x]));
+      if(n>1){ M.push("A"+r0+":A"+(r0+n-1)); M.push("B"+r0+":B"+(r0+n-1)); } });
+    downloadBytes(name+".xlsx",xlsxBytes(R,{name:t("brkFile")+" "+fmtD(bp.ds).slice(0,5).replace("/","-"),rtl:lang==="he",widths:[12,10,34],merges:M,header:true}),
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"); }
+  else if(kind==="text"){ const dn=t("days")[fromISO(bp.ds).getDay()];
+    const txt=t("brkSheetT",{d:dn+" "+fmtD(bp.ds)})+"\n"+bp.slots.map(s=>s.tm+" — "+(s.names.length?s.names.map(x=>x[0]).join(", "):s.places+" "+t("brkPlaces"))+(s.spare?" (+"+s.spare+" "+t("brkSpareW")+")":"")).join("\n");
+    navigator.clipboard&&navigator.clipboard.writeText(txt); showToast("📋 "+t("brkCopied"),true); }
+  else{ const w=window.open("","_blank"); if(!w){ showToast("⚠ "+t("brkPopup"),false); return; }
+    w.document.write(brkSheetHtml(bp)); w.document.close(); w.focus(); setTimeout(()=>w.print(),250); }
+}
+function brkSettings(){ // ⚙ the procedure's rules: first / last break (Friday's too), slot length, cap, spare
+  const c=brkCfg(), box=document.getElementById("brkSet"); if(!box) return;
+  const f=(k,lab,inp)=>`<label class="mini">${t(lab)} ${inp}</label>`;
+  const hh=(k,v,di)=>{ const [lo,hi]=brkOpen(di), x0=Math.min(hi-c.step,Math.max(lo,brkMin(v))); let o="";
+    for(let m=lo;m<=hi-5;m+=5){ const x=brkTm(m); o+=`<option${m===x0-x0%5?" selected":""}>${x}</option>`; }
+    return `<select class="hpIn" data-k="${k}" style="width:80px">${o}</select>`; };
+  box.innerHTML=f("start","brkFirst",hh("start",c.start,0))
+    +f("end","brkLast",hh("end",c.end,0))+f("friEnd","brkLastFri",hh("friEnd",(state.settings.brk||{}).friEnd||"12:00",5))
+    +f("step","brkStep",`<input type="number" min="5" max="60" step="5" class="hpIn" data-k="step" value="${c.step}" style="width:56px">`)
+    +f("cap","brkCap",`<input type="number" min="1" max="30" class="hpIn" data-k="cap" value="${c.cap}" style="width:56px">`)
+    +f("spare","brkSpare",`<input type="number" min="0" max="50" step="5" class="hpIn" data-k="spare" value="${c.spare??10}" style="width:56px">`)
+    +`<p class="hpHint">${t("brkHoursHint")}</p>`;
+  box.querySelectorAll("[data-k]").forEach(inp=>inp.addEventListener("change",()=>{ const k=inp.dataset.k, b=state.settings.brk=state.settings.brk||{};
+    b[k]=inp.type==="number"?+inp.value:inp.value; state._brkUndo=null; saveState(); renderBreaks(); }));
+}
 function renderAll(){
   renderSetSkills();
   dirtyPages.add("matrix"); dirtyPages.add("trends"); dirtyPages.add("recruit");
-  dirtyPages.add("workforce"); dirtyPages.add("scheduler");
+  dirtyPages.add("workforce"); dirtyPages.add("scheduler"); dirtyPages.add("breaks");
   renderDirty(); saveState();
 }
 
@@ -9750,7 +10059,7 @@ document.addEventListener("keydown",e=>{
 });
 
 /* ---------------- Wiring ---------------- */
-const pages=["home","matrix","workforce","scheduler","trends","recruit","settings"];
+const pages=["home","matrix","workforce","scheduler","breaks","trends","recruit","settings"];
 function closeEditor(){ ce.style.display="none"; ceCtx=null; document.getElementById("ceAgRow").style.display=""; document.getElementById("ceFutRow").style.display="none"; }
 /* header height feeds the one-screen matrix layout (the nav can wrap on narrow screens) */
 function fitMatrix(){
@@ -10573,7 +10882,7 @@ const winBind=(id,key)=>{ const el=document.getElementById(id); el.value=state.s
 winBind("setDayStart","dayStart"); winBind("setDayEnd","dayEnd"); winBind("setFriEnd","friEnd");
 
 /* the courses, edited in place: name · trainees · start · days · hire % → floor date · reps on the floor */
-function cohortsChanged(){ state.fcCache.clear(); saveState(); renderAll(); }
+function cohortsChanged(keepUndo){ if(!keepUndo) state._planUndo=null; state.fcCache.clear(); saveState(); renderAll(); }
 /* what to bring: the course file's basic shape — a mini table in the drop box + a ready template to fill */
 function crsTemplateRows(){
   const d=iso(new Date());
@@ -10694,7 +11003,8 @@ function hirePlan(){
       sug.push(s); G-=s.count*ph;
     }
   }
-  months.forEach(mo=>{ mo.E1=expected(mo.mid,true); if(mo.E0==null) mo.E0=expected(mo.mid,false); });
+  months.forEach(mo=>{ mo.E1=expected(mo.mid,true); if(mo.E0==null) mo.E0=expected(mo.mid,false);
+    mo.H0=H0; mo.leave=H0*S.attrition/100*Math.max(0,dd(today,mo.mid))/30; });
   const total=[...add.values()].reduce((a,b)=>a+b,0)+sug.reduce((a,s)=>a+s.count,0);
   return {months,courses,add,sug,total};
 }
@@ -10705,34 +11015,54 @@ function renderHirePlan(){
   if(!p.months.length){ // the forecast stops before the coming months: the box says so, quietly
     box.innerHTML=`<div class="hpTitle">🎯 ${t("hpQ")}</div><p class="hpSub">${t("hpNoFc",{d:state.horizonISO?fmtD(state.horizonISO):"—"})}</p>`; return; }
   const esc=v=>String(v??"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");
-  const loc=lang==="he"?"he-IL":"en-GB", mLbl=m=>new Date(+m.slice(0,4),+m.slice(5,7)-1,1).toLocaleDateString(loc,{month:"short"});
+  const loc=lang==="he"?"he-IL":"en-GB", mLbl=(m,long)=>new Date(+m.slice(0,4),+m.slice(5,7)-1,1).toLocaleDateString(loc,{month:long?"long":"short"});
   const d5=ds=>fmtD(ds).slice(0,5), last=p.months[p.months.length-1];
+  const short=p.months.filter(mo=>mo.N-mo.E1>0.5); // still short WITH the additions = the courses can't reach them in time
   let html=`<div class="hpTitle">🎯 ${t("hpQ")} <span class="info" data-tip="${esc(t("tipHp"))}" tabindex="0">i</span></div>`;
+  // undo: the last update can be taken back, exactly
+  if(state._planUndo) html+=`<div class="hpUndo">✓ ${t("hpDone",{n:state._planUndo.n})} <button type="button" class="undoPill" id="hpUndo">↶ ${t("hpUndo")}</button></div>`;
+  // the answer — "yes" only when EVERY month reaches the target
   html+=p.total>0
     ?`<div class="hpHero"><span class="hpN">+${p.total}</span> <span>${t("hpRecruits")}${p.sug.length===1?t("hpMoreCourse1"):p.sug.length?t("hpMoreCourses",{k:p.sug.length}):""}</span></div>`
+    :short.length?`<div class="hpHero warn">${t("hpShortN",{n:short.length})}</div>`
     :`<div class="hpHero ok">✓ ${t("hpOkMonths",{m:mLbl(last.m)})}</div>`;
   html+=`<p class="hpSub">${t("hpTarget",{m:primName(),t:S.target})}</p>`;
-  // one picture: per month, the reps needed (tick) vs the reps expected — with the additions when there are any
-  const anyAdd=p.total>0;
+  // one picture: per month, needed (tick) vs expected — with the additions when there are any. A month opens its numbers.
+  const anyAdd=p.total>0, pick=state._hpMonth;
   const cols=p.months.map(mo=>{ const gap=Math.ceil(mo.N-mo.E1-0.05);
-    return {key:mo.m,label:mLbl(mo.m),iron:anyAdd?mo.E0:0,sched:mo.E1,need:mo.N,foot:gap>0?"−"+gap:"✓",cls:gap>0?"bad":"good",
+    return {key:mo.m,label:mLbl(mo.m),iron:anyAdd?mo.E0:0,sched:mo.E1,need:mo.N,foot:gap>0?"−"+gap:"✓",cls:gap>0?"bad":"good",pick:pick===mo.m,
       tip:t("hpTipMo",{n:mo.N,a:Math.round(mo.E0),b:anyAdd?" → "+Math.round(mo.E1):""})}; });
   const leg=(anyAdd?[["ir",t("hpLgPlan")],["sd",t("hpLgWith")]]:[["sd",t("hpLgPlan")]]).concat([["nd",t("hpLgNeed")]]);
   html+=`<div class="hpChart">${ironBars(cols,70)}</div><div class="legend rdyLeg">${leg.map(([k,l])=>`<span><i class="lg-${k}"></i>${l}</span>`).join("")}</div>`;
-  // months the courses can't reach in time — said with the date they first can
-  p.months.filter(mo=>mo.N-mo.E1>0.5&&mo.late).forEach(mo=>{ html+=`<p class="hpSub">${t("hpLateMo",{m:mLbl(mo.m),x:Math.ceil(mo.N-mo.E1),d:d5(mo.late)})}</p>`; });
+  const mo=p.months.find(x=>x.m===pick);
+  html+=mo?`<p class="hpMonth"><b>${mLbl(mo.m,true)}:</b> ${t("hpCalc",{n:mo.N,e:Math.round(mo.E0),h:mo.H0,l:Math.round(mo.leave),g:Math.round(mo.E0-mo.H0+mo.leave)})}${anyAdd&&mo.E1-mo.E0>0.5?" "+t("hpCalcAdd",{a:Math.round(mo.E1-mo.E0)}):""}</p>`
+    :`<p class="mini hpHint">${t("hpPickHint")}</p>`;
+  // months the courses can't reach in time — with the date they first can
+  short.forEach(x=>{ html+=`<p class="hpSub">${t(x.late?"hpLateMo":"hpShortMo",{m:mLbl(x.m),x:Math.ceil(x.N-x.E1),d:x.late?d5(x.late):""})}</p>`; });
+  // the changes, each with its own tick — apply what you choose
   const rows=p.courses.filter(x=>p.add.get(x.i)).map(x=>{ const n=p.add.get(x.i), full=x.count+n>=siteMax(x.site);
-    return `<div class="hpRow"><span class="hpNm">${esc(x.c.name)}</span><span class="mini">${esc(x.site||t("hpOther"))} · ${t("cohFloor")} ${d5(x.floor)}</span><span>${x.count} → <b>${x.count+n}</b> <span class="hpPlus">+${n}</span>${full?` <span class="mini">${t("hpFull")}</span>`:""}</span></div>`; });
-  p.sug.forEach(s=>rows.push(`<div class="hpRow sug"><span class="hpNm">➕ ${t("hpNew")} · ${esc(s.site)}</span><span class="mini">${t("cohStart")} ${d5(s.start)} → ${t("cohFloor")} ${d5(s.floor)}</span><span><b>${s.count}</b> ${t("cohCount")}</span></div>`));
+    return `<label class="hpRow"><input type="checkbox" checked data-a="${x.i}"><span class="hpNm">${esc(x.c.name)}</span><span class="mini">${esc(x.site||t("hpOther"))} · ${t("cohFloor")} ${d5(x.floor)}</span><span>${x.count} → <b>${x.count+n}</b> <span class="hpPlus">+${n}</span>${full?` <span class="mini">${t("hpFull")}</span>`:""}</span></label>`; });
+  p.sug.forEach((s,k)=>rows.push(`<label class="hpRow sug"><input type="checkbox" checked data-s="${k}"><span class="hpNm">➕ ${t("hpNew")} · ${esc(s.site)}</span><span class="mini">${t("cohStart")} ${d5(s.start)} → ${t("cohFloor")} ${d5(s.floor)}</span><span><b>${s.count}</b> ${t("cohCount")}</span></label>`));
   if(rows.length) html+=`<div class="hpList">${rows.join("")}</div><button type="button" class="btn navy applymini" id="hpApply">${t("hpApply")}</button>`;
-  // the one limit you may want to change: class size per location (length comes from the courses themselves)
+  // how it works (3 steps) + the one limit you may want to change: class size per location
   const sites=[...new Set(SITES.map(s=>s[0]).concat(state.cohorts.map(courseSite).filter(Boolean)))];
-  html+=`<details class="hpLim"><summary>${t("hpLimits")}</summary><div class="hpLimRow">${sites.map(s=>`<label class="mini">${esc(s)} <input type="number" min="1" max="60" class="hpIn" style="width:52px" data-site="${esc(s)}" value="${siteMax(s)}"></label>`).join("")}</div></details>`;
+  html+=`<details class="hpLim"><summary>${t("hpHow")}</summary><ol class="hpSteps"><li>${t("hpStep1")}</li><li>${t("hpStep2")}</li><li>${t("hpStep3")}</li></ol></details>`
+    +`<details class="hpLim"><summary>${t("hpLimits")}</summary><div class="hpLimRow">${sites.map(s=>`<label class="mini">${esc(s)} <input type="number" min="1" max="60" class="hpIn" style="width:52px" data-site="${esc(s)}" value="${siteMax(s)}"></label>`).join("")}</div></details>`;
   box.innerHTML=html;
-  const ap=box.querySelector("#hpApply"); if(ap) ap.addEventListener("click",()=>{
-    p.add.forEach((n,i)=>{ if(state.cohorts[i]) state.cohorts[i].count+=n; });
-    p.sug.forEach(s=>state.cohorts.push({name:t("courseDefault")+" "+s.site+" "+d5(s.start),site:s.site,count:s.count,start:s.start,duration:s.duration,yield:S.defYield||85,skill:"",wd:true}));
-    showToast("✅ "+t("hpApplied",{n:p.total}),true); cohortsChanged(); });
+  box.querySelector(".ouWrap").querySelectorAll(".rdyCol").forEach(b=>b.addEventListener("click",()=>{ state._hpMonth=state._hpMonth===b.dataset.k?null:b.dataset.k; renderHirePlan(); }));
+  const ap=box.querySelector("#hpApply");
+  if(ap){ const sync=()=>{ ap.disabled=!box.querySelector(".hpList input:checked"); };
+    box.querySelectorAll(".hpList input").forEach(c=>c.addEventListener("change",sync));
+    ap.addEventListener("click",()=>{
+      const prev=JSON.stringify(state.cohorts); let n=0;
+      box.querySelectorAll(".hpList input[data-a]:checked").forEach(c=>{ const i=+c.dataset.a, k=p.add.get(i); if(state.cohorts[i]&&k){ state.cohorts[i].count+=k; n+=k; } });
+      box.querySelectorAll(".hpList input[data-s]:checked").forEach(c=>{ const s=p.sug[+c.dataset.s]; if(!s) return;
+        state.cohorts.push({name:t("courseDefault")+" "+s.site+" "+d5(s.start),site:s.site,count:s.count,start:s.start,duration:s.duration,yield:S.defYield||85,skill:"",wd:true}); n+=s.count; });
+      if(!n) return;
+      state._planUndo={prev,n}; showToast("✅ "+t("hpApplied",{n}),true); cohortsChanged(true); }); }
+  const un=box.querySelector("#hpUndo"); if(un) un.addEventListener("click",()=>{
+    try{ state.cohorts=JSON.parse(state._planUndo.prev); }catch(e){}
+    state._planUndo=null; showToast("↶ "+t("hpUndone"),true); cohortsChanged(); });
   box.querySelectorAll("[data-site]").forEach(inp=>inp.addEventListener("change",()=>{
     (S.siteMax=S.siteMax||{})[inp.dataset.site]=Math.max(1,Math.min(60,+inp.value||20)); saveState(); renderHirePlan(); }));
 }
@@ -10740,11 +11070,16 @@ function renderHirePlan(){
 function courseDefaults(){
   return {yield:state.settings.defYield||85,count:10,dur:12}; // 12 working days
 }
-/* same course again (name + start) replaces itself — dropping an updated plan never doubles it */
+/* the same course again replaces itself — re-dropping a plan never doubles it. Same = the same name (spaces,
+   quote marks and case aside) and start, or the same location, start and length (a course renamed in the file) */
+function courseKey(s){ return String(s||"").replace(/[״"׳'`]/g,"\"").replace(/\s+/g," ").trim().toLowerCase(); }
 function addCourses(list){
-  let n=0; for(const c of list){ const i=state.cohorts.findIndex(x=>x.name===c.name&&x.start===c.start);
-    if(i>=0) state.cohorts[i]={...state.cohorts[i],...c}; else state.cohorts.push({...c,skill:""}); n++; }
-  return n;
+  let a=0,u=0;
+  for(const c of list){
+    const i=state.cohorts.findIndex(x=>x.start===c.start&&(courseKey(x.name)===courseKey(c.name)
+      ||(courseSite(x)&&courseSite(x)===courseSite(c)&&+x.duration===+c.duration)));
+    if(i>=0){ state.cohorts[i]={...state.cohorts[i],...c}; u++; } else { state.cohorts.push({...c,skill:""}); a++; } }
+  return {a,u};
 }
 document.getElementById("cohNew").addEventListener("click",()=>{
   const d=courseDefaults();
@@ -10894,8 +11229,8 @@ function ingestCourseFile(f){
       let list=[];
       for(const g of grids){ list=parseCoursesGrid((g||[]).filter(x=>x&&x.length),courseDefaults()); if(list.length) break; }
       if(!list.length){ showToast("⚠ "+t("crsErr"),false); return; }
-      const n=addCourses(list);
-      showToast("✅ "+t("crsOk",{n}),true);
+      const got=addCourses(list); // new ones · the ones already there (updated, never doubled)
+      showToast("✅ "+[got.a?t("crsNew",{n:got.a}):"",got.u?t("crsUpd",{n:got.u}):""].filter(Boolean).join(" · "),true);
       cohortsChanged(); // course graduates scale forecast agents
     }catch(err){ showToast("⚠ "+t("dropErrParse"),false); }
     finally{ endBusy(); }
@@ -10918,6 +11253,13 @@ document.getElementById("trnSave").addEventListener("click",()=>{ const v=trnRea
   if(Object.keys(v.byDay).length&&v.e>v.s) state.trainees[state.week]=v; else delete state.trainees[state.week];
   S.trnPct=v.pct; S.trnWin={s:v.s,e:v.e,days:[0,1,2,3,4]}; saveState(); saveData(); memo.clear(); renderAll(); });
 document.getElementById("trnClear").addEventListener("click",()=>{ if(state.trainees) delete state.trainees[state.week]; saveData(); memo.clear(); renderAll(); });
+// ☕ breaks: the day (‹ date ›), today's attendance ±, the exports
+{ const go=d=>{ state.brkDate=d; renderBreaks(); };
+  document.getElementById("brkDate").addEventListener("change",e=>{ if(e.target.value) go(e.target.value); });
+  const step=k=>{ let d=brkDay(), g=0; do{ d=addDays(d,k); }while(fromISO(d).getDay()===6&&g++<3); go(d); };
+  document.getElementById("brkPrev").addEventListener("click",()=>step(-1));
+  document.getElementById("brkNext").addEventListener("click",()=>step(1));
+  document.getElementById("brkExpMenu").addEventListener("click",e=>{ const b=e.target.closest("[data-fmt]"); if(b) brkExport(b.dataset.fmt); }); }
 // Friday rotation switch (in both Friday cards' titles): a click must not fold the card
 document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest(".friEverySeg button"); if(!b) return; e.preventDefault();
   state.settings.friEvery=+b.dataset.v; saveState(); renderWorkforce(); renderFriday(); });
@@ -10999,7 +11341,7 @@ function saveData(){
       capSkills:state.capSkills, capSkillMap:state.rosterCapSkill, skillList:state.skillList,
       un:state.unallocRows, schedSkills:state.schedSkills, ironDraft:state.ironDraft||null, emptyUn:state._emptyUn||null, emptyVac:state._emptyVac||null,
       week:state.week, wfFilter:state.wfFilter, cons:state.weeklyConstraints,
-      schedOut:state._schedOut, schedExt:state.appliedExtensions, schedLocks:[...(state.schedLocks||[])], schedLockTL:[...(state.schedLockTL||[])], schedDeclined:state.schedDeclined||{}, agWhatIf:[...state.agWhatIf], trainees:state.trainees||{} }));
+      schedOut:state._schedOut, schedExt:state.appliedExtensions, schedLocks:[...(state.schedLocks||[])], schedLockTL:[...(state.schedLockTL||[])], schedDeclined:state.schedDeclined||{}, agWhatIf:[...state.agWhatIf], trainees:state.trainees||{}, brkAdj:state.brkAdj||{}, brkPresent:state.brkPresent||{} }));
   }catch(e){} // quota exceeded on huge files → data simply stays transient
 }
 function loadData(){
@@ -11036,6 +11378,8 @@ function loadData(){
     rebuildRosterCoverage(); // NB: this clears any optimized preview AND what-ifs — restore both AFTER
     state.agWhatIf=new Map(Array.isArray(s.agWhatIf)?s.agWhatIf:[]);
     state.trainees=s.trainees&&typeof s.trainees==="object"?s.trainees:{};
+    state.brkAdj=s.brkAdj&&typeof s.brkAdj==="object"?s.brkAdj:{};
+    state.brkPresent=s.brkPresent&&typeof s.brkPresent==="object"?s.brkPresent:{};
     // a persisted optimizer result: the sidur + matrix "Optimized" toggle survive a refresh
     state.appliedExtensions=Array.isArray(s.schedExt)?s.schedExt:[];
     state.schedLocks=new Set(Array.isArray(s.schedLocks)?s.schedLocks:[]); state.schedLockTL=new Set(Array.isArray(s.schedLockTL)?s.schedLockTL:[]); state.schedDeclined=s.schedDeclined||{};

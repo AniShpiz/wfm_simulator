@@ -88,6 +88,7 @@ Current top-level page model:
 - Date Trends
 - Workforce and Iron
 - Auto-Scheduler
+- Breaks (how many can be on break per slot, by the day's forecast)
 - Recruitment and Training
 - Advanced Settings
 

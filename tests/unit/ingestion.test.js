@@ -92,3 +92,8 @@ test("parseCoursesGrid: rows carry computed duration and normalized yield", () =
   assert.equal(r[0].yield, 80);      // 0.8 → 80%
   assert.equal(r[0].count, 12);
 });
+
+test("csvToGrid: a quote inside a field is a letter (ב\"ש, סה\"כ); quoted fields still work", () => {
+  assert.deepEqual(S.csvToGrid('קורס ב"ש 1,2026-11-01,12\nסה"כ,,40'), [["קורס ב\"ש 1", "2026-11-01", "12"], ["סה\"כ", "", "40"]]);
+  assert.deepEqual(S.csvToGrid('"a,b",c\n"קורס ב""ש",1'), [["a,b", "c"], ["קורס ב\"ש", "1"]]);
+});
