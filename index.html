@@ -11514,6 +11514,10 @@ function ingestCourseFile(f){
         const heads=Object.keys(res.json[0]||{});
         grids=[[heads,...res.json.map(o=>heads.map(h=>o[h]))]];
       }
+      // a forecast or a sidur dropped on this page goes where it belongs (the course reader would find "courses" in anything)
+      const other=(res.grids||[]).some(s=>/ברזל|iron|סידור|roster/i.test((s&&s.name)||""))
+        ||grids.some(g=>{ const gg=(g||[]).filter(x=>x&&x.length), hd=gg.length?findHeader(gg):null, k=hd?classifyGrid(hd.map,null):null; return k==="forecast"||k==="roster"; });
+      if(other){ setTimeout(()=>ingestFile(f),0); return; }
       let list=[];
       for(const g of grids){ list=parseCoursesGrid((g||[]).filter(x=>x&&x.length),courseDefaults()); if(list.length) break; }
       if(!list.length){ showToast("⚠ "+t("crsErr"),false); return; }
