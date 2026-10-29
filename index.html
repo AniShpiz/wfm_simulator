@@ -455,7 +455,9 @@ td.gapCell.closed{background:#d6f3e2!important;color:#0f6a3f;font-weight:700}
 @media (max-width:1100px){ .crsGrid{grid-template-columns:minmax(0,1fr)} }
 .cohT input.cohIn[data-k=name]{min-width:120px}
 .crsUndo{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:.8rem;color:var(--emerald);background:#eef8f1;border-radius:8px;padding:5px 10px;margin:0 0 8px}
-.hpBeyond{color:var(--crimson);font-size:.8rem;margin:2px 0 0}
+.hpScen{display:inline-block;font-size:.78rem;font-weight:600;color:#7a4b00;background:#fff3cd;border:1px solid #f0d9a6;border-radius:999px;padding:2px 10px;margin:4px 0 0}
+.hpWas{font-size:.78rem;font-weight:500;color:var(--muted)} .hpProd{display:block;color:var(--muted);font-size:.74rem;margin-top:2px}
+.hpBeyond{color:var(--crimson);font-size:.8rem;margin:2px 0 0} .hpWhy{font-size:.76rem;color:var(--muted);margin:1px 0 0}
 .cohT tr.hl td{background:#fff3cd!important;transition:background .15s} .cohT tr.ovl td:first-child{box-shadow:inset -4px 0 0 #e3a72f} .hpRow[data-ci]{cursor:pointer} .hpFor{font-size:.72rem;color:var(--muted);white-space:nowrap}
 /* ☕ breaks */
 .brkDay{color:var(--navy)} .brkAdj{display:inline-flex;align-items:center;gap:4px;font-size:.8rem;color:var(--muted)}
@@ -498,6 +500,9 @@ label.hpRow{grid-template-columns:auto minmax(110px,1.2fr) 1.5fr auto;cursor:poi
 #hpApply:disabled{opacity:.45;cursor:default} .hpLim{margin-top:8px} .hpLim>summary{cursor:pointer;font-size:.78rem;color:var(--muted)}
 .hpLimRow{display:flex;flex-wrap:wrap;gap:12px;margin-top:6px}
 .hpRules{border-collapse:collapse;margin:6px 0 4px;font-size:.78rem} .hpRules th,.hpRules td{padding:2px 8px;text-align:center} .hpRules tbody th{text-align:start;font-weight:600}
+.hpRuleBox{margin:8px 0 2px} .hpRule{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:4px 0}
+.hpChip{border:1px solid var(--border);background:#fff;color:var(--muted);border-radius:999px;padding:3px 11px;font:inherit;font-size:.78rem;cursor:pointer}
+.hpChip.on{background:var(--navy);border-color:var(--navy);color:#fff;font-weight:600} .hpRuleAdd{font-size:.76rem} .hpRuleBox .hpLink{margin:2px 0 0}
 .hpRules thead th{color:var(--muted);font-weight:600;background:none;border:none} .hpRules td,.hpRules tbody th{border:none;background:none} .hpLink{display:flex;align-items:center;gap:6px;margin:4px 0 0}
 .cohT select.cohSite{border:1px solid transparent;background:transparent;font:inherit;font-size:.78rem;padding:2px}
 .cohT select.cohSite:hover{border-color:var(--border)}
@@ -1896,7 +1901,7 @@ en:{
   tipTrain:"Enter a course's start and length; graduates join on start + duration, by the certification rate.",
   cohName:"Course name", cohCount:"Trainees", cohStart:"Course start", cohDur:"Duration (days)", cohYield:"Yield rate (%)", cohAdd:"Add course",
   courseDefault:"Course",
-  tipDur:"Course length in working days (Sun–Thu); closed holidays don't count.",
+  tipDur:"The course's length in course days (Sun–Thu); closed holidays don't count.",
   tipYield:"Share of trainees expected to certify and start working. Also the default for course files that don't give one.",
   cohLine:"{name} — {n} trainees × {y}% yield → ~{m} reps starting {d}",
   cohFloor:"Floor entry", cohReps:"~Reps on floor",
@@ -1999,7 +2004,7 @@ en:{
   trTipDay:"click = its row in the table", trTipOpen:"click = open its days", relNeed:"Needs at least 6 actual periods — pick days or a longer range.",
   relWeak:"Weakly", relMod:"Moderately", relStrong:"Strongly", relSent:"{s} related (r = {r}): every {dx} ({x}) ≈ {dy} ({y}).", relNone:"{x} and {y} barely move together here (r = {r}).",
   ibSum:"{p}% of the iron in the sidur",
-  cohDurS:"Work days", cohSite:"Location", hpOkMonths:"Yes — every month through {m}", hpShortN:"Not every month: {n} months stay short", hpShortMo:"{m}: {x} short", hpDone:"Added {n} trainees to the courses.", hpUndo:"Undo", hpUndone:"The courses are back as they were", repBtn:"📄 Executive report", repPick:"What goes in", repKpi:"The numbers", repTraj:"The decision (trajectory)", repPlan:"Are your courses enough — month by month", repGantt:"Courses Gantt", repWi:"Reaching the target (What-If)", repOut:"Headcount outlook", repRules:"Course rules", repTitle:"Recruitment & training — executive summary", repSub:"Made {d} · from the simulator, by the forecast and the courses as loaded", repEmpty:"Nothing picked.", repMonth:"Month", repGap:"Short", repAdds:"What to add, by course", repAdd:"Add", repFor:"For", repGanttKey:"Painted = the course is running (start → on the floor) · ב\"ש blue · רחובות green · בית amber · red frame = this week", repTgt:"target {t}%: reached {d}", repNoReach:"target {t}%: not reached within the horizon", repLevers:"Levers as set", repDate:"Date", repToday:"Today", repHc:"Projected reps", repFile:"executive-summary", repHowKpi:"reps = scheduled in the answering skills · max deficit = needed − scheduled, worst day · hire rate = certified ÷ trainees", repHowTraj:"the recruitment line comes from 'are your courses enough' · the profile = the weekly window with most of the shortfall", repHowMon:"calls = the days summed · answer rate and AHT = weighted by calls · hours = needed × ½ h ÷ availability · actual = measured, forecast = the model", repHowPlan:"needed = today's team × needed staffing ÷ the team's staffing · expected = the month's average of today − leavers + graduates · additions = the earliest course first, up to its class size", repHowGantt:"from the start to the first day on shifts, in work days · closed holidays push it", repHowWi:"Erlang A on the first forecast week, with the levers as set · reps week by week = today − leavers + graduates", repHowOut:"today, less monthly attrition, plus course graduates and recruitment simulations", repHowRules:"class size = most trainees · work days = a new course's length · same letter = never at the same time", repMon:"Month by month (Date Trends)", repMix:"actual + forecast", repFc:"forecast", repAct:"actual", repGross:"Hours to schedule (gross)", repMet:"Days at {t}%", repScope:"Answering skills counted: {s}", repAll:"the whole center", repLensReal:"forecast weeks with attrition & courses", repLensToday:"forecast weeks with today's team (the iron)", hpTotal:"total {n}", hpGroup:"Not at the same time", hpGroupHint:"Locations with the same letter never run a course at the same time.", crsOverlap:"Runs at the same time as {n} (same location or group)", hpClass:"Class size", hpDays:"Work days", hpNoOverlap:"ב\"ש and רחובות never at the same time (one course between them)", hpLenDone:"{s}: {n} upcoming courses set to {d} work days", crsDeleted:"Removed {n}", hpFor:"for {m}", hpBeyond:"{m}: no course can graduate in time", hpBeyondD:"{m}: no course can graduate in time — the earliest one graduates {d}", trajHireP:"Recruit {n} more trainees — the months a course can still reach; {k} months stay short (no course graduates in time). By course in the training pipeline.", hpPickHint:"Click a month — its numbers", hpCalc:"needed {n} · expected {e} = {h} today − {l} leaving + {g} graduates (a new rep is at full speed within a month)", hpCalcAdd:"· with the additions +{a}", hpHow:"? How it is worked out", hpStep1:"Every month, by the forecast: the reps needed to hold the answer-rate target, against the reps you will have — today's, minus those who leave, plus course graduates.", hpStep2:"A short month: trainees go into the earliest course that graduates in time, up to its class size.", hpStep3:"Still short: one more course at the location that can graduate soonest (one course at a time per location, or per group of locations you set; holidays push it).", hpMoreCourses:" · {k} more courses", hpMoreCourse1:" · and one more course", hpNoFc:"Needs a forecast for the coming months — yours ends {d}.", hpTarget:"Target: {m} {t}% · by the forecast, month by month", hpLgPlan:"Expected with your courses", hpLgWith:"With the additions", hpLgNeed:"Needed", hpTipMo:"Needed {n} · expected {a}{b}", hpLateMo:"{m}: {x} short — the earliest course to add graduates {d}", hpFull:"(full)", hpOther:"Other", hpLimits:"⚙ Course rules", trnOther:"Other", crsTpl:"⬇ Excel template", crsTplFile:"courses-template.csv", crsSampleCap:"Columns in any order, any name · days and hire % are optional", cohNew:"+ Course", cohDefY:"Hire % for new courses", crsDropLine:"or drop a course file anywhere on the page", cohYieldS:"Hire %", dropCourses:"📂 Drop the course plan anywhere — any layout",
+  cohDurS:"Course days", cohSite:"Location", hpOkMonths:"Yes — every month through {m}", hpShortN:"{n} months stay short", hpShortMo:"{m}: {x} short", hpDone:"Added {n} trainees to the courses.", hpUndo:"Undo", hpUndone:"The courses are back as they were", repBtn:"📄 Executive report", repPick:"What goes in", repKpi:"The numbers", repTraj:"The decision (trajectory)", repPlan:"Are your courses enough — month by month", repGantt:"Courses Gantt", repWi:"Reaching the target (What-If)", repOut:"Headcount outlook", repRules:"Course rules", repTitle:"Recruitment & training — executive summary", repSub:"Made {d} · from the simulator, by the forecast and the courses as loaded", repEmpty:"Nothing picked.", repMonth:"Month", repGap:"Short", repAdds:"What to add, by course", repAdd:"Add", repFor:"For", repGanttKey:"Painted = the course is running (start → on the floor) · ב\"ש blue · רחובות green · בית amber · red frame = this week", repTgt:"target {t}%: reached {d}", repNoReach:"target {t}%: not reached within the horizon", repLevers:"Levers as set", repDate:"Date", repToday:"Today", repHc:"Projected reps", repFile:"executive-summary", repHowKpi:"reps = scheduled in the answering skills · max deficit = needed − scheduled, worst day · hire rate = certified ÷ trainees", repHowTraj:"the recruitment line comes from 'are your courses enough' · the profile = the weekly window with most of the shortfall", repHowMon:"calls = the days summed · answer rate and AHT = weighted by calls · hours = needed × ½ h ÷ availability · actual = measured, forecast = the model", repHowPlan:"needed = today's team × needed staffing ÷ the team's staffing · expected = the month's average of today − leavers + graduates · additions = the earliest course first, up to its class size", repHowGantt:"from the start to the first day on shifts, in work days · closed holidays push it", repHowWi:"Erlang A on the first forecast week, with the levers as set · reps week by week = today − leavers + graduates", repHowOut:"today, less monthly attrition, plus course graduates and recruitment simulations", repHowRules:"class size = most trainees · course days = a new course's length · locations in one rule = never at the same time", repMon:"Month by month (Date Trends)", repMix:"actual + forecast", repFc:"forecast", repAct:"actual", repGross:"Hours to schedule (gross)", repMet:"Days at {t}%", repScope:"Answering skills counted: {s}", repAll:"the whole center", repLensReal:"forecast weeks with attrition & courses", repLensToday:"forecast weeks with today's team (the iron)", hpTotal:"total {n}", hpGroup:"Not at the same time", hpGroupHint:"Locations with the same letter never run a course at the same time.", hpPairsT:"Not at the same time:", hpPairsHint:"Locations lit in the same row never run a course at the same time — a new course in one waits for the others'.", hpStillShort:"Still short, even with the additions:", hpWhyFullLate:"Why: the courses that graduate in time are full, and a new course can only start after the planned ones (one at a time per location) — the first one graduates {d}.", hpWhyLate:"Why: even a new course opened now graduates only {d}.", hpWhyFull:"Why: the courses that graduate in time are full.", hpWhyDo:"Shorter courses or bigger classes (⚙ Course rules) help.", hpRuleAdd:"+ another rule", hpRuleDup:"That rule is already there (or inside another rule) — not added twice", hpScen:"Scenario from the What-If: {l}", hpScenWas:"(instead of +{n} without it)", hpApplyScen:"✓ Update the ticked courses — by this scenario", hpProdChk:"Check by the history's productivity: ~{n} needed", repScen:"With the What-If scenario: +{n} (the plan above: +{b})", crsOverlap:"Runs at the same time as {n} (same location, or a rule you set)", hpClass:"Class size", hpDays:"Course days", hpNoOverlap:"ב\"ש and רחובות never at the same time (one course between them)", hpLenDone:"{s}: {n} upcoming courses set to {d} course days", crsDeleted:"Removed {n}", hpFor:"for {m}", hpBeyond:"{m}: no course can graduate in time", hpBeyondD:"{m}: no course can graduate in time — the earliest one graduates {d}", trajHireP:"Recruit {n} more trainees — the months a course can still reach; {k} months stay short (no course graduates in time). By course in the training pipeline.", hpPickHint:"Click a month — its numbers", hpCalc:"needed {n} · expected {e} = {h} today − {l} leaving + {g} graduates (a new rep is at full speed within a month)", hpCalcAdd:"· with the additions +{a}", hpHow:"? How it is worked out", hpStep1:"Every month, by the forecast: the reps needed to hold the answer-rate target, against the reps you will have — today's, minus those who leave, plus course graduates.", hpStep2:"A short month: trainees go into the earliest course that graduates in time, up to its class size.", hpStep3:"Still short: one more course at the location that can graduate soonest (one course at a time per location, and not together with locations in one of your rules; holidays push it).", hpMoreCourses:" · {k} more courses", hpMoreCourse1:" · and one more course", hpNoFc:"Needs a forecast for the coming months — yours ends {d}.", hpTarget:"Target: {m} {t}% · by the forecast, month by month", hpLgPlan:"Expected with your courses", hpLgWith:"With the additions", hpLgNeed:"Needed", hpTipMo:"Needed {n} · expected {a}{b}", hpLateMo:"{m}: {x} short — the earliest course to add graduates {d}", hpFull:"(full)", hpOther:"Other", hpLimits:"⚙ Course rules", trnOther:"Other", crsTpl:"⬇ Excel template", crsTplFile:"courses-template.csv", crsSampleCap:"Columns in any order, any name · days and hire % are optional", cohNew:"+ Course", cohDefY:"Hire % for new courses", crsDropLine:"or drop a course file anywhere on the page", cohYieldS:"Hire %", dropCourses:"📂 Drop the course plan anywhere — any layout",
   hpT:"How many to recruit", hpQ:"Are your courses enough?", tipHp:"Month by month, by the forecast: do your courses bring enough reps to hold the answer-rate target? If not — how many more trainees, into which course (the earliest first, up to its class size), and whether to open another.", hpBarAr:"Needed for {m} {t}% by {d}", hpBarHc:"Target headcount by {d}", hpBarHave:"Your courses bring by then", hpBarWith:"With the extra trainees", hpModeHc:"Headcount", hpBy:"by", tipHpAttr:"Staff who leave each month — the same value as Advanced Settings → Workforce dynamics. It erodes today's headcount and course graduates.",
   hpUnreach:"Adding people alone won't reach {m} {t}% with today's demand and handle time.",
   hpGoalAr:"to reach {m} {t}% by {d}", hpGoalHc:"to reach {n} reps by {d}", hpRecruits:"more trainees to recruit",
@@ -2452,7 +2457,7 @@ he:{
   tipTrain:"הזינו פתיחה ומשך של קורס; הבוגרים מצטרפים בפתיחה + משך, לפי אחוז ההסמכה.",
   cohName:"שם קורס", cohCount:"חניכים", cohStart:"פתיחת קורס", cohDur:"משך (ימים)", cohYield:"אחוז הסמכה (%)", cohAdd:"הוספת קורס",
   courseDefault:"קורס",
-  tipDur:"אורך הקורס בימי עבודה (א׳–ה׳); חגים סגורים לא נספרים.",
+  tipDur:"אורך הקורס בימי הקורס (א׳–ה׳); חגים סגורים לא נספרים.",
   tipYield:"אחוז החניכים הצפויים לעבור הסמכה ולהתחיל לעבוד. גם ברירת המחדל לקובצי קורסים בלי אחוז.",
   cohLine:"{name} — {n} חניכים × {y}% הסמכה → ~{m} נציגים מתחילים {d}",
   cohFloor:"כניסה למשמרות", cohReps:"נציגים בפועל ~",
@@ -2555,7 +2560,7 @@ he:{
   trTipDay:"לחיצה = השורה בטבלה", trTipOpen:"לחיצה = פתיחת הימים", relNeed:"נדרשות לפחות 6 תקופות בפועל — בחרו ימים או טווח ארוך יותר.",
   relWeak:"קשר חלש", relMod:"קשר בינוני", relStrong:"קשר חזק", relSent:"{s} (r = {r}): כל {dx} ({x}) ≈ {dy} ({y}).", relNone:"{x} ו־{y} כמעט לא זזים יחד כאן (r = {r}).",
   ibSum:"{p}% מהברזל בסידור",
-  cohDurS:"ימי עבודה", cohSite:"מיקום", hpOkMonths:"כן — כל חודש עד {m}", hpShortN:"לא בכל חודש: {n} חודשים נשארים חסרים", hpShortMo:"{m}: חסרים {x}", hpDone:"נוספו {n} חניכים לקורסים.", hpUndo:"ביטול", hpUndone:"הקורסים חזרו למצבם הקודם", repBtn:"📄 דוח מנהלים", repPick:"מה ייכנס לדוח", repKpi:"המספרים", repTraj:"ההחלטה (תובנות מגמה)", repPlan:"הקורסים מספיקים — חודש אחרי חודש", repGantt:"גאנט קורסים", repWi:"הגעה ליעד (סימולטור What-If)", repOut:"תחזית מצבה", repRules:"כללי קורסים", repTitle:"גיוס והכשרה — סיכום מנהלים", repSub:"הופק {d} · מהסימולטור, לפי התחזית והקורסים כפי שנטענו", repEmpty:"לא נבחר דבר.", repMonth:"חודש", repGap:"חסר", repAdds:"מה להוסיף, לפי קורס", repAdd:"תוספת", repFor:"בשביל", repGanttKey:"צבוע = הקורס רץ (פתיחה ← כניסה למשמרות) · ב״ש כחול · רחובות ירוק · בית כתום · מסגרת אדומה = השבוע", repTgt:"היעד {t}%: מושג ב־{d}", repNoReach:"היעד {t}%: לא מושג בטווח התחזית", repLevers:"מנופים כפי שנקבעו", repDate:"תאריך", repToday:"היום", repHc:"נציגים צפויים", repFile:"סיכום-מנהלים", repHowKpi:"מצבה = משובצים במיומנויות המענה · פער מרבי = נדרשים פחות משובצים, ביום הגרוע · הסמכה = מוסמכים ÷ חניכים", repHowTraj:"שורת הגיוס מתוך ״הקורסים מספיקים״ · הפרופיל = החלון השבועי עם רוב החוסר", repHowMon:"שיחות = סכום הימים · מענה ומשך שיחה = ממוצע משוקלל בשיחות · שעות = נדרשים × חצי שעה ÷ זמינות · בפועל = מדוד, תחזית = המודל", repHowPlan:"נדרשים = הצוות היום × איוש נדרש ÷ איוש הצוות · צפוי = ממוצע החודש של היום, פחות עוזבים, ועוד בוגרים · תוספות = קודם לקורס המוקדם, עד גודל הכיתה", repHowGantt:"מהפתיחה עד היום הראשון במשמרות, בימי עבודה · חגים סגורים דוחים", repHowWi:"ארלנג A על שבוע התחזית הראשון, לפי המנופים · נציגים בכל שבוע = היום, פחות עוזבים, ועוד בוגרים", repHowOut:"המצבה היום, פחות עזיבה חודשית, ועוד בוגרי קורסים וסימולציות גיוס", repHowRules:"גודל כיתה = מקסימום חניכים · ימי עבודה = אורך קורס חדש · אות זהה = לא באותו זמן", repMon:"חודש אחרי חודש (מגמות ותאריכים)", repMix:"בפועל + תחזית", repFc:"תחזית", repAct:"בפועל", repGross:"שעות לשיבוץ (ברוטו)", repMet:"ימים ביעד {t}%", repScope:"מיומנויות מענה שנלקחו בחשבון: {s}", repAll:"כל המוקד", repLensReal:"שבועות התחזית כוללים עזיבה וקורסים", repLensToday:"שבועות התחזית לפי הצוות של היום (הברזל)", hpTotal:"סה״כ {n}", hpGroup:"לא במקביל", hpGroupHint:"מיקומים עם אותה אות — אף פעם לא מריצים קורס באותו זמן.", crsOverlap:"רץ באותו זמן עם {n} (אותו מיקום או אותה קבוצה)", hpClass:"גודל כיתה", hpDays:"ימי עבודה", hpNoOverlap:"ב״ש ורחובות לא במקביל (קורס אחד ביניהם בכל פעם)", hpLenDone:"{s}: {n} קורסים קרובים עודכנו ל־{d} ימי עבודה", crsDeleted:"נמחק: {n}", hpFor:"בשביל {m}", hpBeyond:"{m}: אין קורס שיסיים בזמן", hpBeyondD:"{m}: אין קורס שיסיים בזמן — המוקדם ביותר מסיים ב־{d}", trajHireP:"לגייס עוד {n} חניכים — לחודשים שקורס עוד מגיע אליהם; {k} חודשים נשארים חסרים (אין קורס שמסיים בזמן). הפירוט לפי קורס בצנרת ההכשרה.", hpPickHint:"לחיצה על חודש — המספרים שלו", hpCalc:"נדרשים {n} · צפי {e} = {h} היום − {l} עוזבים + {g} בוגרים (נציג חדש מגיע לפריון מלא תוך חודש)", hpCalcAdd:"· עם התוספות +{a}", hpHow:"? איך זה מחושב", hpStep1:"כל חודש, לפי התחזית: כמה נציגים צריך כדי להחזיק את יעד המענה, מול כמה יהיו — היום, פחות מי שעוזב, ועוד בוגרי קורסים.", hpStep2:"חודש חסר: מוסיפים חניכים לקורס המוקדם שמסיים בזמן, עד גודל הכיתה.", hpStep3:"עדיין חסר: קורס נוסף במיקום שיכול לסיים הכי מוקדם (קורס אחד בכל פעם במיקום, או בקבוצת מיקומים שהגדרתם; חגים דוחים).", hpMoreCourses:" · {k} קורסים נוספים", hpMoreCourse1:" · ועוד קורס אחד", hpNoFc:"צריך תחזית לחודשים הקרובים — התחזית שלך מסתיימת ב־{d}.", hpTarget:"יעד: {m} {t}% · לפי התחזית, חודש אחרי חודש", hpLgPlan:"צפי לפי הקורסים", hpLgWith:"עם התוספות", hpLgNeed:"נדרשים", hpTipMo:"נדרשים {n} · צפי {a}{b}", hpLateMo:"{m}: חסרים {x} — הקורס הנוסף המוקדם ביותר מסיים ב־{d}", hpFull:"(מלא)", hpOther:"אחר", hpLimits:"⚙ כללי קורסים", trnOther:"אחר", crsTpl:"⬇ תבנית Excel", crsTplFile:"תבנית קורסים.csv", crsSampleCap:"עמודות בכל סדר ובכל שם · ימים ו־% הסמכה לא חובה", cohNew:"+ קורס", cohDefY:"% הסמכה לקורס חדש", crsDropLine:"או גררו קובץ קורסים לכל מקום בעמוד", cohYieldS:"% הסמכה", dropCourses:"📂 גררו את תוכנית הקורסים לכל מקום — בכל מבנה",
+  cohDurS:"ימי הקורס", cohSite:"מיקום", hpOkMonths:"כן — כל חודש עד {m}", hpShortN:"{n} חודשים נשארים חסרים", hpShortMo:"{m}: חסרים {x}", hpDone:"נוספו {n} חניכים לקורסים.", hpUndo:"ביטול", hpUndone:"הקורסים חזרו למצבם הקודם", repBtn:"📄 דוח מנהלים", repPick:"מה ייכנס לדוח", repKpi:"המספרים", repTraj:"ההחלטה (תובנות מגמה)", repPlan:"הקורסים מספיקים — חודש אחרי חודש", repGantt:"גאנט קורסים", repWi:"הגעה ליעד (סימולטור What-If)", repOut:"תחזית מצבה", repRules:"כללי קורסים", repTitle:"גיוס והכשרה — סיכום מנהלים", repSub:"הופק {d} · מהסימולטור, לפי התחזית והקורסים כפי שנטענו", repEmpty:"לא נבחר דבר.", repMonth:"חודש", repGap:"חסר", repAdds:"מה להוסיף, לפי קורס", repAdd:"תוספת", repFor:"בשביל", repGanttKey:"צבוע = הקורס רץ (פתיחה ← כניסה למשמרות) · ב״ש כחול · רחובות ירוק · בית כתום · מסגרת אדומה = השבוע", repTgt:"היעד {t}%: מושג ב־{d}", repNoReach:"היעד {t}%: לא מושג בטווח התחזית", repLevers:"מנופים כפי שנקבעו", repDate:"תאריך", repToday:"היום", repHc:"נציגים צפויים", repFile:"סיכום-מנהלים", repHowKpi:"מצבה = משובצים במיומנויות המענה · פער מרבי = נדרשים פחות משובצים, ביום הגרוע · הסמכה = מוסמכים ÷ חניכים", repHowTraj:"שורת הגיוס מתוך ״הקורסים מספיקים״ · הפרופיל = החלון השבועי עם רוב החוסר", repHowMon:"שיחות = סכום הימים · מענה ומשך שיחה = ממוצע משוקלל בשיחות · שעות = נדרשים × חצי שעה ÷ זמינות · בפועל = מדוד, תחזית = המודל", repHowPlan:"נדרשים = הצוות היום × איוש נדרש ÷ איוש הצוות · צפוי = ממוצע החודש של היום, פחות עוזבים, ועוד בוגרים · תוספות = קודם לקורס המוקדם, עד גודל הכיתה", repHowGantt:"מהפתיחה עד היום הראשון במשמרות, בימי עבודה · חגים סגורים דוחים", repHowWi:"ארלנג A על שבוע התחזית הראשון, לפי המנופים · נציגים בכל שבוע = היום, פחות עוזבים, ועוד בוגרים", repHowOut:"המצבה היום, פחות עזיבה חודשית, ועוד בוגרי קורסים וסימולציות גיוס", repHowRules:"גודל כיתה = מקסימום חניכים · ימי הקורס = אורך קורס חדש · מיקומים באותו כלל = לא באותו זמן", repMon:"חודש אחרי חודש (מגמות ותאריכים)", repMix:"בפועל + תחזית", repFc:"תחזית", repAct:"בפועל", repGross:"שעות לשיבוץ (ברוטו)", repMet:"ימים ביעד {t}%", repScope:"מיומנויות מענה שנלקחו בחשבון: {s}", repAll:"כל המוקד", repLensReal:"שבועות התחזית כוללים עזיבה וקורסים", repLensToday:"שבועות התחזית לפי הצוות של היום (הברזל)", hpTotal:"סה״כ {n}", hpGroup:"לא במקביל", hpGroupHint:"מיקומים עם אותה אות — אף פעם לא מריצים קורס באותו זמן.", hpPairsT:"לא באותו זמן:", hpPairsHint:"מיקומים מסומנים באותה שורה — אף פעם לא מריצים קורס באותו זמן; קורס חדש באחד מהם יחכה לסיום הקורס באחרים.", hpStillShort:"חסרים גם אחרי התוספות:", hpWhyFullLate:"למה: הקורסים שמסיימים בזמן כבר מלאים, וקורס חדש ייפתח רק אחרי המתוכננים (קורס אחד בכל פעם במיקום) — הראשון יסיים ב־{d}.", hpWhyLate:"למה: גם קורס חדש שייפתח עכשיו יסיים רק ב־{d}.", hpWhyFull:"למה: הקורסים שמסיימים בזמן כבר מלאים.", hpWhyDo:"יעזרו: קורסים קצרים יותר או כיתות גדולות יותר (⚙ כללי קורסים).", hpRuleAdd:"+ כלל נוסף", hpRuleDup:"הכלל הזה כבר קיים (או כלול בכלל אחר) — לא נוסף פעמיים", hpScen:"תרחיש מהסימולטור: {l}", hpScenWas:"(במקום ‎+{n} בלי התרחיש)", hpApplyScen:"✓ לעדכן את הקורסים המסומנים — לפי התרחיש", hpProdChk:"בדיקה לפי פריון העבר: ~{n} נדרשים", repScen:"בתרחיש מהסימולטור: ‎+{n} (התוכנית למעלה: ‎+{b})", crsOverlap:"רץ באותו זמן עם {n} (אותו מיקום, או כלל שהגדרתם)", hpClass:"גודל כיתה", hpDays:"ימי הקורס", hpNoOverlap:"ב״ש ורחובות לא במקביל (קורס אחד ביניהם בכל פעם)", hpLenDone:"{s}: {n} קורסים קרובים עודכנו ל־{d} ימי קורס", crsDeleted:"נמחק: {n}", hpFor:"בשביל {m}", hpBeyond:"{m}: אין קורס שיסיים בזמן", hpBeyondD:"{m}: אין קורס שיסיים בזמן — המוקדם ביותר מסיים ב־{d}", trajHireP:"לגייס עוד {n} חניכים — לחודשים שקורס עוד מגיע אליהם; {k} חודשים נשארים חסרים (אין קורס שמסיים בזמן). הפירוט לפי קורס בצנרת ההכשרה.", hpPickHint:"לחיצה על חודש — המספרים שלו", hpCalc:"נדרשים {n} · צפי {e} = {h} היום − {l} עוזבים + {g} בוגרים (נציג חדש מגיע לפריון מלא תוך חודש)", hpCalcAdd:"· עם התוספות +{a}", hpHow:"? איך זה מחושב", hpStep1:"כל חודש, לפי התחזית: כמה נציגים צריך כדי להחזיק את יעד המענה, מול כמה יהיו — היום, פחות מי שעוזב, ועוד בוגרי קורסים.", hpStep2:"חודש חסר: מוסיפים חניכים לקורס המוקדם שמסיים בזמן, עד גודל הכיתה.", hpStep3:"עדיין חסר: קורס נוסף במיקום שיכול לסיים הכי מוקדם (קורס אחד בכל פעם במיקום, ולא יחד עם מיקומים מאותו כלל; חגים דוחים).", hpMoreCourses:" · {k} קורסים נוספים", hpMoreCourse1:" · ועוד קורס אחד", hpNoFc:"צריך תחזית לחודשים הקרובים — התחזית שלך מסתיימת ב־{d}.", hpTarget:"יעד: {m} {t}% · לפי התחזית, חודש אחרי חודש", hpLgPlan:"צפי לפי הקורסים", hpLgWith:"עם התוספות", hpLgNeed:"נדרשים", hpTipMo:"נדרשים {n} · צפי {a}{b}", hpLateMo:"{m}: חסרים {x} — הקורס הנוסף המוקדם ביותר מסיים ב־{d}", hpFull:"(מלא)", hpOther:"אחר", hpLimits:"⚙ כללי קורסים", trnOther:"אחר", crsTpl:"⬇ תבנית Excel", crsTplFile:"תבנית קורסים.csv", crsSampleCap:"עמודות בכל סדר ובכל שם · ימים ו־% הסמכה לא חובה", cohNew:"+ קורס", cohDefY:"% הסמכה לקורס חדש", crsDropLine:"או גררו קובץ קורסים לכל מקום בעמוד", cohYieldS:"% הסמכה", dropCourses:"📂 גררו את תוכנית הקורסים לכל מקום — בכל מבנה",
   hpT:"כמה לגייס", hpQ:"הקורסים מספיקים?", tipHp:"חודש אחרי חודש, לפי התחזית: האם הקורסים מביאים מספיק נציגים כדי להחזיק את יעד המענה? אם לא — כמה חניכים להוסיף, לאיזה קורס (המוקדם קודם, עד גודל הכיתה), והאם לפתוח קורס נוסף.", hpBarAr:"נדרשים ל{m} {t}% עד {d}", hpBarHc:"יעד מצבה עד {d}", hpBarHave:"הקורסים שלך מביאים עד אז", hpBarWith:"עם החניכים הנוספים", hpModeHc:"מצבה", hpBy:"עד", tipHpAttr:"כמה עובדים עוזבים בחודש — אותו ערך כמו בהגדרות מתקדמות ← דינמיקת כוח אדם. מקטין את המצבה של היום ואת בוגרי הקורסים.",
   hpUnreach:"הוספת אנשים לבדה לא תביא ל{m} {t}% בביקוש ובמשך השיחה של היום.",
   hpGoalAr:"כדי להגיע ל{m} {t}% עד {d}", hpGoalHc:"כדי להגיע ל־{n} נציגים עד {d}", hpRecruits:"חניכים נוספים לגייס",
@@ -11115,13 +11120,18 @@ function siteMax(s){ const m=state.settings.siteMax||{}; return Math.max(1,+(m[s
 function siteLen(s){ const v=+((state.settings.siteLen||{})[s]); if(v>0) return v; // your rule (⚙), else the median of its courses
   const d=state.cohorts.filter(c=>courseSite(c)===s).map(c=>+c.duration).filter(x=>x>0).sort((a,b)=>a-b);
   return d.length?d[d.length>>1]:12; }
-// ב"ש and רחובות may share one course lane (⚙): then a course in one waits for the other's to end
-const SITE_GROUPS=["א","ב","ג"];
-function siteGroups(){ const S=state.settings; // the old ב"ש + רחובות switch becomes group א
-  if(!S.siteGroup){ S.siteGroup={}; if(S.crsNoOverlap){ S.siteGroup["ב\"ש"]="א"; S.siteGroup["רחובות"]="א"; } } return S.siteGroup; }
-function siteLane(s){ const G=siteGroups(), g=G[s]; if(!g) return [s];
-  return [...new Set([s].concat(Object.keys(G).filter(x=>G[x]===g)))]; }
-/* two courses that share a lane (same location, or one group) and run at the same time: {i: the other course's name} */
+/* "not at the same time" RULES (settings.siteRules = [[location…]…]): each rule = locations that never run a course
+   together — two, three, any. A course in one waits for the others' to end. Earlier forms (the ב"ש + רחובות switch,
+   group letters, ticked pairs) become rules once. */
+function siteRules(){ const S=state.settings;
+  if(!Array.isArray(S.siteRules)){ const R=[];
+    if(S.crsNoOverlap) R.push(["ב\"ש","רחובות"]);
+    const G=S.siteGroup||{}, by={}; for(const k in G) if(G[k]) (by[G[k]]=by[G[k]]||[]).push(k); for(const g in by) if(by[g].length>1) R.push(by[g]);
+    (S.sitePairs||[]).forEach(k=>R.push(k.split("|")));
+    S.siteRules=R; delete S.siteGroup; delete S.crsNoOverlap; delete S.sitePairs; }
+  return S.siteRules; }
+function siteLane(s){ const out=new Set([s]); for(const r of siteRules()) if(r.length>1&&r.includes(s)) r.forEach(x=>out.add(x)); return [...out]; }
+/* two courses that may not run together (same location, or a ticked pair) and do: {i: the other course's name} */
 function courseOverlaps(){ const out={}, L=state.cohorts.map((c,i)=>({i,c,s:courseSite(c),a:c.start,b:cohortFloorDate(c)}));
   for(const x of L) for(const y of L){ if(x.i>=y.i||!x.s||!y.s||!siteLane(x.s).includes(y.s)) continue;
     if(x.a<y.b&&y.a<x.b){ out[x.i]=out[x.i]||y.c.name; out[y.i]=out[y.i]||x.c.name; } }
@@ -11132,14 +11142,26 @@ function courseOverlaps(){ const out={}, L=state.cohorts.map((c,i)=>({i,c,s:cour
    the floor by mid-month (a new rep ramps from half to full within a month). Short months are filled from the
    EARLIEST course that still graduates in time, never above its location's class size; still short → an extra
    course at the earliest free slot of a location (a location runs one course at a time; holidays push it). */
-function hirePlan(){
-  const S=state.settings, k=JSON.stringify([state._serVer,state._crsVer||0,state._holVer||0,state.cohorts,S.headcount,S.attrition,S.target,S.primaryMetric,S.defYield,
-    S.siteMax,S.siteLen,S.siteGroup,S.capSkills,state.capSkills,S.capLens,state.maxDate,state.horizonISO,iso(new Date()),state.iron?state.iron.emps.size:0,state.rosterCap.size]);
-  if(state._hpC&&state._hpC.k===k) return state._hpC.v;
-  const v=hirePlanRaw(); state._hpC={k,v}; return v;
+/* 🔧 the What-If levers as a scenario for the plan: null while every lever is at 0 */
+function wiScenario(){ const v=id=>+(document.getElementById(id)||{}).value||0;
+  const s={ahtCut:v("wiAht"),attrCut:v("wiAttr"),shrinkCut:v("wiShrink"),absCut:v("wiAbsence")};
+  return s.ahtCut||s.attrCut||s.shrinkCut||s.absCut?s:null; }
+function hirePlan(sc){
+  const S=state.settings, k=JSON.stringify([sc||null,state._serVer,state._crsVer||0,state._holVer||0,state.cohorts,S.headcount,S.attrition,S.target,S.primaryMetric,S.defYield,
+    S.siteMax,S.siteLen,S.siteRules,S.capSkills,state.capSkills,S.capLens,state.maxDate,state.horizonISO,iso(new Date()),state.iron?state.iron.emps.size:0,state.rosterCap.size]);
+  const C=state._hpCs=state._hpCs||new Map(); if(C.has(k)) return C.get(k); // the real plan and one scenario at a time
+  const v=hirePlanRaw(sc); if(C.size>=4) C.delete(C.keys().next().value); C.set(k,v); return v;
 }
-function hirePlanRaw(){
-  const S=state.settings, H0=S.headcount;
+/* the history's productivity: handled work per scheduled rep-second (the file's answered × AHT ÷ reps × ½ h),
+   last 8 weeks — shrinkage is already inside it (a scheduled rep includes breaks and absence) */
+function histProductivity(){ const key=state._serVer+"|"+state.maxDate; if(state._prodC&&state._prodC.k===key) return state._prodC.v;
+  let w=0,cap=0; const from=state.maxDate?addDays(state.maxDate,-56):null;
+  for(const [ds,dm] of state.days){ if(!from||ds<from) continue; for(const r of dm.values()) if(r.answered>0&&r.agents>0&&r.aht>0){ w+=r.answered*r.aht; cap+=r.agents*1800; } }
+  const v=cap>0?w/cap:null; state._prodC={k:key,v}; return v; }
+function hirePlanRaw(sc){
+  const S0=state.settings, S=sc?{...S0,attrition:S0.attrition*(1-sc.attrCut/100)}:S0, H0=S0.headcount;
+  const ahtMul=sc?1-sc.ahtCut/100:1, eff2=sc?Math.max(0.05,availShare({...S0,shrinkage:S0.shrinkage*(1-sc.shrinkCut/100),absence:S0.absence*(1-sc.absCut/100)})*(state.calib||1)):0;
+  const P=histProductivity(), tgt=S0.target/100;
   if(!state.days.size||!state.maxDate||!state.horizonISO||!(H0>0)) return null;
   const today=iso(new Date()), dd=(a,b)=>Math.round((fromISO(b)-fromISO(a))/86400000);
   const early=1-Math.min(0.9,S.attrition*1.5/100), ramp=x=>x<0?0:Math.min(1,0.5+0.5*x/30);
@@ -11149,16 +11171,18 @@ function hirePlanRaw(){
       const d0=new Date(fromISO(today)); d0.setDate(1); d0.setMonth(d0.getMonth()+k);
       const m=iso(d0).slice(0,7), from=k?m+"-01":today, last=iso(new Date(d0.getFullYear(),d0.getMonth()+1,0));
       if(from>state.horizonISO) break;
-      let need=0,cap=0;
+      let need=0,cap=0,needP=0;
       for(let ds=from;ds<=last&&ds<=state.horizonISO;ds=addDays(ds,1)){
         const di=fromISO(ds).getDay(); if(di>5||ds<=state.maxDate) continue;
         const c=computeDay(ds); if(!c) continue;
         for(const r of c.rows){ if(!r.rec||r.closed||r.exc||r.nodata) continue;
           const base=state.iron?ironCapAt(ds,di,r.tm):(r.rec.agents||0)/lensScale(ds);
-          need+=r.reqEff; cap+=base; }
+          // the scenario: the same Erlang need with its shorter calls and its availability
+          need+=sc?requiredAgentsMemo(r.rec.volume,Math.max(1,r.rec.aht*ahtMul),S0.target,S0,r.rec.mpt)/eff2:r.reqEff; cap+=base;
+          if(P) needP+=r.rec.volume*tgt*r.rec.aht*ahtMul/(P*1800); } // the check: the target's calls ÷ the history's productivity
       }
       const pts=[]; for(let d=from;d<=last;d=addDays(d,7)) pts.push(d); if(pts[pts.length-1]!==last) pts.push(last);
-      if(cap>0) months.push({m,mid:m+"-15"<from?from:m+"-15",pts,N:Math.ceil(H0*need/cap)});
+      if(cap>0) months.push({m,mid:m+"-15"<from?from:m+"-15",pts,N:Math.ceil(H0*need/cap),Np:P?Math.ceil(H0*needP/cap):null});
     }
   }
   if(!months.length) return {months:[],noFc:true};
@@ -11205,7 +11229,7 @@ function hirePlanRaw(){
 }
 function renderHirePlan(){
   const box=document.getElementById("hirePlan"); if(!box) return;
-  const S=state.settings, p=hirePlan();
+  const S=state.settings, sc=wiScenario(), p=hirePlan(sc), pb=sc?hirePlan(null):null;
   if(!p){ box.innerHTML=""; return; }
   if(!p.months.length){ // the forecast stops before the coming months: the box says so, quietly
     box.innerHTML=`<div class="hpTitle">🎯 ${t("hpQ")}</div><p class="hpSub">${t("hpNoFc",{d:state.horizonISO?fmtD(state.horizonISO):"—"})}</p>`; return; }
@@ -11215,13 +11239,18 @@ function renderHirePlan(){
   const short=p.months.filter(mo=>mo.N-mo.E1>0.5); // still short WITH the additions = the courses can't reach them in time
   let html=`<div class="hpTitle">🎯 ${t("hpQ")} <span class="info" data-tip="${esc(t("tipHp"))}" tabindex="0">i</span></div>`;
   // undo: the last update can be taken back, exactly
+  // 🔧 a scenario is on: said once, with its levers — the numbers below are the scenario's
+  if(sc){ const lv=[["wiAht",sc.ahtCut],["wiAttr",sc.attrCut],["wiShrink",sc.shrinkCut],["wiAbsence",sc.absCut]].filter(x=>x[1]>0).map(x=>t(x[0])+" "+x[1]+"%").join(" · ");
+    html+=`<div class="hpScen">🔧 ${t("hpScen",{l:esc(lv)})}</div>`; }
   // the answer — "yes" only when EVERY month reaches the target
   html+=p.total>0
-    ?`<div class="hpHero"><span class="hpN">+${p.total}</span> <span>${t("hpRecruits")}${p.sug.length===1?t("hpMoreCourse1"):p.sug.length?t("hpMoreCourses",{k:p.sug.length}):""}</span></div>`
+    ?`<div class="hpHero"><span class="hpN">+${p.total}</span> <span>${t("hpRecruits")}${p.sug.length===1?t("hpMoreCourse1"):p.sug.length?t("hpMoreCourses",{k:p.sug.length}):""}</span>${pb&&pb.total!==p.total?` <span class="hpWas">${t("hpScenWas",{n:pb.total})}</span>`:""}</div>`
     :short.length?`<div class="hpHero warn">${t("hpShortN",{n:short.length})}</div>`
     :`<div class="hpHero ok">✓ ${t("hpOkMonths",{m:mLbl(last.m)})}</div>`;
   if(short.length){ const late=short.map(x=>x.late).filter(Boolean).sort()[0];
-    html+=`<p class="hpBeyond">${t(late?"hpBeyondD":"hpBeyond",{m:short.map(x=>mLbl(x.m)).join(", "),d:late?d5(late):""})}</p>`; }
+    const lastOf=m=>iso(new Date(+m.slice(0,4),+m.slice(5,7),0)), full=short.some(mo=>p.courses.some(x=>x.floor<=lastOf(mo.m))); // courses that graduate in time exist → they are full
+    html+=`<p class="hpBeyond"><b>${t("hpStillShort")}</b> ${short.map(x=>`${mLbl(x.m)} <b dir="ltr">−${Math.ceil(x.N-x.E1)}</b>`).join(" · ")}</p>`
+      +`<p class="hpWhy">${t(full&&late?"hpWhyFullLate":late?"hpWhyLate":"hpWhyFull",{d:late?d5(late):""})} ${t("hpWhyDo")}</p>`; }
   html+=`<p class="hpSub">${t("hpTarget",{m:primName(),t:S.target})}</p>`;
   // one picture: per month, needed (tick) vs expected — with the additions when there are any. A month opens its numbers.
   const anyAdd=p.total>0, pick=state._hpMonth;
@@ -11230,23 +11259,25 @@ function renderHirePlan(){
       tip:t("hpTipMo",{n:mo.N,a:Math.round(mo.E0),b:anyAdd?" → "+Math.round(mo.E1):""})}; });
   const leg=(anyAdd?[["ir",t("hpLgPlan")],["sd",t("hpLgWith")]]:[["sd",t("hpLgPlan")]]).concat([["nd",t("hpLgNeed")]]);
   html+=`<div class="hpChart">${ironBars(cols,70)}</div><div class="legend rdyLeg">${leg.map(([k,l])=>`<span><i class="lg-${k}"></i>${l}</span>`).join("")}</div>`;
-  const mo=p.months.find(x=>x.m===pick);
-  html+=mo?`<p class="hpMonth"><b>${mLbl(mo.m,true)}:</b> ${t("hpCalc",{n:mo.N,e:Math.round(mo.E0),h:mo.H0,l:Math.round(mo.leave),g:Math.round(mo.E0-mo.H0+mo.leave)})}${anyAdd&&mo.E1-mo.E0>0.5?" "+t("hpCalcAdd",{a:Math.round(mo.E1-mo.E0)}):""}</p>`
+  const mo=p.months.find(x=>x.m===pick), prod=mo&&mo.Np?` <span class="hpProd">${t("hpProdChk",{n:mo.Np})}</span>`:"";
+  html+=mo?`<p class="hpMonth"><b>${mLbl(mo.m,true)}:</b> ${t("hpCalc",{n:mo.N,e:Math.round(mo.E0),h:mo.H0,l:Math.round(mo.leave),g:Math.round(mo.E0-mo.H0+mo.leave)})}${anyAdd&&mo.E1-mo.E0>0.5?" "+t("hpCalcAdd",{a:Math.round(mo.E1-mo.E0)}):""}${prod}</p>`
     :`<p class="mini hpHint">${t("hpPickHint")}</p>`;
   // months the courses can't reach in time — with the date they first can
   // the changes, each with its own tick — apply what you choose
   const rows=p.courses.filter(x=>p.add.get(x.i)).map(x=>{ const n=p.add.get(x.i), full=x.count+n>=siteMax(x.site);
     return `<label class="hpRow" data-ci="${x.i}"><input type="checkbox" checked data-a="${x.i}"><span class="hpNm">${esc(x.c.name)}</span><span class="mini">${esc(x.site||t("hpOther"))} · ${t("cohFloor")} ${d5(x.floor)}</span><span><bdi class="hpPlus">+${n}</bdi> · ${t("hpTotal",{n:x.count+n})}${full?" "+t("hpFull"):""} · <span class="hpFor">${t("hpFor",{m:mLbl(p.addFor.get(x.i))})}</span></span></label>`; });
   p.sug.forEach((s,k)=>rows.push(`<label class="hpRow sug"><input type="checkbox" checked data-s="${k}"><span class="hpNm">➕ ${t("hpNew")} · ${esc(s.site)}</span><span class="mini">${t("cohStart")} ${d5(s.start)} · ${t("cohFloor")} ${d5(s.floor)}</span><span><b>${s.count}</b> ${t("cohCount")} · <span class="hpFor">${t("hpFor",{m:mLbl(s.for)})}</span></span></label>`));
-  if(rows.length) html+=`<div class="hpList">${rows.join("")}</div><button type="button" class="btn navy applymini" id="hpApply">${t("hpApply")}</button>`;
+  if(rows.length) html+=`<div class="hpList">${rows.join("")}</div><button type="button" class="btn navy applymini" id="hpApply">${t(sc?"hpApplyScen":"hpApply")}</button>`;
   // how it works (3 steps) + the one limit you may want to change: class size per location
   const sites=[...new Set(SITES.map(s=>s[0]).concat(state.cohorts.map(courseSite).filter(Boolean)))];
   html+=`<details class="hpLim"><summary>${t("hpHow")}</summary><ol class="hpSteps"><li>${t("hpStep1")}</li><li>${t("hpStep2")}</li><li>${t("hpStep3")}</li></ol></details>`
-    +`<details class="hpLim"${state._hpRules?" open":""}><summary>${t("hpLimits")}</summary><table class="hpRules"><thead><tr><th></th><th>${t("hpClass")}</th><th>${t("hpDays")}</th><th>${t("hpGroup")}</th></tr></thead><tbody>`
+    +`<details class="hpLim"${state._hpRules?" open":""}><summary>${t("hpLimits")}</summary><table class="hpRules"><thead><tr><th></th><th>${t("hpClass")}</th><th>${t("hpDays")}</th></tr></thead><tbody>`
     +sites.map(s=>`<tr><th>${esc(s)}</th><td><input type="number" min="1" max="60" class="hpIn" style="width:52px" data-site="${esc(s)}" value="${siteMax(s)}"></td>`
-      +`<td><input type="number" min="1" max="120" class="hpIn" style="width:52px" data-len="${esc(s)}" value="${siteLen(s)}"></td>`
-      +`<td><select class="hpIn" data-grp="${esc(s)}">${[""].concat(SITE_GROUPS).map(g=>`<option value="${g}"${(siteGroups()[s]||"")===g?" selected":""}>${g||"—"}</option>`).join("")}</select></td></tr>`).join("")
-    +`</tbody></table><p class="mini hpLink">${t("hpGroupHint")}</p></details>`;
+      +`<td><input type="number" min="1" max="120" class="hpIn" style="width:52px" data-len="${esc(s)}" value="${siteLen(s)}"></td></tr>`).join("")
+    +`</tbody></table><div class="hpRuleBox"><b class="mini">${t("hpPairsT")}</b>`
+    +(siteRules().length?siteRules():[[]]).map((r,ri)=>`<div class="hpRule" data-r="${ri}">${sites.map(s=>`<button type="button" class="hpChip${r.includes(s)?" on":""}" data-loc="${esc(s)}">${esc(s)}</button>`).join("")}`
+      +(siteRules().length?`<button type="button" class="xbtn" data-rx="${ri}" title="${esc(t("remove"))}">✕</button>`:"")+`</div>`).join("")
+    +`<button type="button" class="linklike hpRuleAdd">${t("hpRuleAdd")}</button><p class="mini hpLink">${t("hpPairsHint")}</p></div></details>`;
   box.innerHTML=html;
   box.querySelector(".ouWrap").querySelectorAll(".rdyCol").forEach(b=>b.addEventListener("click",()=>{ state._hpMonth=state._hpMonth===b.dataset.k?null:b.dataset.k; renderHirePlan(); }));
   const ap=box.querySelector("#hpApply");
@@ -11267,8 +11298,14 @@ function renderHirePlan(){
     const hit=state.cohorts.filter(c=>courseSite(c)===s&&c.start>=today&&+c.duration!==v);
     if(hit.length) crsSnap(t("hpLenDone",{s,d:v,n:hit.length}));
     (S.siteLen=S.siteLen||{})[s]=v; hit.forEach(c=>{ c.duration=v; }); cohortsChanged(!!hit.length); }));
-  box.querySelectorAll("[data-grp]").forEach(sel=>sel.addEventListener("change",()=>{ const G=siteGroups(); if(sel.value) G[sel.dataset.grp]=sel.value; else delete G[sel.dataset.grp];
-    delete S.crsNoOverlap; saveState(); renderRecruit(); }));
+  { const rules=()=>{ const R=siteRules(); if(!R.length) R.push([]); return R; }, done=()=>{ const R=siteRules().map(r=>[...new Set(r)]).filter(r=>r.length), cover=(r,o)=>r.length>1&&o.length>=r.length&&r.every(x=>o.includes(x));
+      const keep=R.filter((r,i)=>!R.some((o,j)=>j!==i&&cover(r,o)&&(o.length>r.length||j<i))); // the same rule twice, or one inside a bigger one
+      if(keep.length<R.length) showToast("ℹ "+t("hpRuleDup"),true);
+      S.siteRules=keep; saveState(); renderRecruit(); };
+    box.querySelectorAll(".hpRule .hpChip").forEach(b=>b.addEventListener("click",()=>{ const r=rules()[+b.closest(".hpRule").dataset.r], s=b.dataset.loc;
+      const i=r.indexOf(s); if(i>=0) r.splice(i,1); else r.push(s); done(); }));
+    box.querySelectorAll("[data-rx]").forEach(b=>b.addEventListener("click",()=>{ siteRules().splice(+b.dataset.rx,1); done(); }));
+    const ad=box.querySelector(".hpRuleAdd"); if(ad) ad.addEventListener("click",()=>{ const R=siteRules(); if(R.length&&R[R.length-1].length) R.push([]); renderHirePlan(); }); }
   // a plan row ↔ its course in the table: hovering a suggested addition lights up the course it changes
   box.querySelectorAll(".hpRow[data-ci]").forEach(r=>{ const tr=()=>document.querySelector(`.cohT tr[data-i="${r.dataset.ci}"]`);
     r.addEventListener("mouseenter",()=>{ const x=tr(); if(x) x.classList.add("hl"); });
@@ -11317,6 +11354,7 @@ function rcReportHtml(){
     const adds=p.courses.filter(x=>p.add.get(x.i)).map(x=>[esc(x.c.name),esc(x.site||"—"),d5(x.floor),x.count,sg("+"+p.add.get(x.i)),esc(mL(p.addFor.get(x.i)))])
       .concat(p.sug.map(s=>["➕ "+esc(t("hpNew")),esc(s.site),d5(s.floor),0,sg("+"+s.count),esc(mL(s.for))]));
     if(adds.length) body+=`<p class="sub">${esc(t("repAdds"))}</p>`+tbl([t("cohName"),t("cohSite"),t("cohFloor"),t("cohCount"),t("repAdd"),t("repFor")],adds);
+    { const sc=wiScenario(), ps=sc?hirePlan(sc):null; if(ps&&ps.total!==p.total) body+=`<p class="sub">🔧 ${esc(t("repScen",{n:ps.total,b:p.total}))}</p>`; }
     b+=sec(t("hpQ"),body,"repHowPlan"); }
   if(on.has("gantt")&&state.cohorts.length){ // weeks across, a course per row, its weeks painted by location
     const cs=state.cohorts.map(c=>({c,a:c.start,z:cohortFloorDate(c),s:courseSite(c)})).sort((x,y)=>x.a<y.a?-1:1);
@@ -11335,8 +11373,9 @@ function rcReportHtml(){
         +(lev?`<p class="sub">${esc(t("repLevers"))}: ${lev}</p>`:"")+tbl([t("repDate"),primName()],pts),"repHowWi"); } }
   if(on.has("out")){ const pts=[0,30,60,90].map(d=>[d?d5(addDays(iso(new Date()),d)):esc(t("repToday")),Math.round(hcAtDay(d,true))]);
     b+=sec(t("outlookTitle"),tbl([t("repDate"),t("repHc")],pts),"repHowOut"); }
-  if(on.has("rules")){ const sites=[...new Set(SITES.map(s=>s[0]).concat(state.cohorts.map(courseSite).filter(Boolean)))], G=siteGroups();
-    b+=sec(t("hpLimits").replace(/^⚙\s*/,""),tbl(["",t("hpClass"),t("hpDays"),t("hpGroup")],sites.map(s=>[esc(s),siteMax(s),siteLen(s),G[s]||"—"])),"repHowRules"); }
+  if(on.has("rules")){ const sites=[...new Set(SITES.map(s=>s[0]).concat(state.cohorts.map(courseSite).filter(Boolean)))], P=siteRules().filter(r=>r.length>1);
+    b+=sec(t("hpLimits").replace(/^⚙\s*/,""),tbl(["",t("hpClass"),t("hpDays")],sites.map(s=>[esc(s),siteMax(s),siteLen(s)]))
+      +`<p class="sub">${esc(t("hpPairsT"))} ${P.length?P.map(r=>esc(r.join(" + "))).join(" · "):"—"}</p>`,"repHowRules"); }
   const title=t("repTitle"), when=fmtD(iso(new Date()));
   return `<!doctype html><html dir="${rtl?"rtl":"ltr"}" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><title>${esc(title)} — ${when}</title><style>
     @page{size:A4;margin:14mm} body{font-family:Arial,sans-serif;color:#15263a;margin:0;font-size:12px} h2{font-size:19px;margin:0 0 2px;color:#0d2a4d}
@@ -11397,9 +11436,9 @@ document.getElementById("injGo").addEventListener("click",()=>{
 /* What-If simulator wiring — sliders drive a live, non-destructive projection */
 ["wiHires","wiAht","wiAttr","wiShrink","wiAbsence"].forEach(id=>{
   const el=document.getElementById(id);
-  if(el) el.addEventListener("input",()=>{ _wiTouched=true; whatIfRunDebounced(); });
+  if(el){ el.addEventListener("input",()=>{ _wiTouched=true; whatIfRunDebounced(); }); el.addEventListener("change",()=>renderHirePlan()); }
 });
-document.getElementById("wiReset").addEventListener("click",()=>{ _wiTouched=false; whatIfSyncSliders(); whatIfRun(); });
+document.getElementById("wiReset").addEventListener("click",()=>{ _wiTouched=false; whatIfSyncSliders(); whatIfRun(); renderHirePlan(); });
 
 /* Course Gantt ingestion — deliberately forgiving: fuzzy headers (HE/EN), any date
    format via normDateAny, duration from end-date or days column, sane defaults */

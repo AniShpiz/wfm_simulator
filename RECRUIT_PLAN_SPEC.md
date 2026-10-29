@@ -47,5 +47,8 @@ Per month in the forecast (from this month, up to 6):
 in red → the courses to top up (count → new count, "(מלא)" at the class size) and the suggested courses
 → "✓ לעדכן את הקורסים המסומנים" (each row has a tick and "→ month" it serves) → ⚙ class size by location.
 Months no course can reach in time: one red line under the number, with the earliest graduation date.
-Every change to the courses (file, ✕, apply) can be undone from the bar above the table. Without a forecast for the coming months the box
+Every change to the courses (file, ✕, apply) can be undone from the bar above the table.
+Scenario: the What-If levers, when moved, run the plan on them (chip + "instead of +N without it"; the button says
+"by this scenario"); the real plan stays the real one. A month's numbers also show a check by the history's
+productivity (answered × AHT ÷ scheduled rep-time, last 8 weeks), never a second answer. Without a forecast for the coming months the box
 says so in one line. The Recruitment page's "Trajectory insights" line shows the same answer.
