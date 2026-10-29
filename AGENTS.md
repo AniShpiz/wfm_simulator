@@ -171,7 +171,8 @@ workforce filter lists legitimately show only "(all)" for this file.
   (`renderCohortTable`); `addCourses` replaces a course with the same name + start.
 - `parseCoursesGrid(grid, defaults)` returns the courses (any layout; carried-down hire rate /
   length; `courseDefaults()` = the remembered "hire % for new courses"). Files dropped anywhere on
-  the page go to `ingestCourseFile`. `crsTemplateRows` = the template + the drop box's mini table.
+  the page go to `ingestCourseFile`, which hands a forecast / sidur (by `findHeader` + `classifyGrid`, or iron /
+  sidur sheet names) to `ingestFile`. `crsTemplateRows` = the template + the drop box's mini table.
 - `hirePlan()` is memoized (`state._hpC`, keyed on courses + settings + `_crsVer`) → `hirePlanRaw`; `lensScale` per
   date (`state._lensC`). `cohortsChanged` bumps `state._crsVer`. Lanes: `settings.siteGroup` → `siteLane`;
   `courseOverlaps()` marks rows. 📄 `rcReportHtml` / `rcReport(fmt)`, sections `settings.repSec` (`REP_SECS`).

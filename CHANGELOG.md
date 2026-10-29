@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### 🎓 A forecast or a sidur dropped on the Recruitment page loads as what it is
+
+- Fix (root cause): every file dropped on the Recruitment page went to the course reader, which finds
+  "courses" in almost any table — a forecast loaded as courses. A file whose header reads as a forecast or a
+  sidur (or a workbook with iron / sidur sheets) now goes to the regular import; only the rest is read as courses.
+
 ### 🎓 Courses page: fast, clearer, rules for any locations, an executive report; breaks read the matrix
 
 - Speed: with "include attrition & courses" on, every half-hour cell re-ran the headcount projection (15k
