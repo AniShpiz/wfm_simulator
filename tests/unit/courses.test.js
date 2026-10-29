@@ -84,3 +84,8 @@ test("the app's own template header \"ימי עבודה\" keeps each course's le
   assert.deepStrictEqual(pick(r, "duration"), [12, 16]);
   assert.deepStrictEqual(pick(r, "count"), [8, 6]);
 });
+
+test("the template's new header \"ימי הקורס\" (course days) keeps each course's length", () => {
+  const r = P([["שם קורס", "פתיחת קורס", "ימי הקורס", "חניכים", "% הסמכה"], ["קורס ב\"ש 1", "04/11/2026", 12, 8, 90], ["קורס בית 1", "11/11/2026", 16, 6, ""]]);
+  assert.deepStrictEqual(pick(r, "duration"), [12, 16]);
+});

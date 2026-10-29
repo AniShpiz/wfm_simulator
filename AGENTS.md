@@ -173,8 +173,10 @@ workforce filter lists legitimately show only "(all)" for this file.
   length; `courseDefaults()` = the remembered "hire % for new courses"). Files dropped anywhere on
   the page go to `ingestCourseFile`, which hands a forecast / sidur (by `findHeader` + `classifyGrid`, or iron /
   sidur sheet names) to `ingestFile`. `crsTemplateRows` = the template + the drop box's mini table.
+- `hirePlan(sc)`: `sc` = `wiScenario()` (the What-If levers, null at 0) — AHT × (1−cut), shrinkage / absence / attrition
+  cut; memoized per scenario. `histProductivity()` → `mo.Np` (the productivity check in a month's numbers).
 - `hirePlan()` is memoized (`state._hpC`, keyed on courses + settings + `_crsVer`) → `hirePlanRaw`; `lensScale` per
-  date (`state._lensC`). `cohortsChanged` bumps `state._crsVer`. Lanes: `settings.siteGroup` → `siteLane`;
+  date (`state._lensC`). `cohortsChanged` bumps `state._crsVer`. Lanes: `settings.siteRules` ([[location…]…], chip rows) → `siteLane`;
   `courseOverlaps()` marks rows. 📄 `rcReportHtml` / `rcReport(fmt)`, sections `settings.repSec` (`REP_SECS`).
 - `hirePlan` / `renderHirePlan` ("are your courses enough?") implement `RECRUIT_PLAN_SPEC.md` —
   read it before touching them. Course calendar: `courseDayOK` + `cohortFloorDate` (working days,

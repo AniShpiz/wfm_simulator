@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### 🔧 The What-If levers as a scenario for "are your courses enough?"
+
+- Move a What-If lever (shorter calls, less attrition, less shrinkage, fewer no-shows) and the plan runs on it
+  when you let go: a chip names the scenario, the number says it against the real one ("+5 … (instead of +14
+  without it)"), and the button says "— by this scenario". "↺ Back to current" clears it. The real plan (the
+  trajectory line, the report's plan) stays the real one; the report adds the scenario in one line.
+- A month's numbers carry a check by the history's productivity (the file's answered × AHT per scheduled rep, last
+  8 weeks — shrinkage already inside): "~129 needed" next to Erlang's 143 (peaks need more than an average).
+
+### 🎓 Course rules in plain words; short months explained
+
+- "Not at the same time" = rules: a row of location chips each — the lit ones never run a course together (two,
+  three, any); "+ another rule"; ✕ removes. The same rule twice, or one inside a bigger one, isn't kept (a line
+  says so). Replaces the group letters; earlier settings carry over.
+- The months the additions can't close: one red line with what each still lacks ("Oct −42 · Nov −32"), then why
+  (full courses / the first new course's date) and what helps (shorter courses, bigger classes).
+- "Work days" → "Course days" (the table, the rules, the template; the file reader knows both).
+
 ### 🎓 A forecast or a sidur dropped on the Recruitment page loads as what it is
 
 - Fix (root cause): every file dropped on the Recruitment page went to the course reader, which finds
