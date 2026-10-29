@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### 🔧 The report says a scenario as a condition; months carry their year
+
+- The executive report's scenario line is a condition, in its own box: "Provided that this is achieved — shorter
+  calls 10% · less attrition 50% — the courses need +5 (without the improvement: +14)", plus "a scenario, not a
+  forecast: it holds only if the improvement really happens". It names its levers, so it stands without the
+  What-If section.
+- Months carry their year in the plan and the trajectory line ("Dec 2026", "for Nov 2026"); the short-months
+  line keeps each number readable in Hebrew ("Oct 2026: −42").
+
 ### 🔧 The What-If levers as a scenario for "are your courses enough?"
 
 - Move a What-If lever (shorter calls, less attrition, less shrinkage, fewer no-shows) and the plan runs on it
