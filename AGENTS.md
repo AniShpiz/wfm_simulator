@@ -172,6 +172,9 @@ workforce filter lists legitimately show only "(all)" for this file.
 - `parseCoursesGrid(grid, defaults)` returns the courses (any layout; carried-down hire rate /
   length; `courseDefaults()` = the remembered "hire % for new courses"). Files dropped anywhere on
   the page go to `ingestCourseFile`. `crsTemplateRows` = the template + the drop box's mini table.
+- `hirePlan()` is memoized (`state._hpC`, keyed on courses + settings + `_crsVer`) → `hirePlanRaw`; `lensScale` per
+  date (`state._lensC`). `cohortsChanged` bumps `state._crsVer`. Lanes: `settings.siteGroup` → `siteLane`;
+  `courseOverlaps()` marks rows. 📄 `rcReportHtml` / `rcReport(fmt)`, sections `settings.repSec` (`REP_SECS`).
 - `hirePlan` / `renderHirePlan` ("are your courses enough?") implement `RECRUIT_PLAN_SPEC.md` —
   read it before touching them. Course calendar: `courseDayOK` + `cohortFloorDate` (working days,
   closed holidays push; cached by `state._holVer`, bumped in `holChanged`). Locations: `SITES`,

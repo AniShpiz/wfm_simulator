@@ -4,6 +4,30 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### 🎓 Courses page: fast, clearer, rules for any locations, an executive report; breaks read the matrix
+
+- Speed: with "include attrition & courses" on, every half-hour cell re-ran the headcount projection (15k
+  projections and 63k course-end dates per change) — one per date now; "are your courses enough?" is worked out
+  once per change (the plan box and the trajectory line share it); the hiring search is a binary search.
+  A course edit / ✕: ~370 ms → ~160 ms on the test machine.
+- "Are your courses enough?" judges a month on its AVERAGE (weekly points), not a snapshot on the 15th: a course
+  that graduates on the 17th now counts for the rest of the month, so a shorter course moves the plan.
+- "Not at the same time" for any set of locations: a group letter (א/ב/ג) per location in ⚙ Course rules; a
+  course that runs at the same time as another in its lane is marked on its row (with which one).
+- Hovering a suggested addition lights up its course in the table. The rows read right in Hebrew:
+  "+4 · סה״כ 12 (מלא) · בשביל דצמ׳" (no arrows between numbers).
+- 📄 Executive report (in the trajectory card's title row — a click there never folds the card): tick the
+  sections — the numbers, the decision, month by month (Date Trends' monthly rows: calls, answer rate, AHT, gross
+  hours, days at target), the plan month by month + what to add, the courses Gantt, reaching the target (What-If,
+  levers as set), the headcount outlook, the course rules — then PDF (print) or Word. RTL, tables only. Each section carries, grey in brackets, how it is
+  worked out (the formula in words). The top
+  line names the answering skills counted and whether forecast weeks include attrition & courses.
+- Breaks: the day's answer rate starts from the matrix's own number for that day (its calibration already
+  carries the usual breaks) and moves by what the planning gains ("▲ 0.2% above the forecast"); a chip shows the loaded sidur week (off its
+  week: one click goes there).
+- Workforce: the iron validation matrix folds to its title like "iron vs sidur — by day" (remembered; folded it
+  keeps the count to check).
+
 ### ↩ Calls come back after a lost day (elections, a closure, an outage)
 
 - New layer on top of the forecast models (they stay as they were): after a closed day or a day far under

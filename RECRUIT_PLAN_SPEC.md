@@ -17,7 +17,7 @@ Recruitment / WFM manager planning the coming months of courses:
 |---|---|
 | Target | **Hold it every month**, by the **forecast's** demand per month (dynamic). |
 | Course length | **Working days** (Sun–Thu); closed holidays (Hebrew calendar + your own dates) don't count and push the floor date. Roughly the same everywhere; home courses are longer. |
-| Locations | From the course name: **בית**, **ב"ש**, **רחובות** (changeable in the table). A location runs **one course at a time** — the next opens when the previous ends. |
+| Locations | From the course name: **בית**, **ב"ש**, **רחובות** (changeable in the table). A location runs **one course at a time** — the next opens when the previous ends; locations given the same group letter (⚙) share one lane. |
 | Class size | Per location — realistic: **ב"ש 12 · רחובות 7 · בית 12**; any other location 20. Editable (⚙ under the plan). |
 | Recruiting lead time | **0** — a course can be filled up to the day before it opens. |
 | Ramp-up | A new rep reaches full productivity **within a month** of certifying (modelled 50% → 100% over 30 days). |
@@ -32,8 +32,9 @@ Per month in the forecast (from this month, up to 6):
 - **Needed reps** `N = today's reps × Σ needed staffing ÷ Σ today's-team staffing` over the month's
   forecast days — "needed staffing" = the matrix's interval need for the target; "today's team" = the
   iron (Friday by the rotation, answering skills), or the forecast file's history without an iron.
-- **Expected reps** `E = today's reps − monthly attrition to mid-month + graduates on the floor by
-  mid-month`, each graduate × hire rate × early-attrition factor × ramp-up.
+- **Expected reps** `E` = the month's AVERAGE (weekly points through the month) of `today's reps − monthly attrition
+  + graduates on the floor`, each graduate × hire rate × early-attrition factor × ramp-up — a course that
+  graduates mid-month counts for the rest of it (was: a snapshot on the 15th).
 - Short month → add trainees to the earliest course that graduates by mid-month, up to its location's
   class size; still short → an extra course at the location whose next slot graduates first
   (length = the location's usual course length, default 12 working days); if none graduates in time,
