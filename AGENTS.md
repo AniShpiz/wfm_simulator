@@ -173,6 +173,9 @@ workforce filter lists legitimately show only "(all)" for this file.
   length; `courseDefaults()` = the remembered "hire % for new courses"). Files dropped anywhere on
   the page go to `ingestCourseFile`, which hands a forecast / sidur (by `findHeader` + `classifyGrid`, or iron /
   sidur sheet names) to `ingestFile`. `crsTemplateRows` = the template + the drop box's mini table.
+- `scopeHc()` = today's reps in the 🎧 skills (+ the course filter) — the plan, the What-If, the lens and the report
+  start from it. `normCourse(c)` runs in `cohortsChanged` and on load (no empty fields reach the math).
+  `whatIfCurve(wi,extra)` (extra = planned courses); `shadowPrices(full)` (levers incl. `availPts`).
 - `hirePlan(sc)`: `sc` = `wiScenario()` (the What-If levers, null at 0) — AHT × (1−cut), shrinkage / absence / attrition
   cut; memoized per scenario. `histProductivity()` → `mo.Np` (the productivity check in a month's numbers).
 - `hirePlan()` is memoized (`state._hpC`, keyed on courses + settings + `_crsVer`) → `hirePlanRaw`; `lensScale` per
@@ -192,6 +195,8 @@ workforce filter lists legitimately show only "(all)" for this file.
 
 ## ☕ Breaks tab
 
+- Exports: `brkSheetHtml(bp,mode)` mode tpl | names (board + `brkEntitle(ds)` list + queue) | proc (the flowchart
+  alone); `brkParts(d)` = the long/short split shared with the plan. Black & white on purpose.
 - `breakPlan(ds,over)`: reps from `schedRows` (else the iron's weekday, Friday via `friW`), each with
   their shift(s) and `5 × hours` minutes split into a long (= slot) + short break (`parts`), each in its
   own slot ≥ 90 min apart (60 / one slot when needed), inside the shift (`fits`). Tightest shifts first;
