@@ -4,7 +4,29 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
-### 🔧 The report says a scenario as a condition; months carry their year
+### ☕ Break sheets: entitlement list, the procedure on its own, black & white · 🎓 Recruitment: one skill list, no NaN, shadow price
+
+- Breaks export: by default the board + the day's break entitlement + the owed-break queue; the delayed-break
+  procedure is its own export (📑). The entitlement list (from the sidur that covers the day, answering skills):
+  each rep's shift(s) — a split shift adds its hours — hours, minutes (5 per working hour), long + short; 6 blank
+  rows for backups not on the sidur (a day without a sidur: an empty list with the rule, to fill by hand). The
+  sheets are black & white: bold black lines between places, grey = blocked, dashed = catch-up, bold minutes = the
+  long break. Excel: the same, a black separator column between places, the list under the board.
+- Fix (root cause): the Recruitment page counted reps with an old second skill filter — the KPI, the plan, the
+  What-If and the realistic lens now all count the 🎧 answering skills' reps (untagged = קו 1), and only courses
+  that train those skills. The KPI's skill chips set 🎧 itself. The report's headcount names its skills.
+- Fix (root cause of NaN): a course with an empty / text field (hire rate, length, size, date — an old save or a
+  partial file) reached the math. Every course is normalized when it changes or loads.
+- The What-If counts graduates from today on (earlier ones are in today's team), so courses now move it; the
+  report's What-If table adds "after recruiting the +N recommended". The hero says "not reached by <date>" (was a
+  fixed "half a year"); hovering the curve shows the date, the answer rate and the gap to the target.
+- 💲 Shadow price (fold under the levers, and a report section as a work plan): per lever — 1% shorter calls,
+  10% less attrition, 1 point more availability — the answer-rate points now and at the horizon, the trainees no
+  longer needed, and the improvement that alone would replace the extra recruiting.
+- Courses table: tick rows (or all) → one hire rate for them, or delete them — undoable.
+- The report's Gantt paints each course on the weeks it really runs (start → its last day) and shows its dates.
+  The report stays in color. A plan row's highlight never sticks; a location no longer in the data leaves its rule.
+
 
 - The executive report's scenario line is a condition, in its own box: "Provided that this is achieved — shorter
   calls 10% · less attrition 50% — the courses need +5 (without the improvement: +14)", plus "a scenario, not a

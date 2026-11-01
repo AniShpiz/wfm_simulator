@@ -137,6 +137,14 @@ forecast with the layer off vs on. Pass = clean sets unchanged, comeback sets im
    no chip (only a trace is left).
 3. `rebuildLearningSeries()` several times → the event stays flagged every time.
 
+## Recruitment checks (this round)
+
+1. 🎧 Line 1 only → the KPI, the plan and the What-If count Line 1's reps (not the whole roster).
+2. A course with an empty hire rate / length / size → no NaN anywhere (page, report).
+3. Tick all courses → one hire rate → ↶ undo; tick two → delete.
+4. 💲 Shadow price opens with three levers, none at a flat 0; the report carries it as a work plan.
+5. Breaks export: board + entitlement (split shift adds up) + queue; 📑 the procedure alone.
+
 ## Persistence Tests
 
 1. Load data and change settings.
