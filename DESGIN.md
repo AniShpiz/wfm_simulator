@@ -20,8 +20,10 @@ Any new design work should preserve those constraints.
 These come from the product owner and override taste. A feature that adds value but breaks one of
 them is not done.
 
-1. **Low cognitive load.** One idea per view. Managers read people ("29 reps"), not hours or model
-   terms. Plain words first; the method lives behind an "i" or a folded "⚙ fine-tune".
+1. **Low cognitive load.** One idea per view. Managers read the floor's daily language — people ("29 reps")
+   and hours ("+40 ש׳") — never model terms. Plain words first; the method lives behind an "i" or a folded
+   "⚙ fine-tune". One unit spelling app-wide: hours go through `hU()` ("8.5h" / "8.5 ש׳"), never a mix of h, H
+   and שעות on one screen.
 2. **Power features, one click deep.** Depth is always there — hover = the period's numbers,
    click = open it (drill-down), fold/unfold a card — but never in the way of the main answer.
 3. **Follow the user's journey.** Put a feature where the decision is made, not where the data
@@ -39,6 +41,10 @@ them is not done.
    broken — no "no shift detected", "not in memory yet", "filtered view…", "missing column"
    lines. Speak only when something real happened, in plain words with its number
    ("📈 calls rose 18% in the last 6 days — the next days are raised to match").
+   A notice earns its place only if the user **can and should act on it, knows exactly how, and the fix is
+   one click away** (the "💡 add answered calls" chip opens the file picker itself). An empty page says ONE
+   thing — the empty-state line with its button — never a stack of "load X" notices. "Missing input" is
+   information (navy), never red; a button that can't run is gray (`.btn:disabled`).
 8. **Fix the root cause, never paper over it.** No ⚠ badges or heuristic data conversions to hide a
    suspicious number — trace it, reproduce it, fix the math.
 9. **Every area can step aside.** Secondary cards fold to a one-line summary (e.g. "89% of the iron
@@ -50,12 +56,33 @@ them is not done.
     happened / what it does, and what the user gets.
 12. **One word per concept.** Staff who leave = "עזיבה"; "נטישה" is only for abandoned calls. A person is a
     **נציג** — never חניך, עובד or סוכן; someone in a course = "נציג בקורס" (EN: rep / rep in course).
+    In-shift time not answering (breaks, training) = "זמן לא זמין" (EN: unavailable time) — never "שחיקה";
+    scheduled reps who don't come = "חוסרים" (EN: no-shows); vacation / sick / reserve duty written in the sidur
+    = "היעדרות" (EN: leave). A half hour = "אינטרוול". Full-time equivalents = "משרות" (EN: FTE).
     A tool answers the user's question in its title ("Are your courses enough?"), the answer comes
     first, the knobs last.
 13. **Same control, same place, same look.** A control that appears on several pages sits in the same spot on
     each ("Include attrition & courses" is at the far end of the toolbar, by the holidays / charts controls, on
-    the matrix and on Date Trends) and every on/off switch is the same `.btn.sw` (gray off, navy on).
+    the matrix and on Date Trends — always shown, never appearing and vanishing by week) and every on/off switch
+    looks the same: a `.seg` without words (the recessed track; a gray thumb at the start = off, the navy thumb
+    at the end = on), for `input.sw` and `.btn.sw` alike, one size, never stretched by a form row. Messages to
+    team managers share one shape (`tlMsg`): "Hi {manager}," · the purpose in one line · "• rep — detail" · thanks.
 14. **No "i" icons on crowded pages** (the matrix): the explanation is the hover of the control it explains.
+15. **Design from where the user stands — in the journey and in time.** Before adding or changing anything, ask:
+    where is the user in their journey right now, what do they want, what do they already know, and what is
+    the single most valuable thing to give them here (or how to steer them to it) — in the fewest clicks.
+    The app has **three time zones**, and the user must always know which one a number lives in:
+    (1) the history in the file (measured, fixed), (2) the gap from the file's last day to today (not in the
+    file — the iron / today's team stands in), and (3) the future (forecast, courses, attrition — estimates).
+    A number on screen says its time (a date, a week, "today", "for Nov 2026's demand"); a page about the
+    future never shows a number from a past browsed week (the Recruitment "short today" KPI is computed from
+    today, with the plan's own math); forecast rows look lighter than measured ones.
+16. **Words are the last resort.** Before writing a sentence, ask whether the journey and the design can make
+    the user act, understand and find their way without reading. Prefer the visual — a bar that fills toward
+    the target beats a "Met / Missed" word — at minimum cognitive load. When words are needed, weigh every
+    letter, word and sentence: cut until nothing more can go without losing understanding, and use only the
+    app's defined terms (rule 12). Titles are the user's question ("Where do the iron hours go?"), not the
+    method ("Treemap").
 
 ## Product Design Principles
 

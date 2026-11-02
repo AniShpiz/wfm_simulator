@@ -4,6 +4,31 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### 🎨 Design-rules pass: one number per question, titles that ask, the target bar, one switch, one message shape
+
+- Workforce: the three KPIs now add up — ① in the sidur ÷ iron · ② "of the iron is on leave" (who + the biggest
+  reasons under it) · ③ "iron hours that can come back" (no leave behind them; click → who). ③ and the "Below their
+  iron" card read one function (`ironGap`), so their numbers match; a rep whose whole gap is leave reads "—".
+  "Contractual deviation" is gone (timing isn't good or bad by itself).
+- Workforce: the treemap and the leave-impact card fold (folded by default, remembered) with a one-line summary;
+  titles are questions ("Where do the iron hours go?", "What does each day's leave cost?"); treemap % = share of the
+  iron, like KPI ①. "How many more can be off?" shows −k (reps missing to reach the target) instead of ⚠.
+- Hours: one spelling app-wide — "8.5h" / "8.5 ש׳" (`hU`); no Hebrew hard-coded in English tooltips.
+- Auto-Scheduler: the banner and the KPI under it show the same shortage (rounded per half hour, like the
+  Uncovered-Demand grid) — "18 shifts moved — the shortage fell from 934 to 921 rep-hours". No "no coverage rules"
+  line. A button that can't run is gray; "what's missing" is navy, not red.
+- Recruitment: "Reps short today" (was "max daily deficit" of a past browsed week) = today's team vs this month's need,
+  the plan's own math, with when the courses close it. Titles ask: "Where are we heading?", "What gets us to target
+  sooner?", "When do new reps join?", "How many reps will we have?". The planning note moved into a hover.
+- Date Trends: the TSF column follows Settings' window (as the matrix); the last column is a target bar — fills toward
+  the target tick, "−x%" or ✓; the header names the metric and its target. Only the target metric is colored.
+- One switch look (a `.seg` without words), never stretched; "Include attrition & courses" is always in its place.
+- Messages to team managers share one shape (`tlMsg`): hi {manager} · purpose · "• rep — detail" · thanks.
+- Words: זמן לא זמין (not שחיקה), חוסרים (no-shows), היעדרות (leave in the sidur), אינטרוול, משרות / FTE. Long tips cut to
+  two sentences. An empty page shows one line + its button. The "💡 add answered calls" chip opens the file picker.
+- DESGIN.md: new rules 15 (design from where the user stands — in the journey and in the three time zones) and
+  16 (words last).
+
 ### ☕ Breaks: up to 20 min in a row, one landscape A4 page, the procedure in color · 🎓 one plan date, shadow price in plain numbers, נציג · 🗓 constraints from the managers, Friday in "Before running"
 
 - Breaks: ⚙ Slots and rules → "Most break minutes in a row" (default 20). A rep's minutes split into breaks no longer

@@ -64,22 +64,27 @@ select:focus,input:focus,button:focus-visible{outline:2px solid var(--magenta);o
 .seg button{background:transparent;border:none;border-radius:999px;padding:5px 12px;cursor:pointer;font-size:.83rem;color:var(--muted);transition:background .15s,color .15s,box-shadow .15s}
 .seg button:not(.active):hover{background:rgba(255,255,255,.75);color:var(--navy)}
 .seg button.active{background:var(--navy);color:#fff;font-weight:600;box-shadow:0 1px 3px rgba(13,42,77,.3)}
-input.sw{-webkit-appearance:none;appearance:none;flex:none;width:34px;height:20px;margin:0;border-radius:999px;cursor:pointer;vertical-align:middle;
-  background:radial-gradient(circle at 10px 50%,#fff 7px,transparent 7.5px),#c3cddb;transition:background .15s}
-input.sw:checked{background:radial-gradient(circle at calc(100% - 10px) 50%,#fff 7px,transparent 7.5px),var(--navy)}
-[dir=rtl] input.sw{background:radial-gradient(circle at calc(100% - 10px) 50%,#fff 7px,transparent 7.5px),#c3cddb}
-[dir=rtl] input.sw:checked{background:radial-gradient(circle at 10px 50%,#fff 7px,transparent 7.5px),var(--navy)}
+/* the switch IS a .seg without words: the same recessed track, the same navy thumb — off = a gray thumb at the
+   start, on = the navy thumb at the end. One size everywhere (never stretched by a form row). */
+input.sw,.frow input.sw{-webkit-appearance:none;appearance:none;flex:none;width:36px;min-width:36px;height:20px;margin:0;border-radius:999px;cursor:pointer;vertical-align:middle;
+  border:1px solid var(--border);box-shadow:inset 0 1px 2px rgba(13,42,77,.08);
+  background:radial-gradient(circle at 9px 50%,#a9b6c6 6px,transparent 6.5px),#e7edf4;transition:background .15s}
+input.sw:checked{background:radial-gradient(circle at calc(100% - 9px) 50%,var(--navy) 6.5px,transparent 7px),#e7edf4}
+[dir=rtl] input.sw{background:radial-gradient(circle at calc(100% - 9px) 50%,#a9b6c6 6px,transparent 6.5px),#e7edf4}
+[dir=rtl] input.sw:checked{background:radial-gradient(circle at 9px 50%,var(--navy) 6.5px,transparent 7px),#e7edf4}
 input.sw:disabled{opacity:.45;cursor:default}
-/* a mode BUTTON that toggles (e.g. holiday paint mode) carries the same switch glyph */
-.btn.sw{display:inline-flex;align-items:center;gap:8px}
-.btn.sw::after{content:"";flex:none;width:28px;height:16px;border-radius:999px;background:radial-gradient(circle at 8px 50%,#fff 5.5px,transparent 6px),#c3cddb}
-[dir=rtl] .btn.sw::after{background:radial-gradient(circle at calc(100% - 8px) 50%,#fff 5.5px,transparent 6px),#c3cddb}
-.btn.sw.on::after{background:radial-gradient(circle at calc(100% - 8px) 50%,#fff 5.5px,transparent 6px),var(--navy)}
-[dir=rtl] .btn.sw.on::after{background:radial-gradient(circle at 8px 50%,#fff 5.5px,transparent 6px),var(--navy)}
+/* a mode BUTTON that toggles (e.g. holiday paint mode) carries the same switch */
+.btn.sw{display:inline-flex;align-items:center;gap:8px} .btn.sw[hidden]{display:none}
+.btn.sw::after{content:"";flex:none;width:34px;height:18px;border-radius:999px;box-shadow:inset 0 0 0 1px var(--border),inset 0 1px 2px rgba(13,42,77,.08);
+  background:radial-gradient(circle at 9px 50%,#a9b6c6 5.5px,transparent 6px),#e7edf4}
+[dir=rtl] .btn.sw::after{background:radial-gradient(circle at calc(100% - 9px) 50%,#a9b6c6 5.5px,transparent 6px),#e7edf4}
+.btn.sw.on::after{background:radial-gradient(circle at calc(100% - 9px) 50%,var(--navy) 6px,transparent 6.5px),#e7edf4}
+[dir=rtl] .btn.sw.on::after{background:radial-gradient(circle at 9px 50%,var(--navy) 6px,transparent 6.5px),#e7edf4}
 .btn.ghost.sw.on{border-color:var(--navy);color:var(--navy)}
 .btn{background:var(--sky);color:#06233f;border:none;padding:8px 15px;border-radius:7px;font-weight:600;font-size:.86rem;cursor:pointer}
 .btn:hover{filter:brightness(1.07)}
 .btn.navy{background:var(--navy);color:#fff}
+.btn:disabled{background:#d5dde7!important;color:#7b8aa0!important;cursor:not-allowed;box-shadow:none!important}
 .btn.ghost{background:#fff;border:1px solid var(--border);color:var(--navy)}
 .chk{display:inline-flex;align-items:center;gap:7px;font-size:.85rem;cursor:pointer}
 .banner{border-radius:7px;padding:8px 12px;font-size:.82rem;margin-bottom:10px;display:none}
@@ -196,7 +201,19 @@ li.insight{border-inline-start:4px solid var(--sky);background:var(--sky-soft)}
 .dtag.act{color:#a8e6c3}.dtag.fc{color:#d6c6ff}.dtag.today{color:#7cc8ff}
 th.todayHd{box-shadow:inset 0 -3px 0 var(--sky)} td.todayCol{box-shadow:inset 2px 0 0 var(--sky),inset -2px 0 0 var(--sky)}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-bottom:12px}
+.page.isEmpty>*:not(.emptyState){display:none!important}
 .kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px}
+td.gbCell{padding:3px 10px;min-width:128px}
+.goalBar{display:flex;align-items:center;gap:7px}
+.goalBar .gbT{position:relative;flex:1;height:8px;border-radius:999px;background:#e7edf4;box-shadow:inset 0 1px 2px rgba(13,42,77,.1)}
+.goalBar .gbT>i{position:absolute;inset-inline-start:0;top:0;bottom:0;border-radius:999px;transition:width .3s}
+.goalBar .gbT>b{position:absolute;top:-3px;bottom:-3px;width:2px;margin-inline-start:-1px;background:var(--navy);border-radius:1px}
+.goalBar .gbV{flex:none;min-width:44px;font-size:.74rem;font-weight:700;text-align:end;direction:ltr;font-variant-numeric:tabular-nums}
+.goalBar.ok .gbT>i{background:#2f9e66} .goalBar.ok .gbV{color:var(--emerald)}
+.goalBar.near .gbT>i{background:#d6a020} .goalBar.near .gbV{color:var(--amber)}
+.goalBar.bad .gbT>i{background:#cf5a46} .goalBar.bad .gbV{color:var(--crimson)}
+tr.fcast .goalBar .gbT>i{opacity:.55}
+.kpi.kpiGo{cursor:pointer;transition:border-color .15s,box-shadow .15s} .kpi.kpiGo:hover,.kpi.kpiGo:focus-visible{border-color:var(--sky);box-shadow:0 2px 8px rgba(13,42,77,.1)}
 .kpi .n{font-size:1.25rem;font-weight:700;color:var(--navy);direction:ltr;unicode-bidi:isolate}
 /* dense numeric scanning: digits align in columns everywhere */
 table,.kpi .n,.num,.sub{font-variant-numeric:tabular-nums}
@@ -310,7 +327,7 @@ tr.r-ok td{background:var(--emerald-bg)}
 .splitbtn.open .menu{display:block}
 /* iron-dependent features are visibly disabled until a סידור ברזל is loaded */
 .ironGated{opacity:.45;pointer-events:none;filter:grayscale(.6);position:relative}
-.gateNote{font-size:.78rem;color:var(--crimson);font-weight:600;margin:4px 0}
+.gateNote{font-size:.78rem;color:var(--navy);font-weight:600;margin:4px 0}
 .cellundo{border:none;background:rgba(255,255,255,.75);border-radius:50%;width:16px;height:16px;line-height:15px;font-size:.68rem;cursor:pointer;padding:0;margin-inline-start:3px;color:var(--navy);vertical-align:middle}
 .cellundo:hover{background:var(--navy);color:#fff}
 /* drop-anywhere overlay + toast */
@@ -539,9 +556,8 @@ details.foldCard>summary h2{display:flex;align-items:center;gap:8px;flex-wrap:wr
 details.foldCard>summary h2::before{content:"▾";color:var(--muted);font-size:.8rem;transition:transform .15s}
 details.foldCard:not([open])>summary h2::before{transform:rotate(-90deg)} [dir=rtl] details.foldCard:not([open])>summary h2::before{transform:rotate(90deg)}
 details.foldCard[open]>summary{margin-bottom:10px}
-.foldSum{font-size:.74rem;font-weight:600;color:var(--muted)}
+.foldSum{font-size:.74rem;font-weight:600;color:var(--muted)} #treeSum:not(:empty)+#impSum:not(:empty)::before{content:"· ";margin-inline-start:4px}
 .friEverySeg{margin-inline-start:auto;font-size:.72rem;font-weight:400}
-details.friIn{margin-top:14px;padding-top:10px;border-top:1px solid var(--border)}
 details.foldCard>summary h3{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0;font-size:.92rem;color:var(--navy)}
 details.foldCard>summary h3::before{content:"▾";color:var(--muted);font-size:.8rem;transition:transform .15s}
 details.foldCard:not([open])>summary h3::before{transform:rotate(-90deg)} [dir=rtl] details.foldCard:not([open])>summary h3::before{transform:rotate(90deg)}
@@ -810,7 +826,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         </div>
         <span style="margin-inline-start:auto;display:inline-flex;align-items:center;gap:4px">
           <!-- ONE switch for forecast weeks without a sidur (off = today's team) — same place as on Date Trends (syncLens) -->
-          <button type="button" class="btn ghost sw lensBtn" aria-pressed="false" hidden data-i18n="lensBtn">Include attrition &amp; courses</button>
+          <button type="button" class="btn ghost sw lensBtn" aria-pressed="false" data-i18n="lensBtn">Include attrition &amp; courses</button>
           <button class="btn ghost sw" id="excModeBtn" aria-pressed="false" data-i18n="excBtn" data-i18n-title="tipExc">🗓 Holiday / Exception Control</button></span>
         <div class="splitbtn" id="expWrap">
           <button class="btn ghost" id="expToggle" data-i18n="exportDemand">⬇ Export Demand Profile</button>
@@ -895,7 +911,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <label data-i18n="trToL">End Date</label><input type="date" id="trTo">
         <button class="linklike" id="resetTrends" style="display:none" data-i18n="resetEdits">↺ Reset to Original Forecast</button>
         <!-- the charts / summary controls, together: attrition & courses · charts (the group holds its place) -->
-        <span style="margin-inline-start:auto;display:inline-flex;gap:8px;align-items:center"><button type="button" class="btn ghost sw lensBtn" aria-pressed="false" hidden data-i18n="lensBtn">Include attrition &amp; courses</button><button class="btn ghost sw" id="trDashBtn" type="button" aria-pressed="true" data-i18n="trDashBtn">📊 Charts</button></span>
+        <span style="margin-inline-start:auto;display:inline-flex;gap:8px;align-items:center"><button type="button" class="btn ghost sw lensBtn" aria-pressed="false" data-i18n="lensBtn">Include attrition &amp; courses</button><button class="btn ghost sw" id="trDashBtn" type="button" aria-pressed="true" data-i18n="trDashBtn">📊 Charts</button></span>
         <button class="btn navy" id="trShareBtn" data-i18n="trShare">📤 Monthly summary</button>
         <button class="btn ghost" id="exportTrends" data-i18n="exportCsv">⬇ Download CSV</button>
       </div>
@@ -939,7 +955,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
       <div class="kpi"><div class="n" id="kpiHc">—</div><div class="l" data-i18n="kpiHc">Current headcount (reps)</div>
         <!-- skill split: the total stays the hero, the queues read at a glance -->
         <div id="kpiHcSkills" style="display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-top:6px"></div></div>
-      <div class="kpi"><div class="n" id="kpiMaxDef">—</div><div class="l"><span data-i18n="kpiMaxDef">Max Daily Representative Deficit</span> <span class="info" data-tipkey="tipMaxDef" tabindex="0">i</span></div></div>
+      <div class="kpi"><div class="n" id="kpiMaxDef">—</div><div class="l"><span data-i18n="kpiMaxDef">Reps short today</span> <span class="info" data-tipkey="tipMaxDef" tabindex="0">i</span></div><div class="kSub" id="kpiGapSub"></div></div>
       <div class="kpi"><div class="l"><span data-i18n="spark2">Cohort Yield Rate Trend</span> <span class="info" data-tipkey="tipSpark2" tabindex="0">i</span></div>
         <div class="n" id="spark2v">—</div><div class="spark" id="spark2"></div><div class="cap" id="spark2c"></div></div>
     </div>
@@ -998,7 +1014,6 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
             <label class="mini" data-i18n="wiAbsence">Fewer no-shows</label><input type="range" id="wiAbsence" min="0" max="100" step="5" value="0"><span class="num" id="wiAbsenceV"></span>
           </div>
           <details class="hpLim" id="wiShadow"><summary data-i18n="shTitle">💲 Shadow price — what each improvement is worth</summary><div id="wiShadowBox"></div></details>
-          <p class="mini" data-i18n="wiAgentsNote" style="margin-top:6px">➕ Extra reps come from your Courses &amp; What-If profiles below.</p>
           <button class="linklike" id="wiReset" style="margin-top:4px" data-i18n="wiReset">↺ Back to current</button>
         </div>
         <div>
@@ -1035,7 +1050,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
   <!-- ============ ADVANCED SETTINGS ============ -->
   <!-- ============ WFM 2.0: WORKFORCE & IRON DASHBOARD ============ -->
   <section class="page" id="page-workforce">
-    <div class="banner tip" id="wfNoIron" style="display:none" data-i18n="wfNoIron">No Iron sheet loaded — drop a multi-sheet Tikshuv workbook (סידור עבודה + סידור ברזל). Falling back to manual contracted hours.</div>
+    <div class="banner tip" id="wfNoIron" style="display:none" data-i18n="wfNoIron">No iron yet — drop the Tikshuv workbook (סידור עבודה + סידור ברזל) to see who is below their iron.</div>
     <div class="toolbar">
       <!-- multi-select: none checked = all; check any mix to narrow (populateWfFilters) -->
       <label data-i18n="wfTeamL">Team</label><div class="splitbtn"><button class="btn ghost" id="wfTeamBtn" style="min-width:130px"></button><div class="menu pad" id="wfTeamMenu"></div></div>
@@ -1055,8 +1070,9 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
     </div>
     <div class="kpis" id="wfKpis">
       <div class="kpi"><div class="n" id="wfKpiUtil">—</div><div class="l"><span data-i18n="wfKpiUtil">Roster-to-Iron Utilization</span> <span class="info" data-tipkey="tipWfUtil" tabindex="0">i</span></div></div>
-      <div class="kpi"><div class="n" id="wfKpiLeak">—</div><div class="l"><span data-i18n="wfKpiLeak">Vacation Leakage Rate</span> <span class="info" data-tipkey="tipWfLeak" tabindex="0">i</span></div></div>
-      <div class="kpi"><div class="n" id="wfKpiDev">—</div><div class="l"><span data-i18n="wfKpiDev">Contractual Deviation Index</span> <span class="info" data-tipkey="tipWfDev" tabindex="0">i</span></div></div>
+      <div class="kpi"><div class="n" id="wfKpiLeak">—</div><div class="l"><span data-i18n="wfKpiLeak">of the iron is on leave</span> <span class="info" data-tipkey="tipWfLeak" tabindex="0">i</span></div><div class="kSub" id="wfKpiLeakS"></div></div>
+      <!-- iron = in the sidur + on leave + can come back: the third tile is the action, one click to who -->
+      <div class="kpi kpiGo" id="wfKpiRecT" role="button" tabindex="0"><div class="n" id="wfKpiRec">—</div><div class="l"><span data-i18n="wfKpiRec">iron hours that can come back</span> <span class="info" data-tipkey="tipWfRec" tabindex="0">i</span></div><div class="kSub" id="wfKpiRecS"></div></div>
     </div>
     <!-- the iron, day by day: iron vs sidur in people (+ the forecast need); a day opens its hours (renderIronDays).
          Folds to its title (remembered) -->
@@ -1064,22 +1080,24 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
       <summary><h2><span data-i18n="wfIronT">Iron vs sidur — by day</span> <span class="info" data-tipkey="tipWfIron" tabindex="0">i</span> <span class="foldSum" id="ibSum"></span></h2></summary>
       <div id="wfIronDays"></div>
     </details>
-    <div class="grid2">
-      <div class="card" id="wfTreeCard">
-        <h2><span data-i18n="wfTreeTitle">Iron Hours Allocation (Treemap)</span> <span class="info" data-tipkey="tipWfTree" tabindex="0">i</span></h2>
-        <div id="wfTreemap" style="direction:ltr"></div>
-        <p class="mini" id="wfTreeTotal" style="text-align:center;margin-top:4px"></p>
-        <div class="legend" id="wfTreeLegend"></div>
+    <!-- one fold for the two views that open together: where the iron hours go · what the leave costs (folded by default, remembered) -->
+    <details class="card foldCard" id="wfHoursCard">
+      <summary><h2><span data-i18n="wfTreeTitle">Where do the iron hours go — and what does leave cost?</span> <span class="info" data-tipkey="tipWfTree" tabindex="0">i</span> <span class="foldSum" id="treeSum"></span><span class="foldSum" id="impSum"></span></h2></summary>
+      <div class="grid2">
+        <div id="wfTreeCard">
+          <div id="wfTreemap" style="direction:ltr"></div>
+          <p class="mini" id="wfTreeTotal" style="text-align:center;margin-top:4px"></p>
+          <div class="legend" id="wfTreeLegend"></div>
+        </div>
+        <div id="wfImpactCard">
+          <p class="mini" id="wfImpactMetric" style="margin-top:0"></p>
+          <div class="tablewrap"><table id="wfImpact"></table></div>
+          <p class="mini" id="wfImpactStars" style="display:none"></p>
+          <!-- the question after "what hurts": how many MORE can be off each day (renderHeadroom) -->
+          <div id="wfHeadroom" style="display:none;margin-top:14px"></div>
+        </div>
       </div>
-      <div class="card" id="wfImpactCard">
-        <h2><span data-i18n="wfImpactTitle">Daily Vacation &amp; SLA Impact Matrix</span> <span class="info" data-tipkey="tipWfImpact" tabindex="0">i</span></h2>
-        <p class="mini" id="wfImpactMetric"></p>
-        <div class="tablewrap"><table id="wfImpact"></table></div>
-        <p class="mini" id="wfImpactStars" style="display:none"></p>
-        <!-- the question after "what hurts": how many MORE can be off each day (renderHeadroom) -->
-        <div id="wfHeadroom" style="display:none;margin-top:14px"></div>
-      </div>
-    </div>
+    </details>
     <details class="card foldCard" id="wfValCard" open>
       <summary><h2><span data-i18n="wfValTitle">Iron Base Validation Matrix</span> <span class="info" data-tipkey="tipWfVal" tabindex="0">i</span> <span class="foldSum" id="valSum"></span></h2></summary>
       <div class="toolbar">
@@ -1087,13 +1105,13 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <button class="btn ghost" id="wfValCopy" data-i18n="wfValCopy">📋 Copy for Excel</button>
       </div>
       <div class="tablewrap" id="wfValWrap" style="max-height:260px;overflow-y:auto"></div>
-      <!-- the same Friday rotation, next to the iron lists (people by team → messages to TLs); folds -->
-      <details class="foldCard friCard friIn" id="wfFriIn" data-wk="wf" style="display:none" open>
-        <summary><h3><span data-i18n="friT">Friday — last week vs this week</span> <span class="info" data-tipkey="tipFri" tabindex="0">i</span>
-        <span class="foldSum friSum"></span>
-        <span class="seg friEverySeg"><button type="button" data-v="2" data-i18n="friEv2">Every other Friday</button><button type="button" data-v="1" data-i18n="friEv1">Every Friday</button></span></h3></summary>
-        <div class="friBody"></div>
-      </details>
+    </details>
+    <!-- the Friday rotation, its own section (people by team → messages to TLs); folds, remembered -->
+    <details class="card foldCard friCard" id="wfFriIn" data-wk="wf" style="display:none" open>
+      <summary><h2><span data-i18n="friT">Friday — last week vs this week</span> <span class="info" data-tipkey="tipFri" tabindex="0">i</span>
+      <span class="foldSum friSum"></span>
+      <span class="seg friEverySeg"><button type="button" data-v="2" data-i18n="friEv2">Every other Friday</button><button type="button" data-v="1" data-i18n="friEv1">Every Friday</button></span></h2></summary>
+      <div class="friBody"></div>
     </details>
     <div class="card">
       <h2><span data-i18n="rosterTitle">Below their iron — who and why</span></h2>
@@ -1190,7 +1208,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
       </details>
       <div class="runRow">
         <p class="gateNote" id="schGateEmpty" style="display:none"><span id="schGateEmptyT"></span></p>
-        <p class="gateNote" id="schGate" style="display:none" data-i18n="schNeedSidur">The optimizer MOVES shifts in the current sidur — load a sidur (with shifts in the selected week) and a forecast to enable it.</p>
+        <p class="gateNote" id="schGate" style="display:none" data-i18n="schNeedSidur">Fine-tuning moves the shifts of a loaded sidur — load a sidur with shifts this week, and a forecast.</p>
         <button class="btn navy" id="schRun" data-i18n="schRun">Generate Optimized Schedule</button>
         <button class="btn navy" id="schGenRun" style="display:none" data-i18n="schGenRun">🏗️ Generate baseline</button>
       </div>
@@ -1277,7 +1295,6 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
           </select></div>
         <div class="frow"><label><span data-i18n="setTarget">Attainment target (%)</span> <span class="info" data-tipkey="tipTarget" tabindex="0">i</span></label><input type="number" id="setTarget" min="50" max="100" step="1"></div>
         <div class="frow"><label data-i18n="setTsfT">Answer-speed window (TSF, seconds)</label><input type="number" id="setTsfT" min="5" max="600" step="5"></div>
-        <p class="mini" data-i18n="tsfBenchNote">TSF 30 and TSF 60 in Date Trends are fixed industry benchmarks and never change with this window.</p>
         <h2 style="margin-top:14px" data-i18n="shiftTitle">Shift Hours Window</h2>
         <div class="frow"><label data-i18n="setDayStart">Day starts (hour)</label><input type="number" id="setDayStart" min="0" max="22" step="1"></div>
         <div class="frow"><label data-i18n="setDayEnd">Day ends (hour)</label><input type="number" id="setDayEnd" min="1" max="23" step="1"></div>
@@ -1292,11 +1309,12 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
             <input type="number" id="setHc" min="0" max="2000" step="1">
             <button class="linklike" id="hcOvr" style="display:none"></button>
           </span></div>
-        <div class="frow"><label><span data-i18n="setAbsence">Absence — היעדרויות (%)</span> <span class="info" data-tipkey="tipAbsence" tabindex="0">i</span></label><input type="number" id="setAbsence" min="0" max="60" step="1"></div>
-        <div class="frow"><label><span data-i18n="setShrink">Shrinkage (%)</span> <span class="info" data-tipkey="tipShrink" tabindex="0">i</span></label><input type="number" id="setShrink" min="0" max="60" step="1"></div>
+        <div class="frow"><label><span data-i18n="setAbsence">No-shows (%)</span> <span class="info" data-tipkey="tipAbsence" tabindex="0">i</span></label><input type="number" id="setAbsence" min="0" max="60" step="1"></div>
+        <div class="frow"><label><span data-i18n="setShrink">Unavailable time (%)</span> <span class="info" data-tipkey="tipShrink" tabindex="0">i</span></label><input type="number" id="setShrink" min="0" max="60" step="1"></div>
+        <!-- the note sits under the two values it is about -->
+        <p class="mini" data-i18n="shrinkNote">With measured answer rates in your file, the model calibrates to them — these two matter most without them.</p>
         <h2 style="margin-top:14px"><span data-i18n="skTitle">🎧 Answering skills</span> <span class="info" data-tipkey="tipSk" tabindex="0">i</span></h2>
         <div id="setSkills" class="skChips"></div>
-        <p class="mini" data-i18n="shrinkNote">When your file carries measured answer rates, the model auto-calibrates to them — so changing shrinkage/absence is largely absorbed (reality outranks estimates). These sliders matter most when no measured data is loaded.</p>
         <details class="danger">
           <summary data-i18n="resetZone">Workspace reset (danger zone)</summary>
           <div class="inner">
@@ -1553,7 +1571,7 @@ en:{
   fmAutoHol:"Auto Israeli-holiday calendar", fmAutoAnom:"Auto war/outage detection",
   fmProfile:"Interval profile window", fmProfAdapt:"Adaptive (8w, fallback all)", fmProf12:"12 weeks",
   reviewExclBtn:"📅 Review excluded days", reviewExclTitle:"Excluded days — holidays & anomalies",
-  reviewExclMsg:"Days the model held out of learning. Holidays come from the Hebrew calendar; anomalies (wars/outages) are auto-detected as abnormally low days. Un-exclude any you want the model to learn from anyway.",
+  reviewExclMsg:"Days the model leaves out of learning: holidays, and unusually low days (war, outage). Bring any day back to learning with one click.",
   hol_closed:"Holiday (closed)", hol_eve:"Holiday eve / partial", hol_chm:"Chol HaMoed",
   exclNote:"— excluded from learning", facNote:"— modeled at ≈{p}% of normal",
   anomWord:"Anomaly", anomNote:"— {p}% of normal (auto-flagged)",
@@ -1570,7 +1588,7 @@ en:{
   mxTipHead:"{m}: {v} — {src}", mxSrcMeas:"measured", mxSrcFc:"forecast",
   mxTipBody:"target {t}% · scheduled {s} · needed for target {r}",
   mxVerdOverOk:"More reps than the target needs — service is above target (100% is neither realistic nor economical).",
-  mxVerdOverLow:"More reps than the model needs, yet measured service came in below target — check real abandonment / absences that day.",
+  mxVerdOverLow:"More reps than the model needs, yet measured service came in below target — check that day's real abandonment and no-shows.",
   mxVerdShortOk:"Fewer reps than the model wants, yet measured service still met the target that day.",
   mxVerdShortOkMeas:"Fewer in the sidur than the model sizes for, yet measured service met the target. Usual reasons: people outside the sidur/queue scope also answered (other skills, overtime), or a low-volume slot where the model is cautious.",
   mxVerdShortOkFc:"Fewer than the model sizes for, yet the forecast is on target — this slot has historically done better than the raw model, and the % includes that. Treat the ring as a caution, not a gap.",
@@ -1589,13 +1607,13 @@ en:{
   logicVol:"Call Volume Forecast — Double Exponential Smoothing (Holt's method, α=0.4, β=0.2, damped φ=0.95), fitted separately per weekday + interval across your uploaded weeks.",
   logicAht:"AHT Prediction — per weekday + interval, from the model chosen in Settings. Beyond the simple averages: calls-weighted smoothing (busy weeks count more, old weeks fade), day level × intraday shape (the day's AHT from all its calls, each interval's own factor shrunk toward the day when it has few calls, smoothed with its neighbours), and a blend of the two. The backtest scores AHT weighted by calls.",
   logicErlang:"Service Level & Answer Rate — one unified Erlang A (Palm) core for abandonment queues: Answer Rate and every TSF window share the same patience-adjusted physics (SL(t) = AR − (pW − pAb)·e^(−rt), exact Erlang C in the zero-abandonment limit); classic Erlang C for emergency/hotline queues.",
-  logicStaff:"Required staffing — iterative search starting at ⌊load⌋+1, incrementing until the Primary Target Metric meets your attainment target. Shrinkage is deducted from scheduled capacity beforehand.",
+  logicStaff:"Required staffing — iterative search starting at ⌊load⌋+1, incrementing until the Primary Target Metric meets your attainment target. Unavailable time is deducted from scheduled capacity beforehand.",
   resetZone:"Workspace reset (danger zone)",
   resetConfirm:"Are you sure you want to reset all active settings and clear loaded forecast arrays?",
   confirmYes:"Yes, reset everything", confirmNo:"Cancel",
-  setAbsence:"Absence (%)",
-  tipAbsence:"Scheduled reps who don't show up at all (sick, no-show). Present = scheduled × (1 − absence).",
-  setShrink:"Shrinkage (%)",
+  setAbsence:"No-shows (%)",
+  tipAbsence:"Scheduled reps who don't come at all (sick, no-show). Present = scheduled × (1 − no-shows).",
+  setShrink:"Unavailable time (%)",
   tipShrink:"Unavailable time of reps who did come: breaks, training, meetings (typically 10–20%). Productive = present × (1 − unavailable).",
   resetWs:"↺ Reset workspace",
   resetNote:"Clears saved settings, policies, courses, simulations and cached datasets from this browser.",
@@ -1624,7 +1642,7 @@ en:{
   trFcNote:"Rows beyond your last data date are forward projections (Holt volume forecast + 4-week AHT average).",
   sumRow:"Total",
   thDate:"Date", thAr:"Answer Rate %", thUtil:"Projected Occupancy Rate %",
-  thAht:"AHT (mm:ss)", thWork:"Hours to schedule (gross)", fTipWork:"Gross rep-hours to schedule so the day meets {m} ≥ {t}% — includes unavailable time and absences. Talk-and-wrap itself is about {n}% of it.", thNetProd:"Net Productivity (calls / net hr)",
+  thAht:"AHT (mm:ss)", thWork:"Hours to schedule (gross)", fTipWork:"Gross rep-hours to schedule so the day meets {m} ≥ {t}% — includes unavailable time and no-shows. Talk-and-wrap itself is about {n}% of it.", thNetProd:"Net Productivity (calls / net hr)",
   fTipVol:"Inbound calls across the day.",
   fTipAr:"Answered ÷ inbound. Past days: from your file; forecast days: predicted.",
   fTipAht:"Average handle time, weighted by calls.",
@@ -1635,15 +1653,15 @@ en:{
   tipExc:"Click a cell to zero it, a day header to zero the whole day, or drag across cells. Exit the mode and click a marked cell to restore it.",
   excTag:"Exception", excRestoreTip:"Click to restore the default forecast",
   resetEdits:"↺ Reset to Original Forecast",
-  kpiMaxDef:"Max Daily Representative Deficit",
-  tipMaxDef:"The most reps missing at the same time in any half hour of the selected week (needed − scheduled).",
+  kpiMaxDef:"Reps short today", gapSubMo:"for {m}'s demand", gapBySub:"the courses close it by {m}", gapMoreSub:"+{n} more to recruit", gapOkSub:"enough for {m}",
+  tipMaxDef:"Today's team vs what this month's demand needs to hit the target — before courses and leavers. The same count as \"Are your courses enough?\".",
   sortBy:"Sort by", sortDef:"Availability deficit", sortSched:"Scheduled hours", sortContr:"Contracted hours", sortName:"Name",
   rthName:"Name", rthSched:"Scheduled / possible", rthContr:"Contracted", rthDef:"Δ to extend",
   auditLink:"To see which rows were skipped — click here",
   auditTitle:"Skipped rows", auditRow:"Row {n}: {s}",
-  thTsf30:"TSF 30", thTsf60:"TSF 60", thVol:"Inbound Calls", thTarget:"Goal Attainment Status",
+  thTsf30:"TSF 30", thTsf60:"TSF 60", thVol:"Inbound Calls", thGoal:"{m} vs target {t}", tipGoal:"How close each period came to your {t}% {m} target: the bar fills toward the navy tick; the number is how far below it (✓ = on target).", goalTgt:"target {t}%",
   tipAttain:"Met when the day's {m}, weighted by calls, reaches {t}%.",
-  slaMet:"Met", slaMissed:"Missed",
+
   /* ===== WFM 2.0 ===== */
   tabWorkforce:"Workforce & Iron", tabScheduler:"Auto-Scheduler", tabBreaks:"Breaks", brkTitle:"Breaks by slot", brkAdj:"Attendance today", brkAdjTip:"Each slot counts who is on shift at that hour in the sidur (start times, short shifts, splits). Type the day's change: no-shows −3, backups +2.", brkAdjS:"Change from the sidur", brkPresent:"Reps present today", brkPresentTip:"No sidur for this day: how many reps came in — spread over the hours like today's team (the iron).", brkAuto:"auto", brkPrev:"Previous day", brkNext:"Next day",
   brkNoFc:"No forecast for this day — by the procedure: {c} places per slot.", brkPlacesOnly:"Room for {p} breaks today.",
@@ -1652,42 +1670,45 @@ en:{
   brkPlaces:"Places", brkTime:"Time", brkName:"Name", brkSheetT:"Break sheet — {d}", brkSheetSub:"Each rep has their own times (minutes in brackets) · missed yours? take a catch-up place, later", brkFile:"breaks",
   brkPdf:"🖨 PDF / print", brkWord:"📄 Word", brkXls:"📊 Excel (.xlsx)", brkPopup:"The browser blocked the print window — allow pop-ups for this page", brkSetT:"⚙ Slots and rules",
   brkFirst:"First break", brkLast:"Last break", brkExcL:"Exception slot", brkStep:"Slot (min)", brkCap:"Most places per slot", brkMaxRun:"Most break minutes in a row", brkPerHour:"Break min per working hour",
-  wfNoIron:"No Iron sheet loaded — drop one multi-sheet Tikshuv workbook (סידור עבודה + סידור ברזל). Falling back to manual contracted hours per rep.",
-  wfTeamL:"Team", wfSkillL:"Skill", wfSiteL:"Site", wfAll:"(all)", skTitle:"🎧 Answering skills", tipSk:"Skills that answer the queue the matrix measures. Same choice as the 🎧 buttons; kept when you reload a sidur. Reps without a skill always count.",
+  wfNoIron:"No iron yet — drop the Tikshuv workbook (סידור עבודה + סידור ברזל) to see who is below their iron.",
+  wfTeamL:"Team", wfSkillL:"Skill", wfSiteL:"Site", wfAll:"(all)", skTitle:"🎧 Answering skills", tipSk:"The skills that answer the queue — the same choice as every 🎧 button. Reps without a skill always count.",
   skEmpty:"The list appears after you load your first sidur. Until then every rep counts as answering.", skNotInSidur:"Not in the current sidur — your choice is kept for when it returns.",
   skNew:"New skill in this sidur: {s} — not counted as answering yet. Change it in Settings → Answering skills.", skInSettings:"⚙ Settings",
   wfNSel:"{n} selected", wfShowAll:"↺ Show all", wfNoVals:"This file has no values in this column.",
   wfDayL:"Day", wfDayAll:"All", daysShort:["Su","Mo","Tu","We","Th","Fr"],
   wfKpiUtil:"Roster-to-Iron Utilization",
-  tipWfUtil:"Scheduled hours ÷ iron (contract) hours — how much of the contract became shifts. Quantity only, not timing.",
-  wfKpiLeak:"Vacation Leakage Rate",
-  tipWfLeak:"Absence hours inside iron windows ÷ iron hours.",
-  wfKpiDev:"Contractual Deviation Index",
-  tipWfDev:"Share of shifts whose start or end differs from the iron times — timing, not quantity.",
-  wfTreeTitle:"Iron Hours Allocation (Treemap)",
-  tipWfTree:"How the iron hours split: scheduled, absences, sidur statuses and unused iron. Click a tile to see who.",
+  tipWfUtil:"Hours in the sidur ÷ iron hours — how much of the contract became shifts.",
+  wfKpiLeak:"of the iron is on leave",
+  tipWfLeak:"Vacation, sick, reserve duty and training written in the sidur, out of the iron hours.",
+  wfLeakSub:"{n} reps · {h}",
+  wfKpiRec:"iron hours that can come back",
+  tipWfRec:"Iron hours missing from the sidur with no leave behind them — short shifts or missing days. Click to see who.",
+  wfRecSub:"at {n} reps — who ↓",
+  wfTreeTitle:"Where do the iron hours go — and what does leave cost?", treeSum:"{a} in the sidur · {b} on leave", impWorst:"hurts most: {d} {v}",
+  tipWfTree:"First: how the iron hours split — in the sidur, on leave, sidur statuses (click a tile to see who). Then: the answer-rate points each skill's leave costs the whole center that day.",
   wf_prod:"Scheduled (actual)", wf_vacation:"Vacation", wf_miluim:"Reserve duty", wf_medical:"Medical",
   wf_training:"Training", wf_exam:"Exams", wf_other:"Other absence", wf_unalloc:"Unused iron base",
   wfNoStatus:"Empty shift (no status)", wfNotYet:"Not scheduled yet",
   roEmpty:"Week {w} sidur loaded — {e} reps, no hours yet.", roEmptyIron:"Iron: {i} reps.",
   schEmptySidur:"The week {w} sidur has no hours yet.", schSkillAsk:"Answering skill:", schSkillAskTip:"Only these skills are placed against the demand; everyone else stays at their iron window.",
-  wfReadyT:"Week {w} readiness", wfReadyNoFc:"With a forecast, shortage and surplus appear here.", tipWfReady:"Per day: the answering reps (🎧) in the iron — everyone in the iron counts as fit to work — against what the forecast needs. Green up = surplus, red down = short. Statuses already typed in the work sidur (vacation, resignation…) are flagged, not subtracted. Click a day: when it is short.", ouUp:"Surplus", ouDn:"Short", ouLgIron:"Reps in the iron", ouAlert:"The work sidur already lists a status for {n} reps — counted as available:", ouPickHint:"Click a day — when it is short", ouByHour:"{d} — by hour (reps at the same time)", ouStDay:"Statuses in the work sidur this day ({n})", ouTipNeed:"Needed ~{n} reps ({h}h)", ouTipIron:"In the iron {i} reps ({h}h)", ouTipNeedH:"Needed {n}", ouTipIronH:"In the iron {a}",
+  wfReadyT:"Week {w} readiness", wfReadyNoFc:"With a forecast, shortage and surplus appear here.", tipWfReady:"Per day: answering reps (🎧) in the iron vs what the forecast needs — green up = surplus, red down = short. Statuses already in the sidur (vacation, resigned…) are marked, not subtracted.", ouUp:"Surplus", ouDn:"Short", ouLgIron:"Reps in the iron", ouAlert:"The work sidur already lists a status for {n} reps — counted as available:", ouPickHint:"Click a day — when it is short", ouByHour:"{d} — by hour (reps at the same time)", ouStDay:"Statuses in the work sidur this day ({n})", ouTipNeed:"Needed ~{n} reps ({h}h)", ouTipIron:"In the iron {i} reps ({h}h)", ouTipNeedH:"Needed {n}", ouTipIronH:"In the iron {a}",
   wfImpactNoFc:"Load a forecast to see what each absence costs in answer rate.",
-  wfImpactTitle:"Daily Vacation & SLA Impact Matrix",
-  hrTitle:"🏖 Vacation headroom — how many more can be off",
-  hrTip:"How many more reps can be off each weekday before {m} drops below target. A guide, not a guarantee.",
+  
+  hrTitle:"🏖 How many more can be off?",
+  hrTip:"+ = how many more can be off that day while {m} stays on target. − = how many are missing to reach it.",
   hrChipTip:"{d}: up to {k} more can be off (≈{h}h shift each) and {m} stays ≥ {t}% — now {v}",
-  hrBelow:"{d}: already below target with the current sidur ({v}) — no room for more absences",
-  tipWfImpact:"Answer-rate points the whole center loses from each skill's absences that day. Green = safe to approve leave; red = critical.",
+  hrBelow:"{d}: {v} — {k} more reps on shift (≈ an average shift each) bring it back to {t}%",
+  
   wfImpactNone:"Needs a forecast + roster with a skill column (מיומנות) to simulate.",
   wfImpactTip1:"Answer rate",
   wfImpactNoIron:"This matrix compares the Iron base (סידור ברזל) against the actual roster — load a Tikshuv workbook with an Iron sheet to enable it.",
-  wfImpactMetric:"Each cell: how many points of the WHOLE center's {m} this row's absences cost that day. Baseline is constant — everyone at Iron; only the row's slice drops to its actual hours. Filters choose whose damage you inspect; the center-wide baseline never moves.",
+  wfImpactMetric:"Each cell: the {m} points the whole center loses to that row's leave that day.",
   wfImpactTip2:"{m} at Iron base staffing → at actual roster staffing",
-  wfImpactUnval:"{n} roster reps have no validated Iron base and are EXCLUDED from this matrix:",
+  wfImpactUnval:"{n} reps without a validated iron aren't counted here:",
   schNeedIron:"The auto-scheduler builds shifts from the סידור ברזל base. Load a Tikshuv workbook with an Iron sheet to enable it.",
-  schNeedSidur:"The optimizer MOVES shifts in the current sidur — load a sidur (with shifts in the selected week) and a forecast to enable it.",
-  schDoneMove:"✅ Sidur optimized: {a} shifts, {m} moved. Still uncovered: {h} rep-hours — close them in the Uncovered-Demand card below.",
+  schNeedSidur:"Fine-tuning moves the shifts of a loaded sidur — load a sidur with shifts this week, and a forecast.",
+  schDoneMove:"✅ {m} shifts moved — the shortage fell from {b} to {a} rep-hours. Close the rest below, in Uncovered demand.",
+  schDoneNoMove:"✅ No move helps this week — {a} rep-hours short. Close them below, in Uncovered demand.", schDoneAll:"✅ {m} shifts moved — the whole week is covered.",
   schChipSidur:"🧩 {n} shifts in the selected week",
   schSrc_moved:"Moved", schSrc_cut:"Cut",
   schCutBtn:"✂ Cut", schCutDone:"{name}'s shift cut — now shown as 'Cut' in the table",
@@ -1698,19 +1719,19 @@ en:{
   crsOk:"{n} courses loaded into the training pipeline.", crsNew:"{n} new courses", crsUpd:"{n} already loaded — updated, not doubled", crsErr:"No course rows found — a course needs at least a start date.",
   wfDrillTitle:"Drill-down: {seg} by {dim}", wfDrillBy:"Drill by", wfDrillHint:"Click a treemap tile to break it down.", wfDrillBack:"✕ Close drill-down", wfDrillWho:"{n} reps — click to list them",
   roIronNote:"Iron base: {n} reps",
-  rosterRecov:"extendable across {n} reps ≈ {f} FTE — recover these hours before hiring externally",
+  rosterRecov:"can come back at {n} reps ≈ {f} FTE — before you hire", rosterAbs:"another {h} on leave", rosterAllAbs:"The whole gap is leave written in the sidur",
   rosterAllOk:"✅ Everyone is at (or above) their contracted baseline — no internal hours to recover.",
   rosterCopyBtn:"Copy list",
   rosterAll:"Show all {n} ▾", rosterLess:"Show fewer ▴", rosterRowTip:"Click to see which days", rosterDayTip:"{s}h in the sidur / {i}h in the iron base",
   rosterMissing:"Iron days missing from the sidur: {d} — the natural place to give the hours back", rosterSpread:"No whole iron day is missing — the gap is shorter shifts; extend on the amber days.", rosterNoIron:"No iron day breakdown for this rep.",
   skillScopeAll:"All skills answer", skillScopeN:"{n} answering skills", wfScopeHint:"The skills this page counts — the same 🎧 answering skills the whole app uses (matrix, scheduler, recruitment, Settings). Reps without a skill always count.",
-  skillScopeHint:"Which skills count as ANSWERING capacity for this queue's AR/TSF? (HR & workforce pages always include everyone.) On billing days check בכיר; מרפאות usually answer קו 1 too.",
+  skillScopeHint:"Which skills answer this queue? On billing days add בכיר; מרפאות often answer קו 1 too.",
   skillScopeAllBtn:"Count every skill",
   rcScopeAll:"Answering: whole center", rcScopePfx:"Answering: ",
   rcScopeHint:"Who answers the frontline — this is the capacity that feeds the simulator, the answer-rate KPIs and the target date below. It's the same 🎧 scope as the matrix page. (HR & workforce pages always include everyone.)",
   legScale:"above target → critical (7 bands around your target)",
   cellUndoTip:"Restore this cell to its original value",
-  schSkillHint:"Which skills does the optimizer treat as frontline — the only ones it moves or cuts against demand? Usually the קו-1 queue only; add בכיר on collection days, מרפאות when they answer קו 1. Unticked skills stay put and are just checked against the coverage rules. Untagged reps always schedule.",
+  schSkillHint:"The skills fine-tuning moves against demand — usually קו 1; add בכיר on billing days, מרפאות when they answer קו 1. The rest stay put; reps without a skill always count.",
   schInsert:"Insert into sidur", schSwapTitle:"Insert {n} on {d} — switch with:",
   schAddNoSwap:"Insert without switching anyone", schSwapDone:"{n} inserted into the schedule.",
   schSrc_manual:"Manual",
@@ -1739,17 +1760,17 @@ en:{
   extShort:"short {n} at {w}", extDeficit:"{h}h below weekly base",
   extCopy:"Copy message",
   extMsg:"Hi {name}, we're short on {day} {date}. Could you {ask}? Thanks! 🙏",
-  extTlHead:"Hi {team}, possible shift extensions on your team:",
+  extTlPurpose:"Shift extensions we need — who can?", tlHi:"Hi {team},", tlFoot:"Thanks! 🙏", waPurpose:"Please validate the iron — these reps have no fixed base hours:", friTlPurpose:"Friday {d} — {g}:", saTlPurpose:"Sidur changes for week {w} — please confirm with the reps:",
   extTlLine:"• {name} — {day} {date}: {ask}",
   hcNoSkill:"untagged", hcSplitSrc:"split from the loaded sidur ({n} distinct reps)",
-  kpiHcSched:"Scheduled reps (משובצים) in the loaded sidur",
-  kpiHcAll:"Whole workforce — everyone in the loaded sidur",
+  kpiHcSched:"Scheduled in the sidur",
+  kpiHcAll:"All reps in the sidur",
   hcBasisAll:"whole workforce", hcBasisSched:"scheduled only",
   hcChipOn:"Plan for {s} only", hcChipOff:"Back to all skills",
-  hcPlanNote:"Planning basis for everything on this page; demand stays center-wide. With measured answer-rate data loaded, shrinkage/absence are auto-calibrated to reality across the app.",
+  hcPlanNote:"The basis for this whole page; demand is the whole center's.",
   cohSkill:"Queue (skill)", cohSkillDef:"קו 1 (default)",
-  shrinkAbsorbed:"The model re-calibrated to your MEASURED answer rates — shrinkage/absence changes are absorbed so the matrix stays anchored to reality.",
-  shrinkNote:"When your file carries measured answer rates, the model auto-calibrates to them — so changing shrinkage/absence is largely absorbed (reality outranks estimates). These sliders matter most when no measured data is loaded.",
+  shrinkAbsorbed:"The model follows your measured answer rates — changing unavailable time or no-shows barely moves it.",
+  shrinkNote:"With measured answer rates in your file, the model calibrates to them — these two matter most without them.",
   skipRDate:"unreadable date", skipRTime:"unreadable interval/time",
   skipRVol:"invalid call volume", skipRAht:"invalid handle time",
   auditDl:"⬇ Download all {n} skipped rows (CSV with reasons)",
@@ -1765,17 +1786,16 @@ en:{
   mxCalibOff:"⚠ Uncalibrated model estimates — the file carries no (or too little) measured answered-calls data, so AR/TSF here are pure Erlang and usually read higher than your real floor. Load a forecast export that includes answered-calls columns to calibrate.",
   mxAuditFlag:"Data audit flagged {n} suspicious values — see the Home page forecast portal.",
   legOn:"on target", legNear:"close (within 3 pts)", legBelow:"below — darker = look first",
-  tipScale:"Green: on target. Light green: within 3 points. Below that, shades rank this week's under-target intervals — the darkest red is the worst quarter, the place to start.",
+  tipScale:"Green = on target, light green = within 3 points. Below that, the darker the red, the worse the interval this week — start there.",
   mxScaleCuts:"This week: light amber {a}–{b}% · amber {b}–{c}% · red {c}–{d}% · dark red under {d}%",
   mxScaleDyn:"Green = at/above target · light green = within 3 points of it · below that, this week's under-target intervals split into four equal groups — red is the worst quarter, the place to look first.",
   mxScaleFix:"Green = at/above target · light green = within 3 points · below that, fixed steps of distance from target (too few under-target intervals this week to rank).",
-  mxFlagCal:"💡 Answered calls = real accuracy", mxFlagCalTip:"Your file has no answered calls, so service here is a model estimate and usually reads high. Add an answered-calls column to the export and the numbers tune to your floor. Click to upload.",
+  mxFlagCal:"💡 Add answered calls → real service", mxFlagCalTip:"Without answered calls in the file, service here is a model estimate and usually reads high. Click and pick a forecast file with an answered-calls column — the numbers tune to your floor.",
   mxFlagAudit:"⚠ {n} suspicious values", mxFlagAuditTip:"The data check found impossible or unusual values in the forecast file. Click to see them on the Home page.",
   wfValTitle:"Iron Base Validation Matrix", valSumN:"{n} to check",
   tipWfVal:"Reps in the sidur with no iron start/end times — send the list to their team leader.",
   wfValNone:"✅ All roster reps have a valid Iron base.",
   wfValCsv:"⬇ Export CSV", wfValCopy:"📋 Copy for Excel", wfValCopied:"Table copied — paste into Excel.",
-  waMsg:"היי {team}, נא לתקף בהקדם סידור ברזל עבור הנציגים הבאים שרשומים ללא שעות בסיס קבועות: {names}.",
   waCopied:"WhatsApp alert for {team} copied.",
   wbOk:"Tikshuv workbook recognized — {e} representatives, {i} Iron records, {v} validation issues.",
   schTitle:"Auto-Scheduling",
@@ -1787,7 +1807,7 @@ en:{
   schGenRun:"🏗️ Generate baseline", schGenNeed:"Load a demand forecast and an iron base (סידור ברזל) to generate a baseline.",
   schChipGenIron:"🏗️ Iron {n}", schChipGenCov:"📐 Rules · {n}",
   schDoneGenIron:"✅ Built from the iron as is: {a} shifts (no forecast for this week — not fitted to demand yet).",
-  schDoneGen:"✅ Baseline generated: {a} shifts placed, {p} in the surplus pool. Still uncovered: {h} rep-hours (structural — hire/allocate there).",
+  schDoneGen:"✅ Baseline built: {a} shifts, {p} in the surplus pool. {h} rep-hours still short — close them below, in Uncovered demand.",
   schGenOutTitle:"Generated Baseline", schGenAuditTitle:"Coverage Compliance",
   schGenCsv:"⬇ Download Generated Baseline (CSV)", schGenGapTitle:"Uncovered Demand (structural)",
   saKpiPlaced:"shifts placed", saKpiPool:"in surplus pool",
@@ -1813,21 +1833,21 @@ en:{
   tipShort:"This counts intervals failing to meet SLA targets for the week selected in the main dropdown. Like the max-deficit KPI, it reflects the REAL week anchored to measured answer rates — shrinkage/absence changes are absorbed by calibration here and act on the planning projections below instead.",
   spark1:"Projected Staffing Curve (30-Day Outlook)",
   tipSpark1:"Data origin: today's headcount from Settings, minus monthly attrition applied daily, plus course graduates whose floor-entry date falls inside the 30-day window (yield-adjusted).",
-  spark2:"Cohort Yield Rate Trend",
+  spark2:"How many finish each course?",
   tipSpark2:"Certification rate of each course, in order of floor entry.",
   spark3:"Hiring Gap — Target vs. Actual",
   tipSpark3:"Hiring Gap calculates the exact number of Full-Time Equivalent (FTE) roles required to bridge current staffing gaps and successfully meet your target SLA. A positive value (e.g., +78) represents a resource deficit, showing you exactly how many new representatives need to be hired or scheduled.",
   capToday:"Today", capEnd:"+30 days", capCourse1:"Course 1", capCourseN:"Latest",
-  outlookTitle:"Capacity Outlook — projected cumulative headcount",
+  outlookTitle:"How many reps will we have?",
   tipOutlook:"Headcount over the next 60 days: today's headcount + course graduates − attrition + active simulations.",
-  trajTitle:"Trajectory Insights", trajAllQueues:"All queues", wiScopeAll:"Whole center",
+  trajTitle:"Where are we heading?", trajAllQueues:"All queues", wiScopeAll:"Whole center",
   trajShift:"{m} trajectory: expected {x}% shift within 30 days under the current hiring rate.",
   trajHire:"Optimal hiring: Add {n} Full-Time Roles to sustain your {t}% {m} target through the forecast period (until {d}).", trajHireN:"Recruit {n} more reps {g}.", trajHireM:"Recruit {n} more reps to hold {m} {t}% every month — by course in the training pipeline.", trajOkM:"On track: your courses hold {m} {t}% every month through {d}.", trajOkN:"On track: your courses are enough {g}.",
   trajHireBig:"You're projected at {p}% {m}; the {t}% target is {n} full-time roles away ({pct}% of the workforce) if hired UNIFORMLY — the most expensive path. Peak-hour gaps are usually the real culprit: try the shift-extension offers on the scheduler page, or revisit the target.",
   trajUnreach:"The {t}% {m} target is out of reach at any reasonable hiring level — the projection tops out around {p}%. This calls for a target or demand conversation, not mass hiring.",
   trajOk:"On track: the current recruitment pace sustains your {t}% {m} target through the forecast period (until {d}).",
-  trajCalc:"Model transparency: projected weekly {m} of {p}% on the last full week · each scheduled rep counts as {e}% of an effective position — calibrated from your MEASURED answer rates, i.e. real combined shrinkage+absence of about {loss}% (the sliders are estimates; this is what the floor actually shows).",
-  trajCalcFull:"Model transparency: projected weekly {m} of {p}% on the last full week · per your measured answer rates, scheduled reps deliver a full effective position — real-world shrinkage/absence are already baked into the measurements.",
+  trajCalc:"Model transparency: projected weekly {m} of {p}% on the last full week · each scheduled rep counts as {e}% of an effective position — calibrated from your measured answer rates, i.e. real combined unavailable time + no-shows of about {loss}%.",
+  trajCalcFull:"Model transparency: projected weekly {m} of {p}% on the last full week · per your measured answer rates, scheduled reps deliver a full effective position — real unavailable time and no-shows are already in the measurements.",
   trajProfile:"Hiring profile: a {win} shift (mostly {days}) carries {pct}% of this week's shortage — ~{n} reps in that window close most of the gap.",
   trajMore:"More details (trend & model)",
   schSortTip:"Click to sort; click again to reverse", schFiltN:"Showing {v} of {n} shifts (filtered)",
@@ -1848,7 +1868,7 @@ en:{
   schAuditTitle:"The result — what changed",
   tipSchAudit:"After each run: coverage rules re-checked on the new schedule, and every changed shift listed by team leader, ready to send.",
   saKpiBreach:"half-hours below a coverage rule", saKpiShifts:"changed shifts", saKpiHours:"hours moved",
-  saKpiMetric:"projected {m} change (week)", saKpiShortSub:"≈{p}% of the hours needed · ~{d} a day", saKpiShortTip:"Every half hour of the week where fewer reps were scheduled than needed, added up. A surplus in the morning doesn't cancel a shortage in the evening — so it can be large even when total hours look sufficient. It is the sum of the days below (“How the sidur was moved”).",
+  saKpiMetric:"projected {m} change (week)", saKpiShortSub:"≈{p}% of the hours needed · ~{d} a day", saKpiShortTip:"Every half hour short of reps, added up for the week — a morning surplus doesn't cancel an evening shortage. The sum of the days below (\"How the sidur was moved\").",
   saGaveUp:"kept · instead of {b}", saRebalance:"↻ Re-optimize with your choices", saRebalanceTip:"Runs the fine-tune again around the reps you kept — it may move other teams to compensate.",
   gapCtx:"Left after the moves (contract hours kept). Closing it takes extra hours — with the rep's OK.", gapCtxLocked:"{n} kept as is.", gapCtxGen:"Gaps the iron base can't cover — structural: hire or allocate here.",
   gapCellTip:"{n} reps short · {o} offers can help",
@@ -1871,47 +1891,43 @@ en:{
   saCovOk:"Covered", saCovGap:"short in {n} intervals", saCovImp:"(improved from {n})",
   saCovOutScope:"This skill isn't in the scheduling scope — tick it in the 🎧 menu above to let the optimizer move its reps, or send an extension request.",
   saCovNoMove:"No spare reps to move — needs an extension request (see the Uncovered-Demand card).",
-  saNoRules:"No coverage rules defined — add them above to audit every run.",
   saNoDiffs:"The optimized schedule matches the original sidur — no changes.",
   saDeltaHead:"{n} changes vs. the original sidur",
   saOrig:"original", saOpt:"optimized",
   saTypeShift:"shifted", saTypeExt:"extended", saTypeAdd:"added", saTypeCut:"cut", unitH:"h", saKpiExtSub:"+{n} extended in ③",
   saTl_ext:"• {name} — {day} {date}: {orig} → {opt} (extended)",
   saTlBtn:"📱 Team-leader messages ({n})",
-  saTlHead:"Hi {team}, schedule changes to hold coverage rules & answer rates:",
-  saTlBreachHead:"⚠ Remaining coverage gaps:",
+  saTlBreachHead:"Still not covered:",
   saTlBreach:"• Missing {s}: {cells}",
-  saTlChanges:"🔄 Changes in your team:",
   saTl_shift:"• {name} — {day} {date}: {orig} → {opt}",
   saTl_add:"• {name} — {day} {date}: added shift {opt}",
   saTl_cut:"• {name} — {day} {date}: shift {orig} removed (surplus)",
-  saTlFoot:"Please confirm with the reps as soon as possible. 🙏",
   saTlSendAll:"📱 Message all team leaders", saAllHead:"🗓️ Schedule update — changes by team",
   waCopiedAll:"Copied — one summary for every team leader.", schMovedFrom:"moved from {w}",
-  wfTreeTotal:"Total shown: {n} h",
+  wfTreeTotal:"100% = {n} of iron this week",
   qaTitle:"QA & Feedback", qaPh:"Found a bug? Numbers look off? Missing something? Write it here…",
   qaSend:"📧 Send by email", qaCopy:"📋 Copy",
   qaNote:"Opens your email app — the page and app context are attached automatically. Nothing is ever sent without you.",
   qaSubject:"WFM Simulator — QA feedback", qaEmpty:"Write something first 🙂", qaCopied:"Copied — paste it anywhere.",
   trajNoData:"Load a forecast and set headcount to unlock predictive trajectory insights.",
-  wiTitle:"Improvement Simulator (What-If)",
-  tipWi:"Move the sliders to see where service lands and when you'd reach the target. Extra reps come from the courses and simulations below. A sandbox — your real settings don't change. Covers the reps answering per the 🎧 button.",
+  wiTitle:"What gets us to target sooner?",
+  tipWi:"Move a slider to see where service lands and when you hit the target — a sandbox, nothing real changes. Extra reps come from the courses and profiles below.",
   cohEditTip:"Click to edit this course",
   wiZeroBase:"This is 0 in Advanced Settings — nothing to reduce. Set a value there to model reducing it.",
   wiAht:"Shorter handle time", wiAttr:"Less attrition", wiShrink:"Less unavailable time", wiAbsence:"Fewer no-shows",
-  wiAgentsNote:"➕ Extra reps come from your Courses & Staffing profiles below.",
+  
   wiReset:"↺ Back to current",
   wiTargetN:"target {t}", wiTargetTick:"target {t}", wiWk:"w",
   wiAlready:"already at target", wiUnreach:"not reached within 6 months", wiBy:"reached by {d}",
-  injTitle:"Staffing Profiles — feeds the simulator", injProfile:"Shift profile",
+  injTitle:"What if we add reps on a set shift?", injProfile:"Shift profile",
   profStudent:"Student Afternoon — 12:00–17:00, Sun–Thu",
   profMorning:"Full-Time Morning — 08:00–13:00, Sun–Fri",
   profFull:"Full-Time — 08:00–17:00, Sun–Thu", profCustom:"Custom per-day profile…",
   injCount:"Number of representatives to add", injGo:"➕ Add Representatives & Recalculate",
-  injActive:"Active Staffing Simulations", injNone:"No active staffing simulations yet.",
+  injActive:"In the simulator now", injNone:"The simulator runs on your team and your courses.",
   injLine:"{n} × {prof}", remove:"Remove",
   profNames:{student:"Student Afternoon",fullMorning:"Full-Time Morning",fullDay:"Full-Time",custom:"Custom per-day"},
-  trainTitle:"Training pipeline",
+  trainTitle:"When do new reps join?",
   tipTrain:"Enter a course's start and length; graduates join on start + duration, by the certification rate.",
   cohName:"Course name", cohCount:"Reps in course", cohStart:"Course start", cohDur:"Duration (days)", cohYield:"Yield rate (%)", cohAdd:"Add course",
   courseDefault:"Course",
@@ -1936,7 +1952,6 @@ en:{
   targetsTitle:"Service Targets",
   setTarget:"Attainment target (%)", tipTarget:"The score every interval and day is measured against.",
   setTsfT:"Answer-speed window (TSF, seconds)",
-  tsfBenchNote:"TSF 30 and TSF 60 in Date Trends are fixed industry benchmarks and never change with this window.",
   wfTitle:"Workforce Dynamics", setAttr:"Monthly attrition (%)",
   setHc:"Current headcount (reps)",
   tipHc:"Used for forward projections. Where a sidur is loaded, its staffing is used instead.",
@@ -1944,8 +1959,8 @@ en:{
   modeAband:"Queue permitting customer abandonment / callback",
   modeNoAband:"No-abandonment emergency / hotline queue",
   setMpt:"Mean Patience Time — MPT (mm:ss)",
-  tipMpt:"Average wait before a caller hangs up. 0 = callers never hang up (hotline). A value in your file overrides this.",
-  setMptHint:"Don't know your MPT? Pull the 'average delay of abandoned calls' from your telephony/ACD abandoned-calls report — that value in seconds is your MPT. Typical service queues: 60–240s.",
+  tipMpt:"Average wait before a caller hangs up; 0 = never (hotline). A value in your file wins.",
+  setMptHint:"Don't know it? Take the average wait of abandoned calls from your phone system's report.",
   ceTitle:"Edit {day} {time}", ceCancel:"Cancel", ceApply:"Apply",
   ceFutL:"Apply to this and all future weeks (same weekday & interval)",
   mxCum:"Day so far ({a}–{b}): {v} · {n} calls", ceCum:"Day so far {a}–{b}:",
@@ -1959,7 +1974,7 @@ en:{
   ceHintAgFile:"Baseline from your file (no sidur for this day) — try a what-if here.",
   ceHintDay:"Total calls for the day — spread across its half-hours by the day's usual profile.",
   profTitle:"📊 Intraday call weights", profBtnTip:"See and edit the intraday call weights",
-  profIntro:"What share of each weekday's calls lands in every half-hour. Forecast days spread their daily total by these weights. History is never changed.",
+  profIntro:"Each weekday's share of calls per half hour — forecast days spread their total by it. History never changes.",
   profViewShare:"Weights", profViewDiff:"Change vs other window", profNone:"Load a forecast file with history to see the weights.",
   profInsSame:"Switching to {o} would barely change anything (under 0.3 points anywhere)",
   profInsDiff:"Switching to {o} would move {day} {tm} by {p} points — the biggest change",
@@ -1979,7 +1994,7 @@ en:{
   grpTag_act:"actual", grpTag_fc:"forecast", grpTag_mix:"actual + forecast", trDrill:"Click to see this period's days",
   wkLbl:"Week {w} · {a}–{b}", trShare:"📤 Share summary", trBackTip:"Back to the grouped view (Backspace)",
   shBack:"Months back", shDragTip:"Click to show · drag to reorder", shAhead:"Months ahead", shInsL:"Insights", shNotePh:"Add a line for the reader (optional)", shColGross:"Hours to schedule", shColAht:"AHT",
-  shTitle:"📤 Monthly summary", shIntro:"How we did and where we're heading — ready to send. Pick the window and the columns; your choices are remembered. Courses joining in the forecast months are already included.",
+  shTitle:"📤 Monthly summary", shIntro:"How we did and where we're heading, ready to send — the courses ahead included. Your choices are remembered.",
   shCopyImg:"📋 Copy image", shPng:"⬇ PNG", shCopyTxt:"📋 Copy as text", shCopied:"Image copied — paste it in WhatsApp / email", shCopiedTxt:"Summary text copied",
   shCopyFail:"This browser blocked the clipboard — use ⬇ PNG instead",
   shHead:"Call center — monthly summary", shSub:"{m} target {t}% · {a} – {b}", shFoot:"WFM Simulator · {d}",
@@ -1995,10 +2010,10 @@ en:{
   mxSum:"Daily",
   mxOffGrid:"incl. {n} calls outside the shift window (not shown as grid rows)",
   rrNoWhy:"No status in the sidur — shorter shifts", rrWhyL:"Why:", rrWhyTip:"{n} reps — click to show only them (again = everyone)", rrFriOff:"off this Friday (every other Friday)",
-  wfIronT:"Iron vs sidur — by day", tipWfIron:"Per day, in people: the reps the iron brings (light) vs the reps the sidur placed (navy), and what the forecast needs (orange tick). Friday counts by the rotation. Under each day: sidur hours ÷ iron hours. Follows the filters and the answering skills (🎧). Click a day: its hours.",
+  wfIronT:"Iron vs sidur — by day", tipWfIron:"Per day, in reps: the iron (light) vs the sidur (navy) vs the forecast need (orange tick); Friday by the rotation. Click a day to see its hours.",
   ibTipIron:"Iron: {n} reps ({h}h)", ibTipFri:"Friday by rotation (every other Friday)", ibTipSched:"Sidur: {n} reps ({h}h)", ibTipUtil:"{p}% of the iron hours are in the sidur", ibTipSchedH:"In the sidur {a}",
   ibLgIron:"In the iron", ibLgSched:"In the sidur", ibLgNeed:"Needed (forecast)", ibNarrow:"Filtered view — the forecast need shows for the whole center only.", ibPickHint:"Click a day — its hours",
-  friT:"Friday — last week vs this week", tipFri:"Who can work Friday comes from the iron: hours in the Friday cell. Anything else (contract, no Friday, empty, any text) = doesn't work Friday. Those who can work every other Friday: who worked last Friday is off this one, who didn't is due. Last Friday comes from the memory of earlier sidurim (names only, the last 12 Fridays). Reps who left are listed apart.",
+  friT:"Friday — last week vs this week", tipFri:"Reps with hours in the iron's Friday cell work every other Friday: whoever worked last Friday is off this one. Last Friday comes from earlier sidurim (the last 12 Fridays).",
   friEv2:"Every other Friday", friEv1:"Every Friday", friDropT:"Compare with last Friday?", friDropD:"Drop last week's sidur here — only its Friday is read (who worked). The current sidur stays.",
   friNow:"this Friday {d}", friLastN:"last Friday {d}", friIronN:"with Friday in the iron", friNoLast:"Last Friday ({d}) isn't in memory yet — from next week it fills in by itself.",
   fri_both:"Two Fridays in a row", fri_due:"Their turn — not in the sidur", fri_dueE:"Their turn this Friday", fri_on:"On, as the rotation says", fri_onAll:"In the sidur this Friday", fri_rest:"Off — worked last Friday", fri_left:"Worked last Friday, no longer active",
@@ -2006,7 +2021,7 @@ en:{
   friCopyTip:"Copy the list by team", friNone:"No Friday with shifts found in that file.", friGot:"Friday {d} saved to memory",
   holAutoSec:"Hebrew-calendar holidays", holOwnSec:"Your own dates", holOwnNoName:"(no name)", holOwnDel:"Remove", holOwnName:"Name (e.g. Election day)", holOwnTo:"Until (optional)", holOwnAdd:"+ Add", holOwnNeed:"Pick a date first", holOwnAdded:"{n} — {l}",
   fmFast:"📈 Follow sudden changes in demand", faBtnTip:"What it sees now and how it works", faTitle:"📈 Sudden changes in demand",
-  faIntro:"Calls jumped suddenly? The coming days move to the new level within days, then ease back. Callers who hung up and will call again are counted too.", tipFast:"Calls jumped suddenly? The coming days move to the new level within days, then ease back. Callers who hung up and will call again are counted too.",
+  faIntro:"Calls jumped suddenly? The next days move to the new level, then ease back — callers who hung up and will call again included.", tipFast:"Calls jumped suddenly? The next days move to the new level, then ease back — callers who hung up and will call again included.",
   faOnL:"Follow sudden shifts", faHalfL:"Back to the regular model", faH5:"~1 week", faH10:"~2 weeks", faH20:"~4 weeks", faRetryL:"Abandoned callers who call again",
   tipFaRetry:"Of the EXTRA abandoned calls (above your usual abandon rate), the share that calls again: ¾ the next working day, ¼ the day after. Typical: 30–60%.",
   faOff:"Off — the forecast uses the regular models only.", faNoData:"⚡ Needs at least 14 working days of history.",
@@ -2019,7 +2034,7 @@ en:{
   relWeak:"Weakly", relMod:"Moderately", relStrong:"Strongly", relSent:"{s} related (r = {r}): every {dx} ({x}) ≈ {dy} ({y}).", relNone:"{x} and {y} barely move together here (r = {r}).",
   ibSum:"{p}% of the iron in the sidur",
   cohDurS:"Course days", cohSite:"Location", hpOkMonths:"Yes — every month through {m}", hpShortN:"{n} months stay short", hpShortMo:"{m}: {x} short", hpDone:"Added {n} reps to the courses.", hpUndo:"Undo", hpUndone:"The courses are back as they were", repBtn:"📄 Executive report", repPick:"What goes in", repKpi:"The numbers", repTraj:"The decision (trajectory)", repPlan:"Are your courses enough — month by month", repGantt:"Courses Gantt", repWi:"Reaching the target (What-If)", repOut:"Headcount outlook", repRules:"Course rules", repTitle:"Recruitment & training — executive summary", repSub:"Made {d} · from the simulator, by the forecast and the courses as loaded", repEmpty:"Nothing picked.", repMonth:"Month", repGap:"Short", repAdds:"What to add, by course", repAdd:"Add", repFor:"For", repGanttKey:"Painted = the course is running (start → its last day) · ב\"ש blue · רחובות green · בית amber · red frame = this week", repTgt:"target {t}%: reached {d}", repNoReach:"target {t}%: not reached within the horizon", repLevers:"Levers as set", repDate:"Date", repToday:"Today", repHc:"Projected reps", repFile:"executive-summary", repWiNow:"with the courses as loaded", repWiAdds:"after recruiting the +{n} recommended", repHowKpi:"reps = scheduled in the answering skills · max deficit = needed − scheduled, worst day · hire rate = certified ÷ reps in course", repHowTraj:"the recruitment line comes from 'are your courses enough' · the profile = the weekly window with most of the shortfall", repHowMon:"calls = the days summed · answer rate and AHT = weighted by calls · hours = needed × ½ h ÷ availability · actual = measured, forecast = the model", repHowPlan:"needed = today's team × needed staffing ÷ the team's staffing · expected = the month's average of today − leavers + graduates · additions = the earliest course first, up to its class size", repHowGantt:"from the start to the first day on shifts, in work days · closed holidays push it", repHowWi:"Erlang A on the first forecast week, with the levers as set · reps week by week = today − leavers + graduates", repHowOut:"today, less monthly attrition, plus course graduates and recruitment simulations", repHowRules:"class size = most reps in a course · course days = a new course's length · at once = how many courses a location runs together · locations in one rule = never at the same time", repMon:"Month by month (Date Trends)", repMix:"actual + forecast", repFc:"forecast", repAct:"actual", repGross:"Hours to schedule (gross)", repMet:"Days at {t}%", repScope:"Answering skills counted: {s}", repAll:"the whole center", repLensReal:"forecast weeks with attrition & courses", repLensToday:"forecast weeks with today's team (the iron)", hpTotal:"total {n}", hpGroup:"Not at the same time", hpGroupHint:"Locations with the same letter never run a course at the same time.", hpPairsT:"Not at the same time:", hpPairsHint:"Locations lit in the same row never run a course at the same time — a new course in one waits for the others'.", hpStillShort:"Still short, even with the additions:", hpWhyFullLate:"Why: the courses that graduate in time are full, and a new course can only start after the planned ones (one at a time per location) — the first one graduates {d}.", hpWhyLate:"Why: even a new course opened now graduates only {d}.", hpWhyFull:"Why: the courses that graduate in time are full.", hpWhyDo:"Shorter courses or bigger classes (⚙ Course rules) help.", hpRuleAdd:"+ another rule", hpRuleDup:"That rule is already there (or inside another rule) — not added twice", hpScen:"Scenario from the What-If: {l}", hpScenWas:"(instead of +{n} without it)", hpApplyScen:"✓ Update the ticked courses — by this scenario", hpProdChk:"Check by the history's productivity: ~{n} needed", repScen:"Provided that this is achieved — {l} — the courses need +{n} more reps (without the improvement: +{b}).", repScenSame:"Provided that this is achieved — {l} — the plan stays the same (+{b}).", repScenNote:"A scenario, not a forecast: it holds only if the improvement really happens. The plan above is the situation without it.", crsOverlapSite:"Runs at the same time as {n} — {s} runs up to {k} at once (⚙ Course rules)", crsOverlapRule:"Runs at the same time as {n} — your rule: {s} never at the same time", hpAtOnce:"At once", shTitle:"💲 Shadow price — what each improvement is worth", shStep:"Step", shNow:"Answer rate now (pts)", shEnd:"By {d} (pts)", shHint:"One step at a time, everything else as is — less attrition pays over time, not today.", shAbsAht:"{d} min shorter ({a} → {b})", shAbsAttr:"{a}% → {b}% a month (≈ {n} fewer reps leaving a month)", shAbsAvail:"{a}% → {b}% of the shift on the phone (≈ {n} more reps answering)", shLv_ahtCut:"{s}% shorter calls", shLv_attrCut:"{s}% less attrition", shLv_availPts:"+{s} point availability", shGain:"→ {m} {n} pts now · {e} by {d}", shLever:"Lever", shAlone:"Alone, instead of recruiting", shTarget:"a {v}% improvement", shNotAlone:"not enough alone", shNoNeed:"no extra recruiting needed", shZero:"0% today (Settings) — nothing to improve", shAvail:"More availability (less unavailable time / no-shows)", shPt:"pt", shTargetPt:"+{v} pts availability", repShadow:"Shadow price — the work plan", repHowShadow:"a step of each lever, everything else as is: the What-If's answer rate · each step and each 'alone' also in plain numbers · 'alone' = the smallest improvement of that lever with which the plan needs no extra recruiting", repUntil:"Until {d}", planToL:"Plan until", planToBack:"↺ forecast end", planToTip:"Both charts, the monthly plan and the executive report run to this date. Now: the forecast's end ({d}).", planToTipOwn:"Your date — both charts, the monthly plan and the executive report run to it. The forecast ends {d}.", planToRange:"Pick a date between 2 weeks and a year from today", wiUnreachBy:"not reached by {d}", wiGap:"{g} pts short", crsSelN:"{n} selected", crsSelAll:"Select all", crsSelNone:"Clear the selection", crsBulkApply:"Apply to them", crsBulkDelB:"Delete them", crsBulkYNeed:"A hire rate between 10 and 100", crsBulkYDone:"{n} courses set to {y}% hire rate", crsBulkDelDone:"Deleted {n} courses", hpClass:"Class size", hpDays:"Course days", hpNoOverlap:"ב\"ש and רחובות never at the same time (one course between them)", hpLenDone:"{s}: {n} upcoming courses set to {d} course days", crsDeleted:"Removed {n}", hpFor:"for {m}", hpBeyond:"{m}: no course can graduate in time", hpBeyondD:"{m}: no course can graduate in time — the earliest one graduates {d}", trajHireP:"Recruit {n} more reps — the months a course can still reach; {k} months stay short (no course graduates in time). By course in the training pipeline.", hpPickHint:"Click a month — its numbers", hpCalc:"needed {n} · expected {e} = {h} today − {l} leaving + {g} graduates (a new rep is at full speed within a month)", hpCalcAdd:"· with the additions +{a}", hpHow:"? How it is worked out", hpStep1:"Every month, by the forecast: the reps needed to hold the answer-rate target, against the reps you will have — today's, minus those who leave, plus course graduates.", hpStep2:"A short month: reps are added to the earliest course that graduates in time, up to its class size.", hpStep3:"Still short: one more course at the location that can graduate soonest (one course at a time per location, and not together with locations in one of your rules; holidays push it).", hpMoreCourses:" · {k} more courses", hpMoreCourse1:" · and one more course", hpNoFc:"Needs a forecast for the coming months — yours ends {d}.", hpTarget:"Target: {m} {t}% · by the forecast, month by month", hpLgPlan:"Expected with your courses", hpLgWith:"With the additions", hpLgNeed:"Needed", hpTipMo:"Needed {n} · expected {a}{b}", hpLateMo:"{m}: {x} short — the earliest course to add graduates {d}", hpFull:"(full)", hpOther:"Other", hpLimits:"⚙ Course rules", trnOther:"Other", crsTpl:"⬇ Excel template", crsTplFile:"courses-template.csv", crsSampleCap:"Columns in any order, any name · days and hire % are optional", cohNew:"+ Course", cohDefY:"Hire % for new courses", crsDropLine:"or drop a course file anywhere on the page", cohYieldS:"Hire %", dropCourses:"📂 Drop the course plan anywhere — any layout",
-  hpT:"How many to recruit", hpQ:"Are your courses enough?", tipHp:"Month by month, by the forecast: do your courses bring enough reps to hold the answer-rate target? If not — how many more reps, into which course (the earliest first, up to its class size), and whether to open another.", hpBarAr:"Needed for {m} {t}% by {d}", hpBarHc:"Target headcount by {d}", hpBarHave:"Your courses bring by then", hpBarWith:"With the extra reps", hpModeHc:"Headcount", hpBy:"by", tipHpAttr:"Staff who leave each month — the same value as Advanced Settings → Workforce dynamics. It erodes today's headcount and course graduates.",
+  hpT:"How many to recruit", hpQ:"Are your courses enough?", tipHp:"Month by month: do your courses bring enough reps to hold the target? If not — how many more, into which course, and whether to open another.", hpBarAr:"Needed for {m} {t}% by {d}", hpBarHc:"Target headcount by {d}", hpBarHave:"Your courses bring by then", hpBarWith:"With the extra reps", hpModeHc:"Headcount", hpBy:"by", tipHpAttr:"Staff who leave each month — the same value as Advanced Settings → Workforce dynamics. It erodes today's headcount and course graduates.",
   hpUnreach:"Adding people alone won't reach {m} {t}% with today's demand and handle time.",
   hpGoalAr:"to reach {m} {t}% by {d}", hpGoalHc:"to reach {n} reps by {d}", hpRecruits:"more reps to recruit",
   hpNeed:"needs {n} on the floor · the plan brings {b}", hpOk:"Yes — no extra recruiting needed",
@@ -2109,7 +2124,7 @@ he:{
   fmAutoHol:"לוח חגים ישראלי אוטומטי", fmAutoAnom:"זיהוי מלחמות/תקלות אוטומטי",
   fmProfile:"חלון פרופיל אינטרוולים", fmProfAdapt:"אדפטיבי (8 שב׳, גיבוי הכל)", fmProf12:"12 שבועות",
   reviewExclBtn:"📅 סקירת ימים שהוחרגו", reviewExclTitle:"ימים שהוחרגו — חגים וחריגות",
-  reviewExclMsg:"ימים שהמודל השמיט מהלמידה. חגים מגיעים מהלוח העברי; חריגות (מלחמות/תקלות) מזוהות אוטומטית כימים נמוכים באופן חריג. ניתן להחזיר ללמידה כל יום שתרצו.",
+  reviewExclMsg:"ימים שהמודל משאיר מחוץ ללמידה: חגים, וימים נמוכים באופן חריג (מלחמה, תקלה). כל יום אפשר להחזיר ללמידה בלחיצה.",
   hol_closed:"חג (סגור)", hol_eve:"ערב חג / יום חלקי", hol_chm:"חול המועד",
   exclNote:"— הוחרג מהלמידה", facNote:"— ממודל כ-≈{p}% מיום רגיל",
   anomWord:"חריגה", anomNote:"— {p}% מהרגיל (סומן אוטומטית)",
@@ -2126,7 +2141,7 @@ he:{
   mxTipHead:"{m}: {v} — {src}", mxSrcMeas:"נמדד", mxSrcFc:"חזוי",
   mxTipBody:"יעד {t}% · משובצים {s} · נדרשים ליעד {r}",
   mxVerdOverOk:"יותר נציגים מהנדרש ליעד — השירות מעל היעד (100% אינו מציאותי ולא כלכלי).",
-  mxVerdOverLow:"יותר נציגים מהנדרש לפי המודל, אך השירות שנמדד היה מתחת ליעד — בדקו נטישה/היעדרויות בפועל באותו יום.",
+  mxVerdOverLow:"יותר נציגים מהנדרש לפי המודל, אך השירות שנמדד היה מתחת ליעד — בדקו נטישה וחוסרים בפועל באותו יום.",
   mxVerdShortOk:"פחות נציגים ממה שהמודל דורש, אך השירות שנמדד עמד ביעד באותו יום.",
   mxVerdShortOkMeas:"בסידור פחות ממה שהמודל מחשב, אך השירות שנמדד עמד ביעד. סיבות נפוצות: ענו גם נציגים מחוץ לסידור/לתחום התור (מיומנויות אחרות, שעות נוספות), או אינטרוול דל-שיחות שבו המודל שמרני.",
   mxVerdShortOkFc:"פחות ממה שהמודל מחשב, אך התחזית ביעד — היסטורית האינטרוול הזה ביצע טוב מהמודל הגולמי, והאחוז כולל זאת. הטבעת היא אזהרה, לא פער.",
@@ -2145,17 +2160,17 @@ he:{
   logicVol:"חיזוי נפח שיחות — החלקה מעריכית כפולה (שיטת Holt, ‏α=0.4, β=0.2, ריסון φ=0.95), מכוילת בנפרד לכל יום שבוע + אינטרוול על פני השבועות שהועלו.",
   logicAht:"חיזוי AHT — לכל יום שבוע + אינטרוול, לפי המודל שנבחר בהגדרות. מעבר לממוצעים הפשוטים: החלקה משוקללת בשיחות (שבועות עמוסים שוקלים יותר, ישנים דועכים), רמה יומית × צורה תוך-יומית (משך השיחה של היום מכל שיחותיו, ולכל אינטרוול מקדם משלו שמתכווץ לכיוון היום כשיש בו מעט שיחות, מוחלק עם השכנים), ושילוב של השניים. הבדיקה לאחור מעריכה AHT בשקלול שיחות.",
   logicErlang:"רמת שירות ואחוז מענה — ליבת Erlang A (פאלם) מאוחדת לתורי נטישה: אחוז המענה וכל חלונות ה־TSF חולקים את אותה פיזיקת סבלנות (במגבלת אפס-נטישה — Erlang C מדויק); Erlang C קלאסי לתורי חירום.",
-  logicStaff:"איוש נדרש — חיפוש איטרטיבי שמתחיל ב־⌊עומס⌋+1 ועולה עד שהמדד המוביל עומד ביעד. השחיקה מנוכה מהקיבולת המשובצת מראש.",
+  logicStaff:"איוש נדרש — חיפוש איטרטיבי שמתחיל ב־⌊עומס⌋+1 ועולה עד שהמדד המוביל עומד ביעד. הזמן הלא זמין מנוכה מהקיבולת המשובצת מראש.",
   resetZone:"איפוס סביבת עבודה (אזור רגיש)",
   resetConfirm:"האם אתם בטוחים שברצונכם לאפס את כל ההגדרות הפעילות ולמחוק את מערכי התחזית שנטענו?",
   confirmYes:"כן, לאפס הכול", confirmNo:"ביטול",
-  setAbsence:"היעדרויות (%)",
-  tipAbsence:"נציגים משובצים שלא מגיעים כלל (מחלה, אי-הופעה). נוכחים = משובצים × (1 − היעדרויות).",
-  setShrink:"שחיקה — חוסר זמינות (%)",
-  tipShrink:"זמן לא-זמין של מי שכן הגיע: הפסקות, הדרכות, ישיבות (בדרך כלל 10–20%). פרודוקטיביים = נוכחים × (1 − זמן לא-זמין).",
+  setAbsence:"חוסרים (%)",
+  tipAbsence:"נציגים משובצים שלא מגיעים בכלל (מחלה, הברזה). מגיעים = משובצים × (1 − חוסרים).",
+  setShrink:"זמן לא זמין (%)",
+  tipShrink:"זמן של מי שהגיע ולא עונה: הפסקות, הדרכות, ישיבות (לרוב 10–20%). עונים = מגיעים × (1 − זמן לא זמין).",
   resetWs:"↺ איפוס סביבת עבודה",
   resetNote:"מוחק הגדרות, מדיניות, קורסים, סימולציות ומערכי נתונים שנשמרו בדפדפן זה.",
-  weekLabel:"שבוע:", thInterval:"אינטרוואל",
+  weekLabel:"שבוע:", thInterval:"אינטרוול",
   weekOpt:"שבוע {w} | {a} – {b}", forecastTag:" (תחזית)",
   wkNow:"השבוע", wkPast1:"שבוע שעבר", wkPast:"לפני {n} שבועות", wkFut1:"שבוע הבא", wkFut:"בעוד {n} שבועות",
   wkActUntil:"בפועל עד יום {d}, משם תחזית", wkNoAct:"אין עדיין נתוני אמת — תחזית", wkJump:"מעבר לשבוע הנוכחי", wkJumpShort:"↩ להשבוע", wkNoJump:"השבוע הנוכחי מחוץ לטווח הנתונים — התחזית מגיעה עד {d}. טענו קובץ תחזית עדכני כדי לראות אותו.",
@@ -2180,7 +2195,7 @@ he:{
   trFcNote:"שורות מעבר לתאריך הנתונים האחרון הן תחזיות קדימה (חיזוי נפח Holt + ממוצע AHT של 4 שבועות).",
   sumRow:"סיכום",
   thDate:"תאריך", thAr:"אחוז מענה", thUtil:"אחוז תעסוקה משוער",
-  thAht:"משך שיחה (mm:ss)", thWork:"שעות לשיבוץ (ברוטו)", fTipWork:"שעות נציג ברוטו לשיבוץ כדי שהיום יעמוד ב{m} ≥ {t}% — כולל זמן לא-זמין והיעדרויות. זמן השיחה והטיפול עצמו הוא כ־{n}% מזה.", thNetProd:"פריון (שיחות לשעה נטו)",
+  thAht:"משך שיחה (mm:ss)", thWork:"שעות לשיבוץ (ברוטו)", fTipWork:"שעות נציג ברוטו לשיבוץ כדי שהיום יעמוד ב{m} ≥ {t}% — כולל זמן לא זמין וחוסרים. זמן השיחה והטיפול עצמו הוא כ־{n}% מזה.", thNetProd:"פריון (שיחות לשעה נטו)",
   fTipVol:"שיחות נכנסות בכל היום.",
   fTipAr:"נענות ÷ נכנסות. ימי עבר: מהקובץ; ימי תחזית: חזוי.",
   fTipAht:"משך שיחה ממוצע, משוקלל בשיחות.",
@@ -2191,59 +2206,62 @@ he:{
   tipExc:"לחיצה על תא מאפסת אותו, על כותרת יום — את כל היום, או גררו על כמה תאים. צאו מהמצב ולחצו על תא מסומן כדי לשחזר.",
   excTag:"חריג", excRestoreTip:"לחצו לשחזור התחזית המקורית",
   resetEdits:"↺ איפוס לנתוני מקור",
-  kpiMaxDef:"פער נציגים מרבי לכיסוי המוקד",
-  tipMaxDef:"מספר הנציגים הגדול ביותר שחסר בו-זמנית בחצי שעה כלשהי בשבוע הנבחר (נדרשים − משובצים).",
+  kpiMaxDef:"נציגים חסרים היום", gapSubMo:"לביקוש של {m}", gapBySub:"הקורסים סוגרים עד {m}", gapMoreSub:"+{n} לגייס", gapOkSub:"מספיק ל־{m}",
+  tipMaxDef:"הצוות של היום מול מה שהביקוש של החודש צריך כדי לעמוד ביעד — לפני קורסים ועזיבה. אותו חישוב כמו \"הקורסים מספיקים?\".",
   sortBy:"מיון לפי", sortDef:"שעות הרחבת זמינות", sortSched:"שעות משובצות", sortContr:"שעות חוזיות", sortName:"שם",
   rthName:"שם", rthSched:"משובצות / אפשרי", rthContr:"חוזיות", rthDef:"Δ להרחבה",
   auditLink:"כדי לראות אילו שורות דולגו — לחצו כאן",
   auditTitle:"שורות שדולגו", auditRow:"שורה {n}: {s}",
-  thTsf30:"TSF 30", thTsf60:"TSF 60", thVol:"שיחות נכנסות", thTarget:"סטטוס עמידה ביעד",
+  thTsf30:"TSF 30", thTsf60:"TSF 60", thVol:"שיחות נכנסות", thGoal:"{m} מול יעד {t}", tipGoal:"כמה קרוב כל יום הגיע ליעד {m} של {t}%: הפס מתמלא עד הקו הכחול; המספר = כמה חסר עד היעד (✓ = ביעד).", goalTgt:"יעד {t}%",
   tipAttain:"עומד כשה{m} היומי, משוקלל בשיחות, מגיע ל־{t}%.",
-  slaMet:"עומד", slaMissed:"חריגה",
+
   /* ===== WFM 2.0 ===== */
-  tabWorkforce:"כוח אדם וברזל", tabScheduler:"שיבוץ אוטומטי", tabBreaks:"הפסקות", brkTitle:"הפסקות לפי משבצת", brkAdj:"נוכחות היום", brkAdjTip:"כל משבצת סופרת מי במשמרת באותה שעה בסידור (שעות התחלה, משמרות קצרות, פיצולים). כתבו את השינוי של היום: הברזות −3, גיבויים +2.", brkAdjS:"שינוי מהסידור", brkPresent:"נוכחים היום", brkPresentTip:"אין סידור ליום הזה: כמה נציגים הגיעו — מתחלק על השעות כמו הצוות של היום (הברזל).", brkAuto:"אוטו׳", brkPrev:"היום הקודם", brkNext:"היום הבא",
+  tabWorkforce:"כוח אדם וברזל", tabScheduler:"שיבוץ אוטומטי", tabBreaks:"הפסקות", brkTitle:"הפסקות לפי משבצת", brkAdj:"נוכחות היום", brkAdjTip:"כל משבצת סופרת מי במשמרת באותה שעה בסידור (שעות התחלה, משמרות קצרות, פיצולים). כתבו את השינוי של היום: חוסרים −3, גיבויים +2.", brkAdjS:"שינוי מהסידור", brkPresent:"נוכחים היום", brkPresentTip:"אין סידור ליום הזה: כמה נציגים הגיעו — מתחלק על השעות כמו הצוות של היום (הברזל).", brkAuto:"אוטו׳", brkPrev:"היום הקודם", brkNext:"היום הבא",
   brkNoFc:"אין תחזית ליום הזה — לפי הנוהל: {c} מקומות בכל משבצת.", brkPlacesOnly:"מקום ל־{p} הפסקות היום.",
   brkHeroOk:"מקום הפסקה לכל {n} הנציגים — יותר מקומות בשעות השקטות", brkHeroOkNoFc:"מקום הפסקה לכל {n} הנציגים (אין תחזית ליום הזה — חלוקה שווה)", brkLen:"5 דק׳ לכל שעת עבודה (ממוצע {m}) · הפסקות של עד {x} דק׳ ברצף (7 שעות ← {a} · 8 שעות ← {b}), בתוך המשמרת", brkExpTpl:"📋 תבנית — כמה מקומות בכל משבצת", brkExpTplS:"בלי שמות; האחמ״ש ממלא", brkExpNames:"👤 שיבוץ אוטומטי — מי יוצא מתי", brkExpNamesS:"שמות מהסידור, משמרות קצרות קודם", brkFTxt:"📋 טקסט", brkExpProc:"📑 נוהל עיכוב בהפסקה — בנפרד", brkExpProcS:"תרשים הזרימה, לתלות ליד הלוח", brkEntT:"זכאות להפסקות — {d}", brkEntNote:"5 דק׳ לכל שעת עבודה · משמרת מפוצלת = סכום השעות · עד {x} דק׳ ברצף, כמו בלוח", brkEntShifts:"משמרת", brkEntH:"שעות", brkEntMin:"זכאות (דק׳)", brkEntSplit:"הפסקות (דק׳)", brkEntSplitTag:"מפוצלת", brkEntBackup:"גיבויים שלא בסידור — שם ודקות ביד", brkEntNoSidur:"אין סידור ליום הזה — רושמים כל נציג ואת הדקות שלו (5 לכל שעת עבודה)", brkLegLS:"משך מודגש = ההפסקה הארוכה", brkFNames:"משובץ", brkBoardT:"ניהול הפסקות במשמרת", brkDateL:"תאריך", brkSupO:"אחמ״ש פתיחה", brkSupC:"אחמ״ש סגירה", brkPlaceN:"מקום {n}", brkEmp:"שם נציג", brkDur:"משך", brkBlk:"חסום", brkCatch:"השלמה", brkBoardNote:"משך = דקות ההפסקה · מי שיצא מסומן במרקר · מקום מקווקו = רק למי שההפסקה שלו נדחתה", brkQT:"תור חייבים הפסקה", brkQN1:"מסמנים בעיגול עדיפות: 1 = שיחה / עיכוב קודם · 2 = סתם", brkQN2:"קודם כל ה־1 שעוד לא שובצו, אחר כך ה־2. 2 שחיכה 40 דקות הופך ל־1", brkQN3:"לא מסדרים מחדש: מוסיפים שורה. כשמשבצים, כותבים את השעה בעמודת ״שובץ לסלוט״", brkQPri:"עדיפות", brkQSlot:"שובץ לסלוט", brkFT:"נוהל עיכוב בהפסקה: תרשים זרימה", brkF1:"הנציג לא יצא להפסקה בזמן", brkF2:"עברו יותר מ־5 דקות?", brkF2b:"לא = אין שינוי, הנציג יוצא כרגיל", brkF3:"כן", brkF4:"בלוח: קו אחד על שמו, בתא שבו התעכב", brkF4b:"(לא מוחקים — כך רואים איפה הוא היה אמור לצאת)", brkF5:"למה התעכב?", brkF6a:"עדיפות 1", brkF6ab:"שיחה / עיכוב קודם (לא באשמתו)", brkF6b:"עדיפות 2", brkF6bb:"סתם (באשמתו)", brkF7a:"בתור: רושמים שם, מסמנים עדיפות 1", brkF7b:"בתור: רושמים שם, מסמנים עדיפות 2", brkF8a:"בלוח: המקום הפנוי הקרוב, בסלוט הנוכחי או הבא. אין פנוי? מוסיפים מקום (+1) בסלוט הבא", brkF8b:"בלוח: מקום פנוי, רק אחרי שכל ה־1 קיבלו. חיכה מעל 40 דקות? הופך ל־1", brkF9:"הנציג יוצא", brkF9b:"בלוח: מסמנים בתא החדש · בתור: שעה בעמודת ״שובץ לסלוט״", brkHoursHint:"בתוך שעות הפעילות של המוקד (הגדרות ← תחילת / סוף יום, סוף שישי)", brkCovL:"הפסקות לכל נציג", brkSpareW:"ספייר", brkOutside:"{n} נציגים במשמרת מחוץ לחלון ההפסקות לא נספרו", brkArL:"יומי, עם תכנון ההפסקות", brkArTip:"במטריצה ליום הזה: {m} (הפסקות כרגיל) · עם התכנון: {a} · הקו האדום = היעד", brkPts:"מעל החיזוי ({m})", brkPtsEq:"≈ כמו החיזוי ({m})", brkWkIn:"ההפסקות לפי הסידור הזה", brkWkGo:"היום הזה מחוץ לסידור הטעון (הצוות של היום מהברזל) — לחיצה עוברת לשבוע הסידור", brkTryL:"חלופה", brkAltAll:"מקום לכולם", brkAltStart:"הפסקה ראשונה {s}", brkBackTm:"חזרה ל־{v}", brkBackCap:"חזרה ל־{v} בכל משבצת", brkLastFri:"הפסקה אחרונה בשישי", brkLegOn:"מקום להפסקה", brkLegOff:"חסום להפסקה", brkLegT:"ההפסקות מורידות מתחת לנדרש", brkLegSp:"השלמה (רק למי שההפסקה נדחתה)", brkSpLine:"השלמה — למי שפספס", brkHeroAll:"מקום הפסקה לכל {n} הנציגים + {s} ספייר", brkHeroSpare:"מקום הפסקה לכל {n} הנציגים · ספייר {g} מתוך {s}", brkHeroNo:"ל־{x} נציגים אין מקום הפסקה בחלון — {r} מקומות ל־{n} נציגים", brkAltL:"חלופות:", brkAltEnd:"הפסקה אחרונה {e}", brkAltCap:"{c} בכל משבצת", brkArDay:"{m} יומי צפוי עם ההפסקות: {a} · בלי הפסקות {b} — כל מקום ממוקם היכן שהוא עולה הכי מעט שיחות", brkSpare:"ספייר (%)", brkUnder:"כאן ההפסקות מורידות מתחת לנדרש — עדיין המקום הזול ביותר", brkExp:"⬇ ייצוא", brkTxt:"📋 העתקה כטקסט (וואטסאפ)", brkCopied:"הועתק — הדביקו בוואטסאפ או במייל", brkHeroShort:"ל־{x} מתוך {n} הנציגים אין מקום — כל המשבצות מלאות ({c} בכל משבצת)",
   brkTip:"משובצים בסידור {on} · נדרשים {need} ← אפשר להוציא {p} להפסקה", brkTipT:"בצוות של היום {on} · נדרשים {need} ← אפשר להוציא {p} להפסקה", brkTipNo:"אין תחזית בשעה הזו", brkExc:"חריגים",
   brkPlaces:"מקומות", brkTime:"שעה", brkName:"שם", brkSheetT:"דף הפסקות — {d}", brkSheetSub:"לכל נציג הזמנים שלו (דקות בסוגריים) · פספסת? קח מקום השלמה, בהמשך", brkFile:"הפסקות",
   brkPdf:"🖨 PDF / הדפסה", brkWord:"📄 Word", brkXls:"📊 Excel (.xlsx)", brkPopup:"הדפדפן חסם את חלון ההדפסה — אפשרו חלונות קופצים לדף הזה", brkSetT:"⚙ משבצות וכללים",
   brkFirst:"הפסקה ראשונה", brkLast:"הפסקה אחרונה", brkExcL:"משבצת חריגים", brkStep:"משבצת (דק׳)", brkCap:"מקסימום מקומות", brkMaxRun:"מקסימום דקות הפסקה ברצף", brkPerHour:"דק׳ הפסקה לכל שעת עבודה",
-  wfNoIron:"לא נטען גיליון ברזל — גררו קובץ תקשוב רב-גיליוני אחד (סידור עבודה + סידור ברזל). בינתיים חישוב לפי שעות חוזיות ידניות לנציג.",
-  wfTeamL:"מנהל צוות", wfSkillL:"מיומנות", wfSiteL:"מוקד", wfAll:"(הכול)", skTitle:"🎧 מיומנויות עונות", tipSk:"המיומנויות שעונות לתור שהמטריצה מודדת. אותה בחירה כמו בכפתורי 🎧; נשמרת בטעינת סידור. נציגים ללא מיומנות תמיד נספרים.",
+  wfNoIron:"אין עדיין ברזל — גררו את קובץ התקשוב (סידור עבודה + סידור ברזל) כדי לראות מי מתחת לברזל.",
+  wfTeamL:"מנהל צוות", wfSkillL:"מיומנות", wfSiteL:"מוקד", wfAll:"(הכול)", skTitle:"🎧 מיומנויות עונות", tipSk:"המיומנויות שעונות לתור — אותה בחירה כמו בכל כפתור 🎧. נציגים בלי מיומנות תמיד נספרים.",
   skEmpty:"הרשימה תופיע אחרי טעינת סידור העבודה הראשון. עד אז כל הנציגים נספרים כעונים.", skNotInSidur:"לא בסידור הנוכחי — הבחירה שלכם נשמרת לפעם שיחזור.",
   skNew:"מיומנות חדשה בסידור: {s} — עדיין לא נספרת כעונה. לשינוי: הגדרות ← מיומנויות עונות.", skInSettings:"⚙ הגדרות",
   wfNSel:"{n} נבחרו", wfShowAll:"↺ הצג הכול", wfNoVals:"אין ערכים בעמודה הזו בקובץ.",
   wfDayL:"יום", wfDayAll:"הכל", daysShort:["א׳","ב׳","ג׳","ד׳","ה׳","ו׳"],
   wfKpiUtil:"ניצול סידור מול ברזל",
-  tipWfUtil:"שעות משובצות ÷ שעות ברזל — כמה מהחוזה הפך למשמרות. כמות בלבד, לא תזמון.",
-  wfKpiLeak:"שיעור זליגת חופשות",
-  tipWfLeak:"שעות היעדרות בתוך חלונות הברזל ÷ שעות הברזל.",
-  wfKpiDev:"מדד סטייה חוזית",
-  tipWfDev:"אחוז המשמרות שההתחלה או הסיום שלהן שונים משעות הברזל — תזמון, לא כמות.",
-  wfTreeTitle:"הקצאת שעות ברזל (Treemap)",
-  tipWfTree:"איך שעות הברזל מתחלקות: משובצות, היעדרויות, סטטוסים מהסידור ויתרה לא מנוצלת. לחיצה על אריח מציגה מי.",
+  tipWfUtil:"שעות בסידור ÷ שעות הברזל — כמה מהחוזה הפך למשמרות.",
+  wfKpiLeak:"מהברזל בהיעדרות",
+  tipWfLeak:"חופשה, מחלה, מילואים ולימודים שרשומים בסידור, מתוך שעות הברזל.",
+  wfLeakSub:"{n} נציגים · {h}",
+  wfKpiRec:"שעות ברזל שאפשר להחזיר",
+  tipWfRec:"שעות ברזל שלא נכנסו לסידור ואין מאחוריהן היעדרות — משמרות קצרות או ימים חסרים. לחיצה מראה מי.",
+  wfRecSub:"אצל {n} נציגים — מי ↓",
+  wfTreeTitle:"לאן הולכות שעות הברזל — ומה עולות ההיעדרויות?", treeSum:"{a} בסידור · {b} בהיעדרות", impWorst:"הכי פוגע: {d} {v}",
+  tipWfTree:"קודם: איך מתחלקות שעות הברזל — בסידור, בהיעדרות, בסטטוסים מהסידור (לחיצה על אריח מראה מי). אחר כך: כמה נקודות אחוז מענה ההיעדרויות של כל מיומנות עולות למוקד באותו יום.",
   wf_prod:"משובץ בפועל", wf_vacation:"חופשה", wf_miluim:"מילואים", wf_medical:"רפואי",
   wf_training:"הדרכה", wf_exam:"מבחנים", wf_other:"היעדרות אחרת", wf_unalloc:"יתרת ברזל לא-מנוצלת",
   wfNoStatus:"משמרת ריקה (ללא סטטוס)", wfNotYet:"טרם שובץ",
   roEmpty:"סידור שבוע {w} נטען — {e} נציגים, עדיין בלי שעות.", roEmptyIron:"ברזל: {i} נציגים.",
   schEmptySidur:"בסידור שבוע {w} עדיין אין שעות.", schSkillAsk:"מיומנות עונה:", schSkillAskTip:"רק המיומנויות שסומנו משובצות מול הביקוש; כל השאר נשארים בחלון הברזל שלהם.",
-  wfReadyT:"מוכנות שבוע {w}", wfReadyNoFc:"עם תחזית, יופיעו כאן חוסר ועודף.", tipWfReady:"לכל יום: כמה נציגים עונים (🎧) יש בברזל — כל מי שבברזל נחשב כשיר לעבוד — מול כמה שהתחזית דורשת. ירוק למעלה = עודף, אדום למטה = חוסר. סטטוסים שכבר רשומים בסידור העבודה (חופש, התפטרות…) מסומנים בהתראה ולא מורדים. לחיצה על יום: מתי בו חסר.", ouUp:"עודף", ouDn:"חוסר", ouLgIron:"נציגים בברזל", ouAlert:"בסידור העבודה כבר רשום סטטוס ל־{n} נציגים — נספרו כזמינים:", ouPickHint:"לחיצה על יום — מתי בו חסר", ouByHour:"{d} — לפי שעה (נציגים במקביל)", ouStDay:"סטטוסים בסידור העבודה ביום הזה ({n})", ouTipNeed:"נדרשים ~{n} נציגים ({h} ש׳)", ouTipIron:"בברזל {i} נציגים ({h} ש׳)", ouTipNeedH:"נדרשים {n}", ouTipIronH:"בברזל {a}",
+  wfReadyT:"מוכנות שבוע {w}", wfReadyNoFc:"עם תחזית, יופיעו כאן חוסר ועודף.", tipWfReady:"לכל יום: נציגים עונים (🎧) בברזל מול מה שהתחזית דורשת — ירוק למעלה = עודף, אדום למטה = חוסר. סטטוסים שכבר בסידור (חופש, התפטרות…) מסומנים, לא מורדים.", ouUp:"עודף", ouDn:"חוסר", ouLgIron:"נציגים בברזל", ouAlert:"בסידור העבודה כבר רשום סטטוס ל־{n} נציגים — נספרו כזמינים:", ouPickHint:"לחיצה על יום — מתי בו חסר", ouByHour:"{d} — לפי שעה (נציגים במקביל)", ouStDay:"סטטוסים בסידור העבודה ביום הזה ({n})", ouTipNeed:"נדרשים ~{n} נציגים ({h} ש׳)", ouTipIron:"בברזל {i} נציגים ({h} ש׳)", ouTipNeedH:"נדרשים {n}", ouTipIronH:"בברזל {a}",
   wfImpactNoFc:"טענו תחזית כדי לראות כמה כל היעדרות עולה באחוז המענה.",
-  wfImpactTitle:"מטריצת חופשות יומית והשפעת SLA",
-  hrTitle:"🏖 מרווח חופשות — כמה עוד אפשר לשחרר",
-  hrTip:"כמה נציגים נוספים אפשר לשחרר בכל יום לפני ש{m} יורד מתחת ליעד. הכוונה, לא התחייבות.",
-  hrChipTip:"{d}: אפשר לשחרר עוד עד {k} (משמרת ≈{h} ש' כל אחד) ו{m} נשאר ≥ {t}% — כעת {v}",
-  hrBelow:"{d}: כבר מתחת ליעד עם הסידור הנוכחי ({v}) — אין מקום להיעדרויות נוספות",
-  tipWfImpact:"כמה נקודות אחוז מענה המוקד כולו מאבד מההיעדרויות של כל מיומנות באותו יום. ירוק = בטוח לאשר חופשה; אדום = קריטי.",
+  
+  hrTitle:"🏖 כמה עוד אפשר לשחרר?",
+  hrTip:"+ = כמה עוד אפשר לשחרר באותו יום ו{m} נשאר ביעד. − = כמה נציגים חסרים כדי להגיע אליו.",
+  hrChipTip:"{d}: אפשר לשחרר עוד עד {k} (משמרת ≈{h} ש׳ כל אחד) ו{m} נשאר ≥ {t}% — כעת {v}",
+  hrBelow:"{d}: {v} — עוד {k} נציגים במשמרת (משמרת ממוצעת כל אחד) מחזירים ל־{t}%",
+  
   wfImpactNone:"נדרשים תחזית + סידור עם עמודת מיומנות כדי לסמלץ.",
   wfImpactTip1:"אחוז מענה",
   wfImpactNoIron:"המטריצה משווה את בסיס הברזל מול הסידור בפועל — טענו קובץ תקשוב עם גיליון סידור ברזל כדי להפעיל אותה.",
-  wfImpactMetric:"כל תא: כמה נקודות מ־{m} של המוקד כולו עולות ההיעדרויות של השורה הזו באותו יום. קו הבסיס קבוע — כולם לפי הברזל; רק פלח השורה יורד לשעות בפועל. הסינון בוחר את מי בודקים; קו הבסיס של המוקד לא זז.",
+  wfImpactMetric:"כל תא: כמה נקודות {m} המוקד כולו מאבד בגלל ההיעדרויות של השורה באותו יום.",
   wfImpactTip2:"{m} באיוש בסיס הברזל ← באיוש הסידור בפועל",
-  wfImpactUnval:"{n} נציגים בסידור ללא בסיס ברזל מתוקף ואינם נכללים במטריצה:",
+  wfImpactUnval:"{n} נציגים בלי ברזל מתוקף לא נספרים כאן:",
   schNeedIron:"השיבוץ האוטומטי בונה משמרות מבסיס סידור הברזל. טענו קובץ תקשוב עם גיליון ברזל כדי להפעיל.",
-  schNeedSidur:"המייעל מזיז משמרות בסידור הנוכחי — טענו סידור עבודה (עם משמרות בשבוע הנבחר) ותחזית כדי להפעיל.",
-  schDoneMove:"✅ הסידור מוטב: {a} משמרות, {m} הוזזו. עדיין חסר כיסוי של {h} שעות-נציג — סוגרים בכרטיס הביקוש הלא מכוסה למטה.",
+  schNeedSidur:"הכוונון מזיז משמרות בסידור טעון — טענו סידור עם משמרות בשבוע הזה, ותחזית.",
+  schDoneMove:"✅ {m} משמרות הוזזו — החוסר ירד מ־{b} ל־{a} שעות-נציג. את השאר סוגרים למטה, בביקוש הלא מכוסה.",
+  schDoneNoMove:"✅ אין הזזה שמשפרת את השבוע — חסרות {a} שעות-נציג. סוגרים אותן למטה, בביקוש הלא מכוסה.", schDoneAll:"✅ {m} משמרות הוזזו — כל השבוע מכוסה.",
   schChipSidur:"🧩 {n} משמרות בשבוע הנבחר",
   schSrc_moved:"הוזז", schSrc_cut:"קוצץ",
   schCutBtn:"✂ קצץ", schCutDone:"המשמרת של {name} קוצצה — מסומנת ׳קוצץ׳ בטבלה",
@@ -2254,19 +2272,19 @@ he:{
   crsOk:"{n} קורסים נטענו לצנרת ההכשרה.", crsNew:"{n} קורסים חדשים", crsUpd:"{n} כבר היו — עודכנו, בלי כפילות", crsErr:"לא נמצאו קורסים — לכל קורס צריך לפחות תאריך פתיחה.",
   wfDrillTitle:"פילוח: {seg} לפי {dim}", wfDrillBy:"פילוח לפי", wfDrillHint:"לחצו על אריח במפת החום לפילוח.", wfDrillBack:"✕ סגירת פילוח", wfDrillWho:"{n} נציגים — לחצו להצגה",
   roIronNote:"בסיס ברזל: {n} נציגים",
-  rosterRecov:"ניתנות להרחבה אצל {n} נציגים ≈ {f} משרות — לאתר את השעות האלה לפני גיוס חיצוני",
+  rosterRecov:"אפשר להחזיר אצל {n} נציגים ≈ {f} משרות — לפני שמגייסים", rosterAbs:"ועוד {h} בהיעדרות", rosterAllAbs:"כל הפער הוא היעדרות שרשומה בסידור",
   rosterAllOk:"✅ כולם בבסיס החוזי שלהם (או מעליו) — אין שעות פנימיות לאיתור.",
   rosterCopyBtn:"העתקת רשימה",
   rosterAll:"הצג את כל {n} ▾", rosterLess:"הצג פחות ▴", rosterRowTip:"לחצו כדי לראות באילו ימים", rosterDayTip:"{s} ש׳ בסידור / {i} ש׳ בברזל",
   rosterMissing:"ימי ברזל שחסרים בסידור: {d} — המקום הטבעי להחזיר את השעות", rosterSpread:"אין יום ברזל שלם שחסר — הפער הוא משמרות קצרות; הארכה בימים הכתומים.", rosterNoIron:"אין פירוט ימי ברזל לנציג זה.",
   skillScopeAll:"כל המיומנויות עונות", skillScopeN:"{n} מיומנויות עונות", wfScopeHint:"המיומנויות שהעמוד הזה סופר — אותן מיומנויות עונות 🎧 של כל המערכת (מטריצה, שיבוץ, גיוס, הגדרות). נציגים ללא מיומנות תמיד נספרים.",
-  skillScopeHint:"אילו מיומנויות נספרות כקיבולת מענה (AR/TSF) של התור? (דפי כוח אדם תמיד כוללים את כולם.) בימי גבייה סמנו גם בכיר; מרפאות לרוב עונות גם קו 1.",
+  skillScopeHint:"אילו מיומנויות עונות לתור? בימי גבייה הוסיפו בכיר; מרפאות לרוב עונות גם קו 1.",
   skillScopeAllBtn:"ספרו את כל המיומנויות",
   rcScopeAll:"מענה: כל המוקד", rcScopePfx:"מענה: ",
   rcScopeHint:"מי עונה לחזית — זו הקיבולת שמזינה את הסימולטור, מדדי אחוז המענה ותאריך היעד למטה. זהו אותו היקף 🎧 של דף המטריצה. (דפי כוח אדם תמיד כוללים את כולם.)",
   legScale:"מעל היעד ← קריטי (7 מדרגות סביב היעד שלכם)",
   cellUndoTip:"החזרת התא לערך המקורי",
-  schSkillHint:"אילו מיומנויות המייעל מתייחס אליהן כחזית — היחידות שהוא מזיז או מקצץ מול הביקוש? בדרך כלל תור קו 1 בלבד; הוסיפו בכיר בימי גבייה, מרפאות כשהן עונות קו 1. מיומנויות שלא סומנו נשארות במקומן ורק נבדקות מול חוקי הכיסוי. נציגים ללא תיוג תמיד משתבצים.",
+  schSkillHint:"המיומנויות שהכוונון מזיז מול הביקוש — לרוב קו 1; הוסיפו בכיר בימי גבייה ומרפאות כשהן עונות קו 1. השאר נשארים במקומם; נציגים בלי מיומנות תמיד נספרים.",
   schInsert:"הכנס לסידור", schSwapTitle:"שיבוץ {n} בתאריך {d} — להחליף עם:",
   schAddNoSwap:"הוספה בלי להחליף אף אחד", schSwapDone:"{n} שובץ לסידור.",
   schSrc_manual:"ידני",
@@ -2295,17 +2313,17 @@ he:{
   extShort:"חסרים {n} בחלון {w}", extDeficit:"חסרות לו {h} ש׳ מהבסיס",
   extCopy:"העתקת הודעה",
   extMsg:"היי {name}, חסר לנו כיסוי ביום {day} {date}. תוכל/י {ask}? תודה! 🙏",
-  extTlHead:"היי {team}, אפשרויות הרחבה אצל הצוות שלך:",
+  extTlPurpose:"הרחבות משמרת שאנחנו צריכים — מי יכול/ה?", tlHi:"היי {team},", tlFoot:"תודה! 🙏", waPurpose:"נא לתקף סידור ברזל — לנציגים האלה אין שעות בסיס קבועות:", friTlPurpose:"שישי {d} — {g}:", saTlPurpose:"שינויים בסידור של שבוע {w} — נא לתקף מול הנציגים:",
   extTlLine:"• {name} — יום {day} {date}: {ask}",
   hcNoSkill:"ללא תיוג", hcSplitSrc:"החלוקה מהסידור הטעון ({n} נציגים שונים)",
-  kpiHcSched:"נציגים משובצים בסידור הטעון",
-  kpiHcAll:"המצבה המלאה — כל מי שבסידור הטעון",
+  kpiHcSched:"משובצים בסידור",
+  kpiHcAll:"כל הנציגים בסידור",
   hcBasisAll:"מצבה מלאה", hcBasisSched:"משובצים בלבד",
   hcChipOn:"תכנון עבור {s} בלבד", hcChipOff:"חזרה לכל המיומנויות",
-  hcPlanNote:"בסיס התכנון לכל העמוד הזה; הביקוש נשאר ברמת כל המוקד. כשטעונים נתוני מענה מדודים, שחיקה/היעדרות מכוילות אוטומטית מול המציאות בכל האפליקציה.",
+  hcPlanNote:"הבסיס לכל העמוד; הביקוש הוא של כל המוקד.",
   cohSkill:"תור (מיומנות)", cohSkillDef:"קו 1 (ברירת מחדל)",
-  shrinkAbsorbed:"המודל כויל מחדש לאחוזי המענה שנמדדו — שינויי שחיקה/היעדרות נבלעים כדי שהמטריצה תישאר מעוגנת במציאות.",
-  shrinkNote:"כשהקובץ מכיל אחוזי מענה מדודים, המודל מכייל את עצמו אליהם — ולכן שינוי שחיקה/היעדרות נבלע ברובו (המציאות גוברת על הערכות). למחוונים האלה יש משמעות בעיקר כשאין נתונים מדודים.",
+  shrinkAbsorbed:"המודל עוקב אחרי אחוזי המענה שנמדדו — שינוי בזמן לא זמין או בחוסרים כמעט לא מזיז אותו.",
+  shrinkNote:"כשיש בקובץ אחוזי מענה מדודים, המודל מתכייל אליהם — שני הערכים האלה חשובים בעיקר כשאין כאלה.",
   skipRDate:"תאריך לא קריא", skipRTime:"אינטרוול/שעה לא קריאים",
   skipRVol:"כמות שיחות לא תקינה", skipRAht:"משך שיחה לא תקין",
   auditDl:"⬇ הורדת כל {n} השורות שדולגו (CSV עם סיבות)",
@@ -2321,17 +2339,16 @@ he:{
   mxCalibOff:"⚠ הערכות מודל לא מכוילות — בקובץ אין (או כמעט אין) נתוני שיחות נענות מדודים, ולכן המענה/TSF כאן הם ארלנג תאורטי ולרוב גבוהים מהמציאות במוקד. טענו תחזית עם עמודות שיחות נענות לכיול.",
   mxAuditFlag:"בקרת הנתונים סימנה {n} ערכים חשודים — ראו את פורטל התחזית בדף הבית.",
   legOn:"ביעד", legNear:"קרוב (עד 3 נק׳)", legBelow:"מתחת — כהה יותר = להתחיל שם",
-  tipScale:"ירוק: ביעד. ירוק בהיר: עד 3 נקודות מתחת. מתחת לזה הגוון מדרג את האינטרוולים של השבוע — האדום הכהה הוא הרבע הגרוע, משם מתחילים.",
+  tipScale:"ירוק = ביעד, ירוק בהיר = עד 3 נקודות מתחת. מתחת לזה — ככל שהאדום כהה יותר, האינטרוול גרוע יותר השבוע; משם מתחילים.",
   mxScaleCuts:"השבוע: כתום בהיר {b}–{a}% · כתום {c}–{b}% · אדום {d}–{c}% · אדום כהה מתחת ל־{d}%",
   mxScaleDyn:"ירוק = ביעד ומעליו · ירוק בהיר = עד 3 נקודות מתחת · מתחת לזה, האינטרוולים שמתחת ליעד בשבוע הזה מחולקים לארבע קבוצות שוות — אדום הוא הרבע הגרוע, המקום להתחיל בו.",
   mxScaleFix:"ירוק = ביעד ומעליו · ירוק בהיר = עד 3 נקודות מתחת · מתחת לזה, מדרגות קבועות של מרחק מהיעד (מעט מדי אינטרוולים מתחת ליעד השבוע כדי לדרג).",
-  mxFlagCal:"💡 שיחות נענות = דיוק אמיתי", mxFlagCalTip:"בקובץ אין שיחות נענות, ולכן השירות כאן הוא הערכת מודל ולרוב גבוה מהמציאות. הוסיפו עמודת שיחות נענות לייצוא והמספרים יכוונו למוקד שלכם. לחיצה לטעינה.",
+  mxFlagCal:"💡 להוסיף שיחות נענות ← שירות אמיתי", mxFlagCalTip:"בלי שיחות נענות בקובץ, השירות כאן הוא הערכת מודל ולרוב גבוה מהמציאות. לחיצה — בחרו קובץ תחזית עם עמודת שיחות נענות, והמספרים יכוונו למוקד שלכם.",
   mxFlagAudit:"⚠ {n} ערכים חשודים", mxFlagAuditTip:"בקרת הנתונים מצאה ערכים בלתי אפשריים או חריגים בקובץ התחזית. לחיצה מציגה אותם בדף הבית.",
   wfValTitle:"מטריצת תיקוף בסיס ברזל", valSumN:"{n} לבדיקה",
   tipWfVal:"נציגים בסידור ללא שעות כניסה/יציאה בברזל — שלחו את הרשימה למנהל הצוות.",
   wfValNone:"✅ לכל נציגי הסידור יש בסיס ברזל תקין.",
   wfValCsv:"⬇ ייצוא CSV", wfValCopy:"📋 העתקה לאקסל", wfValCopied:"הטבלה הועתקה — הדביקו באקסל.",
-  waMsg:"היי {team}, נא לתקף בהקדם סידור ברזל עבור הנציגים הבאים שרשומים ללא שעות בסיס קבועות: {names}.",
   waCopied:"התראת וואטסאפ עבור {team} הועתקה.",
   wbOk:"קובץ תקשוב זוהה — {e} נציגים, {i} רשומות ברזל, {v} בעיות תיקוף.",
   schTitle:"שיבוץ אוטומטי",
@@ -2343,7 +2360,7 @@ he:{
   schGenRun:"🏗️ צור בסיס סידור", schGenNeed:"טענו תחזית ביקוש ובסיס ברזל (סידור ברזל) כדי ליצור בסיס.",
   schChipGenIron:"🏗️ ברזל {n}", schChipGenCov:"📐 כללי כיסוי · {n}",
   schDoneGenIron:"✅ נבנה מהברזל כמו שהוא: {a} משמרות (אין תחזית לשבוע הזה — עוד לא מותאם לביקוש).",
-  schDoneGen:"✅ נוצר בסיס: {a} משמרות שובצו, {p} במאגר העודף. עדיין חסר כיסוי: {h} שעות-נציג (מבני — גייסו/הקצו שם).",
+  schDoneGen:"✅ נבנה בסיס: {a} משמרות, {p} במאגר העודף. חסרות עוד {h} שעות-נציג — סוגרים למטה, בביקוש הלא מכוסה.",
   schGenOutTitle:"בסיס סידור שנוצר", schGenAuditTitle:"תאימות כיסוי",
   schGenCsv:"⬇ הורדת בסיס הסידור (CSV)", schGenGapTitle:"ביקוש לא מכוסה (מבני)",
   saKpiPlaced:"משמרות שובצו", saKpiPool:"במאגר העודף",
@@ -2369,21 +2386,21 @@ he:{
   tipShort:"נספרים כאן אינטרוולים שאינם עומדים ביעדי ה־SLA עבור השבוע שנבחר בתפריט הראשי. כמו מדד הפער המרבי, זהו שיקוף של השבוע האמיתי המעוגן במענה המדוד — שינויי שחיקה/היעדרות נבלעים כאן בכיול ופועלים על תחזיות התכנון שמתחת.",
   spark1:"עקומת איוש חזויה (מבט ל־30 יום)",
   tipSpark1:"מקור הנתונים: המצבה הנוכחית מההגדרות, בניכוי עזיבה חודשית המוחלת יומית, בתוספת בוגרי קורסים שמועד כניסתם למשמרות בתוך חלון 30 הימים (מותאם לאחוז ההסמכה).",
-  spark2:"מגמת אחוזי הסמכה בקורסים",
+  spark2:"כמה מסיימים כל קורס?",
   tipSpark2:"אחוז ההסמכה של כל קורס, לפי סדר הכניסה למשמרות.",
   spark3:"פער גיוס — יעד מול בפועל",
   tipSpark3:"פער הגיוס מחשב את המספר המדויק של משרות מלאות (FTE) הנדרשות לגישור על פערי האיוש הנוכחיים ולעמידה ביעד ה־SLA שלכם. ערך חיובי (למשל ‎+78‎) מייצג גירעון משאבים — בדיוק כמה נציגים חדשים יש לגייס או לשבץ.",
   capToday:"היום", capEnd:"+30 יום", capCourse1:"קורס 1", capCourseN:"אחרון",
-  outlookTitle:"תחזית קיבולת — מצבה מצטברת חזויה",
+  outlookTitle:"כמה נציגים יהיו לנו?",
   tipOutlook:"מצבה ל־60 הימים הקרובים: המצבה היום + בוגרי קורסים − עזיבה + סימולציות פעילות.",
-  trajTitle:"תובנות מגמה", trajAllQueues:"כל התורים", wiScopeAll:"כל המוקד",
+  trajTitle:"לאן המוקד הולך?", trajAllQueues:"כל התורים", wiScopeAll:"כל המוקד",
   trajShift:"מגמת {m}: צפוי שינוי של ‎{x}%‎ בתוך 30 יום בקצב הגיוס הנוכחי.",
   trajHire:"גיוס מומלץ: עוד ‎{n}‎ משרות מלאות יחזיקו {m} של ‎{t}%‎ עד סוף תקופת התחזית ({d}).", trajHireN:"לגייס עוד {n} נציגים {g}.", trajHireM:"לגייס עוד {n} נציגים כדי להחזיק {m} {t}% בכל חודש — הפירוט לפי קורס בצנרת ההכשרה.", trajOkM:"במסלול: הקורסים מחזיקים {m} {t}% בכל חודש עד {d}.", trajOkN:"במסלול: הקורסים מספיקים {g}.",
   trajHireBig:"אתם צפויים ל-{m} של ‎{p}%‎; היעד ‎{t}%‎ רחוק ‎{n}‎ משרות (‎{pct}%‎ מהמצבה) — אבל רק אם מגייסים אחיד, וזו הדרך היקרה. לרוב הבעיה היא שעות שיא: נסו קודם את הצעות הרחבת המשמרות בעמוד השיבוץ, או בחנו מחדש את היעד.",
   trajUnreach:"יעד {m} של ‎{t}%‎ אינו בר-השגה בשום היקף גיוס סביר — התחזית נעצרת סביב ‎{p}%‎. זו שיחה על היעד או על הביקוש, לא על גיוס המוני.",
   trajOk:"במסלול: קצב הגיוס הנוכחי מחזיק {m} של ‎{t}%‎ עד סוף תקופת התחזית ({d}).",
-  trajCalc:"שקיפות המודל: {m} שבועי חזוי ‎{p}%‎ על השבוע המלא האחרון · כל נציג משובץ נספר כ-‎{e}%‎ עמדה אפקטיבית — מכויל מהמענה המדוד שלכם, כלומר שחיקה+היעדרות משולבות בפועל של כ-‎{loss}%‎ (המחוונים הם הערכות; זה מה שהמוקד מראה בפועל).",
-  trajCalcFull:"שקיפות המודל: {m} שבועי חזוי ‎{p}%‎ על השבוע המלא האחרון · לפי המענה המדוד, הנציגים מספקים עמדה אפקטיבית מלאה — השחיקה וההיעדרות בפועל כבר משוקללות במדידות.",
+  trajCalc:"שקיפות המודל: {m} שבועי חזוי ‎{p}%‎ על השבוע המלא האחרון · כל נציג משובץ נספר כ-‎{e}%‎ עמדה אפקטיבית — מכויל מהמענה המדוד שלכם, כלומר זמן לא זמין + חוסרים בפועל של כ-‎{loss}%‎.",
+  trajCalcFull:"שקיפות המודל: {m} שבועי חזוי ‎{p}%‎ על השבוע המלא האחרון · לפי המענה המדוד, הנציגים מספקים עמדה אפקטיבית מלאה — הזמן הלא זמין והחוסרים בפועל כבר בתוך המדידות.",
   trajProfile:"פרופיל גיוס: משמרת {win} (בעיקר ימי {days}) מרכזת ‎{pct}%‎ מהחוסר השבועי — כ-{n} נציגים בחלון הזה יסגרו את רוב הפער.",
   trajMore:"פרטים נוספים (מגמה ומודל)",
   schSortTip:"לחצו למיון; לחיצה נוספת הופכת את הסדר", schFiltN:"מוצגות {v} מתוך {n} משמרות (מסונן)",
@@ -2404,7 +2421,7 @@ he:{
   schAuditTitle:"התוצאה — מה השתנה",
   tipSchAudit:"אחרי כל הרצה: כללי הכיסוי נבדקים על הסידור החדש, וכל משמרת שהשתנתה מוצגת לפי מנהל צוות, מוכנה לשליחה.",
   saKpiBreach:"חצאי-שעה מתחת לכלל כיסוי", saKpiShifts:"משמרות ששונו", saKpiHours:"שעות שהוזזו",
-  saKpiMetric:"שינוי צפוי ב{m} (שבועי)", saKpiShortSub:"≈{p}% מהשעות הנדרשות · ~{d} ביום", saKpiShortTip:"כל חצי שעה בשבוע שבה שובצו פחות נציגים מהנדרש, מסוכמת. עודף בבוקר לא מקזז חוסר בערב — ולכן המספר יכול להיות גדול גם כשסך השעות נראה מספיק. זה סכום הימים שבהסבר למטה (״איך הוזז הסידור״).",
+  saKpiMetric:"שינוי צפוי ב{m} (שבועי)", saKpiShortSub:"≈{p}% מהשעות הנדרשות · ~{d} ביום", saKpiShortTip:"כל חצי שעה שחסרו בה נציגים, מסוכמת לשבוע — עודף בבוקר לא מקזז חוסר בערב. זה סכום הימים למטה (״איך הוזז הסידור״).",
   saGaveUp:"נשאר · במקום {b}", saRebalance:"↻ כוונון מחדש עם הבחירות שלכם", saRebalanceTip:"מריץ שוב את הכוונון סביב מי שהשארתם — עשוי להזיז צוותים אחרים כדי לפצות.",
   gapCtx:"נשאר אחרי ההזזות (שעות החוזה נשמרו). סגירה = שעות נוספות, בהסכמת הנציג.", gapCtxLocked:"{n} נשארו במקומם.", gapCtxGen:"פערים שבסיס הברזל לא מכסה — מבניים: לגייס או להקצות כאן.",
   gapCellTip:"חסרים {n} נציגים · {o} הצעות יכולות לעזור",
@@ -2423,51 +2440,47 @@ he:{
   saSent:"נשלח", saUpdated:"השתנה מאז ששלחתם", saTlOffTip:"לא להזיז את הצוות הזה — הסידור שלו נשאר כמו שהוא", saTlOnTip:"לאפשר להזיז את הצוות הזה",
   saTlKept:"לא מוזז · {n} נציגים נשארים כמו בסידור", saRepKeptN:"{n} נשארים כמו שהם", saKeepRep:"לא להזיז", saMoveRep:"לאפשר הזזה", saKeptAsIs:"נשאר כמו בסידור",
   saRerun:"מכוונן מחדש בלעדיהם…", saKpiShort:"חוסר שבועי בשעות נציג (לפני ← אחרי)", saKpiMoved:"משמרות שהוזזו",
-  saCovLegend:"אינטרוואל = חלון של חצי שעה. ✓ = החוק מתקיים בכל אינטרוואל · ⚠ = חסר כיסוי בחלקם.",
-  saCovOk:"מכוסה", saCovGap:"חסר ב-{n} אינטרוואלים", saCovImp:"(שופר מ-{n})",
+  saCovLegend:"אינטרוול = חצי שעה. ✓ = החוק מתקיים בכל אינטרוול · ✗ = חסר כיסוי בחלקם.",
+  saCovOk:"מכוסה", saCovGap:"חסר ב-{n} אינטרוולים", saCovImp:"(שופר מ-{n})",
   saCovOutScope:"המיומנות אינה בתחום השיבוץ — סמנו אותה בתפריט 🎧 למעלה כדי לאפשר למייעל להזיז את נציגיה, או שלחו בקשת הרחבה.",
   saCovNoMove:"אין עודף נציגים להזזה — נדרשת בקשת הרחבה (ראו כרטיס הביקוש הלא מכוסה).",
-  saNoRules:"לא הוגדרו חוקי כיסוי — הוסיפו למעלה כדי שכל הרצה תיבדק.",
   saNoDiffs:"הסידור המיטבי זהה לסידור המקורי — אין שינויים.",
   saDeltaHead:"{n} שינויים מול הסידור המקורי",
   saOrig:"מקורי", saOpt:"מיטבי",
   saTypeShift:"הוזז", saTypeExt:"הוארך", saTypeAdd:"נוסף", saTypeCut:"קוצץ", unitH:"ש׳", saKpiExtSub:"+{n} הוארכו ב־③",
   saTl_ext:"• {name} — יום {day} {date}: {orig} ← {opt} (הארכה)",
   saTlBtn:"📱 הודעות למנהלי צוות ({n})",
-  saTlHead:"היי {team}, שינויים בסידור לשמירה על חוקי הכיסוי ואחוזי המענה:",
-  saTlBreachHead:"⚠ פערי כיסוי שנותרו:",
+  saTlBreachHead:"עדיין חסר כיסוי:",
   saTlBreach:"• חסר {s}: {cells}",
-  saTlChanges:"🔄 שינויים בצוות שלך:",
   saTl_shift:"• {name} — יום {day} {date}: {orig} ← {opt}",
   saTl_add:"• {name} — יום {day} {date}: נוספה משמרת {opt}",
   saTl_cut:"• {name} — יום {day} {date}: המשמרת {orig} ירדה (עודף)",
-  saTlFoot:"נא לתקף מול הנציגים בהקדם. 🙏",
   saTlSendAll:"📱 הודעה לכל מנהלי הצוות", saAllHead:"🗓️ עדכון סידור — שינויים לפי צוות",
   waCopiedAll:"הועתק — סיכום אחד לכל מנהלי הצוות.", schMovedFrom:"הוזז מ־{w}",
-  wfTreeTotal:"סה\"כ מוצג: {n} שעות",
+  wfTreeTotal:"100% = {n} ברזל השבוע",
   qaTitle:"משוב ודיווח תקלות (QA)", qaPh:"מצאתם באג? מספר נראה מוזר? חסר משהו? כתבו כאן…",
   qaSend:"📧 שליחה במייל", qaCopy:"📋 העתקה",
   qaNote:"נפתחת אפליקציית המייל שלכם — ההקשר (עמוד, נתונים) מצורף אוטומטית. שום דבר לא נשלח בלעדיכם.",
   qaSubject:"סימולטור WFM — משוב QA", qaEmpty:"כתבו משהו קודם 🙂", qaCopied:"הועתק — הדביקו בכל מקום.",
   trajNoData:"טענו תחזית והגדירו מצבה כדי לקבל תובנות מגמה חזויות.",
-  wiTitle:"סימולטור שיפורים (What-If)",
-  tipWi:"הזיזו את המחוונים כדי לראות לאן מגיע השירות ומתי תעמדו ביעד. נציגים נוספים מגיעים מהקורסים והסימולציות למטה. סביבת ניסוי — ההגדרות האמיתיות לא משתנות. חל על העונים לפי כפתור 🎧.",
+  wiTitle:"מה יקרב אותנו ליעד?",
+  tipWi:"הזיזו מחוון וראו לאן מגיע השירות ומתי מגיעים ליעד — סביבת ניסוי, שום דבר אמיתי לא משתנה. נציגים נוספים מגיעים מהקורסים והפרופילים למטה.",
   cohEditTip:"לחצו לעריכת הקורס",
   wiZeroBase:"הערך 0 בהגדרות מתקדמות — אין מה להפחית. הגדירו ערך שם כדי לדמות הפחתה.",
-  wiAht:"קיצור משך שיחה", wiAttr:"פחות עזיבה", wiShrink:"הפחתת זמן לא-זמין", wiAbsence:"הפחתת הברזות",
-  wiAgentsNote:"➕ תוספת נציגים מגיעה מהקורסים ומפרופילי האיוש שמתחת.",
+  wiAht:"קיצור משך שיחה", wiAttr:"פחות עזיבה", wiShrink:"פחות זמן לא זמין", wiAbsence:"פחות חוסרים",
+  
   wiReset:"↺ חזרה למצב הנוכחי",
   wiTargetN:"יעד {t}", wiTargetTick:"יעד {t}", wiWk:"שב'",
   wiAlready:"כבר עומדים ביעד", wiUnreach:"לא יושג בחצי השנה הקרובה", wiBy:"יושג עד {d}",
-  injTitle:"פרופילי איוש — מזינים את הסימולטור", injProfile:"פרופיל משמרת",
+  injTitle:"מה אם נוסיף נציגים במשמרת קבועה?", injProfile:"פרופיל משמרת",
   profStudent:"סטודנטים אחה\"צ — 12:00–17:00, א'–ה'",
   profMorning:"משרה מלאה בוקר — 08:00–13:00, א'–ו'",
   profFull:"משרה מלאה — 08:00–17:00, א'–ה'", profCustom:"פרופיל מותאם לפי יום…",
   injCount:"מספר נציגים להוספה", injGo:"➕ הוספת נציגים וחישוב מחדש",
-  injActive:"סימולציות נציגים פעילות", injNone:"אין עדיין סימולציות נציגים פעילות.",
+  injActive:"בסימולטור עכשיו", injNone:"הסימולטור עובד עם הצוות והקורסים שלכם.",
   injLine:"{n} × {prof}", remove:"הסרה",
   profNames:{student:"סטודנטים אחה\"צ",fullMorning:"משרה מלאה בוקר",fullDay:"משרה מלאה",custom:"מותאם לפי יום"},
-  trainTitle:"צנרת הכשרות",
+  trainTitle:"מתי מגיעים נציגים חדשים?",
   tipTrain:"הזינו פתיחה ומשך של קורס; הבוגרים מצטרפים בפתיחה + משך, לפי אחוז ההסמכה.",
   cohName:"שם קורס", cohCount:"נציגים בקורס", cohStart:"פתיחת קורס", cohDur:"משך (ימים)", cohYield:"אחוז הסמכה (%)", cohAdd:"הוספת קורס",
   courseDefault:"קורס",
@@ -2492,7 +2505,6 @@ he:{
   targetsTitle:"יעדי שירות",
   setTarget:"יעד עמידה (%)", tipTarget:"הציון שכל אינטרוול ויום נמדדים מולו.",
   setTsfT:"חלון מהירות מענה (TSF, שניות)",
-  tsfBenchNote:"‏TSF 30 ו־TSF 60 במגמות התאריכים הם מדדי ייחוס קבועים ואינם משתנים עם חלון זה.",
   wfTitle:"דינמיקת כוח אדם", setAttr:"עזיבה חודשית (%)",
   setHc:"מצבת נציגים נוכחית",
   tipHc:"משמש לתחזיות קדימה. איפה שסידור טעון, האיוש שלו משמש במקום.",
@@ -2500,8 +2512,8 @@ he:{
   modeAband:"תור מאפשר המתנה / נטישה",
   modeNoAband:"תור ללא המתנה / חירום",
   setMpt:"זמן סבלנות ממוצע — MPT (mm:ss)",
-  tipMpt:"זמן ההמתנה הממוצע עד שמתקשר מנתק. 0 = לא מנתקים (קו חירום). ערך בקובץ גובר על זה.",
-  setMptHint:"לא יודעים את ה־MPT? שלפו את 'זמן ההמתנה הממוצע של שיחות נטושות' מדוח השיחות הנטושות במערכת הטלפוניה/ACD — הערך בשניות הוא ה־MPT שלכם. תורי שירות טיפוסיים: 60–240 שניות.",
+  tipMpt:"זמן ההמתנה הממוצע עד שמתקשר מנתק; 0 = אף פעם (קו חירום). ערך בקובץ גובר.",
+  setMptHint:"לא יודעים? קחו את זמן ההמתנה הממוצע של שיחות נטושות מדוח מערכת הטלפוניה.",
   ceTitle:"עריכת {day} {time}", ceCancel:"ביטול", ceApply:"החלה",
   ceFutL:"החל על שורה זו ועל כל השבועות הבאים (אותו יום ואותו אינטרוול)",
   mxCum:"מצטבר יומי ({a}–{b}): {v} · {n} שיחות", ceCum:"מצטבר יומי {a}–{b}:",
@@ -2515,7 +2527,7 @@ he:{
   ceHintAgFile:"בסיס מהקובץ (אין סידור ליום הזה) — אפשר לנסות כאן מה־אם.",
   ceHintDay:"סה״כ שיחות ליום — מתפזרות על חצאי השעה לפי הפרופיל הרגיל של היום.",
   profTitle:"📊 חלוקת משקלי שיחות ביום", profBtnTip:"הצגה ועריכה של משקלי השיחות לאורך היום",
-  profIntro:"איזה חלק מהשיחות של כל יום בשבוע נופל בכל חצי שעה. ימי התחזית מפזרים את הסה״כ היומי לפי המשקלים האלה. ההיסטוריה לא משתנה.",
+  profIntro:"החלק של כל חצי שעה מהשיחות של כל יום בשבוע — ימי התחזית מתפזרים לפיו. ההיסטוריה לא משתנה.",
   profViewShare:"משקלים", profViewDiff:"שינוי מול החלון השני", profNone:"טענו קובץ תחזית עם היסטוריה כדי לראות את המשקלים.",
   profInsSame:"מעבר ל{o} כמעט לא ישנה דבר (פחות מ־0.3 נק׳ בכל אינטרוואל)",
   profInsDiff:"מעבר ל{o} יזיז את {day} {tm} ב־{p} נק׳ — השינוי הגדול ביותר",
@@ -2535,7 +2547,7 @@ he:{
   grpTag_act:"בפועל", grpTag_fc:"תחזית", grpTag_mix:"בפועל + תחזית", trDrill:"לחיצה מציגה את ימי התקופה",
   wkLbl:"שבוע {w} · {a}–{b}", trShare:"📤 שיתוף סיכום", trBackTip:"חזרה לתצוגה המקובצת (Backspace)",
   shBack:"חודשים אחורה", shDragTip:"לחיצה להצגה · גרירה לשינוי הסדר", shAhead:"חודשים קדימה", shInsL:"תובנות", shNotePh:"שורה אישית לקורא (לא חובה)", shColGross:"שעות לשיבוץ", shColAht:"משך שיחה",
-  shTitle:"📤 סיכום חודשי", shIntro:"איך עמדנו ולאן אנחנו הולכים — מוכן לשליחה. בחרו טווח ועמודות; הבחירה נשמרת. קורסים שמצטרפים בחודשי התחזית כבר כלולים.",
+  shTitle:"📤 סיכום חודשי", shIntro:"איך עמדנו ולאן הולכים, מוכן לשליחה — כולל הקורסים שבדרך. הבחירות נשמרות.",
   shCopyImg:"📋 העתקת תמונה", shPng:"⬇ PNG", shCopyTxt:"📋 העתקה כטקסט", shCopied:"התמונה הועתקה — הדביקו בוואטסאפ / במייל", shCopiedTxt:"טקסט הסיכום הועתק",
   shCopyFail:"הדפדפן חסם את ההעתקה — השתמשו ב־⬇ PNG",
   shHead:"מוקד — סיכום חודשי", shSub:"יעד {m} {t}% · {a} – {b}", shFoot:"סימולטור WFM · {d}",
@@ -2551,10 +2563,10 @@ he:{
   mxSum:"יומי",
   mxOffGrid:"כולל {n} שיחות מחוץ לחלון המשמרת (לא מוצגות כשורות בגריד)",
   rrNoWhy:"אין סטטוס בסידור — משמרות קצרות", rrWhyL:"למה:", rrWhyTip:"{n} נציגים — לחיצה מציגה רק אותם (שוב = כולם)", rrFriOff:"לא בשישי הזה (שישי לסירוגין)",
-  wfIronT:"ברזל מול סידור — לפי יום", tipWfIron:"לכל יום, באנשים: כמה נציגים הברזל מביא (בהיר) מול כמה הסידור שיבץ (כחול כהה), וכמה התחזית דורשת (קו כתום). שישי נספר לפי הסבב. מתחת לכל יום: שעות בסידור ÷ שעות בברזל. לפי הסינונים ומיומנויות המענה (🎧). לחיצה על יום: לפי שעות.",
+  wfIronT:"ברזל מול סידור — לפי יום", tipWfIron:"לכל יום, בנציגים: הברזל (בהיר) מול הסידור (כחול כהה) מול מה שהתחזית דורשת (קו כתום); שישי לפי הסבב. לחיצה על יום מראה את השעות.",
   ibTipIron:"ברזל: {n} נציגים ({h} ש׳)", ibTipFri:"שישי לפי סבב (לסירוגין)", ibTipSched:"סידור: {n} נציגים ({h} ש׳)", ibTipUtil:"{p}% משעות הברזל נכנסו לסידור", ibTipSchedH:"בסידור {a}",
   ibLgIron:"בברזל", ibLgSched:"בסידור", ibLgNeed:"נדרשים (תחזית)", ibNarrow:"תצוגה מסוננת — הצורך מהתחזית מוצג רק לכל המוקד.", ibPickHint:"לחיצה על יום — לפי שעות",
-  friT:"שישי — שבוע שעבר מול השבוע", tipFri:"מי יכול לעבוד שישי — לפי הברזל: שעות בתא של שישי. כל דבר אחר (חוזה, ללא שישי, ריק, כל טקסט) = לא עובד שישי. מי שיכול — עובד שישי לסירוגין: מי שעבד בשישי שעבר לא בתורו השבוע, ומי שלא עבד — בתורו. שישי שעבר מגיע מהזיכרון של סידורים קודמים (שמות בלבד, 12 ימי שישי אחרונים). נציגים שעזבו מוצגים בנפרד.",
+  friT:"שישי — שבוע שעבר מול השבוע", tipFri:"מי שיש לו שעות בתא של שישי בברזל עובד שישי לסירוגין: מי שעבד בשישי שעבר לא בתורו השבוע. שישי שעבר מגיע מסידורים קודמים (12 ימי השישי האחרונים).",
   friEv2:"שישי לסירוגין", friEv1:"כל שישי", friDropT:"להשוות לשישי שעבר?", friDropD:"גררו לכאן את הסידור של שבוע שעבר — נקרא רק יום שישי שלו (מי עבד). הסידור הנוכחי נשאר.",
   friNow:"בשישי הזה {d}", friLastN:"בשישי שעבר {d}", friIronN:"עם שישי בברזל", friNoLast:"שישי שעבר ({d}) עוד לא בזיכרון — מהשבוע הבא זה יתמלא לבד.",
   fri_both:"שני ימי שישי ברצף", fri_due:"בתורם — לא בסידור", fri_dueE:"בתורם בשישי הזה", fri_on:"משובצים לפי הסבב", fri_onAll:"בסידור בשישי הזה", fri_rest:"לא בתורם — עבדו בשישי שעבר", fri_left:"עבדו בשישי שעבר, כבר לא פעילים",
@@ -2562,7 +2574,7 @@ he:{
   friCopyTip:"העתקת הרשימה לפי צוות", friNone:"לא נמצא בקובץ יום שישי עם משמרות.", friGot:"שישי {d} נשמר בזיכרון",
   holAutoSec:"חגים לפי הלוח העברי", holOwnSec:"תאריכים שלכם", holOwnNoName:"(ללא שם)", holOwnDel:"הסרה", holOwnName:"שם (למשל יום בחירות)", holOwnTo:"עד (לא חובה)", holOwnAdd:"+ הוספה", holOwnNeed:"בחרו תאריך קודם", holOwnAdded:"{n} — {l}",
   fmFast:"📈 התחזית עוקבת אחרי שינוי פתאומי בביקוש", faBtnTip:"מה הוא רואה עכשיו ואיך זה עובד", faTitle:"📈 שינוי פתאומי בביקוש",
-  faIntro:"השיחות קפצו פתאום? הימים הקרובים עוברים לרמה החדשה תוך ימים, ואז חוזרים בהדרגה. גם מי שניתק ויתקשר שוב נכנס לתחזית.", tipFast:"השיחות קפצו פתאום? הימים הקרובים עוברים לרמה החדשה תוך ימים, ואז חוזרים בהדרגה. גם מי שניתק ויתקשר שוב נכנס לתחזית.",
+  faIntro:"השיחות קפצו פתאום? הימים הקרובים עוברים לרמה החדשה וחוזרים בהדרגה — כולל מי שניתק ויתקשר שוב.", tipFast:"השיחות קפצו פתאום? הימים הקרובים עוברים לרמה החדשה וחוזרים בהדרגה — כולל מי שניתק ויתקשר שוב.",
   faOnL:"מעקב אחרי שינוי פתאומי", faHalfL:"חזרה למודל הרגיל", faH5:"~שבוע", faH10:"~שבועיים", faH20:"~4 שבועות", faRetryL:"נוטשים שמתקשרים שוב",
   tipFaRetry:"מתוך הנטישות העודפות (מעל שיעור הנטישה הרגיל שלכם) — כמה מתקשרים שוב: ¾ ביום העבודה הבא, ¼ ביום שאחריו. מקובל: 30–60%.",
   faOff:"כבוי — התחזית משתמשת רק במודלים הרגילים.", faNoData:"⚡ נדרשים לפחות 14 ימי עבודה בהיסטוריה.",
@@ -2574,8 +2586,8 @@ he:{
   trTipDay:"לחיצה = השורה בטבלה", trTipOpen:"לחיצה = פתיחת הימים", relNeed:"נדרשות לפחות 6 תקופות בפועל — בחרו ימים או טווח ארוך יותר.",
   relWeak:"קשר חלש", relMod:"קשר בינוני", relStrong:"קשר חזק", relSent:"{s} (r = {r}): כל {dx} ({x}) ≈ {dy} ({y}).", relNone:"{x} ו־{y} כמעט לא זזים יחד כאן (r = {r}).",
   ibSum:"{p}% מהברזל בסידור",
-  cohDurS:"ימי הקורס", cohSite:"מיקום", hpOkMonths:"כן — כל חודש עד {m}", hpShortN:"{n} חודשים נשארים חסרים", hpShortMo:"{m}: חסרים {x}", hpDone:"נוספו {n} נציגים לקורסים.", hpUndo:"ביטול", hpUndone:"הקורסים חזרו למצבם הקודם", repBtn:"📄 דוח מנהלים", repPick:"מה ייכנס לדוח", repKpi:"המספרים", repTraj:"ההחלטה (תובנות מגמה)", repPlan:"הקורסים מספיקים — חודש אחרי חודש", repGantt:"גאנט קורסים", repWi:"הגעה ליעד (סימולטור What-If)", repOut:"תחזית מצבה", repRules:"כללי קורסים", repTitle:"גיוס והכשרה — סיכום מנהלים", repSub:"הופק {d} · מהסימולטור, לפי התחזית והקורסים כפי שנטענו", repEmpty:"לא נבחר דבר.", repMonth:"חודש", repGap:"חסר", repAdds:"מה להוסיף, לפי קורס", repAdd:"תוספת", repFor:"בשביל", repGanttKey:"צבוע = הקורס רץ (פתיחה ← היום האחרון) · ב״ש כחול · רחובות ירוק · בית כתום · מסגרת אדומה = השבוע", repTgt:"היעד {t}%: מושג ב־{d}", repNoReach:"היעד {t}%: לא מושג בטווח התחזית", repLevers:"מנופים כפי שנקבעו", repDate:"תאריך", repToday:"היום", repHc:"נציגים צפויים", repFile:"סיכום-מנהלים", repWiNow:"עם הקורסים כפי שנטענו", repWiAdds:"אחרי גיוס ‎+{n} המומלצים", repHowKpi:"מצבה = משובצים במיומנויות המענה · פער מרבי = נדרשים פחות משובצים, ביום הגרוע · הסמכה = מוסמכים ÷ נציגים בקורס", repHowTraj:"שורת הגיוס מתוך ״הקורסים מספיקים״ · הפרופיל = החלון השבועי עם רוב החוסר", repHowMon:"שיחות = סכום הימים · מענה ומשך שיחה = ממוצע משוקלל בשיחות · שעות = נדרשים × חצי שעה ÷ זמינות · בפועל = מדוד, תחזית = המודל", repHowPlan:"נדרשים = הצוות היום × איוש נדרש ÷ איוש הצוות · צפוי = ממוצע החודש של היום, פחות עוזבים, ועוד בוגרים · תוספות = קודם לקורס המוקדם, עד גודל הכיתה", repHowGantt:"מהפתיחה עד היום הראשון במשמרות, בימי עבודה · חגים סגורים דוחים", repHowWi:"ארלנג A על שבוע התחזית הראשון, לפי המנופים · נציגים בכל שבוע = היום, פחות עוזבים, ועוד בוגרים", repHowOut:"המצבה היום, פחות עזיבה חודשית, ועוד בוגרי קורסים וסימולציות גיוס", repHowRules:"גודל כיתה = מקסימום נציגים בקורס · ימי הקורס = אורך קורס חדש · במקביל = כמה קורסים רצים יחד במיקום · מיקומים באותו כלל = לא באותו זמן", repMon:"חודש אחרי חודש (מגמות ותאריכים)", repMix:"בפועל + תחזית", repFc:"תחזית", repAct:"בפועל", repGross:"שעות לשיבוץ (ברוטו)", repMet:"ימים ביעד {t}%", repScope:"מיומנויות מענה שנלקחו בחשבון: {s}", repAll:"כל המוקד", repLensReal:"שבועות התחזית כוללים עזיבה וקורסים", repLensToday:"שבועות התחזית לפי הצוות של היום (הברזל)", hpTotal:"סה״כ {n}", hpGroup:"לא במקביל", hpGroupHint:"מיקומים עם אותה אות — אף פעם לא מריצים קורס באותו זמן.", hpPairsT:"לא באותו זמן:", hpPairsHint:"מיקומים מסומנים באותה שורה — אף פעם לא מריצים קורס באותו זמן; קורס חדש באחד מהם יחכה לסיום הקורס באחרים.", hpStillShort:"חסרים גם אחרי התוספות:", hpWhyFullLate:"למה: הקורסים שמסיימים בזמן כבר מלאים, וקורס חדש ייפתח רק אחרי המתוכננים (קורס אחד בכל פעם במיקום) — הראשון יסיים ב־{d}.", hpWhyLate:"למה: גם קורס חדש שייפתח עכשיו יסיים רק ב־{d}.", hpWhyFull:"למה: הקורסים שמסיימים בזמן כבר מלאים.", hpWhyDo:"יעזרו: קורסים קצרים יותר או כיתות גדולות יותר (⚙ כללי קורסים).", hpRuleAdd:"+ כלל נוסף", hpRuleDup:"הכלל הזה כבר קיים (או כלול בכלל אחר) — לא נוסף פעמיים", hpScen:"תרחיש מהסימולטור: {l}", hpScenWas:"(במקום ‎+{n} בלי התרחיש)", hpApplyScen:"✓ לעדכן את הקורסים המסומנים — לפי התרחיש", hpProdChk:"בדיקה לפי פריון העבר: ~{n} נדרשים", repScen:"בתנאי שיושג: {l} — יידרשו ‎+{n} נציגים לקורסים (בלי השיפור: ‎+{b}).", repScenSame:"בתנאי שיושג: {l} — התוכנית נשארת אותה תוכנית (‎+{b}).", repScenNote:"זה תרחיש ולא תחזית: הוא נכון רק אם השיפור יקרה בפועל. התוכנית למעלה היא המצב בלעדיו.", crsOverlapSite:"רץ באותו זמן עם {n} — {s}: עד {k} במקביל (⚙ כללי קורסים)", crsOverlapRule:"רץ באותו זמן עם {n} — הכלל שלכם: {s} לא באותו זמן", hpAtOnce:"במקביל", shTitle:"💲 מחיר הצל — כמה שווה כל שיפור", shStep:"צעד", shNow:"מענה עכשיו (נק׳)", shEnd:"עד {d} (נק׳)", shHint:"צעד אחד בכל פעם, כל השאר כמו שהוא — פחות עזיבה משתלמת עם הזמן, לא היום.", shAbsAht:"{d} דק׳ פחות ({a} ← {b})", shAbsAttr:"{a}% ← {b}% בחודש (≈ {n} נציגים פחות עוזבים בחודש)", shAbsAvail:"{a}% ← {b}% מהמשמרת על הקו (≈ {n} נציגים נוספים עונים)", shLv_ahtCut:"קיצור של {s}% במשך השיחה", shLv_attrCut:"הפחתה של {s}% בעזיבה", shLv_availPts:"עוד {s} נק׳ זמינות", shGain:"← {m} {n} נק׳ עכשיו · {e} עד {d}", shLever:"מנוף", shAlone:"לבד, במקום לגייס", shTarget:"שיפור של {v}%", shNotAlone:"לא מספיק לבד", shNoNeed:"לא צריך גיוס נוסף", shZero:"היום 0% (בהגדרות) — אין מה לשפר", shAvail:"יותר זמינות (פחות זמן לא־זמין / הברזות)", shPt:"נק׳", shTargetPt:"‎+{v} נק׳ זמינות", repShadow:"מחיר הצל — תוכנית עבודה", repHowShadow:"צעד אחד בכל מנוף, כל השאר כמו שהוא: אחוז המענה מהסימולטור · כל צעד וכל ״לבד״ גם במספרים · ״לבד״ = השיפור הקטן ביותר של המנוף הזה שאיתו התוכנית לא צריכה גיוס נוסף", repUntil:"עד {d}", planToL:"תכנון עד", planToBack:"↺ סוף התחזית", planToTip:"שני הגרפים, התוכנית החודשית ודוח המנהלים רצים עד התאריך הזה. עכשיו: סוף התחזית ({d}).", planToTipOwn:"התאריך שבחרתם — שני הגרפים, התוכנית החודשית ודוח המנהלים רצים עד אליו. התחזית מסתיימת ב־{d}.", planToRange:"בחרו תאריך בין שבועיים לשנה מהיום", wiUnreachBy:"לא יושג עד {d}", wiGap:"חסרות {g} נק׳", crsSelN:"נבחרו {n}", crsSelAll:"בחירת הכול", crsSelNone:"ביטול הבחירה", crsBulkApply:"החל עליהם", crsBulkDelB:"מחיקתם", crsBulkYNeed:"אחוז הסמכה בין 10 ל־100", crsBulkYDone:"{n} קורסים עודכנו ל־{y}% הסמכה", crsBulkDelDone:"נמחקו {n} קורסים", hpClass:"גודל כיתה", hpDays:"ימי הקורס", hpNoOverlap:"ב״ש ורחובות לא במקביל (קורס אחד ביניהם בכל פעם)", hpLenDone:"{s}: {n} קורסים קרובים עודכנו ל־{d} ימי קורס", crsDeleted:"נמחק: {n}", hpFor:"בשביל {m}", hpBeyond:"{m}: אין קורס שיסיים בזמן", hpBeyondD:"{m}: אין קורס שיסיים בזמן — המוקדם ביותר מסיים ב־{d}", trajHireP:"לגייס עוד {n} נציגים — לחודשים שקורס עוד מגיע אליהם; {k} חודשים נשארים חסרים (אין קורס שמסיים בזמן). הפירוט לפי קורס בצנרת ההכשרה.", hpPickHint:"לחיצה על חודש — המספרים שלו", hpCalc:"נדרשים {n} · צפי {e} = {h} היום − {l} עוזבים + {g} בוגרים (נציג חדש מגיע לפריון מלא תוך חודש)", hpCalcAdd:"· עם התוספות +{a}", hpHow:"? איך זה מחושב", hpStep1:"כל חודש, לפי התחזית: כמה נציגים צריך כדי להחזיק את יעד המענה, מול כמה יהיו — היום, פחות מי שעוזב, ועוד בוגרי קורסים.", hpStep2:"חודש חסר: מוסיפים נציגים לקורס המוקדם שמסיים בזמן, עד גודל הכיתה.", hpStep3:"עדיין חסר: קורס נוסף במיקום שיכול לסיים הכי מוקדם (קורס אחד בכל פעם במיקום, ולא יחד עם מיקומים מאותו כלל; חגים דוחים).", hpMoreCourses:" · {k} קורסים נוספים", hpMoreCourse1:" · ועוד קורס אחד", hpNoFc:"צריך תחזית לחודשים הקרובים — התחזית שלך מסתיימת ב־{d}.", hpTarget:"יעד: {m} {t}% · לפי התחזית, חודש אחרי חודש", hpLgPlan:"צפי לפי הקורסים", hpLgWith:"עם התוספות", hpLgNeed:"נדרשים", hpTipMo:"נדרשים {n} · צפי {a}{b}", hpLateMo:"{m}: חסרים {x} — הקורס הנוסף המוקדם ביותר מסיים ב־{d}", hpFull:"(מלא)", hpOther:"אחר", hpLimits:"⚙ כללי קורסים", trnOther:"אחר", crsTpl:"⬇ תבנית Excel", crsTplFile:"תבנית קורסים.csv", crsSampleCap:"עמודות בכל סדר ובכל שם · ימים ו־% הסמכה לא חובה", cohNew:"+ קורס", cohDefY:"% הסמכה לקורס חדש", crsDropLine:"או גררו קובץ קורסים לכל מקום בעמוד", cohYieldS:"% הסמכה", dropCourses:"📂 גררו את תוכנית הקורסים לכל מקום — בכל מבנה",
-  hpT:"כמה לגייס", hpQ:"הקורסים מספיקים?", tipHp:"חודש אחרי חודש, לפי התחזית: האם הקורסים מביאים מספיק נציגים כדי להחזיק את יעד המענה? אם לא — כמה נציגים להוסיף, לאיזה קורס (המוקדם קודם, עד גודל הכיתה), והאם לפתוח קורס נוסף.", hpBarAr:"נדרשים ל{m} {t}% עד {d}", hpBarHc:"יעד מצבה עד {d}", hpBarHave:"הקורסים שלך מביאים עד אז", hpBarWith:"עם הנציגים הנוספים", hpModeHc:"מצבה", hpBy:"עד", tipHpAttr:"כמה נציגים עוזבים בחודש — אותו ערך כמו בהגדרות מתקדמות ← דינמיקת כוח אדם. מקטין את המצבה של היום ואת בוגרי הקורסים.",
+  cohDurS:"ימי הקורס", cohSite:"מיקום", hpOkMonths:"כן — כל חודש עד {m}", hpShortN:"{n} חודשים נשארים חסרים", hpShortMo:"{m}: חסרים {x}", hpDone:"נוספו {n} נציגים לקורסים.", hpUndo:"ביטול", hpUndone:"הקורסים חזרו למצבם הקודם", repBtn:"📄 דוח מנהלים", repPick:"מה ייכנס לדוח", repKpi:"המספרים", repTraj:"ההחלטה (תובנות מגמה)", repPlan:"הקורסים מספיקים — חודש אחרי חודש", repGantt:"גאנט קורסים", repWi:"הגעה ליעד (סימולטור What-If)", repOut:"תחזית מצבה", repRules:"כללי קורסים", repTitle:"גיוס והכשרה — סיכום מנהלים", repSub:"הופק {d} · מהסימולטור, לפי התחזית והקורסים כפי שנטענו", repEmpty:"לא נבחר דבר.", repMonth:"חודש", repGap:"חסר", repAdds:"מה להוסיף, לפי קורס", repAdd:"תוספת", repFor:"בשביל", repGanttKey:"צבוע = הקורס רץ (פתיחה ← היום האחרון) · ב״ש כחול · רחובות ירוק · בית כתום · מסגרת אדומה = השבוע", repTgt:"היעד {t}%: מושג ב־{d}", repNoReach:"היעד {t}%: לא מושג בטווח התחזית", repLevers:"מנופים כפי שנקבעו", repDate:"תאריך", repToday:"היום", repHc:"נציגים צפויים", repFile:"סיכום-מנהלים", repWiNow:"עם הקורסים כפי שנטענו", repWiAdds:"אחרי גיוס ‎+{n} המומלצים", repHowKpi:"מצבה = משובצים במיומנויות המענה · פער מרבי = נדרשים פחות משובצים, ביום הגרוע · הסמכה = מוסמכים ÷ נציגים בקורס", repHowTraj:"שורת הגיוס מתוך ״הקורסים מספיקים״ · הפרופיל = החלון השבועי עם רוב החוסר", repHowMon:"שיחות = סכום הימים · מענה ומשך שיחה = ממוצע משוקלל בשיחות · שעות = נדרשים × חצי שעה ÷ זמינות · בפועל = מדוד, תחזית = המודל", repHowPlan:"נדרשים = הצוות היום × איוש נדרש ÷ איוש הצוות · צפוי = ממוצע החודש של היום, פחות עוזבים, ועוד בוגרים · תוספות = קודם לקורס המוקדם, עד גודל הכיתה", repHowGantt:"מהפתיחה עד היום הראשון במשמרות, בימי עבודה · חגים סגורים דוחים", repHowWi:"ארלנג A על שבוע התחזית הראשון, לפי המנופים · נציגים בכל שבוע = היום, פחות עוזבים, ועוד בוגרים", repHowOut:"המצבה היום, פחות עזיבה חודשית, ועוד בוגרי קורסים וסימולציות גיוס", repHowRules:"גודל כיתה = מקסימום נציגים בקורס · ימי הקורס = אורך קורס חדש · במקביל = כמה קורסים רצים יחד במיקום · מיקומים באותו כלל = לא באותו זמן", repMon:"חודש אחרי חודש (מגמות ותאריכים)", repMix:"בפועל + תחזית", repFc:"תחזית", repAct:"בפועל", repGross:"שעות לשיבוץ (ברוטו)", repMet:"ימים ביעד {t}%", repScope:"מיומנויות מענה שנלקחו בחשבון: {s}", repAll:"כל המוקד", repLensReal:"שבועות התחזית כוללים עזיבה וקורסים", repLensToday:"שבועות התחזית לפי הצוות של היום (הברזל)", hpTotal:"סה״כ {n}", hpGroup:"לא במקביל", hpGroupHint:"מיקומים עם אותה אות — אף פעם לא מריצים קורס באותו זמן.", hpPairsT:"לא באותו זמן:", hpPairsHint:"מיקומים מסומנים באותה שורה — אף פעם לא מריצים קורס באותו זמן; קורס חדש באחד מהם יחכה לסיום הקורס באחרים.", hpStillShort:"חסרים גם אחרי התוספות:", hpWhyFullLate:"למה: הקורסים שמסיימים בזמן כבר מלאים, וקורס חדש ייפתח רק אחרי המתוכננים (קורס אחד בכל פעם במיקום) — הראשון יסיים ב־{d}.", hpWhyLate:"למה: גם קורס חדש שייפתח עכשיו יסיים רק ב־{d}.", hpWhyFull:"למה: הקורסים שמסיימים בזמן כבר מלאים.", hpWhyDo:"יעזרו: קורסים קצרים יותר או כיתות גדולות יותר (⚙ כללי קורסים).", hpRuleAdd:"+ כלל נוסף", hpRuleDup:"הכלל הזה כבר קיים (או כלול בכלל אחר) — לא נוסף פעמיים", hpScen:"תרחיש מהסימולטור: {l}", hpScenWas:"(במקום ‎+{n} בלי התרחיש)", hpApplyScen:"✓ לעדכן את הקורסים המסומנים — לפי התרחיש", hpProdChk:"בדיקה לפי פריון העבר: ~{n} נדרשים", repScen:"בתנאי שיושג: {l} — יידרשו ‎+{n} נציגים לקורסים (בלי השיפור: ‎+{b}).", repScenSame:"בתנאי שיושג: {l} — התוכנית נשארת אותה תוכנית (‎+{b}).", repScenNote:"זה תרחיש ולא תחזית: הוא נכון רק אם השיפור יקרה בפועל. התוכנית למעלה היא המצב בלעדיו.", crsOverlapSite:"רץ באותו זמן עם {n} — {s}: עד {k} במקביל (⚙ כללי קורסים)", crsOverlapRule:"רץ באותו זמן עם {n} — הכלל שלכם: {s} לא באותו זמן", hpAtOnce:"במקביל", shTitle:"💲 מחיר הצל — כמה שווה כל שיפור", shStep:"צעד", shNow:"מענה עכשיו (נק׳)", shEnd:"עד {d} (נק׳)", shHint:"צעד אחד בכל פעם, כל השאר כמו שהוא — פחות עזיבה משתלמת עם הזמן, לא היום.", shAbsAht:"{d} דק׳ פחות ({a} ← {b})", shAbsAttr:"{a}% ← {b}% בחודש (≈ {n} נציגים פחות עוזבים בחודש)", shAbsAvail:"{a}% ← {b}% מהמשמרת על הקו (≈ {n} נציגים נוספים עונים)", shLv_ahtCut:"קיצור של {s}% במשך השיחה", shLv_attrCut:"הפחתה של {s}% בעזיבה", shLv_availPts:"עוד {s} נק׳ זמינות", shGain:"← {m} {n} נק׳ עכשיו · {e} עד {d}", shLever:"מנוף", shAlone:"לבד, במקום לגייס", shTarget:"שיפור של {v}%", shNotAlone:"לא מספיק לבד", shNoNeed:"לא צריך גיוס נוסף", shZero:"היום 0% (בהגדרות) — אין מה לשפר", shAvail:"יותר זמינות (פחות זמן לא זמין וחוסרים)", shPt:"נק׳", shTargetPt:"‎+{v} נק׳ זמינות", repShadow:"מחיר הצל — תוכנית עבודה", repHowShadow:"צעד אחד בכל מנוף, כל השאר כמו שהוא: אחוז המענה מהסימולטור · כל צעד וכל ״לבד״ גם במספרים · ״לבד״ = השיפור הקטן ביותר של המנוף הזה שאיתו התוכנית לא צריכה גיוס נוסף", repUntil:"עד {d}", planToL:"תכנון עד", planToBack:"↺ סוף התחזית", planToTip:"שני הגרפים, התוכנית החודשית ודוח המנהלים רצים עד התאריך הזה. עכשיו: סוף התחזית ({d}).", planToTipOwn:"התאריך שבחרתם — שני הגרפים, התוכנית החודשית ודוח המנהלים רצים עד אליו. התחזית מסתיימת ב־{d}.", planToRange:"בחרו תאריך בין שבועיים לשנה מהיום", wiUnreachBy:"לא יושג עד {d}", wiGap:"חסרות {g} נק׳", crsSelN:"נבחרו {n}", crsSelAll:"בחירת הכול", crsSelNone:"ביטול הבחירה", crsBulkApply:"החל עליהם", crsBulkDelB:"מחיקתם", crsBulkYNeed:"אחוז הסמכה בין 10 ל־100", crsBulkYDone:"{n} קורסים עודכנו ל־{y}% הסמכה", crsBulkDelDone:"נמחקו {n} קורסים", hpClass:"גודל כיתה", hpDays:"ימי הקורס", hpNoOverlap:"ב״ש ורחובות לא במקביל (קורס אחד ביניהם בכל פעם)", hpLenDone:"{s}: {n} קורסים קרובים עודכנו ל־{d} ימי קורס", crsDeleted:"נמחק: {n}", hpFor:"בשביל {m}", hpBeyond:"{m}: אין קורס שיסיים בזמן", hpBeyondD:"{m}: אין קורס שיסיים בזמן — המוקדם ביותר מסיים ב־{d}", trajHireP:"לגייס עוד {n} נציגים — לחודשים שקורס עוד מגיע אליהם; {k} חודשים נשארים חסרים (אין קורס שמסיים בזמן). הפירוט לפי קורס בצנרת ההכשרה.", hpPickHint:"לחיצה על חודש — המספרים שלו", hpCalc:"נדרשים {n} · צפי {e} = {h} היום − {l} עוזבים + {g} בוגרים (נציג חדש מגיע לפריון מלא תוך חודש)", hpCalcAdd:"· עם התוספות +{a}", hpHow:"? איך זה מחושב", hpStep1:"כל חודש, לפי התחזית: כמה נציגים צריך כדי להחזיק את יעד המענה, מול כמה יהיו — היום, פחות מי שעוזב, ועוד בוגרי קורסים.", hpStep2:"חודש חסר: מוסיפים נציגים לקורס המוקדם שמסיים בזמן, עד גודל הכיתה.", hpStep3:"עדיין חסר: קורס נוסף במיקום שיכול לסיים הכי מוקדם (קורס אחד בכל פעם במיקום, ולא יחד עם מיקומים מאותו כלל; חגים דוחים).", hpMoreCourses:" · {k} קורסים נוספים", hpMoreCourse1:" · ועוד קורס אחד", hpNoFc:"צריך תחזית לחודשים הקרובים — התחזית שלך מסתיימת ב־{d}.", hpTarget:"יעד: {m} {t}% · לפי התחזית, חודש אחרי חודש", hpLgPlan:"צפי לפי הקורסים", hpLgWith:"עם התוספות", hpLgNeed:"נדרשים", hpTipMo:"נדרשים {n} · צפי {a}{b}", hpLateMo:"{m}: חסרים {x} — הקורס הנוסף המוקדם ביותר מסיים ב־{d}", hpFull:"(מלא)", hpOther:"אחר", hpLimits:"⚙ כללי קורסים", trnOther:"אחר", crsTpl:"⬇ תבנית Excel", crsTplFile:"תבנית קורסים.csv", crsSampleCap:"עמודות בכל סדר ובכל שם · ימים ו־% הסמכה לא חובה", cohNew:"+ קורס", cohDefY:"% הסמכה לקורס חדש", crsDropLine:"או גררו קובץ קורסים לכל מקום בעמוד", cohYieldS:"% הסמכה", dropCourses:"📂 גררו את תוכנית הקורסים לכל מקום — בכל מבנה",
+  hpT:"כמה לגייס", hpQ:"הקורסים מספיקים?", tipHp:"חודש אחרי חודש: האם הקורסים מביאים מספיק נציגים כדי להחזיק את היעד? אם לא — כמה להוסיף, לאיזה קורס, והאם לפתוח עוד אחד.", hpBarAr:"נדרשים ל{m} {t}% עד {d}", hpBarHc:"יעד מצבה עד {d}", hpBarHave:"הקורסים שלך מביאים עד אז", hpBarWith:"עם הנציגים הנוספים", hpModeHc:"מצבה", hpBy:"עד", tipHpAttr:"כמה נציגים עוזבים בחודש — אותו ערך כמו בהגדרות מתקדמות ← דינמיקת כוח אדם. מקטין את המצבה של היום ואת בוגרי הקורסים.",
   hpUnreach:"הוספת אנשים לבדה לא תביא ל{m} {t}% בביקוש ובמשך השיחה של היום.",
   hpGoalAr:"כדי להגיע ל{m} {t}% עד {d}", hpGoalHc:"כדי להגיע ל־{n} נציגים עד {d}", hpRecruits:"נציגים נוספים לגייס",
   hpNeed:"נדרשים {n} על המשמרות · התוכנית מביאה {b}", hpOk:"כן — אין צורך לגייס עוד",
@@ -4243,7 +4255,7 @@ function renderFriCard(card,wk){
   box.querySelectorAll(".friCopy").forEach(b=>b.addEventListener("click",e=>{ e.preventDefault(); e.stopPropagation();
     const g=shown.find(x=>x.k===b.dataset.k); if(!g) return;
     const byT={}; g.names.forEach(n=>{ const tm=metaOf(n).team||"—"; (byT[tm]=byT[tm]||[]).push(n); });
-    const txt=t("fri_"+g.k)+" — "+fmtD(fri)+"\n"+Object.entries(byT).map(([tm,ns])=>tm+"\n"+ns.sort().map(n=>"  "+n+(stFri.has(n)?" ("+stFri.get(n)+")":"")).join("\n")).join("\n\n");
+    const txt=Object.entries(byT).map(([tm,ns])=>tlMsg(tm,t("friTlPurpose",{g:t("fri_"+g.k),d:fmtD(fri)}),ns.sort().map(n=>"• "+n+(stFri.has(n)?" — "+stFri.get(n):"")))).join("\n\n");
     navigator.clipboard&&navigator.clipboard.writeText(txt); showToast("📋 "+t("wfValCopied"),true); }));
   // one sidur is loaded at a time: without last Friday in memory, last week's file adds only its Friday
   if(!last){ box.insertAdjacentHTML("beforeend",`<div class="dropzone friDz" tabindex="0" role="button">${req?"":`<b>${t("friDropT")}</b>`}<p class="mini">${t("friDropD")}</p><input type="file" accept=".csv,.tsv,.txt,.json,.xlsx,.xlsm,.xls" style="display:none"></div>`);
@@ -4283,14 +4295,14 @@ function computeWorkforce(){
   let sched=0,dev=0,tot=0;
   for(const r of state.schedRows) if(inWeek(r)&&wfPass(r)){ sched+=r.h; tot++; if(r.dev) dev++; }
   const absByType={};
-  let absTot=0;
-  for(const v of state.vacations) if(inWeek(v)&&wfPass(v)){ absByType[v.type]=(absByType[v.type]||0)+v.hours; absTot+=v.hours; }
+  let absTot=0; const absNames=new Set();
+  for(const v of state.vacations) if(inWeek(v)&&wfPass(v)){ absByType[v.type]=(absByType[v.type]||0)+v.hours; absTot+=v.hours; absNames.add(v.name); }
   // unallocated hours bucketed by the sidur's raw status ("" = empty cell, on purpose)
   const unBy={}; let unTot=0;
   for(const u of state.unallocRows||[]) if(inWeek(u)&&wfPass(u)){
     unBy[u.status]=(unBy[u.status]||0)+u.hours; unTot+=u.hours;
   }
-  return {ironTotal,sched,absByType,absTot,unBy,unTot,dev,tot};
+  return {ironTotal,sched,absByType,absTot,absN:absNames.size,unBy,unTot,dev,tot};
 }
 const WF_COLORS={prod:"#18b39a",vacation:"#3fa9f5",miluim:"#7a5fd0",medical:"#f06423",training:"#f5b301",exam:"#d63384",other:"#6b7c90",unalloc:"#dbe4ee"};
 /* status tiles get stable palette colors by insertion order (raw sidur statuses) */
@@ -4310,9 +4322,9 @@ function renderTreemap(W){
   let x=0; const parts=[];
   const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
   const tile=(x0,y0,tw,thh,key,val,label,color)=>{
-    const p=val/total;
+    const p=val/(W.ironTotal>0?W.ironTotal:total);
     // data-seg is URI-encoded: raw statuses may contain quotes (חו"ל) that break markup
-    parts.push(`<rect data-seg="${encodeURIComponent(key)}" style="cursor:pointer" x="${x0.toFixed(1)}" y="${y0.toFixed(1)}" width="${Math.max(0,tw-2).toFixed(1)}" height="${Math.max(0,thh-2).toFixed(1)}" fill="${color}" rx="3"><title>${esc(label)}: ${val.toFixed(1)}h (${(p*100).toFixed(1)}%)</title></rect>`+
+    parts.push(`<rect data-seg="${encodeURIComponent(key)}" style="cursor:pointer" x="${x0.toFixed(1)}" y="${y0.toFixed(1)}" width="${Math.max(0,tw-2).toFixed(1)}" height="${Math.max(0,thh-2).toFixed(1)}" fill="${color}" rx="3"><title>${esc(label)}: ${hU(val)} (${(p*100).toFixed(1)}%)</title></rect>`+
       tileLabel(x0,y0,tw,thh,label,p,key==="unalloc"?"#44546a":"#fff"));
   };
   /* a label is SIZED to its tile, never clipped: full "status 12%" shrinks to fit (down to 6.5px),
@@ -4345,7 +4357,8 @@ function renderTreemap(W){
   // the sum of every square = the pool the tiles are drawn against (iron base, or the
   // accounted hours when absences+unallocated exceed it). One honest total, no clutter.
   const totEl=document.getElementById("wfTreeTotal");
-  if(totEl) totEl.textContent=t("wfTreeTotal",{n:Math.round(total).toLocaleString()});
+  if(totEl) totEl.textContent=t("wfTreeTotal",{n:hU(W.ironTotal>0?W.ironTotal:total)});
+  { const s=document.getElementById("treeSum"); if(s) s.textContent=W.ironTotal>0?t("treeSum",{a:hU(Math.min(W.sched,total)),b:hU(W.absTot)}):""; }
   leg.innerHTML=[
     `<span><i style="background:${WF_COLORS.prod}"></i>${t("wf_prod")}</span>`,
     ...Object.keys(W.absByType).map(k=>`<span><i style="background:${WF_COLORS[k]||"#999"}"></i>${t("wf_"+k)}</span>`),
@@ -4409,10 +4422,10 @@ function renderTreeDrill(){
   const esc=x=>String(x).replace(/&/g,"&amp;").replace(/</g,"&lt;");
   const bar=(k,v)=>`<span style="min-width:140px">${esc(k)}</span>
       <div style="flex:1;background:var(--sky-soft);border-radius:4px;height:14px;direction:ltr"><div style="width:${(v/tot*100).toFixed(1)}%;background:${WF_COLORS[seg]||(seg.startsWith("st:")?"#6b7c90":"#999")};height:14px;border-radius:4px"></div></div>
-      <span style="min-width:76px;direction:ltr">${v.toFixed(1)}h (${(v/tot*100).toFixed(0)}%)</span>`;
+      <span style="min-width:76px;direction:ltr">${hU(v)} (${(v/tot*100).toFixed(0)}%)</span>`;
   const people=k=>{ const g=who[k]; if(!g) return "";
     const list=Object.entries(g).sort((x,y)=>y[1]-x[1]);
-    return `<div class="drlWho">${list.map(([n,h])=>`<span>${esc(n)} <b>${h.toFixed(1)}h</b></span>`).join("")}</div>`; };
+    return `<div class="drlWho">${list.map(([n,h])=>`<span>${esc(n)} <b>${hU(h)}</b></span>`).join("")}</div>`; };
   box.innerHTML=`<div class="toolbar" style="margin:0 0 4px">
       <b style="font-size:.82rem">${t("wfDrillTitle",{seg:segLabel,dim:dimName[dim]})}</b>
       <label class="mini">${t("wfDrillBy")}</label>
@@ -4442,10 +4455,11 @@ function renderImpactMatrix(){
   if(starsEl) starsEl.style.display="none";
   // hard requirement: this matrix compares the ברזל base against the actual סידור עבודה —
   // without a loaded Iron sheet there is nothing valid to compare, so it stays gated
-  if(!state.iron||!state.series){ tbl.innerHTML=`<tr><td class="mini">${t(state.iron?"wfImpactNoFc":"wfImpactNoIron")}</td></tr>`; if(metricEl) metricEl.textContent=""; return; }
+  if(!state.iron||!state.series){ tbl.innerHTML=`<tr><td class="mini">${t(state.iron?"wfImpactNoFc":"wfImpactNoIron")}</td></tr>`; if(metricEl) metricEl.textContent=""; { const s=document.getElementById("impSum"); if(s) s.textContent=""; } return; }
   const iron=validatedIron();
   const unval=new Set(state.validationErrors.map(v=>v.name));
   if(metricEl) metricEl.textContent=t("wfImpactMetric",{m:primName()});
+  let worst={d:0.05,di:null}; const impSum=document.getElementById("impSum"); if(impSum) impSum.textContent="";
   const metaOf=name=>state.rosterMeta.get(name)||iron.get(name)||{};
   // WHOLE-CENTER iron base per weekday — never filtered: it is the constant baseline
   const ironAllBy={}, wkI=wfWeek(); // Friday iron = this Friday's rotation, not every eligible rep
@@ -4514,14 +4528,16 @@ function renderImpactMatrix(){
       }
       if(!vol){ td.textContent=t("noData"); tr.appendChild(td); continue; }
       const a1=pBase/vol, a2=pVar/vol, dmg=(a1-a2)*100;
+      if(dmg>worst.d) worst={d:dmg,di};
       td.className=dmg>=5?"tier-bad":(dmg>=1.5?"tier-warn":"tier-good");
       td.innerHTML=`<span class="v">${dmg<0.05?"0":"−"+dmg.toFixed(1)}%</span>`;
-      td.title=`${t("wfImpactTip2",{m:primName()})}: ${(a1*100).toFixed(1)}% → ${(a2*100).toFixed(1)}% (ברזל ${ironH.toFixed(1)}h ← בפועל ${schedH.toFixed(1)}h)`;
+      td.title=`${t("wfImpactTip2",{m:primName()})}: ${(a1*100).toFixed(1)}% → ${(a2*100).toFixed(1)}% (${t("ibLgIron")} ${hU(ironH)} → ${t("ibLgSched")} ${hU(schedH)})`;
       tr.appendChild(td);
     }
     tb.appendChild(tr);
   }
   tbl.appendChild(tb);
+  if(impSum&&worst.di!=null) impSum.textContent=t("impWorst",{d:t("days")[worst.di],v:"−"+worst.d.toFixed(1)+"%"});
   // roster agents without a validated iron base are excluded — surfaced, never silently dropped
   if(starsEl&&unval.size){
     starsEl.style.display="block";
@@ -4552,18 +4568,19 @@ function renderHeadroom(){
     const metricAt=h=>{ const conc=Math.max(0,Math.round(h/winH*effShare));
       return dem.reduce((s,d)=>s+primVal(evalInterval(d.v,d.a,conc,S))*d.v,0)/vol; };
     const m0=metricAt(allH);
-    let k=0;
+    let k=0, miss=0;
     if(m0>=tgt) while(k<slice.length&&metricAt(allH-(k+1)*avgH)>=tgt) k++;
-    out.push({di,k,m0,avgH});
+    else while(miss<60&&metricAt(allH+miss*avgH)<tgt) miss++; // below target: how many more on shift bring it back
+    out.push({di,k,miss,m0,avgH});
   }
   if(!out.length) return;
   const full=t("days"), short=t("daysShort"), pick=state.wfFilter.day;
   box.innerHTML=`<div class="mini" style="font-weight:700;color:var(--navy)">${t("hrTitle")} <span class="info" data-tip="${t("hrTip",{m:primName()}).replace(/"/g,"&quot;")}" tabindex="0">i</span></div>`
     +`<div class="hrChips">`+out.map(o=>{
       const below=o.m0<tgt, cls=below?"tier-bad":(o.k===0?"tier-warn":"tier-good");
-      const tip=below?t("hrBelow",{d:full[o.di],v:pct(o.m0)})
+      const tip=below?t("hrBelow",{d:full[o.di],v:pct(o.m0),k:o.miss,t:S.target})
         :t("hrChipTip",{d:full[o.di],k:o.k,h:o.avgH.toFixed(1),m:primName(),t:S.target,v:pct(o.m0)});
-      return `<span class="hrc ${cls}${pick!==""&&+pick===o.di?" pick":""}" title="${tip.replace(/"/g,"&quot;")}">${short[o.di]}<b>${below?"⚠":"+"+o.k}</b></span>`;
+      return `<span class="hrc ${cls}${pick!==""&&+pick===o.di?" pick":""}" title="${tip.replace(/"/g,"&quot;")}">${short[o.di]}<b dir="ltr">${below?"−"+o.miss:"+"+o.k}</b></span>`;
     }).join("")+`</div>`;
   box.style.display="block";
 }
@@ -4580,7 +4597,7 @@ function renderValidation(){
     const b=document.createElement("button"); b.className="btn ghost applymini";
     b.textContent="📱 "+team+" ("+byTeam[team].length+")";
     b.addEventListener("click",()=>{
-      const msg=t("waMsg",{team,names:byTeam[team].join(", ")});
+      const msg=tlMsg(team,t("waPurpose"),byTeam[team].map(n=>"• "+n));
       navigator.clipboard&&navigator.clipboard.writeText(msg);
       showToast("📋 "+t("waCopied",{team}),true);
     });
@@ -4863,7 +4880,13 @@ function renderWorkforce(){
   if(em) renderReadiness();
   document.getElementById("wfKpiUtil").textContent=W.ironTotal>0?(W.sched>0?pct(Math.min(1.5,W.sched/W.ironTotal)):t("wfNotYet")):t("noData");
   document.getElementById("wfKpiLeak").textContent=W.ironTotal>0?pct(Math.min(1,W.absTot/W.ironTotal)):t("noData");
-  document.getElementById("wfKpiDev").textContent=W.tot>0?pct(W.dev/W.tot):t("noData");
+  // on leave: the share, then who and the biggest reasons in the small line
+  document.getElementById("wfKpiLeakS").textContent=W.absTot>0.4?[t("wfLeakSub",{n:W.absN,h:hU(W.absTot)})]
+    .concat(Object.entries(W.absByType).sort((a,b)=>b[1]-a[1]).slice(0,2).map(([k,v])=>t("wf_"+k)+" "+pct(v/Math.max(W.ironTotal,1)))).join(" · "):"";
+  // can come back: the same numbers as the "Below their iron" card (ironGap)
+  const G=state.roster.length?ironGap():null;
+  document.getElementById("wfKpiRec").textContent=G?"+"+hU(G.rec):t("noData");
+  document.getElementById("wfKpiRecS").textContent=G&&G.n?t("wfRecSub",{n:G.n}):"";
   // micro target-bars: fill = level, color = status vs operational thresholds
   const setKpiBar=(id,frac,tier)=>{
     const host=document.getElementById(id); if(!host) return;
@@ -4881,7 +4904,7 @@ function renderWorkforce(){
     const l=W.absTot/W.ironTotal;
     setKpiBar("wfKpiLeak",Math.min(1,l),l<=0.08?"good":l<=0.15?"warn":"bad");
   }
-  if(W.tot>0){ const d2=W.dev/W.tot; setKpiBar("wfKpiDev",Math.min(1,d2),d2<=0.15?"good":d2<=0.3?"warn":"bad"); }
+  if(G&&W.ironTotal>0){ const r=G.rec/W.ironTotal; setKpiBar("wfKpiRec",Math.min(1,r),r<=0.03?"good":r<=0.08?"warn":"bad"); }
   renderTreemap(W);
   renderIronDays();
   renderFriday();
@@ -4889,6 +4912,12 @@ function renderWorkforce(){
   renderValidation();
   renderInternalRoster();
 }
+/* the "can come back" tile opens its list: one click from the number to the names */
+{ const go=()=>{ const c=document.getElementById("rosterWrap"); if(c) c.closest(".card").scrollIntoView({behavior:"smooth",block:"start"}); }, el=document.getElementById("wfKpiRecT");
+  el.addEventListener("click",e=>{ if(!e.target.closest(".info")) go(); }); el.addEventListener("keydown",e=>{ if(e.key==="Enter") go(); }); }
+/* every message to a team manager has the same shape, so they learn where to look:
+   "Hi {team}," · the purpose (one line) · "• rep — detail" lines · the same thanks */
+function tlMsg(team,purpose,lines){ return [t("tlHi",{team}),purpose,...lines,"",t("tlFoot")].join("\n"); }
 /* ---------- Epic 4: two-iteration auto-scheduler (pure, worker-safe) ---------- */
 function schedulerCore(P){
   const toMin=t2=>{ const[a,b]=String(t2).split(":").map(Number); return a*60+b; };
@@ -5044,10 +5073,9 @@ function optimizeSidur(){
     // so a rule for an out-of-scope skill still sees its reps — just can't move them)
     const staff={},skl={};
     tms.forEach(tm=>{ staff[tm]=0; skl[tm]={}; });
-    const addSkl=(sh,sign)=>{ if(!sh.skill) return; for(let m=mins(sh.s);m<mins(sh.e);m+=30){
-      const tm=toTm(m); if(skl[tm]) skl[tm][sh.skill]=(skl[tm][sh.skill]||0)+sign; } };
-    const addShift=(sh,sign)=>{ for(let m=mins(sh.s);m<mins(sh.e);m+=30){
-      const tm=toTm(m); if(staff[tm]!=null) staff[tm]+=sign; } addSkl(sh,sign); };
+    // count on the app's half-hour slots (halfHoursBetween) — a shift starting 08:15 counts from 09:00, like everywhere else
+    const addSkl=(sh,sign)=>{ if(!sh.skill) return; for(const tm of halfHoursBetween(sh.s,sh.e)) if(skl[tm]) skl[tm][sh.skill]=(skl[tm][sh.skill]||0)+sign; };
+    const addShift=(sh,sign)=>{ for(const tm of halfHoursBetween(sh.s,sh.e)) if(staff[tm]!=null) staff[tm]+=sign; addSkl(sh,sign); };
     shifts.forEach(sh=>addShift(sh,1));
     // out-of-scope: counted for the coverage rules only · locked in-scope: cover demand too, never move
     fixed.forEach(sh=>{ if(inScope(sh.skill)&&locked.has(sh.name)) addShift(sh,1); else addSkl(sh,1); });
@@ -5097,11 +5125,11 @@ function optimizeSidur(){
       return m2; };
     for(const sh of shifts.slice().sort((a,b)=>(mins(a.e)-mins(a.s))-(mins(b.e)-mins(b.s)))){
       let ok=true;
-      for(let m=mins(sh.s);m<mins(sh.e)&&ok;m+=30){ const tm=toTm(m);
+      for(const tm of halfHoursBetween(sh.s,sh.e)){ if(!ok) break; if(sur[tm]==null){ if(/:[03]0$/.test(tm)) ok=false; continue; } // off-grid start: skip; outside the demand window: never a cut
         if(!(sur[tm]>=1)) ok=false;
         else if(sh.skill&&((skl[tm]||{})[sh.skill]||0)-1<ruleMinAt(sh.skill,tm)) ok=false; }
       if(ok){
-        for(let m=mins(sh.s);m<mins(sh.e);m+=30){ const tm=toTm(m); sur[tm]--; if(sh.skill) skl[tm][sh.skill]--; }
+        for(const tm of halfHoursBetween(sh.s,sh.e)){ if(sur[tm]==null) continue; sur[tm]--; if(sh.skill) skl[tm][sh.skill]--; }
         pool.push({name:sh.name,ds,di,s:sh.s,e:sh.e});
       }
     }
@@ -5117,8 +5145,7 @@ async function runScheduler(){
   state._schedOut=out; // live result — manual edits mutate this
   (state._schedOutBy=state._schedOutBy||{}).optimizeCurrent=out; // remembered per mode for non-destructive toggling
   const b=document.getElementById("schBanner");
-  b.textContent=t("schDoneMove",{a:out.asg.length,m:out.moved,
-    h:Math.round(out.gaps.reduce((s,g)=>s+g.n,0)/2)}); // half-hour blocks → agent-hours
+  b.textContent=schDoneMsg(out,false);
   b.classList.add("show");
   renderSchedulerResults(out);
 }
@@ -5195,7 +5222,7 @@ function generateIronBaseline(){
       for(const [a,b] of u.segs) for(let s=Math.ceil(a/30)*30;s+u.dur<=b;s+=30){ const g=gainAt(u,s); if(g>bg){ bg=g; bs=s; } } // only the hours they can
       return {g:bg,s:bs}; };
     const place=(u,startM)=>{
-      for(let m=startM;m<startM+u.dur;m+=30){ const tm=toTm(m); if(staff[tm]!=null) staff[tm]++;
+      for(const tm of halfHoursBetween(toTm(startM),toTm(startM+u.dur))){ if(staff[tm]!=null) staff[tm]++; // app slots: an 08:15 split part counts from 09:00
         if(u.skill&&skl[tm]) skl[tm][u.skill]=(skl[tm][u.skill]||0)+1; }
       asg.push({name:u.name,ds,di,s:toTm(startM),e:toTm(startM+u.dur),src:u.adj?"adj":"base"});
     };
@@ -5244,8 +5271,7 @@ async function runGenerator(){
   state._schedOut=out;
   (state._schedOutBy=state._schedOutBy||{}).generateIron=out; // remembered per mode
   const b=document.getElementById("schBanner");
-  b.textContent=out.noFc>=weekDates(schWeek()).length?t("schDoneGenIron",{a:out.asg.length}) // no forecast: the iron as is
-    :t("schDoneGen",{a:out.asg.length,p:out.pool.length,h:Math.round(out.gaps.reduce((s,g)=>s+g.n,0)/2)}); // half-hour blocks → agent-hours
+  b.textContent=schDoneMsg(out,true);
   b.classList.add("show");
   renderSchedulerResults(out);
 }
@@ -5337,6 +5363,14 @@ function projectedMetricDelta(out){
   }
   return vol?{before:accO/vol,after:accN/vol}:null;
 }
+/* the run's one-line answer: what moved and how much shortage is left — the same numbers as the KPI under it */
+function schDoneMsg(out,gen){
+  const h=v=>(Math.round(v*10)/10).toLocaleString(); // the KPI's precision: the same number, written the same
+  if(gen&&out.noFc>=weekDates(schWeek()).length) return t("schDoneGenIron",{a:out.asg.length}); // no forecast: the iron as is
+  const ws=weekShortage(out);
+  if(gen) return t("schDoneGen",{a:out.asg.length,p:(out.pool||[]).length,h:h(ws.a)});
+  return ws.a<0.5?t("schDoneAll",{m:out.moved}):out.moved&&ws.a<ws.b?t("schDoneMove",{m:out.moved,b:h(ws.b),a:h(ws.a)}):t("schDoneNoMove",{a:h(ws.a)});
+}
 /* the week's shortage in rep-hours, original sidur vs the plan (same reps, same need) */
 function weekShortage(out){
   let b=0,a=0,need=0,days=0;
@@ -5379,8 +5413,7 @@ function renderSchedAudit(out){
   // ---- coverage audit: each rule, plainly — is it covered, and if not, why ----
   const sc=state.schedSkills, inScope=sk=>!sc||!sc.length||sc.includes(sk);
   const cw=document.getElementById("schCovAudit"); cw.innerHTML="";
-  if(!reqs.length) cw.innerHTML=`<p class="mini">${t("saNoRules")}</p>`;
-  else{ const lg=document.createElement("p"); lg.className="mini"; lg.style.margin="0 0 4px";
+  if(reqs.length){ const lg=document.createElement("p"); lg.className="mini"; lg.style.margin="0 0 4px";
     lg.textContent=t("saCovLegend"); cw.appendChild(lg); }
   audits.forEach(({r,base,opt})=>{
     const brO=opt?opt.breaches:0, brB=base?base.breaches:0, ok=brO===0;
@@ -5425,12 +5458,11 @@ function renderSchedAudit(out){
   const breachLines=audits.filter(a2=>a2.opt&&a2.opt.breaches>0).map(a2=>
     t("saTlBreach",{s:a2.r.skill,cells:a2.opt.breachCells.slice(0,4).map(b2=>dayNames[b2.di]+" "+b2.tm).join(", ")+(a2.opt.breachCells.length>4?"…":"")}));
   const lineFor=d=>t("saTl_"+d.type,{name:d.name,day:dayNames[d.di],date:fmtD(d.ds),orig:d.orig,opt:d.opt});
-  const msgFor=tl=>[t("saTlHead",{team:tl}),...(breachLines.length?[t("saTlBreachHead"),...breachLines]:[]),
-    t("saTlChanges"),...(byTeam[tl]||[]).map(lineFor),t("saTlFoot")].join("\n");
+  const msgFor=tl=>tlMsg(tl,t("saTlPurpose",{w:isoWeek(schWeek())}),[...(byTeam[tl]||[]).map(lineFor),...(breachLines.length?["",t("saTlBreachHead"),...breachLines]:[])]);
   const allMsg=()=>{ const parts=[t("saAllHead")];
     teams.filter(tl=>byTeam[tl]).forEach(tl=>{ parts.push("","*"+tl+"*  ("+byTeam[tl].length+")"); byTeam[tl].forEach(d=>parts.push(lineFor(d))); });
     if(breachLines.length) parts.push("",t("saTlBreachHead"),...breachLines);
-    parts.push("",t("saTlFoot")); return parts.join("\n"); };
+    parts.push("",t("tlFoot")); return parts.join("\n"); };
   const sent=state._sentTL||(state._sentTL={}); // TL → the exact message copied (so "updated since" is detectable)
   const sendable=teams.filter(tl=>byTeam[tl]);
   const nSent=sendable.filter(tl=>sent[tl]===msgFor(tl)).length;
@@ -5556,7 +5588,8 @@ function explainDay(out,ds){
   const mins=x=>{ const[h,m]=x.split(":").map(Number); return h*60+m; };
   moved.sort((a,b)=>Math.abs(mins(b.s)-mins(b.os))-Math.abs(mins(a.s)-mins(a.os)));
   const gapB={},gapA={}; let sb=0,sa=0;
-  tms.forEach(tm=>{ gapB[tm]=req[tm]-before[tm]; gapA[tm]=req[tm]-after[tm]; sb+=Math.max(0,gapB[tm]); sa+=Math.max(0,gapA[tm]); });
+  // whole reps per half hour, exactly like the Uncovered-Demand grid → the banner, the KPI and the grid add up the same
+  tms.forEach(tm=>{ gapB[tm]=req[tm]-before[tm]; gapA[tm]=req[tm]-after[tm]; sb+=Math.max(0,Math.round(gapB[tm])); sa+=Math.max(0,Math.round(gapA[tm])); });
   // where coverage was taken from / given to (first..last interval of each)
   const lost=tms.filter(tm=>after[tm]<before[tm]), got=tms.filter(tm=>after[tm]>before[tm]);
   const span=a=>a.length?a[0]+"–"+addHalf(a[a.length-1]):"";
@@ -6236,9 +6269,7 @@ document.querySelectorAll("#schModeSeg button").forEach(btn=>btn.addEventListene
   if(prev){ // restore this mode's own result
     state._schedOut=prev; state.optimizedOutput=prev.asg;
     renderScheduler(); // sets mode visibility + titles first
-    b.textContent=m==="generateIron"
-      ? t("schDoneGen",{a:prev.asg.length,p:prev.pool.length,h:Math.round(prev.gaps.reduce((s,g)=>s+g.n,0)/2)})
-      : t("schDoneMove",{a:prev.asg.length,m:prev.moved,h:Math.round(prev.gaps.reduce((s,g)=>s+g.n,0)/2)});
+    b.textContent=schDoneMsg(prev,m==="generateIron");
     b.classList.add("show");
     renderSchedulerResults(prev);
   }else{ // never run in this mode → clean slate (no stale output under new labels)
@@ -6457,7 +6488,7 @@ function renderExtensionOffers(out){
     if(offers.length){ const msg=document.createElement("button"); msg.className="btn ghost applymini"; msg.textContent=t(checked.size?"exTrayMsgSel":"exTrayMsgAll");
       msg.addEventListener("click",()=>{ const list=checked.size?[...checked.values()].map(v=>v.o):offers, byTeam={};
         list.forEach(o=>{ const tl=extMetaOf(o.name).team||t("wfAll"); (byTeam[tl]=byTeam[tl]||[]).push(o); });
-        const txt=Object.entries(byTeam).map(([tl,os])=>[t("extTlHead",{team:tl}),...os.map(o=>t("extTlLine",{name:o.name,day:dayNames[o.di],date:fmtD(o.ds),ask:extAskText(o)}))].join("\n")).join("\n\n");
+        const txt=Object.entries(byTeam).map(([tl,os])=>tlMsg(tl,t("extTlPurpose"),os.map(o=>t("extTlLine",{name:o.name,day:dayNames[o.di],date:fmtD(o.ds),ask:extAskText(o)})))).join("\n\n");
         navigator.clipboard&&navigator.clipboard.writeText(txt); showToast("📋 "+t("waCopiedAll"),true); });
       acts.appendChild(msg); }
     if(acts.children.length) tray.appendChild(acts);
@@ -7672,10 +7703,10 @@ function sourceDay(ds){
 /* week-vs-today chip: past / current / future at a glance, plus where measured data
    ends inside the week. Not on "now"? The chip becomes a one-click jump to this week. */
 /* the lens switch: shown only where it changes something (a forecast day without a sidur); ONE state, both pages */
-function syncLens(page,show){
+function syncLens(page){ // always shown, same place on both pages: it sets how every future week without a sidur is counted
   const root=document.getElementById("page-"+page); if(!root) return;
   const real=state.settings.capLens==="real", b=root.querySelector(".lensBtn"); if(!b) return;
-  b.hidden=!show; b.classList.toggle("on",real); b.setAttribute("aria-pressed",String(real));
+  b.classList.toggle("on",real); b.setAttribute("aria-pressed",String(real));
   // the hover says what it does, in people, for the week on screen
   const wk=page==="matrix"?state.week:null, d=wk?lensWeekDelta(wk):null;
   b.title=t("tipLens")+(d?"\n"+t("lensWeekTip",{g:d.g,l:d.l}):"");
@@ -8162,6 +8193,7 @@ function skillDot(sk){
 function ensureEmptyState(pageId){
   const page=document.getElementById("page-"+pageId); if(!page) return false;
   const hasData=state.days.size||state.rosterCap.size||state.iron||state.schedRows.length;
+  page.classList.toggle("isEmpty",!hasData&&pageId!=="recruit");
   let es=page.querySelector(".emptyState");
   if(hasData){ if(es) es.remove(); return false; }
   if(!es){
@@ -8231,7 +8263,8 @@ function renderMatrixBody(){
       if(go) b.addEventListener("click",go); else b.style.cursor="help"; box.appendChild(b); };
     // a recommendation, not an alarm: the fix (a file with answered calls) is the user's to make.
     // Data-audit findings stay on the Home portal next to the file — they can't be fixed from here.
-    if(!(state.calib&&state.calib!==1)) chip(t("mxFlagCal"),t("mxFlagCalTip"),"rec",()=>showPage("home"));
+    // the fix is one click: the chip opens the forecast file picker itself (no detour through Home)
+    if(!(state.calib&&state.calib!==1)) chip(t("mxFlagCal"),t("mxFlagCalTip"),"rec",()=>document.getElementById("fcInput").click());
   }
   const dates=weekDates(state.week), dayNames=t("days");
   let totSaved=0,totDrops=0,shortCount=0;
@@ -8260,7 +8293,7 @@ function renderMatrixBody(){
   });
   renderWeekContext(dates);
   renderTrainees();
-  syncLens("matrix",dates.some(ds=>state.maxDate&&ds>state.maxDate&&!state.rosterDates.has(ds)));
+  syncLens("matrix");
   thead.appendChild(hr); tbl.appendChild(thead);
   const comp=dates.map(ds=>computeDay(ds));
   const B=mxBands(comp);
@@ -8384,7 +8417,7 @@ function renderMatrixBody(){
   tbl.appendChild(tbody);
   // frame today's column top-to-bottom (box-shadow, so tier colors stay intact)
   if(todayIdx>=0) tbody.querySelectorAll("tr").forEach(tr=>{ const c=tr.children[todayIdx+1]; if(c) c.classList.add("todayCol"); });
-  document.getElementById("kpiMaxDef").innerHTML=`<span class="num">${maxDef>0?"+"+maxDef:"0"}</span>`;
+  // (the Recruitment "short today" KPI is renderRecruit's alone — from today, with the plan's math, never this browsed week)
   const b=document.getElementById("decayBanner");
   if(state.policy.enabled&&totDrops>0){ b.textContent=t("decaySaved",{n:totDrops,h:totSaved.toFixed(1)}); b.classList.add("show"); }
   else b.classList.remove("show");
@@ -8662,12 +8695,13 @@ const TR_METRICS=[
   {k:"prod",lk:"thNetProd",fmt:v=>v.toFixed(1),zero:true},
   {k:"tsf30",lk:"thTsf30",pct:true},
   {k:"netH",lk:"thNetH",fmt:v=>Math.round(v).toLocaleString(),zero:true,needNet:true}];
+const mLab=m=>m.k==="tsf30"?t("metricTsfDyn",{s:state.settings.tsfT}):t(m.lk); // TSF = Settings' window, like the matrix
 const TR_REL=[["vol","ar"],["netH","ar"],["aht","ar"],["occ","ar"],["vol","aht"]];
 function trPoints(list,G){
   const dn=t("daysShort");
   return list.filter(r=>!r.zero).map(r=>G==="day"
-    ?{key:r.ds,lab:fmtD(r.ds).slice(0,5),long:dn[r.dayIdx]+" "+fmtD(r.ds),fc:!!r.forecast,vol:r.vol,ar:r.ar,aht:r.aht,occ:r.occ,prod:r.netProd,tsf30:r.tsf30,netH:r.netH||0,src:r}
-    :{key:r.k,lab:G==="month"?r.label.split(" ")[0].slice(0,3)+" "+r.k.slice(2,4):"W"+isoWeek(r.k),long:r.label,fc:r.tag==="fc",mix:r.tag==="mix",vol:r.vol,ar:r.ar,aht:r.aht,occ:r.occ,prod:r.prod,tsf30:r.tsf30,netH:r.netH||0,src:r});
+    ?{key:r.ds,lab:fmtD(r.ds).slice(0,5),long:dn[r.dayIdx]+" "+fmtD(r.ds),fc:!!r.forecast,vol:r.vol,ar:r.ar,aht:r.aht,occ:r.occ,prod:r.netProd,tsf30:r.tsf,netH:r.netH||0,src:r}
+    :{key:r.k,lab:G==="month"?r.label.split(" ")[0].slice(0,3)+" "+r.k.slice(2,4):"W"+isoWeek(r.k),long:r.label,fc:r.tag==="fc",mix:r.tag==="mix",vol:r.vol,ar:r.ar,aht:r.aht,occ:r.occ,prod:r.prod,tsf30:r.tsf,netH:r.netH||0,src:r});
 }
 function niceStep(x){ if(!(x>0)) return 1; const p=Math.pow(10,Math.floor(Math.log10(x))), f=x/p; return (f<1.5?1:f<3.5?2:f<7.5?5:10)*p; }
 function renderTrendDash(list,G,onOpen){
@@ -8680,7 +8714,7 @@ function renderTrendDash(list,G,onOpen){
   const onSet=new Set((S.trCharts||[]).filter(k=>mets.some(m=>m.k===k)));
   const showRel=(S.trCharts||[]).includes("rel");
   const esc=v=>String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
-  const chips=`<div class="trPick"><span class="mini">${t("trPickL")}</span>`+mets.map(m=>`<button type="button" class="trChip${onSet.has(m.k)?" on":""}" data-k="${m.k}">${t(m.lk)}</button>`).join("")
+  const chips=`<div class="trPick"><span class="mini">${t("trPickL")}</span>`+mets.map(m=>`<button type="button" class="trChip${onSet.has(m.k)?" on":""}" data-k="${m.k}">${mLab(m)}</button>`).join("")
     +`<button type="button" class="trChip${showRel?" on":""}" data-k="rel">🔗 ${t("relT")}</button></div>`;
   if(pts.length<2){ box.innerHTML=chips+`<p class="mini">${t("trDashFew")}</p>`; wire(); return; }
   const W=560, H=112, pl=44, pr=8, pt=12, pb=18, n=pts.length, step=(W-pl-pr)/n, X=i=>pl+step*(i+.5);
@@ -8711,7 +8745,7 @@ function renderTrendDash(list,G,onOpen){
     const last=[...pts].reverse().find(p=>!p.fc&&p[m.k]!=null&&(!m.needNet||p[m.k]>0));
     g+=`<line class="trXh" x1="-10" x2="-10" y1="${pt}" y2="${H-pb}"/><circle class="trDot" r="4" cx="-10" cy="-10"/>`;
     g+=pts.map((p,i)=>`<rect class="trHit" data-i="${i}" x="${(pl+step*i).toFixed(1)}" y="0" width="${step.toFixed(1)}" height="${H}"/>`).join("");
-    return `<div class="trTile" data-k="${m.k}"><div class="trTileH"><b>${t(m.lk)}</b>${last?`<span>${esc(f(last[m.k]))} <small>${esc(last.lab)}</small></span>`:""}</div>`
+    return `<div class="trTile" data-k="${m.k}"><div class="trTileH"><b>${mLab(m)}</b>${last?`<span>${esc(f(last[m.k]))} <small>${esc(last.lab)}</small></span>`:""}</div>`
       +`<svg viewBox="0 0 ${W} ${H}" width="100%" data-lo="${lo}" data-hi="${hi}" data-k="${m.k}">${g}</svg></div>`;
   }).join("");
   box.innerHTML=chips+`<div class="trTiles">${tiles}${showRel?trRelTile(pts,mets):""}</div><div class="trTip" hidden></div>`;
@@ -8725,7 +8759,7 @@ function renderTrendDash(list,G,onOpen){
       const v=p[m.k], lo=+svg.dataset.lo, hi=+svg.dataset.hi;
       if(v!=null&&isFinite(v)&&(!m.needNet||v>0)){ dot.setAttribute("cx",x); dot.setAttribute("cy",(pt+(H-pt-pb)*(1-(v-lo)/(hi-lo))).toFixed(1)); } else dot.setAttribute("cx",-10); });
     tip.innerHTML=`<b>${esc(p.long)}</b>${p.fc?` <span class="grpTag fc">${t("grpTag_fc")}</span>`:p.mix?` <span class="grpTag mix">${t("grpTag_mix")}</span>`:""}`
-      +mets.map(m=>{ const v=p[m.k]; return v!=null&&isFinite(v)&&(!m.needNet||v>0)?`<div><span>${t(m.lk)}</span><b>${esc(metaF(m)(v))}</b></div>`:""; }).join("")
+      +mets.map(m=>{ const v=p[m.k]; return v!=null&&isFinite(v)&&(!m.needNet||v>0)?`<div><span>${mLab(m)}</span><b>${esc(metaF(m)(v))}</b></div>`:""; }).join("")
       +`<div class="mini">${t(G==="day"?"trTipDay":"trTipOpen")}</div>`;
     tip.hidden=false; };
   box.querySelectorAll(".trHit").forEach(r=>{
@@ -8765,7 +8799,7 @@ function trRelTile(pts,mets){
   let g="";
   [y0,(y0+y1)/2,y1].forEach(v=>{ g+=`<line x1="${pl}" x2="${W-pr}" y1="${Y(v).toFixed(1)}" y2="${Y(v).toFixed(1)}" class="trGrid"/><text x="${pl-5}" y="${(Y(v)+3).toFixed(1)}" class="trTick" text-anchor="end">${esc(fy(v))}</text>`; });
   [x0,(x0+x1)/2,x1].forEach((v,i)=>{ g+=`<text x="${X(v).toFixed(1)}" y="${H-14}" class="trTick" text-anchor="${["start","middle","end"][i]}">${esc(fx(v))}</text>`; });
-  g+=`<text x="${(W-pr).toFixed(1)}" y="${H-2}" class="trTick" text-anchor="end">${esc(t(mx.lk))} →</text>`;
+  g+=`<text x="${(W-pr).toFixed(1)}" y="${H-2}" class="trTick" text-anchor="end">${esc(mLab(mx))} →</text>`;
   g+=`<line x1="${X(x0).toFixed(1)}" y1="${Y(a+b*x0).toFixed(1)}" x2="${X(x1).toFixed(1)}" y2="${Y(a+b*x1).toFixed(1)}" class="relFit"/>`;
   g+=pp.map(q=>`<g class="relDot" data-i="${q.i}"><circle cx="${X(q.x).toFixed(1)}" cy="${Y(q.y).toFixed(1)}" r="12" class="relHit"/><circle cx="${X(q.x).toFixed(1)}" cy="${Y(q.y).toFixed(1)}" r="4.5" class="relPt"/><title>${esc(q.p.long)}: ${esc(fx(q.x))} · ${esc(fy(q.y))}</title></g>`).join("");
   // the sentence: a round step of X (≈ a fifth of its spread) and what Y does over it
@@ -8773,8 +8807,8 @@ function trRelTile(pts,mets){
   const str=ar<0.3?"relWeak":ar<0.6?"relMod":"relStrong";
   const dxs=mx.pct?"+"+Math.round(dx*100)+" "+t("relPts"):"+"+(mx.k==="aht"?fmtSec(dx):Math.round(dx).toLocaleString())+(mx.k==="netH"?" "+t("relHrs"):"");
   const dys=my.pct?(dy>=0?"+":"−")+Math.abs(dy*100).toFixed(1)+" "+t("relPts"):(dy>=0?"+":"−")+(my.k==="aht"?fmtSec(Math.abs(dy)):Math.abs(dy).toFixed(1));
-  const sent=ar<0.3?t("relNone",{x:t(mx.lk),y:t(my.lk),r:r.toFixed(2)})
-    :t("relSent",{s:t(str),r:r.toFixed(2),dx:dxs,x:t(mx.lk),dy:dys,y:t(my.lk)});
+  const sent=ar<0.3?t("relNone",{x:mLab(mx),y:mLab(my),r:r.toFixed(2)})
+    :t("relSent",{s:t(str),r:r.toFixed(2),dx:dxs,x:mLab(mx),dy:dys,y:mLab(my)});
   return `<div class="trTile trRel">${head}${pick}<svg viewBox="0 0 ${W} ${H}" width="100%">${g}</svg><p class="relSentence">${esc(sent)}</p><p class="mini">${t("relFoot",{n:N})}</p></div>`;
 }
 function renderTrends(){
@@ -8795,9 +8829,10 @@ function renderTrends(){
   const workTh=thTip(t("thWork")," "); hr.appendChild(workTh); // tip filled once totals exist
   hr.appendChild(thTip(t("thNetProd"),t("fTipNetProd")));
   hr.appendChild(thTip(t("thUtil"),t("fTipOcc")));
-  hr.appendChild(thTip(t("thTsf30"),t("fTipTsf",{s:30})));
-  hr.appendChild(thTip(t("thTsf60"),t("fTipTsf",{s:60})));
-  hr.appendChild(thTip(t("thTarget"),t("tipAttain",{m:primName(),t:S.target})));
+  const show60=+S.tsfT!==60; // the window IS 60 → one TSF column, not the same one twice
+  hr.appendChild(thTip(t("metricTsfDyn",{s:S.tsfT}),t("fTipTsf",{s:S.tsfT})));
+  if(show60) hr.appendChild(thTip(t("thTsf60"),t("fTipTsf",{s:60})));
+  hr.appendChild(thTip(t("thGoal",{m:"<bdi>"+primName()+"</bdi>",t:'<bdi dir="ltr">'+S.target+"%</bdi>"}),t("tipGoal",{m:primName(),t:S.target})));
   thead.appendChild(hr); tbl.appendChild(thead);
   const tbody=document.createElement("tbody");
   const dayNames=t("days");
@@ -8818,11 +8853,20 @@ function renderTrends(){
       n:T.grossH>0?Math.round(T.ahtW/3600/T.grossH*100):"—"}); }
   const hasNet=rowsData.some(r=>r.netH>0);
   if(hasNet) workTh.after(thTip(t("thNetH"),t("fTipNetH")));
-  const NCOL=hasNet?12:11;
+  const NCOL=(hasNet?12:11)-(show60?0:1);
   /* PASS 2 — DOM row factory */
   const plain=v=>{ const td=document.createElement("td"); td.innerHTML=`<span class="v">${v}</span>`; return td; };
   const tinted=(v,cls)=>{ const td=document.createElement("td"); td.className=cls;
     td.innerHTML=`<span class="v">${pct(v)}</span>`; return td; };
+  // only the metric the target is set on gets the target colors; the other one is plain information
+  const isAr=S.primaryMetric==="ar", tintIf=(v,on)=>on?tinted(v,tier(v)):plain(pct(v));
+  /* the target bar: fills toward the target (the navy tick), the number = points from it. One glance: how close */
+  const gTgt=S.target/100, gPos=v=>Math.max(0,Math.min(1,v))*100;
+  const goalCell=v=>{ const td=document.createElement("td"); td.className="gbCell";
+    const d=(v-gTgt)*100, cls=d>=0?"ok":d>=-4?"near":"bad";
+    td.title=primName()+" "+pct(v)+" · "+t("goalTgt",{t:S.target});
+    td.innerHTML=`<div class="goalBar ${cls}"><span class="gbT"><i style="width:${gPos(v).toFixed(1)}%"></i><b style="inset-inline-start:${gPos(gTgt).toFixed(1)}%"></b></span><span class="gbV">${d>=0?"✓":"−"+Math.abs(d).toFixed(1)+"%"}</span></div>`;
+    return td; };
   // 🕎 holiday pill — red for CLOSED (demand zeroed), amber for eve/Chol-HaMoed
   const HOL_COL={closed:"#b3271e",eve:"#b45309",chm:"#b45309"};
   const holPill=(ds,lvl)=>{
@@ -8882,7 +8926,7 @@ function renderTrends(){
     if(d.forecast){ volTd.style.cursor="pointer"; volTd.classList.add("cell");
       volTd.addEventListener("click",e=>openTrendEditor(e,ds,Math.round(d.vol),Math.round(d.aht))); }
     tr.appendChild(volTd);
-    tr.appendChild(tinted(d.ar,tier(d.ar)));
+    tr.appendChild(tintIf(d.ar,isAr));
     const ahtTd=plain(fmtSec(d.aht));
     if(d.forecast){ ahtTd.style.cursor="pointer"; ahtTd.classList.add("cell");
       ahtTd.addEventListener("click",e=>openTrendEditor(e,ds,Math.round(d.vol),Math.round(d.aht))); }
@@ -8891,10 +8935,9 @@ function renderTrends(){
     if(hasNet) tr.appendChild(plain(d.netH>0?Math.round(d.netH).toLocaleString():"—"));
     tr.appendChild(plain(d.netProd.toFixed(1)));
     tr.appendChild(tinted(d.occ,d.occ>=.65&&d.occ<=.92?"tier-good":"tier-warn"));
-    tr.appendChild(tinted(d.tsf30,tier(d.tsf30)));
-    tr.appendChild(tinted(d.tsf60,tier(d.tsf60)));
-    const ts=document.createElement("td"); ts.className=d.met?"tier-good":"tier-bad";
-    ts.textContent=d.met?t("slaMet"):t("slaMissed"); tr.appendChild(ts);
+    tr.appendChild(tintIf(d.tsf,!isAr));
+    if(show60) tr.appendChild(plain(pct(d.tsf60)));
+    tr.appendChild(goalCell(isAr?d.ar:d.tsf));
     return tr;
   };
   /* סיכום — totals for the WHOLE selected range (independent of rows shown) */
@@ -8910,11 +8953,9 @@ function renderTrends(){
     if(hasNet) sr.appendChild(sc(Math.round(T.netH||0).toLocaleString()));
     sr.appendChild(sc(T.prodDen>0?(T.prodNum/T.prodDen).toFixed(1):t("noData")));
     sr.appendChild(sc(T.occDen>0?pct(Math.min(1,T.occNum/T.occDen)):t("noData")));
-    sr.appendChild(sc(pct(T.tsf30W/T.vol)));
-    sr.appendChild(sc(pct(T.tsf60W/T.vol)));
-    const metT=(S.primaryMetric==="ar"?T.arW/T.vol:T.tsfW/T.vol)>=S.target/100;
-    const st=document.createElement("td"); st.className=metT?"tier-good":"tier-bad";
-    st.textContent=metT?t("slaMet"):t("slaMissed"); sr.appendChild(st);
+    sr.appendChild(sc(pct(T.tsfW/T.vol)));
+    if(show60) sr.appendChild(sc(pct(T.tsf60W/T.vol)));
+    sr.appendChild(goalCell(isAr?T.arW/T.vol:T.tsfW/T.vol));
     tbody.appendChild(sr);
   }
   // week / month rows — click one to open its days
@@ -8925,16 +8966,15 @@ function renderTrends(){
     const rt=g.n?g.met/g.n:0, dm=document.createElement("td");
     dm.className=rt>=0.8?"tier-good":rt>=0.5?"tier-near":"tier-bad"; dm.innerHTML=`<span class="v">${g.met}/${g.n}</span>`; tr.appendChild(dm);
     tr.appendChild(plain(Math.round(g.vol).toLocaleString()));
-    tr.appendChild(tinted(g.ar,tier(g.ar)));
+    tr.appendChild(tintIf(g.ar,isAr));
     tr.appendChild(plain(fmtSec(g.aht)));
     tr.appendChild(plain(Math.round(g.gross).toLocaleString()));
     if(hasNet) tr.appendChild(plain(g.netH>0?Math.round(g.netH).toLocaleString():"—"));
     tr.appendChild(plain(g.prod.toFixed(1)));
     tr.appendChild(tinted(g.occ,g.occ>=.65&&g.occ<=.92?"tier-good":"tier-warn"));
-    tr.appendChild(tinted(g.tsf30,tier(g.tsf30)));
-    tr.appendChild(tinted(g.tsf60,tier(g.tsf60)));
-    const ts=document.createElement("td"); ts.className=g.metAgg?"tier-good":"tier-bad";
-    ts.textContent=g.metAgg?t("slaMet"):t("slaMissed"); tr.appendChild(ts);
+    tr.appendChild(tintIf(g.tsf,!isAr));
+    if(show60) tr.appendChild(plain(pct(g.tsf60)));
+    tr.appendChild(goalCell(isAr?g.ar:g.tsf));
     tr.dataset.k=g.k;
     tr.addEventListener("click",()=>drill(g));
     return tr;
@@ -8993,7 +9033,7 @@ function renderTrends(){
         const a=document.createElement("button"); a.className="linklike"; a.textContent=t("trHintLink");
         a.addEventListener("click",()=>{ showPage("settings"); openEvents(); });
         h.appendChild(a); } } }
-  syncLens("trends",rowsData.some(r=>r.forecast&&!state.rosterDates.has(r.ds)));
+  syncLens("trends");
   { const el=document.getElementById("trCu"), cu=cuInfo(rowsData.filter(r=>r.forecast).map(r=>r.ds)); el.hidden=!cu;
     if(cu){ el.textContent=(cu.on?t("cuLine",{d:cu.d,l:cu.list}):t("cuLineOff",{d:cu.d}))+" ";
       const a=document.createElement("button"); a.className="linklike"; a.textContent=t(cu.on?"cuWithout":"cuBack"); a.addEventListener("click",cuToggle); el.appendChild(a); } }
@@ -9500,20 +9540,15 @@ function renderRecruit(){
   // max daily deficit — computed here from computeDay so it never depends on the
   // matrix page having been opened first (memoized, cheap)
   {
-    const mdEl=document.getElementById("kpiMaxDef");
-    let maxDef=0,any=false;
-    if(state.week&&state.days.size){
-      for(const ds of weekDates(state.week)){
-        const c=computeDay(ds); if(!c) continue;
-        any=true;
-        for(const row of c.rows){
-          if(!row.rec||row.closed||row.exc||row.nodata) continue;
-          if(row.sched<row.reqEff) maxDef=Math.max(maxDef,row.reqEff-row.sched);
-        }
-      }
-    }
-    if(any) mdEl.innerHTML=`<span class="num">${maxDef>0?"+"+maxDef:"0"}</span>`;
-    else mdEl.textContent=t("noData");
+    // short TODAY: this month's need vs today's team — the same calculation as "Are your courses enough?",
+    // starting from today (never a past browsed week), plus when the planned courses close it
+    const mdEl=document.getElementById("kpiMaxDef"), sub=document.getElementById("kpiGapSub");
+    const p=hirePlan(null), mo=p&&p.months&&p.months[0];
+    const mL=m=>new Date(+m.slice(0,4),+m.slice(5,7)-1,1).toLocaleDateString(lang==="he"?"he-IL":"en-GB",{month:"short",year:"numeric"});
+    if(mo){ const gap=Math.ceil(mo.N-mo.H0-0.05), ok=p.months.find(m=>m.N-m.E0<=0.5);
+      mdEl.innerHTML=`<span class="num" dir="ltr">${gap>0?"−"+gap:"✓"}</span>`;
+      sub.textContent=gap<=0?t("gapOkSub",{m:mL(mo.m)}):[t("gapSubMo",{m:mL(mo.m)}),ok?t("gapBySub",{m:mL(ok.m)}):"",p.total>0?t("gapMoreSub",{n:p.total}):""].filter(Boolean).join(" · "); }
+    else{ mdEl.textContent=t("noData"); sub.textContent=""; }
   }
   // headcount split by skill (מיומנות): the total stays the hero number, the small
   // chips answer the manager's NEXT question — "of whom?" — without a single click.
@@ -9563,13 +9598,8 @@ function renderRecruit(){
           seg.appendChild(b2);
         });
         box.appendChild(seg);
-        // planning honesty: this page uses shrinkage/absence directly; center-level demand
-        if(plan.skillF||plan.basis==="all"){
-          const d=document.createElement("span"); d.className="mini";
-          d.style.cssText="width:100%;text-align:center";
-          d.textContent=t("hcPlanNote");
-          box.appendChild(d);
-        }
+        // what this number is for — one hover deep, not a paragraph on the tile
+        { const l=document.querySelector('#page-recruit .kpi .l[data-i18n^="kpiHc"]'); if(l) l.title=t("hcPlanNote"); }
       }
     }
   }
@@ -9645,6 +9675,32 @@ function renderRecruit(){
 }
 /* roster table — honest columns: contracted/Δ only when the file provides them.
    Lives on the Workforce page: under-hours reps are a staffing lever, not a hiring one. */
+/* hours with one unit app-wide: "8.5h" in English, "8.5 ש׳" in Hebrew */
+function hU(v){ const x=(Math.round((+v||0)*10)/10).toLocaleString(); return lang==="he"?x+" ש׳":x+"h"; }
+/* who is below their iron this week (or on the picked day), with the page filters. gap = base − sidur;
+   abs = the part an absence in the sidur explains; rec = the rest — hours that can come back.
+   The Workforce KPI and the "Below their iron" card both read THIS, so their numbers match. */
+function ironGap(){
+  const wk=wfWeek(), wkSet=new Set(wk?weekDates(wk):[]), day=state.wfFilter.day===""?null:+state.wfFilter.day, ft=fullTimeWeeklyHours();
+  const fri=wk?addDays(wk,5):null, onFri=new Set(state.schedRows.filter(r=>r.ds===fri&&r.h>0).map(r=>r.name));
+  const friP=name=>{ const w=friW(name,wk); return w===0.5?(onFri.has(name)?1:0):w; }; // unknown last Friday: counts only if worked
+  const r1=v=>Math.round(v*10)/10;
+  // a rep's base: the roster's contract column → else the IRON hours (Friday by rotation) → else full time
+  const baseOf=e=>{ const ir=state.iron&&state.iron.emps.get(e.name);
+    if(day!=null){ if(ir&&ir.days&&ir.contracted>0) return ((ir.days[day]&&ir.days[day].h)||0)*(day===5?friP(e.name):1);
+      return day===5?0:(e.contracted>0?e.contracted:ft)/5; }
+    if(e.contracted>0) return e.contracted;
+    if(!ir||!(ir.contracted>0)) return ft;
+    let s=0; for(let di=0;di<6;di++) s+=((ir.days[di]&&ir.days[di].h)||0)*(di===5?friP(e.name):1); return r1(s); };
+  const inDay=x=>wkSet.has(x.ds)&&(day==null||x.di===day);
+  const absBy=new Map(); for(const v of state.vacations||[]) if(inDay(v)) absBy.set(v.name,(absBy.get(v.name)||0)+(v.hours||0));
+  const schBy=new Map(); if(day!=null) for(const r of state.schedRows) if(inDay(r)) schBy.set(r.name,(schBy.get(r.name)||0)+(r.h||0));
+  const list=state.roster.filter(e=>{ const m=state.rosterMeta.get(e.name)||{}; return wfPass({team:m.team,skill:m.skill,site:m.site}); })
+    .map(e=>{ const base=r1(baseOf(e)), sch=day==null?e.scheduled:r1(schBy.get(e.name)||0), def=r1(base-sch);
+      const abs=r1(Math.min(Math.max(0,def),absBy.get(e.name)||0)); return {...e,base,scheduled:sch,def,abs,rec:r1(Math.max(0,def-abs))}; })
+    .filter(e=>e.def>0.4&&e.base>0);
+  return {list,rec:r1(list.reduce((s,e)=>s+e.rec,0)),abs:r1(list.reduce((s,e)=>s+e.abs,0)),n:list.filter(e=>e.rec>0.4).length};
+}
 function renderInternalRoster(){
   const rw=document.getElementById("rosterWrap"); if(!rw) return;
   rw.innerHTML="";
@@ -9652,23 +9708,11 @@ function renderInternalRoster(){
     rw.innerHTML=`<div class="banner tip" style="text-align:center">${t("rosterNudge")}</div>`;
     return;
   }
-  const hasContract=state.roster.some(e=>e.contracted>0);
   const wk=wfWeek(), wkSet=new Set(wk?weekDates(wk):[]), dShort=t("daysShort"), dFull=t("days");
   const fri=wk?addDays(wk,5):null, onFri=new Set(state.schedRows.filter(r=>r.ds===fri&&r.h>0).map(r=>r.name));
   // Friday per person: the rotation decides when last Friday is known; unknown → this Friday counts
   // only if the rep works it (never a "missing" Friday on a guess)
   const friP=name=>{ const w=friW(name,wk); return w===0.5?(onFri.has(name)?1:0):w; };
-  // manager-first view: ONLY reps below their contracted base, emptiest first,
-  // headline = the total hours (and FTE) recoverable before any external hiring
-  // each rep's true base: roster contract column → else their IRON weekly hours (Friday by
-  // rotation) → else the full-time default (an honest base, not a one-size 42h yardstick)
-  const baseOf=e=>{
-    if(e.contracted>0) return e.contracted;
-    const ir=state.iron&&state.iron.emps.get(e.name);
-    if(!ir||!(ir.contracted>0)) return fullTimeWeeklyHours();
-    let s=0; for(let di=0;di<6;di++) s=s+((ir.days[di]&&ir.days[di].h)||0)*(di===5?friP(e.name):1);
-    return Math.round(s*10)/10;
-  };
   // WHY each rep is below: the sidur's own words this week — absence types, typed statuses, empty cells
   const stOrder=[...new Set((state.unallocRows||[]).filter(u=>wkSet.has(u.ds)).map(u=>u.status))];
   const why=new Map(); // name → Map(key → {label,color,days:Set})
@@ -9676,25 +9720,21 @@ function renderInternalRoster(){
     const o=m.get(key)||{key,label,color,days:new Set()}; o.days.add(di); m.set(key,o); };
   for(const v of state.vacations||[]) if(wkSet.has(v.ds)) addWhy(v.name,"t:"+v.type,t("wf_"+v.type),WF_COLORS[v.type]||"#999",v.di);
   for(const u of state.unallocRows||[]) if(wkSet.has(u.ds)) addWhy(u.name,"s:"+u.status,u.status||t("wfNoStatus"),statusColor(u.status,stOrder),u.di);
-  const under=state.roster
-    .map(e=>{ const base=baseOf(e); return {...e,base,def:Math.round((base-e.scheduled)*10)/10}; })
-    .filter(e=>e.def>0.4)
-    .filter(e=>{ const m=state.rosterMeta.get(e.name)||{}; return wfPass({team:m.team,skill:m.skill,site:m.site}); }) // page filters apply here too
-    // sorted by the BAR: emptiest fill first (lowest scheduled/base ratio), so the
-    // visual order and the priority order are the same thing
-    .sort((a,b)=>(a.scheduled/a.base)-(b.scheduled/b.base)||b.def-a.def);
+  // the same list the "can come back" KPI adds up (ironGap): hours that can come back first, emptiest bar
+  // first — then the reps whose whole gap is an absence (nothing to bring back)
+  const G=ironGap(), under=G.list.slice()
+    .sort((a,b)=>((b.rec>0.4)-(a.rec>0.4))||(a.scheduled/a.base)-(b.scheduled/b.base)||b.rec-a.rec);
   under.forEach(e=>{ const m=why.get(e.name); e.why=m?[...m.values()].sort((a,b)=>b.days.size-a.days.size)
     :[{key:"none",label:t("rrNoWhy"),color:"#b9c4d0",days:new Set()}]; });
   if(!under.length){
     rw.innerHTML=`<div class="banner good" style="display:block">${t("rosterAllOk")}</div>`;
     return;
   }
-  const totH=Math.round(under.reduce((s,e)=>s+e.def,0)*10)/10;
-  const fte=Math.round(totH/fullTimeWeeklyHours()*10)/10;
+  const fte=Math.round(G.rec/fullTimeWeeklyHours()*10)/10;
   const head=document.createElement("div");
   head.style.cssText="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px";
-  head.innerHTML=`<span style="font-size:1.5rem;font-weight:700;color:var(--navy);direction:ltr">+${totH}h</span>
-    <span class="mini">${t("rosterRecov",{n:under.length,f:fte})}</span>
+  head.innerHTML=`<span style="font-size:1.5rem;font-weight:700;color:var(--navy);direction:ltr">+${hU(G.rec)}</span>
+    <span class="mini">${t("rosterRecov",{n:G.n,f:fte})}${G.abs>0.4?" · "+t("rosterAbs",{h:hU(G.abs)}):""}</span>
     <button class="linklike" id="rosterCopyBtn" style="margin-inline-start:auto">📋 ${t("rosterCopyBtn")}</button>`;
   rw.appendChild(head);
   // the reasons, one chip each (reps per reason) — click = only those reps; again = everyone
@@ -9733,10 +9773,11 @@ function renderInternalRoster(){
     det.innerHTML=`<summary title="${t("rosterRowTip")}"><span style="min-width:150px;font-weight:600">${esc(e.name)}</span>
       <span class="mini" style="min-width:88px">${esc(meta.team||"")}</span>
       <span class="rrTags">${whyHtml}</span>
-      <div style="flex:1;min-width:90px;background:var(--sky-soft);border-radius:5px;height:16px;position:relative;direction:ltr" title="${e.scheduled}h / ${e.base}h">
-        <div style="width:${fill.toFixed(0)}%;background:${e.def>=8?"#c94f2e":"#e3a72f"};height:16px;border-radius:5px"></div>
+      <div style="flex:1;min-width:90px;background:var(--sky-soft);border-radius:5px;height:16px;position:relative;direction:ltr" title="${esc(t("rosterDayTip",{s:e.scheduled,i:e.base}))}">
+        <div style="width:${fill.toFixed(0)}%;background:${e.rec>=8?"#c94f2e":e.rec>0.4?"#e3a72f":"#b9c4d0"};height:16px;border-radius:5px"></div>
       </div>
-      <span style="min-width:56px;direction:ltr;font-weight:700;color:${e.def>=8?"var(--crimson)":"#8a6d1a"}">+${e.def}h</span></summary>`;
+      ${e.rec>0.4?`<span style="min-width:56px;direction:ltr;font-weight:700;color:${e.rec>=8?"var(--crimson)":"#8a6d1a"}">+${hU(e.rec)}</span>`
+        :`<span class="mini" style="min-width:56px;text-align:center" title="${esc(t("rosterAllAbs"))}">—</span>`}</summary>`;
     det.addEventListener("toggle",()=>{ if(det.open&&!det._filled){ det._filled=true; det.insertAdjacentHTML("beforeend",dayStrip(e)); } }, {once:false});
     rw.appendChild(det);
   });
@@ -9746,13 +9787,10 @@ function renderInternalRoster(){
     more.addEventListener("click",()=>{ state._rosterAll=!state._rosterAll; renderInternalRoster(); });
     rw.appendChild(more);
   }
-  const note=document.createElement("p"); note.className="mini"; note.style.marginTop="6px";
-  note.textContent=t(hasContract?"rosterSortDef":"rosterSortSched",{h:fullTimeWeeklyHours()});
-  rw.appendChild(note);
   document.getElementById("rosterCopyBtn").addEventListener("click",e2=>{
     e2.stopPropagation();
     const byTeam={}; list.forEach(x=>{ const tm=(state.rosterMeta.get(x.name)||{}).team||"—"; (byTeam[tm]=byTeam[tm]||[]).push(x); });
-    const txt=Object.entries(byTeam).map(([tm,xs])=>tm+"\n"+xs.map(x=>`  ${x.name}: ${x.scheduled}h/${x.base}h (+${x.def}h) · ${x.why.map(w=>w.label).join(", ")}`).join("\n")).join("\n\n");
+    const txt=Object.entries(byTeam).map(([tm,xs])=>tm+"\n"+xs.map(x=>`  ${x.name}: ${hU(x.scheduled)} / ${hU(x.base)}${x.rec>0.4?" (+"+hU(x.rec)+")":""} · ${x.why.map(w=>w.label).join(", ")}`).join("\n")).join("\n\n");
     navigator.clipboard&&navigator.clipboard.writeText(txt);
     showToast("📋 "+t("wfValCopied"),true);
   });
@@ -10540,7 +10578,7 @@ const SHARE_METRICS=[
   {k:"vol",  l:()=>t("shColVol"),   v:g=>Math.round(g.vol).toLocaleString()},
   {k:"gross",l:()=>t("shColGross"), v:g=>Math.round(g.gross).toLocaleString()},
   {k:"aht",  l:()=>t("shColAht"),   v:g=>fmtSec(g.aht)},
-  {k:"tsf30",l:()=>"TSF 30",        v:g=>pct(g.tsf30)}];
+  {k:"tsf30",l:()=>t("metricTsfDyn",{s:state.settings.tsfT}),v:g=>pct(g.tsf)}];
 function shareOpts(){
   const o=state.settings.shareOpts||{};
   const keys=SHARE_METRICS.map(x=>x.k), ord=(Array.isArray(o.order)?o.order:[]).filter(k=>keys.includes(k));
@@ -11698,7 +11736,9 @@ document.getElementById("cohNew").addEventListener("click",()=>{
 // the form's hire rate is also the default for course files that don't give one (remembered)
 // monthly attrition: the SAME setting as Advanced Settings → Workforce dynamics (one value, two doors)
 document.getElementById("cohAttr").addEventListener("change",e=>{ const v=Math.max(0,Math.min(30,+e.target.value||0));
-  state.settings.attrition=v; const sa=document.getElementById("setAttr"); if(sa) sa.value=v; cohortsChanged(); });
+  // through the Settings field itself: the same caches cleared, the same re-render — the two doors can't drift apart
+  const sa=document.getElementById("setAttr"); if(sa){ sa.value=v; sa.dispatchEvent(new Event("change")); } else state.settings.attrition=v;
+  cohortsChanged(); });
 document.getElementById("cohYield").addEventListener("change",e=>{
   state.settings.defYield=Math.min(100,Math.max(10,+e.target.value||85)); saveState(); });
 
@@ -12046,7 +12086,7 @@ if(typeof MutationObserver!=="undefined"){
   document.querySelectorAll(".seg button").forEach(syncSeg);
 }
 const savedWs=loadState();
-{ const f=state.settings.fold||{}; document.querySelectorAll("details.foldCard").forEach(d=>{ if(f[d.id]===false) d.open=false; }); } // folded cards stay folded
+{ const f=state.settings.fold||{}; document.querySelectorAll("details.foldCard").forEach(d=>{ if(f[d.id]!=null) d.open=f[d.id]; }); } // folded cards stay folded
 buildTimes(); // restored window settings reshape the grid skeleton
 // re-sync inputs with the restored workspace (bindings were initialized from defaults)
 [["setTarget","target"],["setTsfT","tsfT"],["setAttr","attrition"],

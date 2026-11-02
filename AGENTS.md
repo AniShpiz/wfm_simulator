@@ -43,7 +43,10 @@ Companion docs (read the one matching your task before editing):
 - Meet the owner's bar in `DESGIN.md` → "The bar every change must clear": low cognitive load,
   power features one click deep, follow the user's journey, one applicative design, fewest clicks,
   value with minimum friction, **silence when all is well** (no notice that makes a healthy state
-  feel broken), root cause over warnings, every secondary area folds.
+  feel broken; a notice only when the user can act, knows how, one click away), root cause over warnings,
+  every secondary area folds, **design from where the user stands in the journey and in time** (history in
+  the file · the gap to today · the future — every number says which), **words last** (visual first; weigh
+  every word; titles are the user's question).
 - Keep the project single-file and offline-capable. Do not add dependencies.
 - Never send user data to external services. Parsing and analytics remain in-browser.
 - Maintain bilingual behavior. Any new user-facing string must be added to both EN and HE in `I18N` and wired via `data-i18n`/`t()`.
@@ -118,11 +121,14 @@ workforce filter lists legitimately show only "(all)" for this file.
 - Workforce team/site filters are populated from both roster metadata and Iron data:
   - `wfFilterValues`
   - `populateWfFilters`
-- Workforce KPIs and visuals:
-  - `computeWorkforce`
-  - `renderTreemap`
+- Workforce KPIs and visuals (iron = in the sidur + on leave + can come back):
+  - `computeWorkforce` (KPI ① in the sidur ÷ iron, ② on leave + who/why in `#wfKpiLeakS`)
+  - `ironGap()` = who is below their iron (page filters + day): `rec` = hours that can come back (no leave behind
+    them), `abs` = explained by leave. KPI ③ `#wfKpiRec` (click → the card) and the "Below their iron" card both
+    read it — one number. Hours print through `hU(v)` ("8.5h" / "8.5 ש׳").
+  - `renderTreemap` (tile % = share of the IRON, like KPI ①; folds, `#treeSum`)
   - `renderIronDays` (iron vs sidur by day, people; folds)
-  - `renderImpactMatrix`
+  - `renderImpactMatrix` (folds; `#impSum` = the day leave hurts most) + `renderHeadroom` (+k can be off · −k missing)
   - `renderValidation`
   - `renderInternalRoster` ("Below their iron — who and why": reasons from the sidur, chip filter)
 - Friday rotation (each rep works every other Friday; `settings.friEvery`): every iron total reads
@@ -136,7 +142,10 @@ workforce filter lists legitimately show only "(all)" for this file.
     `generateIronBaseline` (greedy build from the iron base); toggle via `applySchedMode`
   - `schedulerCore` is legacy — no longer called by the app, only by
     `tests/unit/scheduler.test.js` (the live engines have no unit tests yet)
-  - `runScheduler` and `renderSchedulerResults`
+  - `runScheduler` and `renderSchedulerResults`; the banner `schDoneMsg(out,gen)` and the KPI read `weekShortage`
+    (`explainDay` rounds each half hour to whole reps, like the Uncovered-Demand grid) — one shortage number.
+  - Messages to team managers: `tlMsg(team,purpose,lines)` — the one shape (hi · purpose · "• rep — …" · thanks)
+    for scheduler changes, extension requests, iron validation and the Friday lists.
   - Constraints (both modes) via `parseConstraintsGrid`: long format, or the managers' grid (`parseConMatrix`,
     `conCell`: a cell = when the rep CAN work; the template comes filled with the iron shift — unchanged = nothing,
     emptied = can't, `xlsxBytes({protect})` locks all but the "ed" cells). `conMerge` = a file replaces only its own reps. `conTemplate` =
@@ -162,6 +171,9 @@ workforce filter lists legitimately show only "(all)" for this file.
 - Your own holidays: `settings.customHol` → `applyCustomHol` (wins over the Hebrew calendar,
   works with it off) and `customHolOn` (names); edited in the holidays table (`renderCustomHol`).
 - Date Trends charts: `renderTrendDash` + `trRelTile`, fed by the same rows as the table.
+- Date Trends table: the TSF column = Settings' window (`metricTsfDyn`, the matrix's TSF; `mLab` in the charts);
+  TSF 60 stays as a labeled benchmark (hidden when the window is 60). Only the primary metric's column is tinted;
+  the last column is the target bar (`goalCell`: 0–100% fill, navy tick at the target, "−x%" or ✓).
 
 ## Forecast-week capacity (matrix + Date Trends)
 
@@ -170,7 +182,7 @@ workforce filter lists legitimately show only "(all)" for this file.
   history `rec.agents` (scaled by `lensScale` inside `forecastDay`).
 - `lensFrom()` = the projection's day 0: today, or the first forecast day when the file ends before today.
 - `settings.capLens`: "today" (default) | "real" — the single `.lensBtn` switch, rendered by
-  `syncLens` on both pages, shown only for forecast days without a sidur.
+  `syncLens` on both pages, ALWAYS shown in the same place (it acts on forecast days without a sidur — its hover says so).
 - 🎓 `traineeAt(ds,di,tm)` from `state.trainees[Sunday]` ({n,s,e,days,pct}, saved with the data) is
   added in `computeDay` and `trendDayStat` only — never in the scheduler or the What-If.
 
