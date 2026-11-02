@@ -137,7 +137,16 @@ workforce filter lists legitimately show only "(all)" for this file.
   - `schedulerCore` is legacy — no longer called by the app, only by
     `tests/unit/scheduler.test.js` (the live engines have no unit tests yet)
   - `runScheduler` and `renderSchedulerResults`
-  - Optional constraints ingestion via `parseConstraintsGrid`
+  - Constraints (both modes) via `parseConstraintsGrid`: long format, or the managers' grid (`parseConMatrix`,
+    `conCell`: a cell = when the rep CAN work; the template comes filled with the iron shift — unchanged = nothing,
+    emptied = can't, `xlsxBytes({protect})` locks all but the "ed" cells). `conMerge` = a file replaces only its own reps. `conTemplate` =
+    the plain grid; `conPerRep` (settings.conPerRep, 2) + `conPlan` (each team's week by day room) → `renderConSum`
+    speaks only when over. Enforced: `conMerge` keeps a rep's first X changed days (`state._conCut` = the rest); the
+    file refuses a change beyond X (data validation vs hidden locked originals J:O) and paints a row over X red.
+  - Split shifts: the iron day keeps every part (`w.parts`, `ironParts(w)`; `w.s`/`w.e` = the first, `w.h` = all).
+    Capacity, breaks, the template and Mode 2 read the parts; Mode 2 keeps a split at its iron hours (`fixedParts`). Mode 2 honours windows (`segsOf` / `fitWin` in `generateIronBaseline`).
+  - "⚙ Before running" (`#schPrep`): the Friday card `#wfFriCard` (data-wk="sch") is a REQUIRED part only in Mode 2
+    while last Friday is unknown; "every Friday" leaves its switch. Only "Required" is tagged.
 
 ## Forecast extras
 
@@ -191,6 +200,10 @@ workforce filter lists legitimately show only "(all)" for this file.
   `sug[].for` = the month each addition is for. Rules: `settings.siteMax` / `siteLen` (per location;
   `siteLen(s)` falls back to the median) and `settings.crsNoOverlap` → `siteLane` (ב"ש + רחובות share a lane).
 - What-If / trajectory measure `wiSun()` (the first forecast week, else the last measured) via `wiRows`.
+- 📅 `planTo()` (settings.planTo, else `planToAuto()` = the forecast's end, 30 days … 6 months): the What-If curve,
+  the capacity outlook, `hirePlanRaw`'s months and the report all run to it. `shAbs(k,v)` = a lever step in plain numbers.
+- Course rules: `siteAtOnce(s)` (settings.siteAtOnce, 1) = courses a location runs together; `courseOverlaps()`
+  returns {n, why:"site"|"rule", s}; `crsPeak` counts concurrency.
 - Page order is CSS `order` on `#page-recruit` (kpis → `#trajCard` → `#whatIfCard` → `#crsCard` → the rest).
 
 ## ☕ Breaks tab
@@ -208,7 +221,10 @@ workforce filter lists legitimately show only "(all)" for this file.
 - `renderBreaks`: tiles, `brkAlts` (option tiles), `state._brkUndo` (the ↶ pill). The floor format:
   `brkSheetHtml(bp,mode)` (board · queue · flowchart; mode "tpl" blank | "names" filled) with `brkCell`;
   `brkExport(fmt,mode)` → pdf | word | xlsx (`xlsxBytes` cells may be `{v,s}` named styles) | text.
-- Split: `parts(d)` = 60 / 40 in 5-minute steps (7h → 20 + 15, 10h → 30 + 20; < 30 min → one).
+- Split: `brkParts(d)` = breaks of at most `brkMaxRun()` minutes in a row (settings.brk.maxRun, 20), even in
+  5-minute steps (`brkSplit`): 7h → 20 + 15, 8h → 20 + 20, 10h → 20 + 15 + 15. `brkLS` = bold when they differ.
+- Print: `brkSheetHtml` fits the board on one landscape A4 (font by cap, row height by slots, `.bdw` zooms itself;
+  its inline script must write `<\/script>`); `xlsxBytes(rows,{print:{land,brk}})` = Excel page setup.
 
 ## Persistence and reset behavior
 

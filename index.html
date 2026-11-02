@@ -575,6 +575,8 @@ details.foldCard:not([open])>summary h3::before{transform:rotate(-90deg)} [dir=r
 /* ⚡ fast lane */
 .fastLine{margin:6px 0;padding:6px 10px;border-radius:8px;background:var(--sky-soft);border:1px solid #c4e2f9;color:var(--navy);font-size:.8rem}
 #brkWk.off{opacity:.65;border-style:dashed} #wiChart{position:relative} .wiTip{position:absolute;top:2px;width:150px;background:var(--navy);color:#fff;font-size:.72rem;line-height:1.4;padding:5px 8px;border-radius:6px;pointer-events:none;text-align:center}
+.shList{margin:6px 0 2px;padding-inline-start:18px;font-size:.78rem;line-height:1.55} .shList li{margin:2px 0}
+.planToW{font-weight:400;display:inline-flex;align-items:center;gap:4px;cursor:default} .planToW input{font:inherit;font-size:.78rem;padding:0 4px;border:1px solid var(--border);border-radius:6px;background:#fff}
 .wiSh{border-collapse:collapse;font-size:.76rem;margin:6px 0 2px} .wiSh th,.wiSh td{padding:2px 8px;text-align:center;border-bottom:1px solid var(--border)} .wiSh tbody th{text-align:start;font-weight:600}
 .wkFast{font-weight:700;color:var(--navy);cursor:pointer;border-bottom:1px dotted currentColor} .wkFast.off{font-weight:500;opacity:.6} .wkctx .wkFast{color:inherit} /* readable on every week pill (the navy "this week" one too) */
 .faMore{margin-top:8px} .faMore>summary{cursor:pointer;font-size:.8rem;color:var(--muted)}
@@ -606,6 +608,8 @@ details.foldCard:not([open])>summary h3::before{transform:rotate(-90deg)} [dir=r
 @keyframes askPulse{0%{box-shadow:0 0 0 2px var(--sky),0 0 0 2px rgba(63,169,245,.55)}100%{box-shadow:0 0 0 2px var(--sky),0 0 0 12px rgba(63,169,245,0)}}
 .schPrep{margin-top:8px;border:1px solid var(--border);border-radius:8px;padding:6px 10px;background:#fafcfe}
 .schPrep > summary{cursor:pointer;font-size:.82rem;font-weight:600;color:var(--navy)}
+.reqTag{display:inline-block;font-size:.66rem;font-weight:700;border-radius:8px;padding:1px 7px;vertical-align:middle;background:#fde8e6;color:#b3271e;border:1px solid #f1b8b2}
+#conSum{font-size:.78rem;margin-top:6px} #conSum .bad{color:#b3271e}
 .prepSec{margin-top:8px}.prepSec h3{font-size:.85rem;color:var(--navy);display:flex;align-items:center;gap:6px;margin-bottom:6px}
 .resSec{margin:10px 0 4px;padding-top:10px;border-top:1px solid var(--border)}.resSec h3{font-size:.88rem;color:var(--navy);margin-bottom:6px}
 .exReplay{width:26px;height:26px;border-radius:50%;border:1px solid var(--border);background:#fff;color:var(--navy);font-size:.95rem;line-height:1;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:transform .3s,background .15s}
@@ -942,6 +946,8 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
     <!-- trajectory: above the simulators, folds (remembered) -->
     <details class="card" id="trajCard" open>
       <summary><h2><span data-i18n="trajTitle">Trajectory Insights</span> <span class="pill" id="trajScope" style="font-weight:600"></span>
+        <!-- 📅 the plan date: both charts, the plan's months and the report run to it (planTo) -->
+        <label class="pill planToW" id="planToW">📅 <span data-i18n="planToL">Plan until</span> <input type="date" id="planTo"> <button type="button" class="linklike" id="planToBack" style="display:none" data-i18n="planToBack">↺ forecast end</button></label>
         <!-- 📄 the executive summary: pick the sections, then PDF / Word (rcReport) — clicks here never fold the card -->
         <span class="splitbtn" id="rcRepWrap"><button class="btn ghost applymini" type="button" data-i18n="repBtn">📄 Executive report</button><span class="menu pad rcRepM" id="rcRepMenu"></span></span></h2></summary>
       <ul class="plain" id="trajList"></ul>
@@ -992,7 +998,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
             <label class="mini" data-i18n="wiAbsence">Fewer no-shows</label><input type="range" id="wiAbsence" min="0" max="100" step="5" value="0"><span class="num" id="wiAbsenceV"></span>
           </div>
           <details class="hpLim" id="wiShadow"><summary data-i18n="shTitle">💲 Shadow price — what each improvement is worth</summary><div id="wiShadowBox"></div></details>
-          <p class="mini" data-i18n="wiAgentsNote" style="margin-top:6px">➕ Extra agents come from your Courses &amp; What-If profiles below.</p>
+          <p class="mini" data-i18n="wiAgentsNote" style="margin-top:6px">➕ Extra reps come from your Courses &amp; What-If profiles below.</p>
           <button class="linklike" id="wiReset" style="margin-top:4px" data-i18n="wiReset">↺ Back to current</button>
         </div>
         <div>
@@ -1124,20 +1130,29 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <p class="mini" data-i18n="schMode2Hint">Builds a baseline by placing each contracted iron window where it best covers demand.</p>
         <p class="gateNote" id="schGenGate" style="display:none" data-i18n="schGenNeed">Load a demand forecast and an iron base (סידור ברזל) to generate a baseline.</p>
       </div>
-      <!-- optional before a run: constraints + coverage rules, folded; the summary says what's set -->
+      <!-- before a run: what is REQUIRED (shown only while it's missing) + what is optional, folded; the summary says what's set -->
       <details id="schPrep" class="schPrep">
-        <summary><span data-i18n="schPrepT">⚙ Before running (optional)</span> <span class="mini" id="schPrepSum"></span></summary>
+        <summary><span data-i18n="schPrepT">⚙ Before running</span> <span class="mini" id="schPrepSum"></span></summary>
+        <!-- required, from iron only: last Friday (who worked) — the Friday rotation decides who is due this Friday (renderFriday) -->
+        <div class="prepSec friCard" id="wfFriCard" data-wk="sch" style="display:none">
+          <h3><span class="reqTag" data-i18n="prepReq">Required</span> <span data-fri-t data-i18n="friReqT">Last Friday — who worked</span> <span class="info" data-tipkey="tipFri" tabindex="0">i</span>
+            <span class="foldSum friSum"></span>
+            <span class="seg friEverySeg"><button type="button" data-v="2" data-i18n="friEv2">Every other Friday</button><button type="button" data-v="1" data-i18n="friEv1">Every Friday</button></span></h3>
+          <div class="friBody"></div>
+        </div>
         <div class="prepSec">
         <div class="dropzone" id="dzSchCon" style="margin-top:8px">
-          <h3 data-i18n="schConL">Weekly constraints file (optional):</h3>
-          <p class="mini" data-i18n="schConHint">Employee | Date | Start | End | Type (Unavailable / Partial / Vacation)</p>
+          <h3 data-i18n="schConL">📝 Constraints — drop the managers' files here</h3>
+          <p class="mini"><span data-i18n="schConHint">Several at once is fine</span> · <button class="linklike" type="button" id="conTplBtn" data-i18n="conTplBtn">⬇ template for the managers</button></p>
           <input type="file" id="schConInput" accept=".csv,.tsv,.txt,.json,.xlsx,.xlsm,.xls" style="display:none">
         </div>
+        <div id="conSum"></div>
         <!-- name reconciliation: unknown names get a did-you-mean flow, never a silent no-op -->
         <div id="conNameCheck" style="display:none"></div>
         <!-- manual entry is collapsed by default — minimal cognitive load, there when needed -->
         <details id="conManual" style="margin-top:6px">
           <summary class="mini" style="cursor:pointer" data-i18n="conManualT">✍ Add a constraint manually</summary>
+          <label class="mini" style="display:block;margin-top:6px"><span data-i18n="conPerRepL">Up to</span> <input type="number" id="conPerRep" min="1" max="6" class="hpIn" style="width:48px"> <span data-i18n="conPerRepR">constraints per rep a week (vacation not counted)</span></label>
           <div class="toolbar" style="margin-top:6px">
             <input id="cmName" list="knownNames" style="width:170px" data-i18n-ph="cmNamePh" placeholder="Employee name">
             <datalist id="knownNames"></datalist>
@@ -1181,13 +1196,6 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
       </div>
       <div class="banner good" id="schBanner"></div>
     </div>
-    <!-- Friday rotation, where the sidur is built: last Friday vs this one (renderFriday). Folds (remembered). -->
-    <details class="card foldCard friCard" id="wfFriCard" data-wk="sch" style="display:none" open>
-      <summary><h2><span data-i18n="friT">Friday — last week vs this week</span> <span class="info" data-tipkey="tipFri" tabindex="0">i</span>
-        <span class="foldSum friSum"></span>
-        <span class="seg friEverySeg"><button type="button" data-v="2" data-i18n="friEv2">Every other Friday</button><button type="button" data-v="1" data-i18n="friEv1">Every Friday</button></span></h2></summary>
-      <div class="friBody"></div>
-    </details>
     <!-- STEP 3 — compliance & delta: rendered after every run -->
     <div class="card" id="schAuditCard" style="display:none">
       <h2><span class="stepN">2</span><span data-i18n="schAuditTitle">Compliance &amp; Changes vs. the Original Sidur</span> <span class="info" data-tipkey="tipSchAudit" tabindex="0">i</span></h2>
@@ -1561,13 +1569,13 @@ en:{
   stateUnder:"Understaffing", stateOver:"Overstaffing", stateBalanced:"Balanced",
   mxTipHead:"{m}: {v} — {src}", mxSrcMeas:"measured", mxSrcFc:"forecast",
   mxTipBody:"target {t}% · scheduled {s} · needed for target {r}",
-  mxVerdOverOk:"More agents than the target needs — service is above target (100% is neither realistic nor economical).",
-  mxVerdOverLow:"More agents than the model needs, yet measured service came in below target — check real abandonment / absences that day.",
-  mxVerdShortOk:"Fewer agents than the model wants, yet measured service still met the target that day.",
+  mxVerdOverOk:"More reps than the target needs — service is above target (100% is neither realistic nor economical).",
+  mxVerdOverLow:"More reps than the model needs, yet measured service came in below target — check real abandonment / absences that day.",
+  mxVerdShortOk:"Fewer reps than the model wants, yet measured service still met the target that day.",
   mxVerdShortOkMeas:"Fewer in the sidur than the model sizes for, yet measured service met the target. Usual reasons: people outside the sidur/queue scope also answered (other skills, overtime), or a low-volume slot where the model is cautious.",
   mxVerdShortOkFc:"Fewer than the model sizes for, yet the forecast is on target — this slot has historically done better than the raw model, and the % includes that. Treat the ring as a caution, not a gap.",
   mxVerdMetric:"Note: 'needed' is sized for your primary metric ({p}), not the metric shown here.",
-  mxVerdShortLow:"Short of the agents the target needs — service is below target here.",
+  mxVerdShortLow:"Short of the reps the target needs — service is below target here.",
   mxVerdBalanced:"Staffing matches what the target needs.",
   setPrimary:"Primary Target Metric",
   tipPrimary:"The metric everything is measured against: answer speed (TSF) or share of calls answered (answer rate).",
@@ -1639,11 +1647,11 @@ en:{
   /* ===== WFM 2.0 ===== */
   tabWorkforce:"Workforce & Iron", tabScheduler:"Auto-Scheduler", tabBreaks:"Breaks", brkTitle:"Breaks by slot", brkAdj:"Attendance today", brkAdjTip:"Each slot counts who is on shift at that hour in the sidur (start times, short shifts, splits). Type the day's change: no-shows −3, backups +2.", brkAdjS:"Change from the sidur", brkPresent:"Reps present today", brkPresentTip:"No sidur for this day: how many reps came in — spread over the hours like today's team (the iron).", brkAuto:"auto", brkPrev:"Previous day", brkNext:"Next day",
   brkNoFc:"No forecast for this day — by the procedure: {c} places per slot.", brkPlacesOnly:"Room for {p} breaks today.",
-  brkHeroOk:"A break place for every one of the {n} reps — more places in the quiet hours", brkHeroOkNoFc:"A break place for every one of the {n} reps (no forecast for this day — spread evenly)", brkLen:"5 min per working hour (avg {m}) · a long + a short break (7h → 20 + 15, 10h → 30 + 20), inside the shift", brkExpTpl:"📋 Template — places per slot", brkExpTplS:"Blank names; the supervisor fills them in", brkExpNames:"👤 Auto-assigned — who goes when", brkExpNamesS:"Names from the sidur, short shifts first", brkFTxt:"📋 Text", brkExpProc:"📑 Delayed-break procedure — on its own", brkExpProcS:"The flowchart, to hang by the board", brkEntT:"Break entitlement — {d}", brkEntNote:"5 min per working hour · a split shift = its hours added up · long + short as on the board", brkEntShifts:"Shift", brkEntH:"Hours", brkEntMin:"Entitled (min)", brkEntSplit:"Long + short", brkEntSplitTag:"split", brkEntBackup:"Backups not on the sidur — name and minutes by hand", brkEntNoSidur:"No sidur for this day — write each rep and their minutes (5 per working hour)", brkLegLS:"minutes in bold = the long break", brkFNames:"assigned", brkBoardT:"Break management on shift", brkDateL:"Date", brkSupO:"Opening supervisor", brkSupC:"Closing supervisor", brkPlaceN:"Place {n}", brkEmp:"Employee", brkDur:"Min", brkBlk:"Blocked", brkCatch:"Catch-up", brkBoardNote:"Min = break minutes · whoever went is marked with a highlighter · a dashed place = only for someone whose break was pushed", brkQT:"Owed a break — queue", brkQN1:"Circle the priority: 1 = a call / an earlier delay · 2 = no reason", brkQN2:"First every 1 not yet placed, then the 2s. A 2 who waited 40 minutes becomes a 1", brkQN3:"Don't reorder — add a line. When placing, write the time under Placed at", brkQPri:"Priority", brkQSlot:"Placed at", brkFT:"Delayed break: flowchart", brkF1:"The rep didn't go on break on time", brkF2:"More than 5 minutes late?", brkF2b:"No = no change, the rep goes as usual", brkF3:"Yes", brkF4:"On the board: one line through their name, in the cell they missed", brkF4b:"(don't erase — so you can see where they were due)", brkF5:"Why the delay?", brkF6a:"Priority 1", brkF6ab:"a call / an earlier delay (not their fault)", brkF6b:"Priority 2", brkF6bb:"no reason (their fault)", brkF7a:"In the queue: write the name, circle 1", brkF7b:"In the queue: write the name, circle 2", brkF8a:"On the board: the nearest free place, this slot or the next. None free? add a place (+1) in the next slot", brkF8b:"On the board: a free place, only after every 1 got one. Waited over 40 minutes? becomes a 1", brkF9:"The rep goes", brkF9b:"Board: mark the new cell · Queue: the time under Placed at", brkHoursHint:"Within the center's hours (Settings → day start / end, Friday end)", brkCovL:"Breaks for every rep", brkSpareW:"spare", brkOutside:"{n} reps on shift outside the break window aren't counted", brkArL:"for the day, with this break plan", brkArTip:"In the matrix for this day: {m} (breaks as usual) · with this plan: {a} · red line = target", brkPts:"above the forecast ({m})", brkPtsEq:"≈ as forecast ({m})", brkWkIn:"The breaks follow this sidur", brkWkGo:"This day is outside the loaded sidur (today's team from the iron) — click to go to the sidur's week", brkTryL:"Option", brkAltAll:"a place for everyone", brkAltStart:"First break {s}", brkBackTm:"Back to {v}", brkBackCap:"Back to {v} per slot", brkLastFri:"Last break on Friday", brkLegOn:"place for a break", brkLegOff:"blocked for breaks", brkLegT:"breaks take it under the need", brkLegSp:"catch-up (only for a pushed break)", brkSpLine:"catch-up — for whoever missed theirs", brkHeroAll:"A break place for every one of the {n} reps + {s} spare", brkHeroSpare:"A break place for every one of the {n} reps · spare {g} of {s}", brkHeroNo:"{x} reps have no break place in the window — {r} places for {n} reps", brkAltL:"Ways out:", brkAltEnd:"Last break {e}", brkAltCap:"{c} per slot", brkArDay:"{m} for the day with these breaks: {a} · without breaks {b} — each place sits where it costs the fewest answered calls", brkSpare:"Spare (%)", brkUnder:"The breaks take this slot under the need — still the cheapest place", brkExp:"⬇ Export", brkTxt:"📋 Copy as text (WhatsApp)", brkCopied:"Copied — paste it in WhatsApp or an email", brkHeroShort:"{x} of the {n} reps have no place — every slot is full ({c} each)",
+  brkHeroOk:"A break place for every one of the {n} reps — more places in the quiet hours", brkHeroOkNoFc:"A break place for every one of the {n} reps (no forecast for this day — spread evenly)", brkLen:"5 min per working hour (avg {m}) · breaks of up to {x} min in a row (7h → {a} · 8h → {b}), inside the shift", brkExpTpl:"📋 Template — places per slot", brkExpTplS:"Blank names; the supervisor fills them in", brkExpNames:"👤 Auto-assigned — who goes when", brkExpNamesS:"Names from the sidur, short shifts first", brkFTxt:"📋 Text", brkExpProc:"📑 Delayed-break procedure — on its own", brkExpProcS:"The flowchart, to hang by the board", brkEntT:"Break entitlement — {d}", brkEntNote:"5 min per working hour · a split shift = its hours added up · up to {x} min in a row, as on the board", brkEntShifts:"Shift", brkEntH:"Hours", brkEntMin:"Entitled (min)", brkEntSplit:"Breaks (min)", brkEntSplitTag:"split", brkEntBackup:"Backups not on the sidur — name and minutes by hand", brkEntNoSidur:"No sidur for this day — write each rep and their minutes (5 per working hour)", brkLegLS:"minutes in bold = the long break", brkFNames:"assigned", brkBoardT:"Break management on shift", brkDateL:"Date", brkSupO:"Opening supervisor", brkSupC:"Closing supervisor", brkPlaceN:"Place {n}", brkEmp:"Rep", brkDur:"Min", brkBlk:"Blocked", brkCatch:"Catch-up", brkBoardNote:"Min = break minutes · whoever went is marked with a highlighter · a dashed place = only for someone whose break was pushed", brkQT:"Owed a break — queue", brkQN1:"Circle the priority: 1 = a call / an earlier delay · 2 = no reason", brkQN2:"First every 1 not yet placed, then the 2s. A 2 who waited 40 minutes becomes a 1", brkQN3:"Don't reorder — add a line. When placing, write the time under Placed at", brkQPri:"Priority", brkQSlot:"Placed at", brkFT:"Delayed break: flowchart", brkF1:"The rep didn't go on break on time", brkF2:"More than 5 minutes late?", brkF2b:"No = no change, the rep goes as usual", brkF3:"Yes", brkF4:"On the board: one line through their name, in the cell they missed", brkF4b:"(don't erase — so you can see where they were due)", brkF5:"Why the delay?", brkF6a:"Priority 1", brkF6ab:"a call / an earlier delay (not their fault)", brkF6b:"Priority 2", brkF6bb:"no reason (their fault)", brkF7a:"In the queue: write the name, circle 1", brkF7b:"In the queue: write the name, circle 2", brkF8a:"On the board: the nearest free place, this slot or the next. None free? add a place (+1) in the next slot", brkF8b:"On the board: a free place, only after every 1 got one. Waited over 40 minutes? becomes a 1", brkF9:"The rep goes", brkF9b:"Board: mark the new cell · Queue: the time under Placed at", brkHoursHint:"Within the center's hours (Settings → day start / end, Friday end)", brkCovL:"Breaks for every rep", brkSpareW:"spare", brkOutside:"{n} reps on shift outside the break window aren't counted", brkArL:"for the day, with this break plan", brkArTip:"In the matrix for this day: {m} (breaks as usual) · with this plan: {a} · red line = target", brkPts:"above the forecast ({m})", brkPtsEq:"≈ as forecast ({m})", brkWkIn:"The breaks follow this sidur", brkWkGo:"This day is outside the loaded sidur (today's team from the iron) — click to go to the sidur's week", brkTryL:"Option", brkAltAll:"a place for everyone", brkAltStart:"First break {s}", brkBackTm:"Back to {v}", brkBackCap:"Back to {v} per slot", brkLastFri:"Last break on Friday", brkLegOn:"place for a break", brkLegOff:"blocked for breaks", brkLegT:"breaks take it under the need", brkLegSp:"catch-up (only for a pushed break)", brkSpLine:"catch-up — for whoever missed theirs", brkHeroAll:"A break place for every one of the {n} reps + {s} spare", brkHeroSpare:"A break place for every one of the {n} reps · spare {g} of {s}", brkHeroNo:"{x} reps have no break place in the window — {r} places for {n} reps", brkAltL:"Ways out:", brkAltEnd:"Last break {e}", brkAltCap:"{c} per slot", brkArDay:"{m} for the day with these breaks: {a} · without breaks {b} — each place sits where it costs the fewest answered calls", brkSpare:"Spare (%)", brkUnder:"The breaks take this slot under the need — still the cheapest place", brkExp:"⬇ Export", brkTxt:"📋 Copy as text (WhatsApp)", brkCopied:"Copied — paste it in WhatsApp or an email", brkHeroShort:"{x} of the {n} reps have no place — every slot is full ({c} each)",
   brkTip:"Scheduled {on} · needed {need} → {p} can go on break", brkTipT:"Today's team {on} · needed {need} → {p} can go on break", brkTipNo:"No forecast at this hour", brkExc:"exceptions",
   brkPlaces:"Places", brkTime:"Time", brkName:"Name", brkSheetT:"Break sheet — {d}", brkSheetSub:"Each rep has their own times (minutes in brackets) · missed yours? take a catch-up place, later", brkFile:"breaks",
   brkPdf:"🖨 PDF / print", brkWord:"📄 Word", brkXls:"📊 Excel (.xlsx)", brkPopup:"The browser blocked the print window — allow pop-ups for this page", brkSetT:"⚙ Slots and rules",
-  brkFirst:"First break", brkLast:"Last break", brkExcL:"Exception slot", brkStep:"Slot (min)", brkCap:"Most places per slot", brkPerHour:"Break min per working hour",
+  brkFirst:"First break", brkLast:"Last break", brkExcL:"Exception slot", brkStep:"Slot (min)", brkCap:"Most places per slot", brkMaxRun:"Most break minutes in a row", brkPerHour:"Break min per working hour",
   wfNoIron:"No Iron sheet loaded — drop one multi-sheet Tikshuv workbook (סידור עבודה + סידור ברזל). Falling back to manual contracted hours per rep.",
   wfTeamL:"Team", wfSkillL:"Skill", wfSiteL:"Site", wfAll:"(all)", skTitle:"🎧 Answering skills", tipSk:"Skills that answer the queue the matrix measures. Same choice as the 🎧 buttons; kept when you reload a sidur. Reps without a skill always count.",
   skEmpty:"The list appears after you load your first sidur. Until then every rep counts as answering.", skNotInSidur:"Not in the current sidur — your choice is kept for when it returns.",
@@ -1676,10 +1684,10 @@ en:{
   wfImpactNoIron:"This matrix compares the Iron base (סידור ברזל) against the actual roster — load a Tikshuv workbook with an Iron sheet to enable it.",
   wfImpactMetric:"Each cell: how many points of the WHOLE center's {m} this row's absences cost that day. Baseline is constant — everyone at Iron; only the row's slice drops to its actual hours. Filters choose whose damage you inspect; the center-wide baseline never moves.",
   wfImpactTip2:"{m} at Iron base staffing → at actual roster staffing",
-  wfImpactUnval:"{n} roster agents have no validated Iron base and are EXCLUDED from this matrix:",
+  wfImpactUnval:"{n} roster reps have no validated Iron base and are EXCLUDED from this matrix:",
   schNeedIron:"The auto-scheduler builds shifts from the סידור ברזל base. Load a Tikshuv workbook with an Iron sheet to enable it.",
   schNeedSidur:"The optimizer MOVES shifts in the current sidur — load a sidur (with shifts in the selected week) and a forecast to enable it.",
-  schDoneMove:"✅ Sidur optimized: {a} shifts, {m} moved. Still uncovered: {h} agent-hours — close them in the Uncovered-Demand card below.",
+  schDoneMove:"✅ Sidur optimized: {a} shifts, {m} moved. Still uncovered: {h} rep-hours — close them in the Uncovered-Demand card below.",
   schChipSidur:"🧩 {n} shifts in the selected week",
   schSrc_moved:"Moved", schSrc_cut:"Cut",
   schCutBtn:"✂ Cut", schCutDone:"{name}'s shift cut — now shown as 'Cut' in the table",
@@ -1689,7 +1697,7 @@ en:{
   crsTitle:"Drop the course plan here", crsHint:"Any layout — or + Course",
   crsOk:"{n} courses loaded into the training pipeline.", crsNew:"{n} new courses", crsUpd:"{n} already loaded — updated, not doubled", crsErr:"No course rows found — a course needs at least a start date.",
   wfDrillTitle:"Drill-down: {seg} by {dim}", wfDrillBy:"Drill by", wfDrillHint:"Click a treemap tile to break it down.", wfDrillBack:"✕ Close drill-down", wfDrillWho:"{n} reps — click to list them",
-  roIronNote:"Iron base: {n} employees",
+  roIronNote:"Iron base: {n} reps",
   rosterRecov:"extendable across {n} reps ≈ {f} FTE — recover these hours before hiring externally",
   rosterAllOk:"✅ Everyone is at (or above) their contracted baseline — no internal hours to recover.",
   rosterCopyBtn:"Copy list",
@@ -1706,10 +1714,10 @@ en:{
   schInsert:"Insert into sidur", schSwapTitle:"Insert {n} on {d} — switch with:",
   schAddNoSwap:"Insert without switching anyone", schSwapDone:"{n} inserted into the schedule.",
   schSrc_manual:"Manual",
-  conManualT:"✍ Add a constraint manually", cmNamePh:"Employee name",
+  conManualT:"✍ Add a constraint manually", cmNamePh:"Rep name",
   cmTvac:"Vacation", cmTunav:"Unavailable", cmTpart:"Partial", cmAdd:"+ Add",
   cmAddOk:"Constraint added for {n}.", cmMissing:"Name and date are required.",
-  conUnknownT:"{n} names don't match any agent in the sidur:",
+  conUnknownT:"{n} names don't match any rep in the sidur:",
   conDidYouMean:"Did you mean \"{x}\"?", conYes:"Yes, fix", conIgnore:"Remove",
   conNoMatch:"no similar name found — check the spelling",
   holTableBtn:"🕎 Holidays & festivals table", holTableTitle:"Holidays & Festivals — working-day classification",
@@ -1721,7 +1729,7 @@ en:{
   btCalActive:"active calibration: {c}%", btCalReset:"reset calibration", btFastNote:"a shift in the demand level is handled by '📈 Follow sudden changes in demand'", fmAdvT:"⚙ Models & checks", fmCu:"↩ Calls come back after a lost day", tipCu:"After a closed day or a day far under normal (elections, an outage), part of its calls come back over the next working days, fading — learned from your own history. Those days stop teaching the normal week.", cuNow:"↩ Calls of a lost day coming back in the next days: {n}.", cuBtT:"↩ Calls coming back after a lost day", cuBtRes:"after {n} lost days in your history, the next days' error: without {a}% · with {b}%", cuBtGuard:"on your history it does worse ({n} lost days: without {a}% · with {b}%) — so it steps aside by itself", cuBtRes1:"after the one lost day in your history, the next days' error: without {a}% · with {b}%", cuBtNone:"no lost day in your history to check it on yet (starts at half / half)", cuBtPar:"comes back {c}% of the lost calls, {q}% of them the first day", cuBtOn:"on", cuBtOff:"off — the regular models exactly", cuChip:"↩ +{n} returning calls", cuChipTip:"Calls that didn't come on {d} come back in the next days: {l}.\nClick — without them (the regular model).", cuChipOff:"↩ without returning calls", cuChipOffTip:"Click — add back the calls of {d}.", cuLine:"↩ Calls that didn't come on {d} come back in the next days: {l}.", cuLineOff:"↩ Shown without the calls of {d} coming back.", cuWithout:"without them", cuBack:"add them back",
   cmAllDay:"all day", cmEdit:"Edit",
   tipExt:"Reps already scheduled next to a gap: staying up to 2h later or coming up to 2h earlier closes it with no new shift. Worst gaps first.",
-  extNone:"No adjacent agents can close these gaps by extending — consider the overstaffing pool or hiring.",
+  extNone:"No adjacent reps can close these gaps by extending — consider the overstaffing pool or hiring.",
   extSummary:"{n} extension offers can help close the gaps",
   extTierN:"{n} offers", extExport:"⬇ Export list (CSV)", extTlBtn:"📱 Team-leader messages ({n})",
   extPick:"Accept this extension", extAdd0:"➕ Add to sidur", extAddN:"➕ Add {n} to sidur · +{p}% {m}",
@@ -1749,7 +1757,7 @@ en:{
   mxViewOrig:"Current sidur", mxViewOpt:"Optimized",
   exTitle:"How the sidur was moved", exHow:"Each shift keeps its length and slides up to 2 hours — out of surplus, toward where reps were missing.",
   exSum:"This day: {n} shifts moved from {from} to {to} — the day’s shortage fell from {a} to {b} rep-hours.", exNone:"No shift needed moving on this day.",
-  exBefore:"before", exAfter:"after ✓", exReplayTip:"Play again", schPrepT:"⚙ Before running (optional)", schPrepCon:"{n} constraints", schPrepRules:"{n} coverage rules", exLgMiss:"short (darker = more)", exLgOver:"surplus", exLgOk:"balanced", exLgShift:"shift (×n identical)", exLgWas:"where it was", exMoreLanes:"+{n} more move patterns — see who moved", exCellGap:"short {b} → {a}", exWho:"Who moved ({n})", exReplay:"▶ Replay", exMore:"+{n} more moved shifts on this day", exOpen:"How this day's shifts moved",
+  exBefore:"before", exAfter:"after ✓", exReplayTip:"Play again", schPrepT:"⚙ Before running", prepReq:"Required", friReqT:"Last Friday — who worked", friRotT:"Friday rotation", prepReqFri:"Required: last Friday", conPerRepL:"Up to", conPerRepR:"constraints per rep a week (vacation not counted)", conTplBtn:"⬇ template for the managers", conTplNone:"No reps to list — load an iron or a sidur first", conTplT:"Constraints — week {w} ({a}–{b}) · up to {p} changes per rep (vacation not counted)", conXlT:"Too many changes", conXlErr:"Up to {p} changes per rep a week (vacation not counted). A red row = over the limit.", conCutN:"{n} reps above {p} — only their first {p} days count; not applied", schConCut:"{c} beyond the limit of {p} not applied", conTplHow:"Each cell = the rep's shift from the iron. Can't come → delete it · only part of it → change the hours · vacation → write vacation. Leave the rest as is.", conTplTeam:"Team manager", conTplName:"Rep name", conTplFile:"constraints week {w}", conTplSheet:"Constraints w{w}", conOverRep:"{n} reps above {p} constraints", conOverDay:"{d}: {n} reps limited, the teams' total for the day is {q}", schConReps:"{r} reps", schConBad:"{b} cells not understood — left out", schPrepCon:"{n} constraints", schPrepRules:"{n} coverage rules", exLgMiss:"short (darker = more)", exLgOver:"surplus", exLgOk:"balanced", exLgShift:"shift (×n identical)", exLgWas:"where it was", exMoreLanes:"+{n} more move patterns — see who moved", exCellGap:"short {b} → {a}", exWho:"Who moved ({n})", exReplay:"▶ Replay", exMore:"+{n} more moved shifts on this day", exOpen:"How this day's shifts moved",
   exCellTip:"{b} in the current sidur → {a} after optimizing",
   mxOptHint:"One click: see this week with the sidur optimized to cover demand. Your sidur stays as it is.", mxOptDone:"{m} shifts moved — previewing the optimized sidur",
   mxViewOptNote:"Optimized-schedule preview — the loaded sidur is unchanged",
@@ -1765,9 +1773,9 @@ en:{
   mxFlagAudit:"⚠ {n} suspicious values", mxFlagAuditTip:"The data check found impossible or unusual values in the forecast file. Click to see them on the Home page.",
   wfValTitle:"Iron Base Validation Matrix", valSumN:"{n} to check",
   tipWfVal:"Reps in the sidur with no iron start/end times — send the list to their team leader.",
-  wfValNone:"✅ All roster employees have a valid Iron base.",
+  wfValNone:"✅ All roster reps have a valid Iron base.",
   wfValCsv:"⬇ Export CSV", wfValCopy:"📋 Copy for Excel", wfValCopied:"Table copied — paste into Excel.",
-  waMsg:"היי {team}, נא לתקף בהקדם סידור ברזל עבור העובדים הבאים שרשומים ללא שעות בסיס קבועות: {names}.",
+  waMsg:"היי {team}, נא לתקף בהקדם סידור ברזל עבור הנציגים הבאים שרשומים ללא שעות בסיס קבועות: {names}.",
   waCopied:"WhatsApp alert for {team} copied.",
   wbOk:"Tikshuv workbook recognized — {e} representatives, {i} Iron records, {v} validation issues.",
   schTitle:"Auto-Scheduling",
@@ -1779,23 +1787,23 @@ en:{
   schGenRun:"🏗️ Generate baseline", schGenNeed:"Load a demand forecast and an iron base (סידור ברזל) to generate a baseline.",
   schChipGenIron:"🏗️ Iron {n}", schChipGenCov:"📐 Rules · {n}",
   schDoneGenIron:"✅ Built from the iron as is: {a} shifts (no forecast for this week — not fitted to demand yet).",
-  schDoneGen:"✅ Baseline generated: {a} shifts placed, {p} in the surplus pool. Still uncovered: {h} agent-hours (structural — hire/allocate there).",
+  schDoneGen:"✅ Baseline generated: {a} shifts placed, {p} in the surplus pool. Still uncovered: {h} rep-hours (structural — hire/allocate there).",
   schGenOutTitle:"Generated Baseline", schGenAuditTitle:"Coverage Compliance",
   schGenCsv:"⬇ Download Generated Baseline (CSV)", schGenGapTitle:"Uncovered Demand (structural)",
   saKpiPlaced:"shifts placed", saKpiPool:"in surplus pool",
   schRun:"🤖 Generate Optimized Schedule",
   schChipFc:"📈 {n} forecast days", schChipIron:"⛓ Iron: {n} reps",
   schChipIronFb:"⛓ Fallback: {n} reps × {h}h manual", schChipCon:"📋 {n} constraints",
-  schConL:"Weekly constraints file (optional):",
-  schConHint:"Employee | Date | Start | End | Type (Unavailable / Partial / Vacation)",
-  schConOk:"{n} weekly constraints loaded.",
+  schConL:"📝 Constraints — drop the managers' files here",
+  schConHint:"Several at once is fine",
+  schConOk:"{n} constraints loaded",
   schOutTitle:"Optimized Schedule",
   schPoolTitle:"Overstaffing Pool (manager review)",
   tipSchPool:"Shifts that sit entirely in overstaffed intervals — cutting them creates no shortage. The decision is yours.",
   schGapTitle:"Uncovered Demand — and how to close it",
   schCsv:"⬇ Download Optimized Schedule (CSV)",
   schNeedData:"Load a forecast and a roster / Iron workbook first.",
-  schDone:"✅ Schedule ready: {a} shifts assigned. {p} surplus agents await your decision (pool below). Still uncovered: {h} agent-hours — see how to close them under Uncovered Demand.",
+  schDone:"✅ Schedule ready: {a} shifts assigned. {p} surplus reps await your decision (pool below). Still uncovered: {h} rep-hours — see how to close them under Uncovered Demand.",
   schSrcL:"Source", schSrc_base:"Baseline", schSrc_adj:"Constraint-adjusted", schSrc_swap:"Pool swap",
   days:["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
   tipVolume:"Incoming calls", tipAht:"Average handling time", tipSched:"Scheduled", tipReq:"Required",
@@ -1814,7 +1822,7 @@ en:{
   tipOutlook:"Headcount over the next 60 days: today's headcount + course graduates − attrition + active simulations.",
   trajTitle:"Trajectory Insights", trajAllQueues:"All queues", wiScopeAll:"Whole center",
   trajShift:"{m} trajectory: expected {x}% shift within 30 days under the current hiring rate.",
-  trajHire:"Optimal hiring: Add {n} Full-Time Roles to sustain your {t}% {m} target through the forecast period (until {d}).", trajHireN:"Recruit {n} more trainees {g}.", trajHireM:"Recruit {n} more trainees to hold {m} {t}% every month — by course in the training pipeline.", trajOkM:"On track: your courses hold {m} {t}% every month through {d}.", trajOkN:"On track: your courses are enough {g}.",
+  trajHire:"Optimal hiring: Add {n} Full-Time Roles to sustain your {t}% {m} target through the forecast period (until {d}).", trajHireN:"Recruit {n} more reps {g}.", trajHireM:"Recruit {n} more reps to hold {m} {t}% every month — by course in the training pipeline.", trajOkM:"On track: your courses hold {m} {t}% every month through {d}.", trajOkN:"On track: your courses are enough {g}.",
   trajHireBig:"You're projected at {p}% {m}; the {t}% target is {n} full-time roles away ({pct}% of the workforce) if hired UNIFORMLY — the most expensive path. Peak-hour gaps are usually the real culprit: try the shift-extension offers on the scheduler page, or revisit the target.",
   trajUnreach:"The {t}% {m} target is out of reach at any reasonable hiring level — the projection tops out around {p}%. This calls for a target or demand conversation, not mass hiring.",
   trajOk:"On track: the current recruitment pace sustains your {t}% {m} target through the forecast period (until {d}).",
@@ -1829,12 +1837,12 @@ en:{
   tipCov:"Minimum reps of a skill per interval. A gap = an interval with reps, but too few of this skill.",
   covAddT:"+ Add a coverage rule", covAdd:"+ Add",
   covPrefL:"target", covFromL:"from", covToL:"to",
-  covHint:"Minimum agents of a skill required in each interval (leave the time window empty for all day). Target is a nice-to-have above the minimum.",
-  covEmpty:"No rules yet — e.g. at least 1 clinics agent in every interval. Add one below.",
+  covHint:"Minimum reps of a skill required in each interval (leave the time window empty for all day). Target is a nice-to-have above the minimum.",
+  covEmpty:"No rules yet — e.g. at least 1 clinics rep in every interval. Add one below.",
   covTarget:"target {n}", covAllDay:"all day",
   covHeadGap:"gaps in {n}", covHeadOk:"all covered ✓",
   covGaps:"{n} gaps", covFull:"fully covered", covWait:"waiting for data",
-  covWaitNote:"No scheduled intervals match this rule's window yet — coverage will appear once that queue's agents are in the roster.",
+  covWaitNote:"No scheduled intervals match this rule's window yet — coverage will appear once that queue's reps are in the roster.",
   covNoSkill:"Pick a skill first.", covBadWin:"End time must be after start.", covAdded:"Coverage rule added for {s}.",
   covPrioTip:"Raise priority — the first rule is the most critical",
   schAuditTitle:"The result — what changed",
@@ -1877,7 +1885,7 @@ en:{
   saTl_shift:"• {name} — {day} {date}: {orig} → {opt}",
   saTl_add:"• {name} — {day} {date}: added shift {opt}",
   saTl_cut:"• {name} — {day} {date}: shift {orig} removed (surplus)",
-  saTlFoot:"Please confirm with the employees as soon as possible. 🙏",
+  saTlFoot:"Please confirm with the reps as soon as possible. 🙏",
   saTlSendAll:"📱 Message all team leaders", saAllHead:"🗓️ Schedule update — changes by team",
   waCopiedAll:"Copied — one summary for every team leader.", schMovedFrom:"moved from {w}",
   wfTreeTotal:"Total shown: {n} h",
@@ -1891,7 +1899,7 @@ en:{
   cohEditTip:"Click to edit this course",
   wiZeroBase:"This is 0 in Advanced Settings — nothing to reduce. Set a value there to model reducing it.",
   wiAht:"Shorter handle time", wiAttr:"Less attrition", wiShrink:"Less unavailable time", wiAbsence:"Fewer no-shows",
-  wiAgentsNote:"➕ Extra agents come from your Courses & Staffing profiles below.",
+  wiAgentsNote:"➕ Extra reps come from your Courses & Staffing profiles below.",
   wiReset:"↺ Back to current",
   wiTargetN:"target {t}", wiTargetTick:"target {t}", wiWk:"w",
   wiAlready:"already at target", wiUnreach:"not reached within 6 months", wiBy:"reached by {d}",
@@ -1905,11 +1913,11 @@ en:{
   profNames:{student:"Student Afternoon",fullMorning:"Full-Time Morning",fullDay:"Full-Time",custom:"Custom per-day"},
   trainTitle:"Training pipeline",
   tipTrain:"Enter a course's start and length; graduates join on start + duration, by the certification rate.",
-  cohName:"Course name", cohCount:"Trainees", cohStart:"Course start", cohDur:"Duration (days)", cohYield:"Yield rate (%)", cohAdd:"Add course",
+  cohName:"Course name", cohCount:"Reps in course", cohStart:"Course start", cohDur:"Duration (days)", cohYield:"Yield rate (%)", cohAdd:"Add course",
   courseDefault:"Course",
   tipDur:"The course's length in course days (Sun–Thu); closed holidays don't count.",
-  tipYield:"Share of trainees expected to certify and start working. Also the default for course files that don't give one.",
-  cohLine:"{name} — {n} trainees × {y}% yield → ~{m} reps starting {d}",
+  tipYield:"Share of the reps in a course expected to certify and start working. Also the default for course files that don't give one.",
+  cohLine:"{name} — {n} reps in course × {y}% yield → ~{m} reps starting {d}",
   cohFloor:"Floor entry", cohReps:"~Reps on floor",
   rosterTitle:"Below their iron — who and why",
   rosterHint:"Representatives below their contracted weekly hours — broaden their availability before hiring externally.",
@@ -1980,7 +1988,7 @@ en:{
   insMoM:"{P} in {m}: {v} ({d} pts vs {p}).", insOne:"{P} in {m}: {v}.", insBest:"Strongest month: {m} — {a}/{n} days on target.",
   insRisk:"Forecast: {m} at {v} — below the {t}% target.", insOk:"Forecast: on target in the next {n} month(s).",
   insCourse:"Course \"{c}\" joins on {d} (+{n} reps) — already in the forecast.",
-  trHint:"Forecast rows: click the calls number to adjust a single day. Know of an upcoming surge (campaign, vendor change)?", lensBtn:"Include attrition & courses", trnTip:"Trainees answering this week (from the instructor)", trnN:"Trainees answering each day", trnHours:"Hours", trnDays:"Days", trnPct:"Counted as", trnSave:"✓ Save", trnClear:"Remove", trnSumTxt:"Adds up to ~{a} reps, {s}–{e}", trnCell:"incl. {t} trainees ({n} × {p}%)", tipLens:"Off: your team as it is today (the iron). On: minus monthly attrition, plus course graduates. Only for weeks without a sidur.", lensWeekTip:"This week vs today: +{g} course graduates · −{l} leaving",
+  trHint:"Forecast rows: click the calls number to adjust a single day. Know of an upcoming surge (campaign, vendor change)?", lensBtn:"Include attrition & courses", trnTip:"Reps in course answering this week (from the instructor)", trnN:"Reps in course answering each day", trnHours:"Hours", trnDays:"Days", trnPct:"Counted as", trnSave:"✓ Save", trnClear:"Remove", trnSumTxt:"Adds up to ~{a} reps, {s}–{e}", trnCell:"incl. {t} reps in course ({n} × {p}%)", tipLens:"Off: your team as it is today (the iron). On: minus monthly attrition, plus course graduates. Only for weeks without a sidur.", lensWeekTip:"This week vs today: +{g} course graduates · −{l} leaving",
   tipEv:"For a known surge history can't predict: total extra calls and working days. Front-loaded = most calls early, then fading.",
   cleanNote:"🧹 {k} outlier points auto-clipped (billing peaks kept)",
   trShowMore:"Show {k} more days ({r} remaining) ▼",
@@ -2010,13 +2018,13 @@ en:{
   trTipDay:"click = its row in the table", trTipOpen:"click = open its days", relNeed:"Needs at least 6 actual periods — pick days or a longer range.",
   relWeak:"Weakly", relMod:"Moderately", relStrong:"Strongly", relSent:"{s} related (r = {r}): every {dx} ({x}) ≈ {dy} ({y}).", relNone:"{x} and {y} barely move together here (r = {r}).",
   ibSum:"{p}% of the iron in the sidur",
-  cohDurS:"Course days", cohSite:"Location", hpOkMonths:"Yes — every month through {m}", hpShortN:"{n} months stay short", hpShortMo:"{m}: {x} short", hpDone:"Added {n} trainees to the courses.", hpUndo:"Undo", hpUndone:"The courses are back as they were", repBtn:"📄 Executive report", repPick:"What goes in", repKpi:"The numbers", repTraj:"The decision (trajectory)", repPlan:"Are your courses enough — month by month", repGantt:"Courses Gantt", repWi:"Reaching the target (What-If)", repOut:"Headcount outlook", repRules:"Course rules", repTitle:"Recruitment & training — executive summary", repSub:"Made {d} · from the simulator, by the forecast and the courses as loaded", repEmpty:"Nothing picked.", repMonth:"Month", repGap:"Short", repAdds:"What to add, by course", repAdd:"Add", repFor:"For", repGanttKey:"Painted = the course is running (start → its last day) · ב\"ש blue · רחובות green · בית amber · red frame = this week", repTgt:"target {t}%: reached {d}", repNoReach:"target {t}%: not reached within the horizon", repLevers:"Levers as set", repDate:"Date", repToday:"Today", repHc:"Projected reps", repFile:"executive-summary", repWiNow:"with the courses as loaded", repWiAdds:"after recruiting the +{n} recommended", repHowKpi:"reps = scheduled in the answering skills · max deficit = needed − scheduled, worst day · hire rate = certified ÷ trainees", repHowTraj:"the recruitment line comes from 'are your courses enough' · the profile = the weekly window with most of the shortfall", repHowMon:"calls = the days summed · answer rate and AHT = weighted by calls · hours = needed × ½ h ÷ availability · actual = measured, forecast = the model", repHowPlan:"needed = today's team × needed staffing ÷ the team's staffing · expected = the month's average of today − leavers + graduates · additions = the earliest course first, up to its class size", repHowGantt:"from the start to the first day on shifts, in work days · closed holidays push it", repHowWi:"Erlang A on the first forecast week, with the levers as set · reps week by week = today − leavers + graduates", repHowOut:"today, less monthly attrition, plus course graduates and recruitment simulations", repHowRules:"class size = most trainees · course days = a new course's length · locations in one rule = never at the same time", repMon:"Month by month (Date Trends)", repMix:"actual + forecast", repFc:"forecast", repAct:"actual", repGross:"Hours to schedule (gross)", repMet:"Days at {t}%", repScope:"Answering skills counted: {s}", repAll:"the whole center", repLensReal:"forecast weeks with attrition & courses", repLensToday:"forecast weeks with today's team (the iron)", hpTotal:"total {n}", hpGroup:"Not at the same time", hpGroupHint:"Locations with the same letter never run a course at the same time.", hpPairsT:"Not at the same time:", hpPairsHint:"Locations lit in the same row never run a course at the same time — a new course in one waits for the others'.", hpStillShort:"Still short, even with the additions:", hpWhyFullLate:"Why: the courses that graduate in time are full, and a new course can only start after the planned ones (one at a time per location) — the first one graduates {d}.", hpWhyLate:"Why: even a new course opened now graduates only {d}.", hpWhyFull:"Why: the courses that graduate in time are full.", hpWhyDo:"Shorter courses or bigger classes (⚙ Course rules) help.", hpRuleAdd:"+ another rule", hpRuleDup:"That rule is already there (or inside another rule) — not added twice", hpScen:"Scenario from the What-If: {l}", hpScenWas:"(instead of +{n} without it)", hpApplyScen:"✓ Update the ticked courses — by this scenario", hpProdChk:"Check by the history's productivity: ~{n} needed", repScen:"Provided that this is achieved — {l} — the courses need +{n} more trainees (without the improvement: +{b}).", repScenSame:"Provided that this is achieved — {l} — the plan stays the same (+{b}).", repScenNote:"A scenario, not a forecast: it holds only if the improvement really happens. The plan above is the situation without it.", crsOverlap:"Runs at the same time as {n} (same location, or a rule you set)", shTitle:"💲 Shadow price — what each improvement is worth", shStep:"Step", shNow:"Answer rate now (pts)", shEnd:"At the horizon (pts)", shTr:"Trainees not needed", shHint:"A step = 1% shorter calls · 10% less attrition (it pays over time, not today) · 1 point more availability — reps actually on the phone (less unavailable time, fewer no-shows).", shLever:"Lever", shAlone:"Alone, instead of recruiting", shTarget:"a {v}% improvement", shNotAlone:"not enough alone", shNoNeed:"no extra recruiting needed", shZero:"0% today (Settings) — nothing to improve", shAvail:"More availability (less unavailable time / no-shows)", shPt:"pt", shTargetPt:"+{v} pts availability", repShadow:"Shadow price — the work plan", repHowShadow:"a step of each lever, everything else as is: the What-If's answer rate and the plan's trainees · 'alone' = the smallest improvement of that lever with which the plan needs no extra trainees", wiUnreachBy:"not reached by {d}", wiGap:"{g} pts short", crsSelN:"{n} selected", crsSelAll:"Select all", crsSelNone:"Clear the selection", crsBulkApply:"Apply to them", crsBulkDelB:"Delete them", crsBulkYNeed:"A hire rate between 10 and 100", crsBulkYDone:"{n} courses set to {y}% hire rate", crsBulkDelDone:"Deleted {n} courses", hpClass:"Class size", hpDays:"Course days", hpNoOverlap:"ב\"ש and רחובות never at the same time (one course between them)", hpLenDone:"{s}: {n} upcoming courses set to {d} course days", crsDeleted:"Removed {n}", hpFor:"for {m}", hpBeyond:"{m}: no course can graduate in time", hpBeyondD:"{m}: no course can graduate in time — the earliest one graduates {d}", trajHireP:"Recruit {n} more trainees — the months a course can still reach; {k} months stay short (no course graduates in time). By course in the training pipeline.", hpPickHint:"Click a month — its numbers", hpCalc:"needed {n} · expected {e} = {h} today − {l} leaving + {g} graduates (a new rep is at full speed within a month)", hpCalcAdd:"· with the additions +{a}", hpHow:"? How it is worked out", hpStep1:"Every month, by the forecast: the reps needed to hold the answer-rate target, against the reps you will have — today's, minus those who leave, plus course graduates.", hpStep2:"A short month: trainees go into the earliest course that graduates in time, up to its class size.", hpStep3:"Still short: one more course at the location that can graduate soonest (one course at a time per location, and not together with locations in one of your rules; holidays push it).", hpMoreCourses:" · {k} more courses", hpMoreCourse1:" · and one more course", hpNoFc:"Needs a forecast for the coming months — yours ends {d}.", hpTarget:"Target: {m} {t}% · by the forecast, month by month", hpLgPlan:"Expected with your courses", hpLgWith:"With the additions", hpLgNeed:"Needed", hpTipMo:"Needed {n} · expected {a}{b}", hpLateMo:"{m}: {x} short — the earliest course to add graduates {d}", hpFull:"(full)", hpOther:"Other", hpLimits:"⚙ Course rules", trnOther:"Other", crsTpl:"⬇ Excel template", crsTplFile:"courses-template.csv", crsSampleCap:"Columns in any order, any name · days and hire % are optional", cohNew:"+ Course", cohDefY:"Hire % for new courses", crsDropLine:"or drop a course file anywhere on the page", cohYieldS:"Hire %", dropCourses:"📂 Drop the course plan anywhere — any layout",
-  hpT:"How many to recruit", hpQ:"Are your courses enough?", tipHp:"Month by month, by the forecast: do your courses bring enough reps to hold the answer-rate target? If not — how many more trainees, into which course (the earliest first, up to its class size), and whether to open another.", hpBarAr:"Needed for {m} {t}% by {d}", hpBarHc:"Target headcount by {d}", hpBarHave:"Your courses bring by then", hpBarWith:"With the extra trainees", hpModeHc:"Headcount", hpBy:"by", tipHpAttr:"Staff who leave each month — the same value as Advanced Settings → Workforce dynamics. It erodes today's headcount and course graduates.",
+  cohDurS:"Course days", cohSite:"Location", hpOkMonths:"Yes — every month through {m}", hpShortN:"{n} months stay short", hpShortMo:"{m}: {x} short", hpDone:"Added {n} reps to the courses.", hpUndo:"Undo", hpUndone:"The courses are back as they were", repBtn:"📄 Executive report", repPick:"What goes in", repKpi:"The numbers", repTraj:"The decision (trajectory)", repPlan:"Are your courses enough — month by month", repGantt:"Courses Gantt", repWi:"Reaching the target (What-If)", repOut:"Headcount outlook", repRules:"Course rules", repTitle:"Recruitment & training — executive summary", repSub:"Made {d} · from the simulator, by the forecast and the courses as loaded", repEmpty:"Nothing picked.", repMonth:"Month", repGap:"Short", repAdds:"What to add, by course", repAdd:"Add", repFor:"For", repGanttKey:"Painted = the course is running (start → its last day) · ב\"ש blue · רחובות green · בית amber · red frame = this week", repTgt:"target {t}%: reached {d}", repNoReach:"target {t}%: not reached within the horizon", repLevers:"Levers as set", repDate:"Date", repToday:"Today", repHc:"Projected reps", repFile:"executive-summary", repWiNow:"with the courses as loaded", repWiAdds:"after recruiting the +{n} recommended", repHowKpi:"reps = scheduled in the answering skills · max deficit = needed − scheduled, worst day · hire rate = certified ÷ reps in course", repHowTraj:"the recruitment line comes from 'are your courses enough' · the profile = the weekly window with most of the shortfall", repHowMon:"calls = the days summed · answer rate and AHT = weighted by calls · hours = needed × ½ h ÷ availability · actual = measured, forecast = the model", repHowPlan:"needed = today's team × needed staffing ÷ the team's staffing · expected = the month's average of today − leavers + graduates · additions = the earliest course first, up to its class size", repHowGantt:"from the start to the first day on shifts, in work days · closed holidays push it", repHowWi:"Erlang A on the first forecast week, with the levers as set · reps week by week = today − leavers + graduates", repHowOut:"today, less monthly attrition, plus course graduates and recruitment simulations", repHowRules:"class size = most reps in a course · course days = a new course's length · at once = how many courses a location runs together · locations in one rule = never at the same time", repMon:"Month by month (Date Trends)", repMix:"actual + forecast", repFc:"forecast", repAct:"actual", repGross:"Hours to schedule (gross)", repMet:"Days at {t}%", repScope:"Answering skills counted: {s}", repAll:"the whole center", repLensReal:"forecast weeks with attrition & courses", repLensToday:"forecast weeks with today's team (the iron)", hpTotal:"total {n}", hpGroup:"Not at the same time", hpGroupHint:"Locations with the same letter never run a course at the same time.", hpPairsT:"Not at the same time:", hpPairsHint:"Locations lit in the same row never run a course at the same time — a new course in one waits for the others'.", hpStillShort:"Still short, even with the additions:", hpWhyFullLate:"Why: the courses that graduate in time are full, and a new course can only start after the planned ones (one at a time per location) — the first one graduates {d}.", hpWhyLate:"Why: even a new course opened now graduates only {d}.", hpWhyFull:"Why: the courses that graduate in time are full.", hpWhyDo:"Shorter courses or bigger classes (⚙ Course rules) help.", hpRuleAdd:"+ another rule", hpRuleDup:"That rule is already there (or inside another rule) — not added twice", hpScen:"Scenario from the What-If: {l}", hpScenWas:"(instead of +{n} without it)", hpApplyScen:"✓ Update the ticked courses — by this scenario", hpProdChk:"Check by the history's productivity: ~{n} needed", repScen:"Provided that this is achieved — {l} — the courses need +{n} more reps (without the improvement: +{b}).", repScenSame:"Provided that this is achieved — {l} — the plan stays the same (+{b}).", repScenNote:"A scenario, not a forecast: it holds only if the improvement really happens. The plan above is the situation without it.", crsOverlapSite:"Runs at the same time as {n} — {s} runs up to {k} at once (⚙ Course rules)", crsOverlapRule:"Runs at the same time as {n} — your rule: {s} never at the same time", hpAtOnce:"At once", shTitle:"💲 Shadow price — what each improvement is worth", shStep:"Step", shNow:"Answer rate now (pts)", shEnd:"By {d} (pts)", shHint:"One step at a time, everything else as is — less attrition pays over time, not today.", shAbsAht:"{d} min shorter ({a} → {b})", shAbsAttr:"{a}% → {b}% a month (≈ {n} fewer reps leaving a month)", shAbsAvail:"{a}% → {b}% of the shift on the phone (≈ {n} more reps answering)", shLv_ahtCut:"{s}% shorter calls", shLv_attrCut:"{s}% less attrition", shLv_availPts:"+{s} point availability", shGain:"→ {m} {n} pts now · {e} by {d}", shLever:"Lever", shAlone:"Alone, instead of recruiting", shTarget:"a {v}% improvement", shNotAlone:"not enough alone", shNoNeed:"no extra recruiting needed", shZero:"0% today (Settings) — nothing to improve", shAvail:"More availability (less unavailable time / no-shows)", shPt:"pt", shTargetPt:"+{v} pts availability", repShadow:"Shadow price — the work plan", repHowShadow:"a step of each lever, everything else as is: the What-If's answer rate · each step and each 'alone' also in plain numbers · 'alone' = the smallest improvement of that lever with which the plan needs no extra recruiting", repUntil:"Until {d}", planToL:"Plan until", planToBack:"↺ forecast end", planToTip:"Both charts, the monthly plan and the executive report run to this date. Now: the forecast's end ({d}).", planToTipOwn:"Your date — both charts, the monthly plan and the executive report run to it. The forecast ends {d}.", planToRange:"Pick a date between 2 weeks and a year from today", wiUnreachBy:"not reached by {d}", wiGap:"{g} pts short", crsSelN:"{n} selected", crsSelAll:"Select all", crsSelNone:"Clear the selection", crsBulkApply:"Apply to them", crsBulkDelB:"Delete them", crsBulkYNeed:"A hire rate between 10 and 100", crsBulkYDone:"{n} courses set to {y}% hire rate", crsBulkDelDone:"Deleted {n} courses", hpClass:"Class size", hpDays:"Course days", hpNoOverlap:"ב\"ש and רחובות never at the same time (one course between them)", hpLenDone:"{s}: {n} upcoming courses set to {d} course days", crsDeleted:"Removed {n}", hpFor:"for {m}", hpBeyond:"{m}: no course can graduate in time", hpBeyondD:"{m}: no course can graduate in time — the earliest one graduates {d}", trajHireP:"Recruit {n} more reps — the months a course can still reach; {k} months stay short (no course graduates in time). By course in the training pipeline.", hpPickHint:"Click a month — its numbers", hpCalc:"needed {n} · expected {e} = {h} today − {l} leaving + {g} graduates (a new rep is at full speed within a month)", hpCalcAdd:"· with the additions +{a}", hpHow:"? How it is worked out", hpStep1:"Every month, by the forecast: the reps needed to hold the answer-rate target, against the reps you will have — today's, minus those who leave, plus course graduates.", hpStep2:"A short month: reps are added to the earliest course that graduates in time, up to its class size.", hpStep3:"Still short: one more course at the location that can graduate soonest (one course at a time per location, and not together with locations in one of your rules; holidays push it).", hpMoreCourses:" · {k} more courses", hpMoreCourse1:" · and one more course", hpNoFc:"Needs a forecast for the coming months — yours ends {d}.", hpTarget:"Target: {m} {t}% · by the forecast, month by month", hpLgPlan:"Expected with your courses", hpLgWith:"With the additions", hpLgNeed:"Needed", hpTipMo:"Needed {n} · expected {a}{b}", hpLateMo:"{m}: {x} short — the earliest course to add graduates {d}", hpFull:"(full)", hpOther:"Other", hpLimits:"⚙ Course rules", trnOther:"Other", crsTpl:"⬇ Excel template", crsTplFile:"courses-template.csv", crsSampleCap:"Columns in any order, any name · days and hire % are optional", cohNew:"+ Course", cohDefY:"Hire % for new courses", crsDropLine:"or drop a course file anywhere on the page", cohYieldS:"Hire %", dropCourses:"📂 Drop the course plan anywhere — any layout",
+  hpT:"How many to recruit", hpQ:"Are your courses enough?", tipHp:"Month by month, by the forecast: do your courses bring enough reps to hold the answer-rate target? If not — how many more reps, into which course (the earliest first, up to its class size), and whether to open another.", hpBarAr:"Needed for {m} {t}% by {d}", hpBarHc:"Target headcount by {d}", hpBarHave:"Your courses bring by then", hpBarWith:"With the extra reps", hpModeHc:"Headcount", hpBy:"by", tipHpAttr:"Staff who leave each month — the same value as Advanced Settings → Workforce dynamics. It erodes today's headcount and course graduates.",
   hpUnreach:"Adding people alone won't reach {m} {t}% with today's demand and handle time.",
-  hpGoalAr:"to reach {m} {t}% by {d}", hpGoalHc:"to reach {n} reps by {d}", hpRecruits:"more trainees to recruit",
+  hpGoalAr:"to reach {m} {t}% by {d}", hpGoalHc:"to reach {n} reps by {d}", hpRecruits:"more reps to recruit",
   hpNeed:"needs {n} on the floor · the plan brings {b}", hpOk:"Yes — no extra recruiting needed",
   hpNew:"New course", hpLate:"graduates after the date", hpApply:"✓ Update the ticked courses",
-  hpAfter:"→ {m} ≈ {v}% by {d}", hpApplied:"+{n} trainees added to the courses", faTune:"⚙ Fine-tune", friSumNow:"{n} on this Friday",
+  hpAfter:"→ {m} ≈ {v}% by {d}", hpApplied:"+{n} reps added to the courses", faTune:"⚙ Fine-tune", friSumNow:"{n} on this Friday",
   relPts:"pts", relHrs:"h", relFoot:"{n} actual periods · forecast periods are left out (they are the model's own numbers) · a relation, not proof of cause"
 },
 he:{
@@ -2195,11 +2203,11 @@ he:{
   /* ===== WFM 2.0 ===== */
   tabWorkforce:"כוח אדם וברזל", tabScheduler:"שיבוץ אוטומטי", tabBreaks:"הפסקות", brkTitle:"הפסקות לפי משבצת", brkAdj:"נוכחות היום", brkAdjTip:"כל משבצת סופרת מי במשמרת באותה שעה בסידור (שעות התחלה, משמרות קצרות, פיצולים). כתבו את השינוי של היום: הברזות −3, גיבויים +2.", brkAdjS:"שינוי מהסידור", brkPresent:"נוכחים היום", brkPresentTip:"אין סידור ליום הזה: כמה נציגים הגיעו — מתחלק על השעות כמו הצוות של היום (הברזל).", brkAuto:"אוטו׳", brkPrev:"היום הקודם", brkNext:"היום הבא",
   brkNoFc:"אין תחזית ליום הזה — לפי הנוהל: {c} מקומות בכל משבצת.", brkPlacesOnly:"מקום ל־{p} הפסקות היום.",
-  brkHeroOk:"מקום הפסקה לכל {n} הנציגים — יותר מקומות בשעות השקטות", brkHeroOkNoFc:"מקום הפסקה לכל {n} הנציגים (אין תחזית ליום הזה — חלוקה שווה)", brkLen:"5 דק׳ לכל שעת עבודה (ממוצע {m}) · הפסקה ארוכה + קצרה (7 שעות ← 20 + 15, 10 שעות ← 30 + 20), בתוך המשמרת", brkExpTpl:"📋 תבנית — כמה מקומות בכל משבצת", brkExpTplS:"בלי שמות; האחמ״ש ממלא", brkExpNames:"👤 שיבוץ אוטומטי — מי יוצא מתי", brkExpNamesS:"שמות מהסידור, משמרות קצרות קודם", brkFTxt:"📋 טקסט", brkExpProc:"📑 נוהל עיכוב בהפסקה — בנפרד", brkExpProcS:"תרשים הזרימה, לתלות ליד הלוח", brkEntT:"זכאות להפסקות — {d}", brkEntNote:"5 דק׳ לכל שעת עבודה · משמרת מפוצלת = סכום השעות · ארוכה + קצרה כמו בלוח", brkEntShifts:"משמרת", brkEntH:"שעות", brkEntMin:"זכאות (דק׳)", brkEntSplit:"ארוכה + קצרה", brkEntSplitTag:"מפוצלת", brkEntBackup:"גיבויים שלא בסידור — שם ודקות ביד", brkEntNoSidur:"אין סידור ליום הזה — רושמים כל נציג ואת הדקות שלו (5 לכל שעת עבודה)", brkLegLS:"משך מודגש = ההפסקה הארוכה", brkFNames:"משובץ", brkBoardT:"ניהול הפסקות במשמרת", brkDateL:"תאריך", brkSupO:"אחמ״ש פתיחה", brkSupC:"אחמ״ש סגירה", brkPlaceN:"מקום {n}", brkEmp:"שם עובד", brkDur:"משך", brkBlk:"חסום", brkCatch:"השלמה", brkBoardNote:"משך = דקות ההפסקה · מי שיצא מסומן במרקר · מקום מקווקו = רק למי שההפסקה שלו נדחתה", brkQT:"תור חייבים הפסקה", brkQN1:"מסמנים בעיגול עדיפות: 1 = שיחה / עיכוב קודם · 2 = סתם", brkQN2:"קודם כל ה־1 שעוד לא שובצו, אחר כך ה־2. 2 שחיכה 40 דקות הופך ל־1", brkQN3:"לא מסדרים מחדש: מוסיפים שורה. כשמשבצים, כותבים את השעה בעמודת ״שובץ לסלוט״", brkQPri:"עדיפות", brkQSlot:"שובץ לסלוט", brkFT:"נוהל עיכוב בהפסקה: תרשים זרימה", brkF1:"הנציג לא יצא להפסקה בזמן", brkF2:"עברו יותר מ־5 דקות?", brkF2b:"לא = אין שינוי, הנציג יוצא כרגיל", brkF3:"כן", brkF4:"בלוח: קו אחד על שמו, בתא שבו התעכב", brkF4b:"(לא מוחקים — כך רואים איפה הוא היה אמור לצאת)", brkF5:"למה התעכב?", brkF6a:"עדיפות 1", brkF6ab:"שיחה / עיכוב קודם (לא באשמתו)", brkF6b:"עדיפות 2", brkF6bb:"סתם (באשמתו)", brkF7a:"בתור: רושמים שם, מסמנים עדיפות 1", brkF7b:"בתור: רושמים שם, מסמנים עדיפות 2", brkF8a:"בלוח: המקום הפנוי הקרוב, בסלוט הנוכחי או הבא. אין פנוי? מוסיפים מקום (+1) בסלוט הבא", brkF8b:"בלוח: מקום פנוי, רק אחרי שכל ה־1 קיבלו. חיכה מעל 40 דקות? הופך ל־1", brkF9:"הנציג יוצא", brkF9b:"בלוח: מסמנים בתא החדש · בתור: שעה בעמודת ״שובץ לסלוט״", brkHoursHint:"בתוך שעות הפעילות של המוקד (הגדרות ← תחילת / סוף יום, סוף שישי)", brkCovL:"הפסקות לכל נציג", brkSpareW:"ספייר", brkOutside:"{n} נציגים במשמרת מחוץ לחלון ההפסקות לא נספרו", brkArL:"יומי, עם תכנון ההפסקות", brkArTip:"במטריצה ליום הזה: {m} (הפסקות כרגיל) · עם התכנון: {a} · הקו האדום = היעד", brkPts:"מעל החיזוי ({m})", brkPtsEq:"≈ כמו החיזוי ({m})", brkWkIn:"ההפסקות לפי הסידור הזה", brkWkGo:"היום הזה מחוץ לסידור הטעון (הצוות של היום מהברזל) — לחיצה עוברת לשבוע הסידור", brkTryL:"חלופה", brkAltAll:"מקום לכולם", brkAltStart:"הפסקה ראשונה {s}", brkBackTm:"חזרה ל־{v}", brkBackCap:"חזרה ל־{v} בכל משבצת", brkLastFri:"הפסקה אחרונה בשישי", brkLegOn:"מקום להפסקה", brkLegOff:"חסום להפסקה", brkLegT:"ההפסקות מורידות מתחת לנדרש", brkLegSp:"השלמה (רק למי שההפסקה נדחתה)", brkSpLine:"השלמה — למי שפספס", brkHeroAll:"מקום הפסקה לכל {n} הנציגים + {s} ספייר", brkHeroSpare:"מקום הפסקה לכל {n} הנציגים · ספייר {g} מתוך {s}", brkHeroNo:"ל־{x} נציגים אין מקום הפסקה בחלון — {r} מקומות ל־{n} נציגים", brkAltL:"חלופות:", brkAltEnd:"הפסקה אחרונה {e}", brkAltCap:"{c} בכל משבצת", brkArDay:"{m} יומי צפוי עם ההפסקות: {a} · בלי הפסקות {b} — כל מקום ממוקם היכן שהוא עולה הכי מעט שיחות", brkSpare:"ספייר (%)", brkUnder:"כאן ההפסקות מורידות מתחת לנדרש — עדיין המקום הזול ביותר", brkExp:"⬇ ייצוא", brkTxt:"📋 העתקה כטקסט (וואטסאפ)", brkCopied:"הועתק — הדביקו בוואטסאפ או במייל", brkHeroShort:"ל־{x} מתוך {n} הנציגים אין מקום — כל המשבצות מלאות ({c} בכל משבצת)",
+  brkHeroOk:"מקום הפסקה לכל {n} הנציגים — יותר מקומות בשעות השקטות", brkHeroOkNoFc:"מקום הפסקה לכל {n} הנציגים (אין תחזית ליום הזה — חלוקה שווה)", brkLen:"5 דק׳ לכל שעת עבודה (ממוצע {m}) · הפסקות של עד {x} דק׳ ברצף (7 שעות ← {a} · 8 שעות ← {b}), בתוך המשמרת", brkExpTpl:"📋 תבנית — כמה מקומות בכל משבצת", brkExpTplS:"בלי שמות; האחמ״ש ממלא", brkExpNames:"👤 שיבוץ אוטומטי — מי יוצא מתי", brkExpNamesS:"שמות מהסידור, משמרות קצרות קודם", brkFTxt:"📋 טקסט", brkExpProc:"📑 נוהל עיכוב בהפסקה — בנפרד", brkExpProcS:"תרשים הזרימה, לתלות ליד הלוח", brkEntT:"זכאות להפסקות — {d}", brkEntNote:"5 דק׳ לכל שעת עבודה · משמרת מפוצלת = סכום השעות · עד {x} דק׳ ברצף, כמו בלוח", brkEntShifts:"משמרת", brkEntH:"שעות", brkEntMin:"זכאות (דק׳)", brkEntSplit:"הפסקות (דק׳)", brkEntSplitTag:"מפוצלת", brkEntBackup:"גיבויים שלא בסידור — שם ודקות ביד", brkEntNoSidur:"אין סידור ליום הזה — רושמים כל נציג ואת הדקות שלו (5 לכל שעת עבודה)", brkLegLS:"משך מודגש = ההפסקה הארוכה", brkFNames:"משובץ", brkBoardT:"ניהול הפסקות במשמרת", brkDateL:"תאריך", brkSupO:"אחמ״ש פתיחה", brkSupC:"אחמ״ש סגירה", brkPlaceN:"מקום {n}", brkEmp:"שם נציג", brkDur:"משך", brkBlk:"חסום", brkCatch:"השלמה", brkBoardNote:"משך = דקות ההפסקה · מי שיצא מסומן במרקר · מקום מקווקו = רק למי שההפסקה שלו נדחתה", brkQT:"תור חייבים הפסקה", brkQN1:"מסמנים בעיגול עדיפות: 1 = שיחה / עיכוב קודם · 2 = סתם", brkQN2:"קודם כל ה־1 שעוד לא שובצו, אחר כך ה־2. 2 שחיכה 40 דקות הופך ל־1", brkQN3:"לא מסדרים מחדש: מוסיפים שורה. כשמשבצים, כותבים את השעה בעמודת ״שובץ לסלוט״", brkQPri:"עדיפות", brkQSlot:"שובץ לסלוט", brkFT:"נוהל עיכוב בהפסקה: תרשים זרימה", brkF1:"הנציג לא יצא להפסקה בזמן", brkF2:"עברו יותר מ־5 דקות?", brkF2b:"לא = אין שינוי, הנציג יוצא כרגיל", brkF3:"כן", brkF4:"בלוח: קו אחד על שמו, בתא שבו התעכב", brkF4b:"(לא מוחקים — כך רואים איפה הוא היה אמור לצאת)", brkF5:"למה התעכב?", brkF6a:"עדיפות 1", brkF6ab:"שיחה / עיכוב קודם (לא באשמתו)", brkF6b:"עדיפות 2", brkF6bb:"סתם (באשמתו)", brkF7a:"בתור: רושמים שם, מסמנים עדיפות 1", brkF7b:"בתור: רושמים שם, מסמנים עדיפות 2", brkF8a:"בלוח: המקום הפנוי הקרוב, בסלוט הנוכחי או הבא. אין פנוי? מוסיפים מקום (+1) בסלוט הבא", brkF8b:"בלוח: מקום פנוי, רק אחרי שכל ה־1 קיבלו. חיכה מעל 40 דקות? הופך ל־1", brkF9:"הנציג יוצא", brkF9b:"בלוח: מסמנים בתא החדש · בתור: שעה בעמודת ״שובץ לסלוט״", brkHoursHint:"בתוך שעות הפעילות של המוקד (הגדרות ← תחילת / סוף יום, סוף שישי)", brkCovL:"הפסקות לכל נציג", brkSpareW:"ספייר", brkOutside:"{n} נציגים במשמרת מחוץ לחלון ההפסקות לא נספרו", brkArL:"יומי, עם תכנון ההפסקות", brkArTip:"במטריצה ליום הזה: {m} (הפסקות כרגיל) · עם התכנון: {a} · הקו האדום = היעד", brkPts:"מעל החיזוי ({m})", brkPtsEq:"≈ כמו החיזוי ({m})", brkWkIn:"ההפסקות לפי הסידור הזה", brkWkGo:"היום הזה מחוץ לסידור הטעון (הצוות של היום מהברזל) — לחיצה עוברת לשבוע הסידור", brkTryL:"חלופה", brkAltAll:"מקום לכולם", brkAltStart:"הפסקה ראשונה {s}", brkBackTm:"חזרה ל־{v}", brkBackCap:"חזרה ל־{v} בכל משבצת", brkLastFri:"הפסקה אחרונה בשישי", brkLegOn:"מקום להפסקה", brkLegOff:"חסום להפסקה", brkLegT:"ההפסקות מורידות מתחת לנדרש", brkLegSp:"השלמה (רק למי שההפסקה נדחתה)", brkSpLine:"השלמה — למי שפספס", brkHeroAll:"מקום הפסקה לכל {n} הנציגים + {s} ספייר", brkHeroSpare:"מקום הפסקה לכל {n} הנציגים · ספייר {g} מתוך {s}", brkHeroNo:"ל־{x} נציגים אין מקום הפסקה בחלון — {r} מקומות ל־{n} נציגים", brkAltL:"חלופות:", brkAltEnd:"הפסקה אחרונה {e}", brkAltCap:"{c} בכל משבצת", brkArDay:"{m} יומי צפוי עם ההפסקות: {a} · בלי הפסקות {b} — כל מקום ממוקם היכן שהוא עולה הכי מעט שיחות", brkSpare:"ספייר (%)", brkUnder:"כאן ההפסקות מורידות מתחת לנדרש — עדיין המקום הזול ביותר", brkExp:"⬇ ייצוא", brkTxt:"📋 העתקה כטקסט (וואטסאפ)", brkCopied:"הועתק — הדביקו בוואטסאפ או במייל", brkHeroShort:"ל־{x} מתוך {n} הנציגים אין מקום — כל המשבצות מלאות ({c} בכל משבצת)",
   brkTip:"משובצים בסידור {on} · נדרשים {need} ← אפשר להוציא {p} להפסקה", brkTipT:"בצוות של היום {on} · נדרשים {need} ← אפשר להוציא {p} להפסקה", brkTipNo:"אין תחזית בשעה הזו", brkExc:"חריגים",
   brkPlaces:"מקומות", brkTime:"שעה", brkName:"שם", brkSheetT:"דף הפסקות — {d}", brkSheetSub:"לכל נציג הזמנים שלו (דקות בסוגריים) · פספסת? קח מקום השלמה, בהמשך", brkFile:"הפסקות",
   brkPdf:"🖨 PDF / הדפסה", brkWord:"📄 Word", brkXls:"📊 Excel (.xlsx)", brkPopup:"הדפדפן חסם את חלון ההדפסה — אפשרו חלונות קופצים לדף הזה", brkSetT:"⚙ משבצות וכללים",
-  brkFirst:"הפסקה ראשונה", brkLast:"הפסקה אחרונה", brkExcL:"משבצת חריגים", brkStep:"משבצת (דק׳)", brkCap:"מקסימום מקומות", brkPerHour:"דק׳ הפסקה לכל שעת עבודה",
+  brkFirst:"הפסקה ראשונה", brkLast:"הפסקה אחרונה", brkExcL:"משבצת חריגים", brkStep:"משבצת (דק׳)", brkCap:"מקסימום מקומות", brkMaxRun:"מקסימום דקות הפסקה ברצף", brkPerHour:"דק׳ הפסקה לכל שעת עבודה",
   wfNoIron:"לא נטען גיליון ברזל — גררו קובץ תקשוב רב-גיליוני אחד (סידור עבודה + סידור ברזל). בינתיים חישוב לפי שעות חוזיות ידניות לנציג.",
   wfTeamL:"מנהל צוות", wfSkillL:"מיומנות", wfSiteL:"מוקד", wfAll:"(הכול)", skTitle:"🎧 מיומנויות עונות", tipSk:"המיומנויות שעונות לתור שהמטריצה מודדת. אותה בחירה כמו בכפתורי 🎧; נשמרת בטעינת סידור. נציגים ללא מיומנות תמיד נספרים.",
   skEmpty:"הרשימה תופיע אחרי טעינת סידור העבודה הראשון. עד אז כל הנציגים נספרים כעונים.", skNotInSidur:"לא בסידור הנוכחי — הבחירה שלכם נשמרת לפעם שיחזור.",
@@ -2245,7 +2253,7 @@ he:{
   crsTitle:"גררו לכאן את תוכנית הקורסים", crsHint:"בכל מבנה — או + קורס",
   crsOk:"{n} קורסים נטענו לצנרת ההכשרה.", crsNew:"{n} קורסים חדשים", crsUpd:"{n} כבר היו — עודכנו, בלי כפילות", crsErr:"לא נמצאו קורסים — לכל קורס צריך לפחות תאריך פתיחה.",
   wfDrillTitle:"פילוח: {seg} לפי {dim}", wfDrillBy:"פילוח לפי", wfDrillHint:"לחצו על אריח במפת החום לפילוח.", wfDrillBack:"✕ סגירת פילוח", wfDrillWho:"{n} נציגים — לחצו להצגה",
-  roIronNote:"בסיס ברזל: {n} עובדים",
+  roIronNote:"בסיס ברזל: {n} נציגים",
   rosterRecov:"ניתנות להרחבה אצל {n} נציגים ≈ {f} משרות — לאתר את השעות האלה לפני גיוס חיצוני",
   rosterAllOk:"✅ כולם בבסיס החוזי שלהם (או מעליו) — אין שעות פנימיות לאיתור.",
   rosterCopyBtn:"העתקת רשימה",
@@ -2305,7 +2313,7 @@ he:{
   mxViewOrig:"הסידור הנוכחי", mxViewOpt:"מיטבי",
   exTitle:"איך הסידור הוזז", exHow:"כל משמרת שומרת על אורכה ומחליקה עד שעתיים — מהעודף, אל המקום שבו חסרו נציגים.",
   exSum:"ביום הזה: {n} משמרות הוזזו מ־{from} אל {to} — החוסר של היום ירד מ־{a} ל־{b} שעות נציג.", exNone:"ביום הזה לא היה צורך להזיז משמרות.",
-  exBefore:"לפני", exAfter:"אחרי ✓", exReplayTip:"הפעלה מחדש", schPrepT:"⚙ לפני ההרצה (לא חובה)", schPrepCon:"{n} אילוצים", schPrepRules:"{n} כללי כיסוי", exLgMiss:"חסר (כהה = יותר)", exLgOver:"עודף", exLgOk:"מאוזן", exLgShift:"משמרת (×מספר זהות)", exLgWas:"איפה הייתה", exMoreLanes:"+{n} דפוסי הזזה נוספים — ראו מי הוזז", exCellGap:"חסר {b} ← {a}", exWho:"מי הוזז ({n})", exReplay:"▶ הפעלה מחדש", exMore:"+{n} משמרות נוספות הוזזו ביום הזה", exOpen:"איך המשמרות של היום הוזזו",
+  exBefore:"לפני", exAfter:"אחרי ✓", exReplayTip:"הפעלה מחדש", schPrepT:"⚙ לפני ההרצה", prepReq:"חובה", friReqT:"שישי שעבר — מי עבד", friRotT:"סבב שישי", prepReqFri:"חובה: שישי שעבר", conPerRepL:"עד", conPerRepR:"אילוצים לנציג בשבוע (חופש לא נספר)", conTplBtn:"⬇ תבנית למנהלות", conTplNone:"אין נציגים לרשימה — טענו קודם ברזל או סידור", conTplT:"אילוצים — שבוע {w} ({a}–{b}) · עד {p} שינויים לנציג (חופש לא נספר)", conXlT:"יותר מדי שינויים", conXlErr:"עד {p} שינויים לנציג בשבוע (חופש לא נספר). שורה אדומה = מעל המותר.", conCutN:"{n} נציגים מעל {p} — נכנסים רק {p} הימים הראשונים; לא נכנסו", schConCut:"{c} מעבר למותר ({p}) לא נכנסו", conTplHow:"בכל תא — המשמרת של הנציג/ה מהברזל. לא יכול/ה לבוא ← מוחקים · יכול/ה רק חלק ← משנים את השעות · חופש ← כותבים חופש. שאר התאים — לא נוגעים.", conTplTeam:"מנהל/ת צוות", conTplName:"שם הנציג/ה", conTplFile:"אילוצים שבוע {w}", conTplSheet:"אילוצים שבוע {w}", conOverRep:"{n} נציגים מעל {p} אילוצים", conOverDay:"{d}: {n} נציגים מוגבלים, סך הצוותים ליום הוא {q}", schConReps:"{r} נציגים", schConBad:"{b} תאים לא הובנו — לא נכנסו", schPrepCon:"{n} אילוצים", schPrepRules:"{n} כללי כיסוי", exLgMiss:"חסר (כהה = יותר)", exLgOver:"עודף", exLgOk:"מאוזן", exLgShift:"משמרת (×מספר זהות)", exLgWas:"איפה הייתה", exMoreLanes:"+{n} דפוסי הזזה נוספים — ראו מי הוזז", exCellGap:"חסר {b} ← {a}", exWho:"מי הוזז ({n})", exReplay:"▶ הפעלה מחדש", exMore:"+{n} משמרות נוספות הוזזו ביום הזה", exOpen:"איך המשמרות של היום הוזזו",
   exCellTip:"{b} בסידור הנוכחי ← {a} אחרי הכוונון",
   mxOptHint:"לחיצה אחת: השבוע הזה עם סידור מכוונן לכיסוי הביקוש. הסידור שלכם לא משתנה.", mxOptDone:"{m} משמרות הוזזו — מוצג הסידור המיטבי",
   mxViewOptNote:"תצוגה מקדימה של הסידור המיטבי — הסידור שנטען לא משתנה",
@@ -2321,9 +2329,9 @@ he:{
   mxFlagAudit:"⚠ {n} ערכים חשודים", mxFlagAuditTip:"בקרת הנתונים מצאה ערכים בלתי אפשריים או חריגים בקובץ התחזית. לחיצה מציגה אותם בדף הבית.",
   wfValTitle:"מטריצת תיקוף בסיס ברזל", valSumN:"{n} לבדיקה",
   tipWfVal:"נציגים בסידור ללא שעות כניסה/יציאה בברזל — שלחו את הרשימה למנהל הצוות.",
-  wfValNone:"✅ לכל עובדי הסידור יש בסיס ברזל תקין.",
+  wfValNone:"✅ לכל נציגי הסידור יש בסיס ברזל תקין.",
   wfValCsv:"⬇ ייצוא CSV", wfValCopy:"📋 העתקה לאקסל", wfValCopied:"הטבלה הועתקה — הדביקו באקסל.",
-  waMsg:"היי {team}, נא לתקף בהקדם סידור ברזל עבור העובדים הבאים שרשומים ללא שעות בסיס קבועות: {names}.",
+  waMsg:"היי {team}, נא לתקף בהקדם סידור ברזל עבור הנציגים הבאים שרשומים ללא שעות בסיס קבועות: {names}.",
   waCopied:"התראת וואטסאפ עבור {team} הועתקה.",
   wbOk:"קובץ תקשוב זוהה — {e} נציגים, {i} רשומות ברזל, {v} בעיות תיקוף.",
   schTitle:"שיבוץ אוטומטי",
@@ -2342,9 +2350,9 @@ he:{
   schRun:"🤖 יצירת סידור מיטבי",
   schChipFc:"📈 {n} ימי תחזית", schChipIron:"⛓ ברזל: {n} נציגים",
   schChipIronFb:"⛓ ברירת מחדל: {n} נציגים × {h} שעות ידני", schChipCon:"📋 {n} אילוצים",
-  schConL:"קובץ אילוצים שבועי (אופציונלי):",
-  schConHint:"עובד | תאריך | התחלה | סיום | סוג (לא זמין / חלקי / חופשה)",
-  schConOk:"נטענו {n} אילוצים שבועיים.",
+  schConL:"📝 אילוצים — גררו לכאן את הקבצים מהמנהלות",
+  schConHint:"אפשר כמה קבצים יחד",
+  schConOk:"נטענו {n} אילוצים",
   schOutTitle:"סידור מיטבי",
   schPoolTitle:"מאגר עודפי איוש (לבחינת מנהל)",
   tipSchPool:"משמרות שכולן בתוך עודף איוש — קיצוצן לא יוצר חוסר. ההחלטה שלכם.",
@@ -2370,7 +2378,7 @@ he:{
   tipOutlook:"מצבה ל־60 הימים הקרובים: המצבה היום + בוגרי קורסים − עזיבה + סימולציות פעילות.",
   trajTitle:"תובנות מגמה", trajAllQueues:"כל התורים", wiScopeAll:"כל המוקד",
   trajShift:"מגמת {m}: צפוי שינוי של ‎{x}%‎ בתוך 30 יום בקצב הגיוס הנוכחי.",
-  trajHire:"גיוס מומלץ: עוד ‎{n}‎ משרות מלאות יחזיקו {m} של ‎{t}%‎ עד סוף תקופת התחזית ({d}).", trajHireN:"לגייס עוד {n} חניכים {g}.", trajHireM:"לגייס עוד {n} חניכים כדי להחזיק {m} {t}% בכל חודש — הפירוט לפי קורס בצנרת ההכשרה.", trajOkM:"במסלול: הקורסים מחזיקים {m} {t}% בכל חודש עד {d}.", trajOkN:"במסלול: הקורסים מספיקים {g}.",
+  trajHire:"גיוס מומלץ: עוד ‎{n}‎ משרות מלאות יחזיקו {m} של ‎{t}%‎ עד סוף תקופת התחזית ({d}).", trajHireN:"לגייס עוד {n} נציגים {g}.", trajHireM:"לגייס עוד {n} נציגים כדי להחזיק {m} {t}% בכל חודש — הפירוט לפי קורס בצנרת ההכשרה.", trajOkM:"במסלול: הקורסים מחזיקים {m} {t}% בכל חודש עד {d}.", trajOkN:"במסלול: הקורסים מספיקים {g}.",
   trajHireBig:"אתם צפויים ל-{m} של ‎{p}%‎; היעד ‎{t}%‎ רחוק ‎{n}‎ משרות (‎{pct}%‎ מהמצבה) — אבל רק אם מגייסים אחיד, וזו הדרך היקרה. לרוב הבעיה היא שעות שיא: נסו קודם את הצעות הרחבת המשמרות בעמוד השיבוץ, או בחנו מחדש את היעד.",
   trajUnreach:"יעד {m} של ‎{t}%‎ אינו בר-השגה בשום היקף גיוס סביר — התחזית נעצרת סביב ‎{p}%‎. זו שיחה על היעד או על הביקוש, לא על גיוס המוני.",
   trajOk:"במסלול: קצב הגיוס הנוכחי מחזיק {m} של ‎{t}%‎ עד סוף תקופת התחזית ({d}).",
@@ -2433,7 +2441,7 @@ he:{
   saTl_shift:"• {name} — יום {day} {date}: {orig} ← {opt}",
   saTl_add:"• {name} — יום {day} {date}: נוספה משמרת {opt}",
   saTl_cut:"• {name} — יום {day} {date}: המשמרת {orig} ירדה (עודף)",
-  saTlFoot:"נא לתקף מול העובדים בהקדם. 🙏",
+  saTlFoot:"נא לתקף מול הנציגים בהקדם. 🙏",
   saTlSendAll:"📱 הודעה לכל מנהלי הצוות", saAllHead:"🗓️ עדכון סידור — שינויים לפי צוות",
   waCopiedAll:"הועתק — סיכום אחד לכל מנהלי הצוות.", schMovedFrom:"הוזז מ־{w}",
   wfTreeTotal:"סה\"כ מוצג: {n} שעות",
@@ -2461,11 +2469,11 @@ he:{
   profNames:{student:"סטודנטים אחה\"צ",fullMorning:"משרה מלאה בוקר",fullDay:"משרה מלאה",custom:"מותאם לפי יום"},
   trainTitle:"צנרת הכשרות",
   tipTrain:"הזינו פתיחה ומשך של קורס; הבוגרים מצטרפים בפתיחה + משך, לפי אחוז ההסמכה.",
-  cohName:"שם קורס", cohCount:"חניכים", cohStart:"פתיחת קורס", cohDur:"משך (ימים)", cohYield:"אחוז הסמכה (%)", cohAdd:"הוספת קורס",
+  cohName:"שם קורס", cohCount:"נציגים בקורס", cohStart:"פתיחת קורס", cohDur:"משך (ימים)", cohYield:"אחוז הסמכה (%)", cohAdd:"הוספת קורס",
   courseDefault:"קורס",
   tipDur:"אורך הקורס בימי הקורס (א׳–ה׳); חגים סגורים לא נספרים.",
-  tipYield:"אחוז החניכים הצפויים לעבור הסמכה ולהתחיל לעבוד. גם ברירת המחדל לקובצי קורסים בלי אחוז.",
-  cohLine:"{name} — {n} חניכים × {y}% הסמכה → ~{m} נציגים מתחילים {d}",
+  tipYield:"אחוז הנציגים בקורס הצפויים לעבור הסמכה ולהתחיל לעבוד. גם ברירת המחדל לקובצי קורסים בלי אחוז.",
+  cohLine:"{name} — {n} נציגים בקורס × {y}% הסמכה → ~{m} נציגים מתחילים {d}",
   cohFloor:"כניסה למשמרות", cohReps:"נציגים בפועל ~",
   rosterTitle:"מתחת לברזל — מי ולמה",
   rosterHint:"נציגים מתחת לשעות הבסיס החוזיות שלהם — הרחיבו זמינות לפני גיוס חיצוני.",
@@ -2536,7 +2544,7 @@ he:{
   insMoM:"{P} ב{m}: {v} ({d} נק׳ מול {p}).", insOne:"{P} ב{m}: {v}.", insBest:"החודש החזק: {m} — {a}/{n} ימים ביעד.",
   insRisk:"צפי: {m} ב־{v} — מתחת ליעד {t}%.", insOk:"צפי: עמידה ביעד ב־{n} החודשים הקרובים.",
   insCourse:"קורס \"{c}\" מצטרף ב־{d} (+{n} נציגים) — כבר כלול בצפי.",
-  trHint:"בשורות התחזית: לחיצה על מספר השיחות מתקנת יום בודד. יודעים על גל צפוי (קמפיין, החלפת ספק)?", lensBtn:"כולל עזיבה וקורסים", trnTip:"חניכים במענה השבוע (לפי המדריכה)", trnN:"כמה חניכים עונים בכל יום", trnHours:"שעות", trnDays:"ימים", trnPct:"נספרים כ־", trnSave:"✓ שמירה", trnClear:"הסרה", trnSumTxt:"מוסיף עד ~{a} נציגים, {s}–{e}", trnCell:"כולל {t} חניכים ({n} × {p}%)", tipLens:"כבוי: הצוות שלך כמו היום (הברזל). דולק: פחות עזיבה חודשית, ועוד בוגרי קורסים. רק לשבועות בלי סידור.", lensWeekTip:"השבוע מול היום: +{g} בוגרי קורסים · −{l} עוזבים",
+  trHint:"בשורות התחזית: לחיצה על מספר השיחות מתקנת יום בודד. יודעים על גל צפוי (קמפיין, החלפת ספק)?", lensBtn:"כולל עזיבה וקורסים", trnTip:"נציגים בקורס במענה השבוע (לפי המדריכה)", trnN:"כמה נציגים בקורס עונים בכל יום", trnHours:"שעות", trnDays:"ימים", trnPct:"נספרים כ־", trnSave:"✓ שמירה", trnClear:"הסרה", trnSumTxt:"מוסיף עד ~{a} נציגים, {s}–{e}", trnCell:"כולל {t} נציגים בקורס ({n} × {p}%)", tipLens:"כבוי: הצוות שלך כמו היום (הברזל). דולק: פחות עזיבה חודשית, ועוד בוגרי קורסים. רק לשבועות בלי סידור.", lensWeekTip:"השבוע מול היום: +{g} בוגרי קורסים · −{l} עוזבים",
   tipEv:"לגל ידוע שההיסטוריה לא יכולה לחזות: סה״כ שיחות נוספות וימי עבודה. מרוכז בהתחלה = רוב השיחות בהתחלה ואז דועכות.",
   cleanNote:"🧹 {k} נקודות חריגות נוקו אוטומטית (שיאי ימי חיוב נשמרו)",
   trShowMore:"הצג עוד {k} ימים (נותרו {r}) ▼",
@@ -2566,13 +2574,13 @@ he:{
   trTipDay:"לחיצה = השורה בטבלה", trTipOpen:"לחיצה = פתיחת הימים", relNeed:"נדרשות לפחות 6 תקופות בפועל — בחרו ימים או טווח ארוך יותר.",
   relWeak:"קשר חלש", relMod:"קשר בינוני", relStrong:"קשר חזק", relSent:"{s} (r = {r}): כל {dx} ({x}) ≈ {dy} ({y}).", relNone:"{x} ו־{y} כמעט לא זזים יחד כאן (r = {r}).",
   ibSum:"{p}% מהברזל בסידור",
-  cohDurS:"ימי הקורס", cohSite:"מיקום", hpOkMonths:"כן — כל חודש עד {m}", hpShortN:"{n} חודשים נשארים חסרים", hpShortMo:"{m}: חסרים {x}", hpDone:"נוספו {n} חניכים לקורסים.", hpUndo:"ביטול", hpUndone:"הקורסים חזרו למצבם הקודם", repBtn:"📄 דוח מנהלים", repPick:"מה ייכנס לדוח", repKpi:"המספרים", repTraj:"ההחלטה (תובנות מגמה)", repPlan:"הקורסים מספיקים — חודש אחרי חודש", repGantt:"גאנט קורסים", repWi:"הגעה ליעד (סימולטור What-If)", repOut:"תחזית מצבה", repRules:"כללי קורסים", repTitle:"גיוס והכשרה — סיכום מנהלים", repSub:"הופק {d} · מהסימולטור, לפי התחזית והקורסים כפי שנטענו", repEmpty:"לא נבחר דבר.", repMonth:"חודש", repGap:"חסר", repAdds:"מה להוסיף, לפי קורס", repAdd:"תוספת", repFor:"בשביל", repGanttKey:"צבוע = הקורס רץ (פתיחה ← היום האחרון) · ב״ש כחול · רחובות ירוק · בית כתום · מסגרת אדומה = השבוע", repTgt:"היעד {t}%: מושג ב־{d}", repNoReach:"היעד {t}%: לא מושג בטווח התחזית", repLevers:"מנופים כפי שנקבעו", repDate:"תאריך", repToday:"היום", repHc:"נציגים צפויים", repFile:"סיכום-מנהלים", repWiNow:"עם הקורסים כפי שנטענו", repWiAdds:"אחרי גיוס ‎+{n} המומלצים", repHowKpi:"מצבה = משובצים במיומנויות המענה · פער מרבי = נדרשים פחות משובצים, ביום הגרוע · הסמכה = מוסמכים ÷ חניכים", repHowTraj:"שורת הגיוס מתוך ״הקורסים מספיקים״ · הפרופיל = החלון השבועי עם רוב החוסר", repHowMon:"שיחות = סכום הימים · מענה ומשך שיחה = ממוצע משוקלל בשיחות · שעות = נדרשים × חצי שעה ÷ זמינות · בפועל = מדוד, תחזית = המודל", repHowPlan:"נדרשים = הצוות היום × איוש נדרש ÷ איוש הצוות · צפוי = ממוצע החודש של היום, פחות עוזבים, ועוד בוגרים · תוספות = קודם לקורס המוקדם, עד גודל הכיתה", repHowGantt:"מהפתיחה עד היום הראשון במשמרות, בימי עבודה · חגים סגורים דוחים", repHowWi:"ארלנג A על שבוע התחזית הראשון, לפי המנופים · נציגים בכל שבוע = היום, פחות עוזבים, ועוד בוגרים", repHowOut:"המצבה היום, פחות עזיבה חודשית, ועוד בוגרי קורסים וסימולציות גיוס", repHowRules:"גודל כיתה = מקסימום חניכים · ימי הקורס = אורך קורס חדש · מיקומים באותו כלל = לא באותו זמן", repMon:"חודש אחרי חודש (מגמות ותאריכים)", repMix:"בפועל + תחזית", repFc:"תחזית", repAct:"בפועל", repGross:"שעות לשיבוץ (ברוטו)", repMet:"ימים ביעד {t}%", repScope:"מיומנויות מענה שנלקחו בחשבון: {s}", repAll:"כל המוקד", repLensReal:"שבועות התחזית כוללים עזיבה וקורסים", repLensToday:"שבועות התחזית לפי הצוות של היום (הברזל)", hpTotal:"סה״כ {n}", hpGroup:"לא במקביל", hpGroupHint:"מיקומים עם אותה אות — אף פעם לא מריצים קורס באותו זמן.", hpPairsT:"לא באותו זמן:", hpPairsHint:"מיקומים מסומנים באותה שורה — אף פעם לא מריצים קורס באותו זמן; קורס חדש באחד מהם יחכה לסיום הקורס באחרים.", hpStillShort:"חסרים גם אחרי התוספות:", hpWhyFullLate:"למה: הקורסים שמסיימים בזמן כבר מלאים, וקורס חדש ייפתח רק אחרי המתוכננים (קורס אחד בכל פעם במיקום) — הראשון יסיים ב־{d}.", hpWhyLate:"למה: גם קורס חדש שייפתח עכשיו יסיים רק ב־{d}.", hpWhyFull:"למה: הקורסים שמסיימים בזמן כבר מלאים.", hpWhyDo:"יעזרו: קורסים קצרים יותר או כיתות גדולות יותר (⚙ כללי קורסים).", hpRuleAdd:"+ כלל נוסף", hpRuleDup:"הכלל הזה כבר קיים (או כלול בכלל אחר) — לא נוסף פעמיים", hpScen:"תרחיש מהסימולטור: {l}", hpScenWas:"(במקום ‎+{n} בלי התרחיש)", hpApplyScen:"✓ לעדכן את הקורסים המסומנים — לפי התרחיש", hpProdChk:"בדיקה לפי פריון העבר: ~{n} נדרשים", repScen:"בתנאי שיושג: {l} — יידרשו ‎+{n} חניכים לקורסים (בלי השיפור: ‎+{b}).", repScenSame:"בתנאי שיושג: {l} — התוכנית נשארת אותה תוכנית (‎+{b}).", repScenNote:"זה תרחיש ולא תחזית: הוא נכון רק אם השיפור יקרה בפועל. התוכנית למעלה היא המצב בלעדיו.", crsOverlap:"רץ באותו זמן עם {n} (אותו מיקום, או כלל שהגדרתם)", shTitle:"💲 מחיר הצל — כמה שווה כל שיפור", shStep:"צעד", shNow:"מענה עכשיו (נק׳)", shEnd:"בסוף הטווח (נק׳)", shTr:"חניכים שלא צריך", shHint:"צעד = קיצור של 1% במשך השיחה · הפחתה של 10% בעזיבה (משתלם עם הזמן, לא היום) · נקודה אחת יותר זמינות — נציגים שבאמת על הקו (פחות זמן לא־זמין, פחות הברזות).", shLever:"מנוף", shAlone:"לבד, במקום לגייס", shTarget:"שיפור של {v}%", shNotAlone:"לא מספיק לבד", shNoNeed:"לא צריך גיוס נוסף", shZero:"היום 0% (בהגדרות) — אין מה לשפר", shAvail:"יותר זמינות (פחות זמן לא־זמין / הברזות)", shPt:"נק׳", shTargetPt:"‎+{v} נק׳ זמינות", repShadow:"מחיר הצל — תוכנית עבודה", repHowShadow:"צעד אחד בכל מנוף, כל השאר כמו שהוא: אחוז המענה מהסימולטור והחניכים מהתוכנית · ״לבד״ = השיפור הקטן ביותר של המנוף הזה שאיתו התוכנית לא צריכה חניכים נוספים", wiUnreachBy:"לא יושג עד {d}", wiGap:"חסרות {g} נק׳", crsSelN:"נבחרו {n}", crsSelAll:"בחירת הכול", crsSelNone:"ביטול הבחירה", crsBulkApply:"החל עליהם", crsBulkDelB:"מחיקתם", crsBulkYNeed:"אחוז הסמכה בין 10 ל־100", crsBulkYDone:"{n} קורסים עודכנו ל־{y}% הסמכה", crsBulkDelDone:"נמחקו {n} קורסים", hpClass:"גודל כיתה", hpDays:"ימי הקורס", hpNoOverlap:"ב״ש ורחובות לא במקביל (קורס אחד ביניהם בכל פעם)", hpLenDone:"{s}: {n} קורסים קרובים עודכנו ל־{d} ימי קורס", crsDeleted:"נמחק: {n}", hpFor:"בשביל {m}", hpBeyond:"{m}: אין קורס שיסיים בזמן", hpBeyondD:"{m}: אין קורס שיסיים בזמן — המוקדם ביותר מסיים ב־{d}", trajHireP:"לגייס עוד {n} חניכים — לחודשים שקורס עוד מגיע אליהם; {k} חודשים נשארים חסרים (אין קורס שמסיים בזמן). הפירוט לפי קורס בצנרת ההכשרה.", hpPickHint:"לחיצה על חודש — המספרים שלו", hpCalc:"נדרשים {n} · צפי {e} = {h} היום − {l} עוזבים + {g} בוגרים (נציג חדש מגיע לפריון מלא תוך חודש)", hpCalcAdd:"· עם התוספות +{a}", hpHow:"? איך זה מחושב", hpStep1:"כל חודש, לפי התחזית: כמה נציגים צריך כדי להחזיק את יעד המענה, מול כמה יהיו — היום, פחות מי שעוזב, ועוד בוגרי קורסים.", hpStep2:"חודש חסר: מוסיפים חניכים לקורס המוקדם שמסיים בזמן, עד גודל הכיתה.", hpStep3:"עדיין חסר: קורס נוסף במיקום שיכול לסיים הכי מוקדם (קורס אחד בכל פעם במיקום, ולא יחד עם מיקומים מאותו כלל; חגים דוחים).", hpMoreCourses:" · {k} קורסים נוספים", hpMoreCourse1:" · ועוד קורס אחד", hpNoFc:"צריך תחזית לחודשים הקרובים — התחזית שלך מסתיימת ב־{d}.", hpTarget:"יעד: {m} {t}% · לפי התחזית, חודש אחרי חודש", hpLgPlan:"צפי לפי הקורסים", hpLgWith:"עם התוספות", hpLgNeed:"נדרשים", hpTipMo:"נדרשים {n} · צפי {a}{b}", hpLateMo:"{m}: חסרים {x} — הקורס הנוסף המוקדם ביותר מסיים ב־{d}", hpFull:"(מלא)", hpOther:"אחר", hpLimits:"⚙ כללי קורסים", trnOther:"אחר", crsTpl:"⬇ תבנית Excel", crsTplFile:"תבנית קורסים.csv", crsSampleCap:"עמודות בכל סדר ובכל שם · ימים ו־% הסמכה לא חובה", cohNew:"+ קורס", cohDefY:"% הסמכה לקורס חדש", crsDropLine:"או גררו קובץ קורסים לכל מקום בעמוד", cohYieldS:"% הסמכה", dropCourses:"📂 גררו את תוכנית הקורסים לכל מקום — בכל מבנה",
-  hpT:"כמה לגייס", hpQ:"הקורסים מספיקים?", tipHp:"חודש אחרי חודש, לפי התחזית: האם הקורסים מביאים מספיק נציגים כדי להחזיק את יעד המענה? אם לא — כמה חניכים להוסיף, לאיזה קורס (המוקדם קודם, עד גודל הכיתה), והאם לפתוח קורס נוסף.", hpBarAr:"נדרשים ל{m} {t}% עד {d}", hpBarHc:"יעד מצבה עד {d}", hpBarHave:"הקורסים שלך מביאים עד אז", hpBarWith:"עם החניכים הנוספים", hpModeHc:"מצבה", hpBy:"עד", tipHpAttr:"כמה עובדים עוזבים בחודש — אותו ערך כמו בהגדרות מתקדמות ← דינמיקת כוח אדם. מקטין את המצבה של היום ואת בוגרי הקורסים.",
+  cohDurS:"ימי הקורס", cohSite:"מיקום", hpOkMonths:"כן — כל חודש עד {m}", hpShortN:"{n} חודשים נשארים חסרים", hpShortMo:"{m}: חסרים {x}", hpDone:"נוספו {n} נציגים לקורסים.", hpUndo:"ביטול", hpUndone:"הקורסים חזרו למצבם הקודם", repBtn:"📄 דוח מנהלים", repPick:"מה ייכנס לדוח", repKpi:"המספרים", repTraj:"ההחלטה (תובנות מגמה)", repPlan:"הקורסים מספיקים — חודש אחרי חודש", repGantt:"גאנט קורסים", repWi:"הגעה ליעד (סימולטור What-If)", repOut:"תחזית מצבה", repRules:"כללי קורסים", repTitle:"גיוס והכשרה — סיכום מנהלים", repSub:"הופק {d} · מהסימולטור, לפי התחזית והקורסים כפי שנטענו", repEmpty:"לא נבחר דבר.", repMonth:"חודש", repGap:"חסר", repAdds:"מה להוסיף, לפי קורס", repAdd:"תוספת", repFor:"בשביל", repGanttKey:"צבוע = הקורס רץ (פתיחה ← היום האחרון) · ב״ש כחול · רחובות ירוק · בית כתום · מסגרת אדומה = השבוע", repTgt:"היעד {t}%: מושג ב־{d}", repNoReach:"היעד {t}%: לא מושג בטווח התחזית", repLevers:"מנופים כפי שנקבעו", repDate:"תאריך", repToday:"היום", repHc:"נציגים צפויים", repFile:"סיכום-מנהלים", repWiNow:"עם הקורסים כפי שנטענו", repWiAdds:"אחרי גיוס ‎+{n} המומלצים", repHowKpi:"מצבה = משובצים במיומנויות המענה · פער מרבי = נדרשים פחות משובצים, ביום הגרוע · הסמכה = מוסמכים ÷ נציגים בקורס", repHowTraj:"שורת הגיוס מתוך ״הקורסים מספיקים״ · הפרופיל = החלון השבועי עם רוב החוסר", repHowMon:"שיחות = סכום הימים · מענה ומשך שיחה = ממוצע משוקלל בשיחות · שעות = נדרשים × חצי שעה ÷ זמינות · בפועל = מדוד, תחזית = המודל", repHowPlan:"נדרשים = הצוות היום × איוש נדרש ÷ איוש הצוות · צפוי = ממוצע החודש של היום, פחות עוזבים, ועוד בוגרים · תוספות = קודם לקורס המוקדם, עד גודל הכיתה", repHowGantt:"מהפתיחה עד היום הראשון במשמרות, בימי עבודה · חגים סגורים דוחים", repHowWi:"ארלנג A על שבוע התחזית הראשון, לפי המנופים · נציגים בכל שבוע = היום, פחות עוזבים, ועוד בוגרים", repHowOut:"המצבה היום, פחות עזיבה חודשית, ועוד בוגרי קורסים וסימולציות גיוס", repHowRules:"גודל כיתה = מקסימום נציגים בקורס · ימי הקורס = אורך קורס חדש · במקביל = כמה קורסים רצים יחד במיקום · מיקומים באותו כלל = לא באותו זמן", repMon:"חודש אחרי חודש (מגמות ותאריכים)", repMix:"בפועל + תחזית", repFc:"תחזית", repAct:"בפועל", repGross:"שעות לשיבוץ (ברוטו)", repMet:"ימים ביעד {t}%", repScope:"מיומנויות מענה שנלקחו בחשבון: {s}", repAll:"כל המוקד", repLensReal:"שבועות התחזית כוללים עזיבה וקורסים", repLensToday:"שבועות התחזית לפי הצוות של היום (הברזל)", hpTotal:"סה״כ {n}", hpGroup:"לא במקביל", hpGroupHint:"מיקומים עם אותה אות — אף פעם לא מריצים קורס באותו זמן.", hpPairsT:"לא באותו זמן:", hpPairsHint:"מיקומים מסומנים באותה שורה — אף פעם לא מריצים קורס באותו זמן; קורס חדש באחד מהם יחכה לסיום הקורס באחרים.", hpStillShort:"חסרים גם אחרי התוספות:", hpWhyFullLate:"למה: הקורסים שמסיימים בזמן כבר מלאים, וקורס חדש ייפתח רק אחרי המתוכננים (קורס אחד בכל פעם במיקום) — הראשון יסיים ב־{d}.", hpWhyLate:"למה: גם קורס חדש שייפתח עכשיו יסיים רק ב־{d}.", hpWhyFull:"למה: הקורסים שמסיימים בזמן כבר מלאים.", hpWhyDo:"יעזרו: קורסים קצרים יותר או כיתות גדולות יותר (⚙ כללי קורסים).", hpRuleAdd:"+ כלל נוסף", hpRuleDup:"הכלל הזה כבר קיים (או כלול בכלל אחר) — לא נוסף פעמיים", hpScen:"תרחיש מהסימולטור: {l}", hpScenWas:"(במקום ‎+{n} בלי התרחיש)", hpApplyScen:"✓ לעדכן את הקורסים המסומנים — לפי התרחיש", hpProdChk:"בדיקה לפי פריון העבר: ~{n} נדרשים", repScen:"בתנאי שיושג: {l} — יידרשו ‎+{n} נציגים לקורסים (בלי השיפור: ‎+{b}).", repScenSame:"בתנאי שיושג: {l} — התוכנית נשארת אותה תוכנית (‎+{b}).", repScenNote:"זה תרחיש ולא תחזית: הוא נכון רק אם השיפור יקרה בפועל. התוכנית למעלה היא המצב בלעדיו.", crsOverlapSite:"רץ באותו זמן עם {n} — {s}: עד {k} במקביל (⚙ כללי קורסים)", crsOverlapRule:"רץ באותו זמן עם {n} — הכלל שלכם: {s} לא באותו זמן", hpAtOnce:"במקביל", shTitle:"💲 מחיר הצל — כמה שווה כל שיפור", shStep:"צעד", shNow:"מענה עכשיו (נק׳)", shEnd:"עד {d} (נק׳)", shHint:"צעד אחד בכל פעם, כל השאר כמו שהוא — פחות עזיבה משתלמת עם הזמן, לא היום.", shAbsAht:"{d} דק׳ פחות ({a} ← {b})", shAbsAttr:"{a}% ← {b}% בחודש (≈ {n} נציגים פחות עוזבים בחודש)", shAbsAvail:"{a}% ← {b}% מהמשמרת על הקו (≈ {n} נציגים נוספים עונים)", shLv_ahtCut:"קיצור של {s}% במשך השיחה", shLv_attrCut:"הפחתה של {s}% בעזיבה", shLv_availPts:"עוד {s} נק׳ זמינות", shGain:"← {m} {n} נק׳ עכשיו · {e} עד {d}", shLever:"מנוף", shAlone:"לבד, במקום לגייס", shTarget:"שיפור של {v}%", shNotAlone:"לא מספיק לבד", shNoNeed:"לא צריך גיוס נוסף", shZero:"היום 0% (בהגדרות) — אין מה לשפר", shAvail:"יותר זמינות (פחות זמן לא־זמין / הברזות)", shPt:"נק׳", shTargetPt:"‎+{v} נק׳ זמינות", repShadow:"מחיר הצל — תוכנית עבודה", repHowShadow:"צעד אחד בכל מנוף, כל השאר כמו שהוא: אחוז המענה מהסימולטור · כל צעד וכל ״לבד״ גם במספרים · ״לבד״ = השיפור הקטן ביותר של המנוף הזה שאיתו התוכנית לא צריכה גיוס נוסף", repUntil:"עד {d}", planToL:"תכנון עד", planToBack:"↺ סוף התחזית", planToTip:"שני הגרפים, התוכנית החודשית ודוח המנהלים רצים עד התאריך הזה. עכשיו: סוף התחזית ({d}).", planToTipOwn:"התאריך שבחרתם — שני הגרפים, התוכנית החודשית ודוח המנהלים רצים עד אליו. התחזית מסתיימת ב־{d}.", planToRange:"בחרו תאריך בין שבועיים לשנה מהיום", wiUnreachBy:"לא יושג עד {d}", wiGap:"חסרות {g} נק׳", crsSelN:"נבחרו {n}", crsSelAll:"בחירת הכול", crsSelNone:"ביטול הבחירה", crsBulkApply:"החל עליהם", crsBulkDelB:"מחיקתם", crsBulkYNeed:"אחוז הסמכה בין 10 ל־100", crsBulkYDone:"{n} קורסים עודכנו ל־{y}% הסמכה", crsBulkDelDone:"נמחקו {n} קורסים", hpClass:"גודל כיתה", hpDays:"ימי הקורס", hpNoOverlap:"ב״ש ורחובות לא במקביל (קורס אחד ביניהם בכל פעם)", hpLenDone:"{s}: {n} קורסים קרובים עודכנו ל־{d} ימי קורס", crsDeleted:"נמחק: {n}", hpFor:"בשביל {m}", hpBeyond:"{m}: אין קורס שיסיים בזמן", hpBeyondD:"{m}: אין קורס שיסיים בזמן — המוקדם ביותר מסיים ב־{d}", trajHireP:"לגייס עוד {n} נציגים — לחודשים שקורס עוד מגיע אליהם; {k} חודשים נשארים חסרים (אין קורס שמסיים בזמן). הפירוט לפי קורס בצנרת ההכשרה.", hpPickHint:"לחיצה על חודש — המספרים שלו", hpCalc:"נדרשים {n} · צפי {e} = {h} היום − {l} עוזבים + {g} בוגרים (נציג חדש מגיע לפריון מלא תוך חודש)", hpCalcAdd:"· עם התוספות +{a}", hpHow:"? איך זה מחושב", hpStep1:"כל חודש, לפי התחזית: כמה נציגים צריך כדי להחזיק את יעד המענה, מול כמה יהיו — היום, פחות מי שעוזב, ועוד בוגרי קורסים.", hpStep2:"חודש חסר: מוסיפים נציגים לקורס המוקדם שמסיים בזמן, עד גודל הכיתה.", hpStep3:"עדיין חסר: קורס נוסף במיקום שיכול לסיים הכי מוקדם (קורס אחד בכל פעם במיקום, ולא יחד עם מיקומים מאותו כלל; חגים דוחים).", hpMoreCourses:" · {k} קורסים נוספים", hpMoreCourse1:" · ועוד קורס אחד", hpNoFc:"צריך תחזית לחודשים הקרובים — התחזית שלך מסתיימת ב־{d}.", hpTarget:"יעד: {m} {t}% · לפי התחזית, חודש אחרי חודש", hpLgPlan:"צפי לפי הקורסים", hpLgWith:"עם התוספות", hpLgNeed:"נדרשים", hpTipMo:"נדרשים {n} · צפי {a}{b}", hpLateMo:"{m}: חסרים {x} — הקורס הנוסף המוקדם ביותר מסיים ב־{d}", hpFull:"(מלא)", hpOther:"אחר", hpLimits:"⚙ כללי קורסים", trnOther:"אחר", crsTpl:"⬇ תבנית Excel", crsTplFile:"תבנית קורסים.csv", crsSampleCap:"עמודות בכל סדר ובכל שם · ימים ו־% הסמכה לא חובה", cohNew:"+ קורס", cohDefY:"% הסמכה לקורס חדש", crsDropLine:"או גררו קובץ קורסים לכל מקום בעמוד", cohYieldS:"% הסמכה", dropCourses:"📂 גררו את תוכנית הקורסים לכל מקום — בכל מבנה",
+  hpT:"כמה לגייס", hpQ:"הקורסים מספיקים?", tipHp:"חודש אחרי חודש, לפי התחזית: האם הקורסים מביאים מספיק נציגים כדי להחזיק את יעד המענה? אם לא — כמה נציגים להוסיף, לאיזה קורס (המוקדם קודם, עד גודל הכיתה), והאם לפתוח קורס נוסף.", hpBarAr:"נדרשים ל{m} {t}% עד {d}", hpBarHc:"יעד מצבה עד {d}", hpBarHave:"הקורסים שלך מביאים עד אז", hpBarWith:"עם הנציגים הנוספים", hpModeHc:"מצבה", hpBy:"עד", tipHpAttr:"כמה נציגים עוזבים בחודש — אותו ערך כמו בהגדרות מתקדמות ← דינמיקת כוח אדם. מקטין את המצבה של היום ואת בוגרי הקורסים.",
   hpUnreach:"הוספת אנשים לבדה לא תביא ל{m} {t}% בביקוש ובמשך השיחה של היום.",
-  hpGoalAr:"כדי להגיע ל{m} {t}% עד {d}", hpGoalHc:"כדי להגיע ל־{n} נציגים עד {d}", hpRecruits:"חניכים נוספים לגייס",
+  hpGoalAr:"כדי להגיע ל{m} {t}% עד {d}", hpGoalHc:"כדי להגיע ל־{n} נציגים עד {d}", hpRecruits:"נציגים נוספים לגייס",
   hpNeed:"נדרשים {n} על המשמרות · התוכנית מביאה {b}", hpOk:"כן — אין צורך לגייס עוד",
   hpNew:"קורס חדש", hpLate:"מסיים אחרי התאריך", hpApply:"✓ לעדכן את הקורסים המסומנים",
-  hpAfter:"← {m} ≈ {v}% עד {d}", hpApplied:"+{n} חניכים נוספו לקורסים", faTune:"⚙ כוונון", friSumNow:"{n} בשישי הזה",
+  hpAfter:"← {m} ≈ {v}% עד {d}", hpApplied:"+{n} נציגים נוספו לקורסים", faTune:"⚙ כוונון", friSumNow:"{n} בשישי הזה",
   relPts:"נק׳", relHrs:"ש׳", relFoot:"{n} תקופות בפועל · תקופות תחזית לא נכללות (אלה מספרי המודל עצמו) · קשר, לא הוכחה לסיבה"
 }};
 let lang="en";
@@ -3831,14 +3839,17 @@ function parseIronGrid(grid){
     if(di===null||di>5) continue;
     const s=m.start!=null?normTimeAny(row[m.start]):null;
     const en=m.end!=null?normTimeAny(row[m.end]):null;
-    if(s&&en&&en>s){
-      if(!e.days[di]){ const h=(toMinW(en)-toMinW(s))/60; e.days[di]={s,e:en,h}; e.contracted+=h; total+=h; }
+    if(s&&en&&en>s){ const h=(toMinW(en)-toMinW(s))/60, w=e.days[di];
+      if(!w){ e.days[di]={s,e:en,h,parts:[[s,en]]}; e.contracted+=h; total+=h; }
+      else if(!w.parts.some(([a,b])=>s<b&&a<en)){ w.parts.push([s,en]); w.parts.sort((x,y)=>x[0]<y[0]?-1:1); [w.s,w.e]=w.parts[0]; w.h+=h; e.contracted+=h; total+=h; } // a split shift: another part (a repeated row is skipped)
     }else e.missing.add(di); // no hours in the cell (חוזה / ללא שישי / empty / any text) = does NOT work that day — never a validation error
   }
   if(!emps.size) return false;
   state.iron={emps,total}; state.ironManual=false;
   return true;
 }
+/* the parts of a rep's iron day: [[s,e],…] — one for a regular shift, more for a split one (an iron saved before splits: one) */
+function ironParts(w){ return w?(w.parts&&w.parts.length?w.parts:w.s&&w.e?[[w.s,w.e]]:[]):[]; }
 function walkRosterExtras(grid,hd){
   const m=hd.map;
   state.rosterMeta=new Map(); state.vacations=[]; state.schedRows=[]; state.unallocRows=[];
@@ -4098,9 +4109,9 @@ function renderReadiness(){
   if(!d) html+=`<p class="mini ouHint">${t("ouPickHint")}</p>`;
   else{ // the picked day, by hour (same picture) + its statuses
     const hrs=new Set(Object.keys(d.req).map(tm=>tm.slice(0,2)));
-    if(!hrs.size) d.iron.forEach(r=>halfHoursBetween(r.w.s,r.w.e).forEach(tm=>hrs.add(tm.slice(0,2))));
+    if(!hrs.size) d.iron.forEach(r=>ironParts(r.w).forEach(([a,b])=>halfHoursBetween(a,b).forEach(tm=>hrs.add(tm.slice(0,2)))));
     const hcols=[...hrs].sort().map(h=>{ const hh=[h+":00",h+":30"];
-      const av=hh.reduce((a,tm)=>a+d.iron.filter(r=>halfHoursBetween(r.w.s,r.w.e).includes(tm)).reduce((x,r)=>x+r.k,0),0)/2;
+      const av=hh.reduce((a,tm)=>a+d.iron.filter(r=>ironParts(r.w).some(([s,e])=>halfHoursBetween(s,e).includes(tm))).reduce((x,r)=>x+r.k,0),0)/2;
       const nv=hh.filter(tm=>d.req[tm]!=null), need=nv.length?nv.reduce((a,tm)=>a+d.req[tm],0)/nv.length:null;
       return {key:h,label:h,need,avail:av,tip:h+":00"+(need!=null?"\n"+t("ouTipNeedH",{n:fmt(need)}):"")+"\n"+t("ouTipIronH",{a:fmt(av)})}; });
     const dm=stDay.get(d.ds);
@@ -4191,6 +4202,15 @@ function renderFriCard(card,wk){
   card.querySelectorAll(".friEverySeg button").forEach(b=>b.classList.toggle("active",+b.dataset.v===every));
   const esc=v=>String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
   const fri=addDays(wk,5), prev=addDays(wk,-2), last=friLast(wk), wkSet=new Set(weekDates(wk));
+  // the scheduler's copy is a REQUIRED step of "Before running" — only when building from the iron, the rotation is on,
+  // the iron has Friday reps and last Friday isn't known yet; it asks for last week's sidur and nothing else
+  const req=card.dataset.wk==="sch";
+  if(req){ const fr=state.settings.schedMode==="generateIron"&&!!state.iron&&[...state.iron.emps.values()].some(e=>e.days&&e.days[5]&&e.days[5].h>0);
+    const need=fr&&every===2&&!last, pick=fr&&every===1; // required: last Friday unknown · your pick "every Friday": the switch stays
+    card.style.display=need||pick?"":"none"; card.dataset.need=need?"1":""; card.querySelector(".friSum").textContent="";
+    card.querySelector(".reqTag").style.display=need?"":"none";
+    const tl=card.querySelector("[data-fri-t]"); if(tl){ tl.dataset.i18n=need?"friReqT":"friRotT"; tl.textContent=t(tl.dataset.i18n); }
+    if(!need){ box.innerHTML=""; return; } }
   const empty=sidurEmpty()||!state.schedRows.some(r=>wkSet.has(r.ds)&&r.h>0); // a week with no shifts yet: who is due
   const metaOf=n=>{ const m=state.rosterMeta.get(n)||{}, e=(state.iron&&state.iron.emps.get(n))||{}; return {team:m.team||e.team||"",skill:m.skill||e.skill||"",site:m.site||e.site||""}; };
   const pass=n=>wfPass(metaOf(n));
@@ -4213,7 +4233,7 @@ function renderFriCard(card,wk){
   }else{
     if(!empty) groups.push({k:"onAll",c:"#1e9e5a",names:[...now]});
   }
-  const shown=groups.filter(g=>g.names.length);
+  const shown=req?[]:groups.filter(g=>g.names.length); if(req) html="";
   html+=shown.map(g=>{ const byT={}; g.names.forEach(n=>{ const tm=metaOf(n).team||"—"; (byT[tm]=byT[tm]||[]).push(n); });
     return `<details class="drl friG"${g.open?" open":""}><summary title="${esc(t("friTip_"+g.k))}"><i style="background:${g.c}"></i>${t("fri_"+g.k)}<b>${g.names.length}</b>`
       +`<button type="button" class="linklike friCopy" data-k="${g.k}" title="${esc(t("friCopyTip"))}">📋</button></summary>`
@@ -4226,7 +4246,7 @@ function renderFriCard(card,wk){
     const txt=t("fri_"+g.k)+" — "+fmtD(fri)+"\n"+Object.entries(byT).map(([tm,ns])=>tm+"\n"+ns.sort().map(n=>"  "+n+(stFri.has(n)?" ("+stFri.get(n)+")":"")).join("\n")).join("\n\n");
     navigator.clipboard&&navigator.clipboard.writeText(txt); showToast("📋 "+t("wfValCopied"),true); }));
   // one sidur is loaded at a time: without last Friday in memory, last week's file adds only its Friday
-  if(!last){ box.insertAdjacentHTML("beforeend",`<div class="dropzone friDz" tabindex="0" role="button"><b>${t("friDropT")}</b><p class="mini">${t("friDropD")}</p><input type="file" accept=".csv,.tsv,.txt,.json,.xlsx,.xlsm,.xls" style="display:none"></div>`);
+  if(!last){ box.insertAdjacentHTML("beforeend",`<div class="dropzone friDz" tabindex="0" role="button">${req?"":`<b>${t("friDropT")}</b>`}<p class="mini">${t("friDropD")}</p><input type="file" accept=".csv,.tsv,.txt,.json,.xlsx,.xlsm,.xls" style="display:none"></div>`);
     const z=box.querySelector(".friDz"), inp=z.querySelector("input");
     ["dragenter","dragover"].forEach(ev=>z.addEventListener(ev,e=>{ e.preventDefault(); z.classList.add("hover"); }));
     ["dragleave","drop"].forEach(ev=>z.addEventListener(ev,e=>{ e.preventDefault(); z.classList.remove("hover"); }));
@@ -4234,13 +4254,13 @@ function renderFriCard(card,wk){
     z.addEventListener("click",()=>inp.click()); z.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); inp.click(); } });
     inp.addEventListener("change",()=>{ if(inp.files[0]) ingestFriFile(inp.files[0]); inp.value=""; }); }
   const due=shown.find(g=>g.k==="due"||g.k==="dueE"), both=shown.find(g=>g.k==="both");
-  card.querySelector(".friSum").textContent=[empty?null:t("friSumNow",{n:now.size}),due?t("fri_"+due.k)+" "+due.names.length:null,both?"⚠ "+both.names.length:null].filter(Boolean).join(" · ");
+  if(!req) card.querySelector(".friSum").textContent=[empty?null:t("friSumNow",{n:now.size}),due?t("fri_"+due.k)+" "+due.names.length:null,both?"⚠ "+both.names.length:null].filter(Boolean).join(" · ");
 }
 async function ingestFriFile(f){
   beginBusy(t("processingName",{n:f.name}));
   try{ await nextPaint(); const got=await ingestFriOnly(f);
     if(!got.length) showToast("⚠ "+t("friNone"),false);
-    else{ showToast("✅ "+t("friGot",{d:got.map(ds=>fmtD(ds).slice(0,5)).join(", ")}),true); renderWorkforce(); renderFriday(); }
+    else{ showToast("✅ "+t("friGot",{d:got.map(ds=>fmtD(ds).slice(0,5)).join(", ")}),true); renderWorkforce(); renderScheduler(); }
   }catch(e){ showToast("⚠ "+t("dropErrParse"),false); }
   finally{ endBusy(); }
 }
@@ -5124,9 +5144,16 @@ function generateIronBaseline(){
   const asg=[],gaps=[],pool=[]; let noFc=0;
   const ruleW=reqs.map((r,i)=>({r,w:2*(reqs.length-i)})); // priority order = weight (same as Mode 1)
   // everyone in the iron is fit to work — statuses typed in the sidur are only flagged (readiness);
-  // a full-day constraint the user set explicitly ("before running") is respected
-  const off=new Set();
-  (state.weeklyConstraints||[]).forEach(c=>{ if(c.ds&&c.type!=="partial") off.add(c.name+"|"+c.ds); });
+  // the week's constraints ("before running") are respected: vacation / can't all day = off; "can only a–b" / "can't a–b" = the hours left
+  const off=new Set(), conBy=new Map();
+  (state.weeklyConstraints||[]).forEach(c=>{ if(!c.ds) return;
+    if(c.type==="vacation"||(c.type==="unavailable"&&!(c.s&&c.e))) off.add(c.name+"|"+c.ds);
+    else if(c.s&&c.e){ const k=c.name+"|"+c.ds; (conBy.get(k)||conBy.set(k,[]).get(k)).push(c); } });
+  const segsOf=(name,ds,a,b)=>{ let S=[[a,b]]; for(const c of conBy.get(name+"|"+ds)||[]){ const x=mins(c.s), y=mins(c.e); if(!(y>x)) continue;
+      S=c.type==="partial"?S.map(([p,q])=>[Math.max(p,x),Math.min(q,y)]):S.flatMap(([p,q])=>[[p,Math.min(q,x)],[Math.max(p,y),q]]); S=S.filter(([p,q])=>q-p>=30); }
+    return S; };
+  const fitWin=(name,ds,s,e)=>{ const a=mins(s), b=mins(e), S=segsOf(name,ds,a,b); if(S.length===1&&S[0][0]===a&&S[0][1]===b) return {s,e,src:"base"};
+    const L=S.sort((x,y)=>(y[1]-y[0])-(x[1]-x[0]))[0]; return L&&L[1]-L[0]>=60?{s:toTm(L[0]),e:toTm(L[1]),src:"adj"}:null; }; // a fixed window: the longest piece left
   for(const ds of wk){
     const di=fromISO(ds).getDay();
     const c=computeDay(ds);
@@ -5135,19 +5162,22 @@ function generateIronBaseline(){
     const tms=Object.keys(req).sort();
     if(!tms.length){ noFc++;
       for(const [name,e] of iron){ const w=e.days&&e.days[di]; if(!w||!w.s||!w.e||off.has(name+"|"+ds)||(di===5&&friW(name,wkS)===0)) continue;
-        asg.push({name,ds,di,s:w.s,e:w.e,src:"base"}); }
+        for(const [a,b] of ironParts(w)){ const f=fitWin(name,ds,a,b); if(f) asg.push({name,ds,di,...f}); } }
       continue; }
     const dayStartM=mins(tms[0]), dayEndM=mins(tms[tms.length-1])+30;
     // placeable units = each in-scope iron employee's contracted window THIS weekday
     // (the demand model is the frontline queue, so only answering skills are placed)
-    const units=[];
+    const units=[], fixedParts=[];
     for(const [name,e] of iron){
       const w=e.days&&e.days[di]; if(!w||!w.s||!w.e) continue;
       if(off.has(name+"|"+ds)||(di===5&&friW(name,wkS)===0)) continue; // worked last Friday → off this one
       const sk=skillOf(name);
-      if(!inScope(sk)){ asg.push({name,ds,di,s:w.s,e:w.e,src:"base"}); continue; } // other queues: not placed against this demand
-      const dur=mins(w.e)-mins(w.s); if(dur<30) continue;
-      units.push({name,dur,skill:sk});
+      if(!inScope(sk)){ for(const [a,b] of ironParts(w)){ const f=fitWin(name,ds,a,b); if(f) asg.push({name,ds,di,...f}); } continue; } // other queues: not placed against this demand
+      if(ironParts(w).length>1){ for(const [a,b] of ironParts(w)){ const f=fitWin(name,ds,a,b); if(f) fixedParts.push({u:{name,dur:mins(f.e)-mins(f.s),skill:sk,adj:f.src==="adj"},s:mins(f.s)}); } continue; } // split: kept, counted
+      let dur=mins(w.e)-mins(w.s); if(dur<30) continue;
+      const segs=segsOf(name,ds,dayStartM,dayEndM), fit=segs.some(([a,b])=>Math.ceil(a/30)*30+dur<=b), adj=!fit;
+      if(!fit){ const L=Math.max(0,...segs.map(([a,b])=>b-Math.ceil(a/30)*30)); if(L<60) continue; dur=Math.floor(L/30)*30; } // the hours they can: a shorter shift
+      units.push({name,dur,skill:sk,segs,adj});
     }
     const staff={},skl={};
     tms.forEach(tm=>{ staff[tm]=0; skl[tm]={}; });
@@ -5162,13 +5192,14 @@ function generateIronBaseline(){
       return g;
     };
     const bestStart=u=>{ let bg=-1,bs=null;
-      for(let s=dayStartM;s+u.dur<=dayEndM;s+=30){ const g=gainAt(u,s); if(g>bg){ bg=g; bs=s; } }
+      for(const [a,b] of u.segs) for(let s=Math.ceil(a/30)*30;s+u.dur<=b;s+=30){ const g=gainAt(u,s); if(g>bg){ bg=g; bs=s; } } // only the hours they can
       return {g:bg,s:bs}; };
     const place=(u,startM)=>{
       for(let m=startM;m<startM+u.dur;m+=30){ const tm=toTm(m); if(staff[tm]!=null) staff[tm]++;
         if(u.skill&&skl[tm]) skl[tm][u.skill]=(skl[tm][u.skill]||0)+1; }
-      asg.push({name:u.name,ds,di,s:toTm(startM),e:toTm(startM+u.dur),src:"base"});
+      asg.push({name:u.name,ds,di,s:toTm(startM),e:toTm(startM+u.dur),src:u.adj?"adj":"base"});
     };
+    fixedParts.forEach(x=>place(x.u,x.s)); // split shifts first, at their hours — the greedy fills around them
     // greedy: each round place the unit whose best start gives the biggest gain,
     // while a positive gain exists (submodular ~1−1/e). Leftovers → surplus pool.
     const remaining=units.slice();
@@ -6022,9 +6053,12 @@ function renderScheduler(){
   if(gr) gr.disabled=!genReady;
   if(gg) gg.style.display=genReady?"none":"block";
   renderSchWeek();
-  { // the folded prep section says what's already set — no need to open it to know
+  { // the folded prep section says what's already set — and what is still required — no need to open it to know
     const ps=document.getElementById("schPrepSum"), nc=state.weeklyConstraints.length, nr=(state.settings.skillReqs||[]).length;
-    if(ps) ps.textContent=nc||nr?"· "+[nc?t("schPrepCon",{n:nc}):"",nr?t("schPrepRules",{n:nr}):""].filter(Boolean).join(" · "):""; }
+    const pr=document.getElementById("schPrep"), fr=document.getElementById("wfFriCard"), need=!!fr&&fr.dataset.need==="1";
+    if(ps) ps.innerHTML=[need?`<span class="reqTag">${t("prepReqFri")}</span>`:"",nc?t("schPrepCon",{n:nc}):"",nr?t("schPrepRules",{n:nr}):""].filter(Boolean).join(" · ");
+    if(pr){ if(need&&pr.dataset.req!=="1") pr.open=true; pr.dataset.req=need?"1":""; }
+    renderConSum(); }
   { // matrix what-ifs are a sandbox: say so where someone might expect the scheduler to obey them
     const wn=document.getElementById("schWiNote"), n=whatIfRows(schWeek()).length;
     if(wn){ wn.style.display=n?"":"none";
@@ -6041,9 +6075,7 @@ function applySchedMode(){
   document.querySelectorAll("#schModeSeg button").forEach(x=>x.classList.toggle("active",x.dataset.mode===state.settings.schedMode));
   const show=(id,on)=>{ const el=document.getElementById(id); if(el) el.style.display=on?"":"none"; };
   // Mode-1-only inputs (presuppose the current published sidur / this week)
-  show("schChipIron",!gen); show("schChipCon",!gen);
-  show("dzSchCon",!gen); show("conManual",!gen); show("schRun",!gen);
-  if(gen){ const nc=document.getElementById("conNameCheck"); if(nc) nc.style.display="none"; }
+  show("schChipIron",!gen); show("schRun",!gen); // constraints count in both modes
   // Mode-2-only inputs
   show("schGenPanel",gen); show("schGenRun",gen);
   { // from iron: point at the answering-skill choice (it decides who is placed against demand)
@@ -6060,9 +6092,80 @@ function applySchedMode(){
   relabel('#schCsv', gen?"schGenCsv":"schCsv");
   relabel('[data-i18n="schGapTitle"],[data-i18n="schGenGapTitle"]', gen?"schGenGapTitle":"schGapTitle"); // Mode 2 has no offers
 }
+/* 📝 CONSTRAINTS FROM THE TEAM MANAGERS — one template for the week: a row per rep (grouped by team), a column per day.
+   In a cell the manager writes when the rep CAN work that day: empty = as in the iron · "until 14:00" · "from 12:00" ·
+   "10:00-14:00" · "can't" · "vacation". The budget: up to settings.conPerRep (2) per rep a week (vacation not counted) and,
+   per team per day, its share of the reps the day can spare = the surplus when the week is built from the iron + forecast. */
+function conPerRep(){ return Math.max(1,Math.min(6,Math.round(+state.settings.conPerRep||2))); }
+function conDayRoom(wk){ // [di]: the iron's staffing ÷ what the forecast needs that day (1 without a forecast) — the roomier, the more constraints
+  return weekDates(wk).slice(0,6).map((ds,di)=>{ const c=state.iron?computeDay(ds):null; let need=0,cap=0;
+    if(c) for(const r of c.rows){ if(!r.rec||r.closed||r.exc||r.nodata) continue; need+=r.reqEff; cap+=ironCapAt(ds,di,r.tm); }
+    return need>0&&cap>0?Math.max(0.2,Math.min(5,cap/need)):1; }); }
+function conPlan(wk){ // each team: its reps and the most constraints a day (the week = reps × the per-rep rule)
+  const P=conPerRep(), room=conDayRoom(wk), teams=conTeams(wk), day=[0,0,0,0,0,0];
+  for(const g of teams){ const on=room.map((_,di)=>g.reps.filter(r=>r.days.has(di)).length), wt=on.map((n,di)=>n*room[di]), tot=wt.reduce((a,b)=>a+b,0);
+    g.week=g.reps.length*P; const raw=wt.map(w=>tot?g.week*w/tot:0), f=raw.map((x,di)=>Math.min(on[di],Math.floor(x))); let left=g.week-f.reduce((a,b)=>a+b,0);
+    raw.map((x,di)=>[x-Math.floor(x),di]).sort((a,b)=>b[0]-a[0]).forEach(([,di])=>{ if(left>0&&f[di]<on[di]){ f[di]++; left--; } });
+    g.day=f; g.week=f.reduce((a,b)=>a+b,0); f.forEach((x,di)=>{ day[di]+=x; }); }
+  return {teams,day}; }
+function conTeams(wk){ // [{team, reps:[{name, days:Set(di in the iron), sh:{di:"08:00-16:00"}}]}] — the iron's reps, else the sidur's
+  const metaOf=n=>state.rosterMeta.get(n)||(state.iron&&state.iron.emps.get(n))||{}, by=new Map();
+  const add=(n,days,sh)=>{ const tm=String(metaOf(n).team||"").trim()||"—"; (by.get(tm)||by.set(tm,[]).get(tm)).push({name:n,days,sh}); };
+  if(state.iron&&state.iron.emps.size){ for(const [n,e] of state.iron.emps){ if(repLeft(n,wk)) continue; const d=new Set(), sh={};
+    for(let di=0;di<6;di++){ const w=e.days&&e.days[di]; if(w&&w.h>0&&!(di===5&&friW(n,wk)===0)){ d.add(di); const P=ironParts(w); if(P.length) sh[di]=P.map(([a,b])=>a+"-"+b).join(" + "); } } if(d.size) add(n,d,sh); } }
+  else for(const n of state.rosterMeta.keys()) add(n,new Set([0,1,2,3,4,5]),{});
+  return [...by].map(([team,reps])=>({team,reps:reps.sort((a,b)=>a.name.localeCompare(b.name,"he"))})).sort((a,b)=>a.team==="—"?1:b.team==="—"?-1:a.team.localeCompare(b.team,"he")); }
+function conTemplate(){
+  const wk=schWeek(); if(!wk){ showToast("⚠ "+t("schNeedData"),false); return; }
+  const ds6=weekDates(wk).slice(0,6), dn=t("days"), teams=conTeams(wk);
+  if(!teams.length){ showToast("⚠ "+t("conTplNone"),false); return; }
+  const W=2+ds6.length, R=[], M=[], col=i=>String.fromCharCode(65+i), line=(v,s)=>{ const r=Array(W).fill(""); r[0]={v,s}; R.push(r); M.push("A"+R.length+":"+col(W-1)+R.length); };
+  line(t("conTplT",{w:isoWeek(wk),a:fmtD(wk).slice(0,5),b:fmtD(ds6[5]).slice(0,5),p:conPerRep()}),"ttl"); line(t("conTplHow"),"txt");
+  R.push([t("conTplName")].concat(ds6.map((ds,i)=>dn[i]+" "+fmtD(ds).slice(0,5)),[t("conTplTeam")]).map(v=>({v,s:"lb"})));
+  // each cell = the iron shift (editable); a day the rep isn't in the iron = "—" (locked, like the names, the days and the team)
+  const cell=(r,di)=>r.days.has(di)?r.sh[di]||"":"—";
+  for(const g of teams) for(const r of g.reps) R.push([{v:r.name,s:"c"}].concat(ds6.map((_,di)=>r.days.has(di)?{v:cell(r,di),s:"ed"}:{v:"—",s:"blk"}),[{v:g.team==="—"?"":g.team,s:"c"},""],ds6.map((_,di)=>cell(r,di))));
+  const n0=4, n1=R.length, P=conPerRep(), V=lang==="he"?"חופש":"vacation", F=`SUMPRODUCT((TRIM($B${n0}:$G${n0})<>$J${n0}:$O${n0})*(TRIM($B${n0}:$G${n0})<>"${V}")*(TRIM($B${n0}:$G${n0})<>"חופש"))`;
+  downloadBytes(t("conTplFile",{w:isoWeek(wk)})+".xlsx",xlsxBytes(R,{name:t("conTplSheet",{w:isoWeek(wk)}),rtl:lang==="he",widths:[24].concat(ds6.map(()=>14),[18,2],ds6.map(()=>12)),merges:M,print:{land:true},protect:true,
+    hide:[8,9,10,11,12,13,14], dv:{sqref:`B${n0}:G${n1}`,f:F+"<="+P,title:t("conXlT"),msg:t("conXlErr",{p:P})}, cf:{sqref:`A${n0}:H${n1}`,f:F+">"+P}}),
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"); }
+/* a header cell that names a day of the scheduling week ("א׳ 08/11", "Sun", "08/11/2026") → its date */
+function conDayCol(cell,dates){ const s=String(cell??"").trim(); if(!s) return null;
+  const m=s.match(/(\d{1,2})[./-](\d{1,2})(?:[./-](\d{2,4}))?/);
+  if(m){ const d=dates.find(x=>+x.slice(8)===+m[1]&&+x.slice(5,7)===+m[2]); if(d) return d; if(m[3]) return normDateAny(m[0]); }
+  const w=s.replace(/^יום\s+/,"").split(/\s+/)[0], di=dayIdxOf(w); return di!=null&&di>=0&&dates[di]?dates[di]:null; }
+/* one cell of the template: when the rep CAN work that day → a constraint (null = no constraint, "?" = not understood) */
+function conCell(v,di,base,pre){ const s=String(v??"").trim(); // base = the iron shift that day; pre = the file came filled with the iron
+  if(!s) return pre&&base?{type:"unavailable",s:null,e:null}:null; // the shift deleted = can't come
+  if(/^[-—–.✓v]+$/i.test(s)) return null; if(typeof v==="number"||/^\d*\.\d+$/.test(s)) return "?"; // a bare Excel time: no "until" / "from"
+  if(/חופש|vacation|holiday/i.test(s)) return {type:"vacation",s:null,e:null};
+  if(/לא\s*(יכול|יכולה|זמין|זמינה|עובד|עובדת)|^x$|^✗$|^off$|unavail|can'?t|cannot|not available/i.test(s)) return {type:"unavailable",s:null,e:null};
+  const T=(s.match(/\d{1,2}(?::\d{2})?/g)||[]).map(x=>normTimeAny(x.includes(":")?x:x+":00")).filter(Boolean);
+  if(T.length>=2&&T.length%2===0&&T.every((x,i)=>!i||x>T[i-1])){ const B=base?base.flat().map(normTimeAny):null;
+    if(B&&B.length===T.length&&B.every((x,i)=>x===T[i])) return null; // unchanged = no constraint
+    const out=[{type:"partial",s:T[0],e:T[T.length-1]}]; for(let i=1;i+1<T.length;i+=2) out.push({type:"unavailable",s:T[i],e:T[i+1]}); // the gaps between windows
+    return out.length>1?out:out[0]; }
+  if(T.length===1){ if(/עד|until|till|before|לפני/i.test(s)) return {type:"partial",s:"00:00",e:T[0]};
+    if(/^\s*(מ|החל|אחרי|from|after|since)|והלאה|ואילך|onwards?/i.test(s)) return {type:"partial",s:T[0],e:"23:59"}; }
+  return "?"; }
+/* the template read back: a header with a name column and ≥ 3 day columns; team rows (no name) are skipped */
+function parseConMatrix(grid){ const wk=schWeek(), dates=wk?weekDates(wk):[];
+  for(let r=0;r<Math.min(20,grid.length);r++){ const row=grid[r]||[], nc=row.findIndex(c=>matchHeader(c)==="name"); if(nc<0) continue;
+    const days=row.map((c,i)=>i===nc?null:{c:i,ds:conDayCol(c,dates)}).filter(x=>x&&x.ds); if(days.length<3) continue;
+    const out=[], names=new Set(); let bad=0;
+    const base=(n,di)=>{ const e=state.iron&&state.iron.emps.get(n), P=ironParts(e&&e.days&&e.days[di]); return P.length?P:null; };
+    const rows=grid.slice(r+1).filter(x=>x&&String(x[nc]??"").trim());
+    // the file came filled with the iron when some cell still holds a rep's iron shift — then an empty cell means "can't"
+    const pre=rows.some(x=>{ const n=String(x[nc]).trim(); return days.some(d=>{ const b=base(n,fromISO(d.ds).getDay()); return b&&conCell(x[d.c],0,b,false)===null&&String(x[d.c]??"").trim(); }); });
+    for(const x of rows){ const name=String(x[nc]).trim(); names.add(name);
+      for(const d of days){ const di=fromISO(d.ds).getDay(), c=conCell(x[d.c],di,base(name,di),pre); if(c==="?"){ bad++; continue; } if(c) [].concat(c).forEach(k=>out.push({name,ds:d.ds,...k})); } }
+    return {out,names,bad}; }
+  return null; }
 function parseConstraintsGrid(grid){
   const hd=findHeader(grid);
-  if(!hd||(hd.map.name==null&&hd.map.empid==null)||hd.map.date==null) throw {code:"noheader",headers:hd?hd.raw:grid[0]};
+  if(!hd||(hd.map.name==null&&hd.map.empid==null)||hd.map.date==null){ // the managers' template: a column per day
+    const mx=parseConMatrix(grid); if(!mx||!mx.names.size) throw {code:"noheader",headers:hd?hd.raw:grid[0]};
+    return conMerge(mx.out,mx.names,mx.bad); }
   const m=hd.map, out=[];
   for(let r=hd.row+1;r<grid.length;r++){
     const row=grid[r]; if(!row) continue;
@@ -6075,9 +6178,27 @@ function parseConstraintsGrid(grid){
     out.push({name,ds,s,e,type});
   }
   if(!out.length) throw {code:"nodata",skipped:0};
-  state.weeklyConstraints=out;
-  return {type:"constraints",rows:out.length};
+  return conMerge(out,new Set(out.map(c=>c.name)),0);
 }
+/* a file replaces only its own reps' constraints — each manager's file adds to the others' */
+function conMerge(out,names,bad){ const P=conPerRep(), days=new Map(), cut=[];
+  out.forEach(c=>{ if(c.type!=="vacation"){ const s=days.get(c.name)||days.set(c.name,new Set()).get(c.name); s.add(c.ds); } });
+  const drop=new Set(); for(const [n,s] of days){ const D=[...s].sort(); D.slice(P).forEach(ds=>{ drop.add(n+"|"+ds); cut.push({name:n,ds}); }); }
+  state._conCut=(state._conCut||[]).filter(x=>!names.has(x.name)).concat(cut);
+  out=out.filter(c=>c.type==="vacation"||!drop.has(c.name+"|"+c.ds));
+  state.weeklyConstraints=state.weeklyConstraints.filter(c=>!names.has(c.name)).concat(out);
+  return {type:"constraints",rows:out.length,reps:names.size,bad,cut:cut.length}; }
+/* what the managers asked, against the budget — said only when something is over (silence when all is well) */
+function renderConSum(){ const el=document.getElementById("conSum"); if(!el) return;
+  const pr=document.getElementById("conPerRep"); if(pr&&document.activeElement!==pr) pr.value=conPerRep();
+  const wk=schWeek(), C=state.weeklyConstraints; if(!wk||!C.length){ el.innerHTML=""; return; }
+  const ds6=new Set(weekDates(wk)), P=conPerRep(), per=new Map(), day=new Map(), esc=v=>String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+  const seen=new Set(); C.forEach(c=>{ if(!ds6.has(c.ds)||c.type==="vacation"||seen.has(c.name+"|"+c.ds)) return; seen.add(c.name+"|"+c.ds); per.set(c.name,(per.get(c.name)||0)+1); (day.get(c.ds)||day.set(c.ds,new Set()).get(c.ds)).add(c.name); });
+  const over=[...per].filter(([,n])=>n>P), Q=conPlan(wk).day, dn=t("days"), di=ds=>fromISO(ds).getDay();
+  const hot=[...day].filter(([ds,s])=>di(ds)<6&&s.size>Q[di(ds)]).sort((a,b)=>a[0]<b[0]?-1:1);
+  const cut=(state._conCut||[]).filter(x=>ds6.has(x.ds)), cutBy=new Map(); cut.forEach(x=>(cutBy.get(x.name)||cutBy.set(x.name,[]).get(x.name)).push(dn[di(x.ds)]));
+  el.innerHTML=(cut.length?`<p class="bad">✂ ${t("conCutN",{n:cutBy.size,p:P})}: ${[...cutBy].map(([n,d])=>esc(n)+" ("+d.join(", ")+")").join(" · ")}</p>`:"")+(over.length?`<p class="bad">⚠ ${t("conOverRep",{n:over.length,p:P})}: ${over.map(([n,k])=>esc(n)+" ("+k+")").join(", ")}</p>`:"")
+    +(hot.length?`<p class="bad">⚠ ${hot.map(([ds,s])=>t("conOverDay",{d:dn[di(ds)],n:s.size,q:Q[di(ds)]})).join(" · ")}</p>`:""); }
 /* ---------- WFM 2.0 wiring ---------- */
 document.getElementById("wfValCsv").addEventListener("click",()=>{
   if(!state.validationErrors.length) return;
@@ -6184,8 +6305,8 @@ function ingestConstraintsFile(f){
         catch(err){ lastErr=err; }
       }
       if(!stats) throw lastErr||{code:"noheader"};
-      showToast("✅ "+t("schConOk",{n:stats.rows}),true);
-      renderScheduler();
+      showToast("✅ "+t("schConOk",{n:stats.rows})+(stats.reps?" · "+t("schConReps",{r:stats.reps}):"")+(stats.cut?" · ✂ "+t("schConCut",{c:stats.cut,p:conPerRep()}):"")+(stats.bad?" · ⚠ "+t("schConBad",{b:stats.bad}):""),!stats.bad&&!stats.cut);
+      saveData(); renderScheduler();
     }catch(err){ showToast("⚠ "+t("dropErrParse"),false); }
     finally{ endBusy(); }
   })(); };
@@ -6193,6 +6314,8 @@ function ingestConstraintsFile(f){
   r.readAsArrayBuffer(f);
 }
 wireDropzone("dzSchCon","schConInput",ingestConstraintsFile);
+document.getElementById("conTplBtn").addEventListener("click",conTemplate);
+document.getElementById("conPerRep").addEventListener("change",e=>{ state.settings.conPerRep=Math.max(1,Math.min(6,Math.round(+e.target.value)||2)); saveState(); renderScheduler(); });
 /* =====================================================================
    SHIFT-EXTENSION OFFERS — who to ask to come earlier / stay later.
    For each contiguous uncovered-demand block, adjacent assignments are
@@ -7827,7 +7950,7 @@ function ironCapAt(ds,dayIdx,tm){
       const m=state.rosterMeta.get(n)||{}, sk=String(m.skill||e.skill||"").trim();
       if(sc&&sc.length&&sk&&!sc.includes(sk)) continue;
       const k=dayIdx===5?friW(n,wk):1; if(!k) continue;
-      for(const h of halfHoursBetween(w.s,w.e)) day[h]=(day[h]||0)+k; } }
+      for(const [a,b] of ironParts(w)) for(const h of halfHoursBetween(a,b)) day[h]=(day[h]||0)+k; } }
   return day[tm]||0;
 }
 /* what the realistic lens changes in a week, in people (for its hover): graduates in, leavers out */
@@ -9024,8 +9147,18 @@ function weightedTSF(scale){
    matrix math (evalInterval) with parametrized effective-agent share +
    an AHT multiplier. Non-destructive: never mutates state.settings.
    ============================================================ */
-const HORIZON_DAYS=90;                      // shared 90-day horizon for both recruit charts
-const WI_WEEKS=Math.ceil(HORIZON_DAYS/7);   // 13 weekly points spanning ~90 days
+/* 📅 THE PLAN DATE — one date for the whole Recruitment page: both charts end on it, the plan's months run to it and
+   the executive report measures the change up to it. Default = the forecast's end (30 days … 6 months ahead, else
+   90 days); the manager can pick any date from 2 weeks to a year ahead (settings.planTo). */
+function planToAuto(){ const today=iso(new Date()), h=state.horizonISO, max=addDays(today,183);
+  return h&&h>=addDays(today,30)?(h<max?h:max):addDays(today,90); }
+function planTo(){ const v=state.settings.planTo, today=iso(new Date());
+  return v&&v>=addDays(today,14)&&v<=addDays(today,366)?v:planToAuto(); }
+function planDays(){ return Math.max(14,Math.round((fromISO(planTo())-fromISO(iso(new Date())))/86400000)); }
+function renderPlanTo(){ const inp=document.getElementById("planTo"); if(!inp) return; const today=iso(new Date()), v=planTo(), own=v===state.settings.planTo&&v!==planToAuto();
+  inp.min=addDays(today,14); inp.max=addDays(today,366); if(document.activeElement!==inp) inp.value=v;
+  const w=document.getElementById("planToW"); if(w) w.title=t(own?"planToTipOwn":"planToTip",{d:fmtD(planToAuto())});
+  const b=document.getElementById("planToBack"); if(b) b.style.display=own?"":"none"; }
 let _wiTouched=false; // once the user drags a slider, stop auto-syncing to real settings
 function wiSun(){ if(!state.maxDate) return null; const s=addDays(sundayOf(state.maxDate),7);
   return state.horizonISO&&addDays(s,5)<=state.horizonISO?s:sundayOf(state.maxDate); }
@@ -9064,16 +9197,17 @@ function whatIfCurve(wi,extra){
   const attr=S.attrition*(1-wi.attrCut/100);
   const av=(1-shrink/100)*(1-absence/100), effShare=Math.max(0.05,(av+(+wi.availPts||0)/100)*calib); // availPts: points of availability (shadow price)
   const ahtMul=1-wi.ahtCut/100;
-  for(let w=0;w<=WI_WEEKS;w++){
-    const day=w*7;
+  const D=planDays(), W=Math.ceil(D/7);
+  for(let w=0;w<=W;w++){
+    const day=Math.min(D,w*7); // weekly points, the last one on the plan date
     const grads=state.cohorts.concat(extra||[]).filter(c=>c.start&&cohortFloorDate(c)>today&&cohortFloorDate(c)<=addDays(today,day)&&cohortMatchesSkill(c,SH.skillF)).reduce((a,c)=>a+cohortEffective(c),0); // graduates from today on (earlier ones are in today's team)
     const hc=base*(1-attr/100*(day/30))+grads;   // courses + reduced attrition; profiles handled in projMetric
     const m=projMetric(hc/base,ahtMul,effShare);
-    curve.push({w,m,date:addDays(today,day)});
+    curve.push({w,day,m,date:addDays(today,day)});
     if(meetWeek==null&&m!=null&&m>=tgt) meetWeek=w;
   }
   // "now" is the curve's own week-0 point — the hero and the chart start can never disagree
-  return {curve,now:curve[0].m,end:curve[WI_WEEKS].m,meetWeek,tgt,today};
+  return {curve,now:curve[0].m,end:curve[W].m,meetWeek,tgt,today,days:D};
 }
 function whatIfSyncSliders(){
   ["wiAht","wiAttr","wiShrink","wiAbsence"].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=0; });
@@ -9085,11 +9219,7 @@ function whatIfRun(){
   card.style.display="block";
   const val=id=>+(document.getElementById(id)||{}).value||0;
   const wi={ahtCut:val("wiAht"),attrCut:val("wiAttr"),shrinkCut:val("wiShrink"),absCut:val("wiAbsence")};
-  // current volume-weighted AHT so the handle-time lever can show its resulting value
-  let vw=0,va=0; { const sun=sundayOf(state.maxDate);
-    for(const ds of weekDates(sun)){ const sd=state.days.get(ds); if(!sd) continue;
-      for(const [,rec] of sd){ vw+=rec.volume; va+=rec.aht*rec.volume; } } }
-  const avgAht=vw?va/vw:0;
+  const avgAht=wiAvgAht(); // the handle-time lever shows its resulting value
   const S=state.settings;
   const trim=n=>(Math.round(n*10)/10).toString().replace(/\.0$/,"");
   // each lever shows the RESULTING absolute value (bold) + the improvement delta (muted)
@@ -9111,24 +9241,35 @@ function whatIfRun(){
   const res=whatIfCurve(wi);
   renderWhatIfOut(res);
 }
+/* the current volume-weighted AHT (the last measured week) — the handle-time lever and its shadow price read it */
+function wiAvgAht(){ if(!state.maxDate) return 0; let vw=0,va=0;
+  for(const ds of weekDates(sundayOf(state.maxDate))){ const sd=state.days.get(ds); if(!sd) continue; for(const [,rec] of sd){ vw+=rec.volume; va+=rec.aht*rec.volume; } }
+  return vw?va/vw:0; }
+/* a lever step of v in plain numbers: minutes of the call, attrition points and reps, reps on the phone */
+function shAbs(k,v){ const S=state.settings, hc=scopeHc().hc||0, tr=n=>(Math.round(n*10)/10).toString();
+  const ms=x=>{ x=Math.max(0,Math.round(x)); return Math.floor(x/60)+":"+pad(x%60); };
+  if(k==="ahtCut"){ const a=wiAvgAht(); return a>0?t("shAbsAht",{d:ms(a*v/100),a:ms(a),b:ms(a*(1-v/100))}):""; }
+  if(k==="attrCut"){ const a=+S.attrition||0; return a>0?t("shAbsAttr",{a:tr(a),b:tr(a*(1-v/100)),n:tr(hc*a*v/10000)}):t("shZero"); }
+  const cb=state.calib||1, av=(1-(+S.shrinkage||0)/100)*(1-(+S.absence||0)/100); // the share on the phone, as the What-If counts it
+  return t("shAbsAvail",{a:tr(av*cb*100),b:tr((av+v/100)*cb*100),n:tr(hc*v/100*cb)}); }
 function whatIfRunDebounced(){ cancelAnimationFrame(_wiRaf); _wiRaf=requestAnimationFrame(whatIfRun); }
 /* 💲 SHADOW PRICE — what one step of each What-If lever is worth: answer-rate points (now and at the horizon) and
    trainees the plan no longer needs; with full=true, also the lever alone that would make the extra recruiting unnecessary
    (a binary search on the plan). Steps: handle time 1%, the others 10% of today's value. */
 const WI_LEVERS=[["ahtCut","wiAht",1,30,"%"],["attrCut","wiAttr",10,100,"%"],["availPts","shAvail",1,15,"pt"]]; // availability in points: shrinkage / no-shows / breaks all buy the same thing
 function shadowPrices(full){
-  const z={ahtCut:0,attrCut:0,shrinkCut:0,absCut:0,availPts:0}, c0=whatIfCurve(z), p0=hirePlan(null), t0=p0&&p0.total||0;
+  const z={ahtCut:0,attrCut:0,shrinkCut:0,absCut:0,availPts:0}, c0=whatIfCurve(z), p0=full?hirePlan(null):null, t0=p0&&p0.total||0;
   if(!c0||c0.now==null) return null;
-  return WI_LEVERS.map(([k,lab,step,max,unit])=>{ const sc={...z,[k]:step}, c1=whatIfCurve(sc), p1=hirePlan(sc);
-    const r={k,lab,step,unit,dNow:(c1.now-c0.now)*100,dEnd:(c1.end-c0.end)*100,dT:p1?t0-(p1.total||0):0,need:null};
+  return WI_LEVERS.map(([k,lab,step,max,unit])=>{ const sc={...z,[k]:step}, c1=whatIfCurve(sc);
+    const r={k,lab,step,unit,abs:shAbs(k,step),dNow:(c1.now-c0.now)*100,dEnd:(c1.end-c0.end)*100,need:null};
     if(full&&t0>0){ const ok=v=>{ const p=hirePlan({...z,[k]:v}); return p&&p.total===0; };
       if(ok(max)){ let lo=0,hi=max; while(hi-lo>step){ const m=Math.round((lo+hi)/2/step)*step||step; if(m>=hi) break; if(ok(m)) hi=m; else lo=m; } r.need=hi; } else r.need=-1; }
     return r; }); }
 function renderShadow(){ const box=document.getElementById("wiShadowBox"), d=document.getElementById("wiShadow"); if(!box||!d||!d.open) return;
-  const rows=shadowPrices(false); if(!rows){ box.innerHTML=""; return; } const f=v=>(v>=0?"+":"")+v.toFixed(1);
-  box.innerHTML=`<table class="wiSh"><thead><tr><th></th><th>${t("shStep")}</th><th>${t("shNow")}</th><th>${t("shEnd")}</th><th>${t("shTr")}</th></tr></thead><tbody>`
-    +rows.map(r=>`<tr><th>${t(r.lab)}</th><td>${r.step}${r.unit==="pt"?" "+t("shPt"):"%"}</td><td dir="ltr">${f(r.dNow)}</td><td dir="ltr">${f(r.dEnd)}</td><td>${r.dT>0?"−"+r.dT:"0"}</td></tr>`).join("")
-    +`</tbody></table><p class="mini">${t("shHint")}</p>`; }
+  const rows=shadowPrices(false); if(!rows){ box.innerHTML=""; return; } const f=v=>`<b class="num">${(v>=0?"+":"")+v.toFixed(1)}</b>`;
+  // one sentence per lever: the step, what it is in plain numbers, and what it buys — now and by the plan date
+  box.innerHTML=`<ul class="shList">`+rows.map(r=>`<li><b>${t("shLv_"+r.k,{s:r.step})}</b>${r.abs?" = "+r.abs:""} ${t("shGain",{m:primName(),n:f(r.dNow),e:f(r.dEnd),d:fmtD(planTo()).slice(0,5)})}</li>`).join("")
+    +`</ul><p class="mini">${t("shHint")}</p>`; }
 function renderWhatIfOut(res){
   const hero=document.getElementById("wiHero"), chart=document.getElementById("wiChart");
   if(!hero||!res) return;
@@ -9137,8 +9278,8 @@ function renderWhatIfOut(res){
   // WHEN — the headline a manager acts on
   let when,whenCol;
   if(res.meetWeek===0){ when=t("wiAlready"); whenCol="#0f6a3f"; }
-  else if(res.meetWeek==null){ when=t("wiUnreachBy",{d:fmtD(addDays(res.today,WI_WEEKS*7))}); whenCol="#b3271e"; }
-  else{ when=t("wiBy",{d:fmtD(addDays(res.today,res.meetWeek*7))}); whenCol="#0f6a3f"; }
+  else if(res.meetWeek==null){ when=t("wiUnreachBy",{d:fmtD(addDays(res.today,res.days))}); whenCol="#b3271e"; }
+  else{ when=t("wiBy",{d:fmtD(res.curve[res.meetWeek].date)}); whenCol="#0f6a3f"; }
   // the metric NAME is the unit — show the value in it, not as a bare percent sign
   const nn=nowP==null?"—":Math.round(nowP), en=endP==null?"—":Math.round(endP);
   hero.innerHTML=
@@ -9156,13 +9297,13 @@ function renderWhatIfOut(res){
     const w=480,h=170,pl=12,pr=14,pt=26,pb=28;
     const vals=res.curve.map(c=>c.m==null?null:c.m*100).filter(v=>v!=null);
     const lo=Math.max(0,Math.min(tgtP,...vals)-6), hi=Math.min(100,Math.max(tgtP,...vals)+4), span=(hi-lo)||1;
-    const X=i=>pl+i*(w-pl-pr)/WI_WEEKS, Y=v=>pt+(h-pt-pb)*(1-(v-lo)/span);
+    const D=res.days, N=res.curve.length-1, Xd=d=>pl+d*(w-pl-pr)/D, X=i=>Xd(res.curve[i].day), Y=v=>pt+(h-pt-pb)*(1-(v-lo)/span);
     const pts=res.curve.map((c,i)=>c.m==null?null:[X(i),Y(c.m*100)]).filter(Boolean);
     const line=pts.map(q=>q[0].toFixed(1)+","+q[1].toFixed(1)).join(" ");
     const cross=res.meetWeek!=null&&res.meetWeek>0?X(res.meetWeek):null;
     const baseY=h-pb, yTgt=Y(tgtP), p0=pts[0], pN=pts[pts.length-1];
-    // day-based ticks [0,30,60,90] so the axis matches the capacity-outlook chart exactly
-    const ticks=[0,30,60,90].map(d=>({x:X(d/7),lab:fmtD(addDays(res.today,d)).slice(0,5)}));
+    // four ticks, today → the plan date, the same as the capacity-outlook chart
+    const ticks=[0,1,2,3].map(k=>{ const d=Math.round(D*k/3); return {x:Xd(d),lab:fmtD(addDays(res.today,d)).slice(0,5)}; });
     // the plot is LTR (dates run left→right); force LTR text so RTL page context
     // doesn't flip anchors and run the target/date labels off the edges
     chart.innerHTML=`<svg viewBox="0 0 ${w} ${h}" width="100%" role="img" style="direction:ltr">
@@ -9184,7 +9325,7 @@ function renderWhatIfOut(res){
     const svg=chart.querySelector("svg"), g=svg.querySelector(".wiHov"), tip=chart.querySelector(".wiTip");
     const hide=()=>{ g.style.display="none"; tip.style.display="none"; };
     svg.addEventListener("mousemove",e=>{ const r=svg.getBoundingClientRect(), vx=(e.clientX-r.left)/r.width*w;
-      const i=Math.max(0,Math.min(WI_WEEKS,Math.round((vx-pl)/((w-pl-pr)/WI_WEEKS)))), cu=res.curve[i]; if(!cu||cu.m==null){ hide(); return; }
+      const dv=(vx-pl)/(w-pl-pr)*D, i=res.curve.reduce((b,c,k)=>Math.abs(c.day-dv)<Math.abs(res.curve[b].day-dv)?k:b,0), cu=res.curve[Math.min(N,i)]; if(!cu||cu.m==null){ hide(); return; }
       const x=X(i), y=Y(cu.m*100), v=cu.m*100, gap=tgtP-v;
       g.style.display=""; g.querySelector("line").setAttribute("x1",x); g.querySelector("line").setAttribute("x2",x); g.querySelector("circle").setAttribute("cx",x); g.querySelector("circle").setAttribute("cy",y);
       tip.innerHTML=`<b>${fmtD(cu.date)}</b> · ${primName()} ${v.toFixed(1)}%<br>${t("wiTargetN",{t:Math.round(tgtP)})}: ${gap>0.05?`<span style="color:#b3271e">${t("wiGap",{g:gap.toFixed(1)})}</span>`:"✓"}`;
@@ -9238,7 +9379,7 @@ function renderOutlook(plan){
   const base=(plan&&plan.hc>0)?plan.hc:state.settings.headcount;
   const skillF=plan?plan.skillF:null;
   if(base<=0){ coData=null; return; }
-  const days=HORIZON_DAYS; // same 90-day span as the What-If chart
+  const days=planDays(); // today → the plan date, as the What-If chart
   const vals=[]; for(let d=0;d<=days;d++) vals.push(hcAtDay(d,true,base,skillF));
   const w=520,h=130,pl=34,pr=10,pt=8,pb=20;
   const min=Math.floor(Math.min(...vals)*0.98), max=Math.ceil(Math.max(...vals)*1.02);
@@ -9248,7 +9389,7 @@ function renderOutlook(plan){
   const line=pts.map(q=>q[0].toFixed(1)+","+q[1].toFixed(1)).join(" ");
   const ticks=[min,(min+max)/2,max];
   const today=iso(new Date());
-  const xlabs=[[0,t("capToday")],[30,fmtD(addDays(today,30)).slice(0,5)],[60,fmtD(addDays(today,60)).slice(0,5)],[90,fmtD(addDays(today,90)).slice(0,5)]];
+  const xlabs=[0,1,2,3].map(k=>{ const d=Math.round(days*k/3); return [d,k?fmtD(addDays(today,d)).slice(0,5):t("capToday")]; });
   el.innerHTML=`<svg id="coSvg" viewBox="0 0 ${w} ${h}" width="100%" style="display:block;direction:ltr" role="img">
     <defs><linearGradient id="coGrad" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#3fa9f5" stop-opacity=".28"></stop>
@@ -9341,6 +9482,7 @@ function recruitPlan(){
 }
 function renderRecruit(){
   setTimeout(renderShadow,0); // the shadow-price table follows the data when it is open
+  renderPlanTo();
   { const d=document.getElementById("trajCard"); if(d){ d.open=!state.settings.trajFold;
     if(!d._w){ d._w=1; d.addEventListener("toggle",()=>{ if(!!state.settings.trajFold===!d.open) return; state.settings.trajFold=!d.open; saveState(); }); } } }
   const S=state.settings;
@@ -9441,7 +9583,7 @@ function renderRecruit(){
   const add=(txt,cls)=>{ const li=document.createElement("li"); li.className=cls||"insight"; li.textContent=txt; ul.appendChild(li); };
   if(!traj) add(t("trajNoData"));
   else{
-    const vars={t:S.target,d:fmtD(state.horizonISO),m:primName()}; // copy adapts to the Primary Target Metric
+    const vars={t:S.target,d:fmtD(planTo()),m:primName()}; // copy adapts to the Primary Target Metric
     // TWO primary insights max — the decision line and the WHERE-to-hire line;
     // trend + model transparency fold into a details row (cognitive load ceiling)
     // the decision line = the training pipeline's answer (hirePlan): ONE number for "how many to recruit"
@@ -9644,20 +9786,25 @@ function xlsxBytes(rows,opt){
   opt=opt||{};
   const esc=v=>String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
   const col=i=>{ let s=""; i++; while(i){ const m=(i-1)%26; s=String.fromCharCode(65+m)+s; i=Math.floor((i-1)/26); } return s; };
-  const XS={hd:1,c:2,blk:3,sp:4,lb:5,ttl:6,txt:7,tm:8,lg:9,shc:10,sepc:11,bc:12,warnc:13}; // named cell styles
+  const XS={hd:1,c:2,blk:3,sp:4,lb:5,ttl:6,txt:7,tm:8,lg:9,shc:10,sepc:11,bc:12,warnc:13,ed:14}; // named cell styles (ed = editable on a locked sheet)
   const NS='xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"', X='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
-  const sheet=X+`<worksheet ${NS}><sheetViews><sheetView workbookViewId="0"${opt.rtl?' rightToLeft="1"':""}/></sheetViews>`
-    +(opt.widths?`<cols>${opt.widths.map((w,i)=>`<col min="${i+1}" max="${i+1}" width="${w}" customWidth="1"/>`).join("")}</cols>`:"")
+  const pr=opt.print; // {land, brk:[row after which a new page starts]}: A4, one page wide, narrow margins — prints right from Excel's defaults
+  const sheet=X+`<worksheet ${NS}>${pr?'<sheetPr><pageSetUpPr fitToPage="1"/></sheetPr>':""}<sheetViews><sheetView workbookViewId="0"${opt.rtl?' rightToLeft="1"':""}/></sheetViews>`
+    +(opt.widths?`<cols>${opt.widths.map((w,i)=>`<col min="${i+1}" max="${i+1}" width="${w}" customWidth="1"${(opt.hide||[]).includes(i)?' hidden="1"':""}/>`).join("")}</cols>`:"")
     +`<sheetData>`+rows.map((r,ri)=>`<row r="${ri+1}">`+r.map((v0,ci)=>{ const o=v0&&typeof v0==="object", v=o?v0.v:v0, ref=col(ci)+(ri+1), st=' s="'+(o?XS[v0.s]??2:ri===0&&opt.header?1:2)+'"';
       return typeof v==="number"?`<c r="${ref}"${st}><v>${v}</v></c>`:`<c r="${ref}"${st} t="inlineStr"><is><t>${esc(v)}</t></is></c>`; }).join("")+`</row>`).join("")
-    +`</sheetData>`+(opt.merges&&opt.merges.length?`<mergeCells count="${opt.merges.length}">${opt.merges.map(m=>`<mergeCell ref="${m}"/>`).join("")}</mergeCells>`:"")+`</worksheet>`;
+    +`</sheetData>`+(opt.protect?'<sheetProtection sheet="1" objects="1" scenarios="1" formatColumns="0" formatRows="0"/>':"")+(opt.merges&&opt.merges.length?`<mergeCells count="${opt.merges.length}">${opt.merges.map(m=>`<mergeCell ref="${m}"/>`).join("")}</mergeCells>`:"")
+    +(opt.cf?`<conditionalFormatting sqref="${opt.cf.sqref}"><cfRule type="expression" dxfId="0" priority="1"><formula>${esc(opt.cf.f)}</formula></cfRule></conditionalFormatting>`:"")
+    +(opt.dv?`<dataValidations count="1"><dataValidation type="custom" allowBlank="1" showErrorMessage="1" errorTitle="${esc(opt.dv.title)}" error="${esc(opt.dv.msg)}" sqref="${opt.dv.sqref}"><formula1>${esc(opt.dv.f)}</formula1></dataValidation></dataValidations>`:"")
+    +(pr?`<printOptions horizontalCentered="1"/><pageMargins left="0.3" right="0.3" top="0.35" bottom="0.35" header="0.2" footer="0.2"/><pageSetup paperSize="9" orientation="${pr.land?"landscape":"portrait"}" fitToWidth="1" fitToHeight="0"/>`
+      +(pr.brk&&pr.brk.length?`<rowBreaks count="${pr.brk.length}" manualBreakCount="${pr.brk.length}">${pr.brk.map(r=>`<brk id="${r}" max="16383" man="1"/>`).join("")}</rowBreaks>`:""):"")+`</worksheet>`;
   const styles=X+`<styleSheet ${NS}><fonts count="4"><font><sz val="11"/><name val="Arial"/></font><font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="Arial"/></font><font><b/><sz val="11"/><name val="Arial"/></font><font><b/><sz val="14"/><name val="Arial"/></font></fonts>`
     +`<fills count="11"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill>${["0D2A4D","D9D9D9","F2F2F2","FFFFFF","FFFFFF","FFFFFF","FFFFFF","FFFFFF","000000"].map(c=>`<fill><patternFill patternType="solid"><fgColor rgb="FF${c}"/><bgColor indexed="64"/></patternFill></fill>`).join("")}</fills>`
     +`<borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FF9AA9B9"/></left><right style="thin"><color rgb="FF9AA9B9"/></right><top style="thin"><color rgb="FF9AA9B9"/></top><bottom style="thin"><color rgb="FF9AA9B9"/></bottom><diagonal/></border></borders>`
-    +`<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="14"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>`
+    +`<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="15"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>`
     +`<xf numFmtId="0" fontId="1" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>`
-    +`<xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>${[[0,3,1],[0,4,1],[2,5,1],[3,0,0],[0,0,0],[2,6,1],[2,7,1],[0,8,1],[0,10,0],[2,0,1],[2,9,1]].map(([f,fi,b])=>`<xf numFmtId="0" fontId="${f}" fillId="${fi}" borderId="${b}" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="${b?"center":"general"}" vertical="center"/></xf>`).join("")}</cellXfs>`
-    +`<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>`;
+    +`<xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>${[[0,3,1],[0,4,1],[2,5,1],[3,0,0],[0,0,0],[2,6,1],[2,7,1],[0,8,1],[0,10,0],[2,0,1],[2,9,1]].map(([f,fi,b])=>`<xf numFmtId="0" fontId="${f}" fillId="${fi}" borderId="${b}" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="${b?"center":"general"}" vertical="center"/></xf>`).join("")}<xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1" applyProtection="1"><alignment horizontal="center" vertical="center"/><protection locked="0"/></xf></cellXfs>`
+    +`<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles><dxfs count="1"><dxf><font><b/><color rgb="FF9C0006"/></font><fill><patternFill><bgColor rgb="FFFFC7CE"/></patternFill></fill></dxf></dxfs></styleSheet>`;
   const R='xmlns="http://schemas.openxmlformats.org/package/2006/relationships"', T="http://schemas.openxmlformats.org/officeDocument/2006/relationships";
   return zipStore({
     "[Content_Types].xml":X+`<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>`,
@@ -9706,7 +9853,7 @@ function breakPlan(ds,over){
   if(sr.length){ const by=new Map(); for(const r of sr){ const o=by.get(r.name)||{name:r.name,h:0,iv:[]}; o.h+=r.h; o.iv.push(span(r.s,r.e)); by.set(r.name,o); } reps=[...by.values()]; }
   else if(state.iron){ let half=0; for(const [n,e] of state.iron.emps){ const w=e.days&&e.days[di];
     if(!w||!w.h||!inSc((state.rosterMeta.get(n)||{}).skill||e.skill)) continue;
-    const k=di===5?friW(n,wk):1; if(!k||(k<1&&half++%2)) continue; reps.push({name:n,h:w.h,iv:[span(w.s,w.e)]}); } } // Friday ½ → every other one
+    const k=di===5?friW(n,wk):1; if(!k||(k<1&&half++%2)) continue; reps.push({name:n,h:w.h,iv:ironParts(w).map(([a,b])=>span(a,b))}); } } // Friday ½ → every other one · a split shift: its parts
   if(!reps.length){ const n=Math.round(Object.values(rows).reduce((x,r)=>x+r.sched*0.5,0)/8); reps=Array.from({length:n},()=>({h:8,iv:[[0,2880]]})); } // no names: the file's staffing ÷ 8h
   const base=reps.length; if(present!=null&&present>=0&&base) reps=Array.from({length:Math.round(present)},(_,i)=>({...reps[i%base],name:null})); // no sidur + "present today"
   const scale=base?reps.length/base:1;
@@ -9733,7 +9880,7 @@ function breakPlan(ds,over){
   const fits=(r,s,d,strict)=>r.iv.some(([a,b])=>s.m>=a+(strict?60:0)&&s.m+d<=b-(strict?30:0));
   const okFor=r=>r.p.map(d=>{ const st=slots.filter(s=>fits(r,s,d,true)); return st.length?st:slots.filter(s=>fits(r,s,d,false)); });
   for(const r of reps){ r.d=Math.max(5,Math.round(r.h)*5); /* whole working hours × 5: clean minutes on the sheet */ r.p=parts(r.d); r.ok=okFor(r);
-    if(r.p.length>1&&!r.ok.every(o=>o.length)){ r.p=[r.d]; r.ok=okFor(r); } } // two don't fit the shift → one
+    for(let k=r.p.length-1;k>=1&&!r.ok.every(o=>o.length);k--){ r.p=brkSplit(r.d,k); r.ok=okFor(r); } } // they don't fit the shift → fewer, longer breaks
   const inW=reps.filter(r=>r.ok.every(o=>o.length)), outside=reps.length-inW.length; // a shift outside the window: its break isn't on this sheet
   inW.sort((a,b)=>Math.min(...a.ok.map(o=>o.length))-Math.min(...b.ok.map(o=>o.length))||b.d-a.d); // the tightest shifts first
   // each break goes where it costs the FEWEST answered calls (losses grow with each extra break in a slot, so this
@@ -9747,10 +9894,10 @@ function breakPlan(ds,over){
       for(const [a,ca] of A) for(const [b,cb] of B){ if(a===b||Math.abs(a.m-b.m)<gap) continue; if(ca+cb<bc-1e-9){ bc=ca+cb; best=[a,b]; } }
       if(best){ take(best[0],r.p[0],1); take(best[1],r.p[1],1); got.push([best[0],r.p[0]],[best[1],r.p[1]]); break; } }
     if(!got.length) return false;
-    for(let i=2;i<r.p.length;i++){ const s=pick(r.ok[i].filter(s=>got.every(([g])=>Math.abs(g.m-s.m)>=60)),r.p[i]);
+    for(let i=2;i<r.p.length;i++){ const far=g=>r.ok[i].filter(s=>got.every(([x])=>Math.abs(x.m-s.m)>=g)), s=pick(far(60),r.p[i])||pick(far(2*step),r.p[i]);
       if(!s){ got.forEach(([g,d])=>take(g,d,-1)); return false; } take(s,r.p[i],1); got.push([s,r.p[i]]); }
     r.got=got; return true; };
-  let placed=0; for(const r of inW) if(place(r)){ placed++; if(r.name) r.got.forEach(([s,d],gi)=>s.names.push([r.name,d,r.p.length>1?(gi?"S":"L"):""])); }
+  let placed=0; for(const r of inW) if(place(r)){ placed++; if(r.name) r.got.forEach(([s,d],gi)=>s.names.push([r.name,d,brkLS(r.p,gi)])); }
   slots.forEach(s=>s.names.sort((a,b)=>a[0].localeCompare(b[0],"he")));
   let vol=0,ans=0,ans0=0; for(const h of Object.values(H)){ vol+=h.r.rec.volume; ans+=val(h,h.B-h.R); ans0+=val(h,h.B); }
   const people=inW.length, avgD=people?Math.round(inW.reduce((x,r)=>x+r.d,0)/people):40, nP=inW.reduce((x,r)=>x+r.p.length,0);
@@ -9806,7 +9953,7 @@ function renderBreaks(){
   if(bp.people){
     const st=bp.placed<bp.people?"bad":bp.extra<bp.spareWant?"warn":"ok", ex=bp.extra;
     const cells=Array.from({length:bp.people},(_,i)=>`<i class="${i<bp.placed?"":"no"}"></i>`).join("")+Array.from({length:ex},()=>'<i class="sp"></i>').join("");
-    const covTip=t("brkLen",{m:bp.avgMin})+(bp.outside?"\n"+t("brkOutside",{n:bp.outside}):"");
+    const covTip=t("brkLen",{m:bp.avgMin,x:brkMaxRun(),a:brkParts(35).join(" + "),b:brkParts(40).join(" + ")})+(bp.outside?"\n"+t("brkOutside",{n:bp.outside}):"");
     hero=`<div class="brkSum"><div class="brkTile ${st}" title="${esc(covTip)}"><span class="brkBig">${st==="bad"?"✗":"✓"} ${bp.placed}/${bp.people}</span>`
       +`<span class="mini">☕ ${t("brkCovL")}${ex?` · +${ex} ${t("brkSpareW")}`:""}</span><span class="brkCov">${cells}</span></div>`;
     const fl=bp.hasFc&&bp.arDay!=null?breakPlan(ds,{flat:true}):null, mAR=dayAR(ds), off=fl&&fl.arDay!=null&&mAR!=null?mAR-fl.arDay:null;
@@ -9842,8 +9989,13 @@ function renderBreaks(){
    ① the board — a row per slot, "place 1…cap" columns of name + minutes; unused places "blocked" (grey),
      catch-up places yellow (only for someone whose break was pushed). mode "tpl" = blank names, "names" = filled.
    ② the owed-break queue  ③ the delayed-break flowchart — the procedure, printed with it */
-/* the long + short split of a rep's break minutes: 60 / 40 in 5-minute steps (7h → 20 + 15 · 10h → 30 + 20 · under 6h → one) */
-function brkParts(d){ if(d<30) return [d]; const L=Math.round(d*0.6/5)*5; return [L,d-L]; }
+/* a rep's break minutes in breaks of at most settings.brk.maxRun minutes in a row (default 20), as even as 5-minute
+   steps allow, the longest first: 7h → 20 + 15 · 8h → 20 + 20 · 10h → 20 + 15 + 15 · 4h → 20 */
+function brkMaxRun(){ return Math.max(5,Math.round((+(state.settings.brk||{}).maxRun||20)/5)*5); }
+function brkSplit(d,k){ k=Math.max(1,Math.min(k,Math.floor(d/5)||1)); const b=Math.floor(d/k/5)*5, o=Array(k).fill(b); let r=d-b*k;
+  for(let i=0;r>=5;i=(i+1)%k){ o[i]+=5; r-=5; } o[0]+=r; return o; }
+function brkParts(d){ return brkSplit(d,Math.ceil(d/brkMaxRun())); }
+function brkLS(p,i){ const mx=Math.max(...p); return p.length>1&&mx>Math.min(...p)?(p[i]===mx?"L":"S"):""; } // bold = the longest, when they differ
 /* the day's break entitlement from the loaded sidur: per rep (answering skills, as the plan) — the shift(s), the hours
    (a split shift = its hours added up), 5 min per working hour, the long + short split. null when the sidur doesn't cover the day */
 function brkEntitle(ds){
@@ -9857,6 +10009,9 @@ function brkCell(s,i,named){ const nN=s.places-s.spare;
   return i<s.places?{k:"sp"}:{k:"blk"}; }
 function brkSheetHtml(bp,mode){
   const named=mode==="names", proc=mode==="proc", rtl=lang==="he", cap=bp.cap, sepS=rtl?"border-right:3px solid #000":"border-left:3px solid #000", dn=t("days")[fromISO(bp.ds).getDay()], esc=v=>String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;");
+  /* one landscape A4 page for the board, at the browser's default print settings: 281 × 194 mm inside the margins —
+     the font follows the places across, the row height the slots down (≥ 6 mm: room to write a name by hand) */
+  const fs=cap<=4?15:cap<=6?13:cap<=8?12:cap<=10?10:9, durMm=cap<=8?10:8, rowMm=Math.max(5.5,Math.min(10,Math.floor((150/((bp.slots.length||1)+2)-1.6)*10)/10)); // the cell height + its padding
   const ln=`<p class="ln">${t("brkDateL")}: <b>${dn} ${fmtD(bp.ds)}</b> &nbsp;&nbsp;&nbsp; ${t("brkSupO")}: ____________ &nbsp;&nbsp;&nbsp; ${t("brkSupC")}: ____________</p>`;
   const bg=c=>` style="background:${c}"`, P=()=>"#FFFFFF", Q=()=>"#FFFFFF";
   let h1=`<tr><th rowspan="2"${bg("#FFFFFF")}>${t("brkTime")}</th>`, h2="<tr>";
@@ -9871,31 +10026,37 @@ function brkSheetHtml(bp,mode){
   const ent0=proc?null:brkEntitle(bp.ds), ent=ent0||(proc?null:[]), entHtml=!ent?"":(()=>{ /* no sidur that day → an empty list to fill by hand */ const H=["#",t("brkEmp"),t("brkEntShifts"),t("brkEntH"),t("brkEntMin"),t("brkEntSplit")];
     const rows=ent.map((o,i)=>{ const f="#FFFFFF", split=o.sh.length>1;
       return `<tr><td${bg(f)}>${i+1}</td><td class="nm"${bg(f)}><b>${esc(o.name)}</b></td><td${st(f,split?"font-weight:700":"")}><bdi dir="ltr">${o.sh.map(x=>x[0]+"–"+x[1]).join(" + ")}</bdi>${split?` <span class="tag">${t("brkEntSplitTag")}</span>`:""}</td>`
-        +`<td${bg(f)}>${(Math.round(o.h*10)/10)}</td><td class="mn"${bg(f)}>${o.d}</td><td${bg(f)}><span class="ls L">${o.p[0]}</span>${o.p[1]?` + <span class="ls S">${o.p[1]}</span>`:""}</td></tr>`; }).join("");
+        +`<td${bg(f)}>${(Math.round(o.h*10)/10)}</td><td class="mn"${bg(f)}>${o.d}</td><td${bg(f)}>${o.p.map((x,j)=>`<span class="ls ${brkLS(o.p,j)}">${x}</span>`).join(" + ")}</td></tr>`; }).join("");
     const bk=Array.from({length:ent.length?6:24},()=>`<tr><td${bg("#FFFFFF")}>+</td><td class="nm"${bg("#FFFFFF")}></td><td${bg("#FFFFFF")}></td><td${bg("#FFFFFF")}></td><td class="mn"${bg("#FFFFFF")}></td><td${bg("#FFFFFF")}></td></tr>`).join("");
-    return `<div class="pb"></div><h2>${t("brkEntT",{d:dn+" "+fmtD(bp.ds)})}</h2><p class="note" style="text-align:center">${t("brkEntNote")}</p>`
+    return `<div class="pb"></div><h2>${t("brkEntT",{d:dn+" "+fmtD(bp.ds)})}</h2><p class="note" style="text-align:center">${t("brkEntNote",{x:brkMaxRun()})}</p>`
       +`<table class="ent"><thead><tr>${H.map(x=>`<th${st("#FFFFFF","border-bottom:2px solid #000")}>${x}</th>`).join("")}</tr></thead><tbody>${rows}`
       +`<tr><td colspan="6" class="bkH"${st("#FFFFFF","border-top:2px solid #000")}>${t(ent.length?"brkEntBackup":"brkEntNoSidur")}</td></tr>${bk}</tbody></table>`; })();
   const box=(a,b,c,span)=>`<tr><td class="fb" colspan="${span||2}"${bg(c)}><b>${a}</b>${b?"<br>"+b:""}</td></tr>`, ar=v=>`<tr><td class="ar" colspan="2">${v||"▼"}</td></tr>`;
-  const flow=box(t("brkF1"),"","#B4C6E7")+ar()+box(t("brkF2"),t("brkF2b"),"#FFF2CC")+ar("▼ "+t("brkF3"))+box(t("brkF4"),t("brkF4b"),"#DDEBF7")+ar()
-    +box(t("brkF5"),"","#FFF2CC")+`<tr><td class="ar">▼</td><td class="ar">▼</td></tr>`
-    +`<tr><td class="fb"${bg("#FFFFFF")}><b>${t("brkF6a")}</b><br>${t("brkF6ab")}</td><td class="fb"${bg("#FFFFFF")}><b>${t("brkF6b")}</b><br>${t("brkF6bb")}</td></tr>`
-    +`<tr><td class="ar">▼</td><td class="ar">▼</td></tr><tr><td class="fb"${bg("#FFFFFF")}>${t("brkF7a")}</td><td class="fb"${bg("#FFFFFF")}>${t("brkF7b")}</td></tr>`
-    +`<tr><td class="ar">▼</td><td class="ar">▼</td></tr><tr><td class="fb"${bg("#FFFFFF")}>${t("brkF8a")}</td><td class="fb"${bg("#FFFFFF")}>${t("brkF8b")}</td></tr>`
-    +ar()+box(t("brkF9"),t("brkF9b"),"#B4C6E7");
+  // the procedure in color, every box: start / end navy · a question amber · an action sky · priority 1 green · priority 2 orange
+  const F={se:"#B4C6E7;border:2px solid #0D2A4D",q:"#FFE699;border:2px solid #BF8F00",a:"#DDEBF7;border:2px solid #2E75B6",p1:"#C6EFCE;border:2px solid #1E7B45",p2:"#F8CBAD;border:2px solid #C55A11"};
+  const fb=(k,x)=>`<td class="fb" style="background:${F[k]}">${x}</td>`, a2=`<tr><td class="ar" style="color:#1E7B45">▼</td><td class="ar" style="color:#C55A11">▼</td></tr>`;
+  const flow=box(t("brkF1"),"",F.se)+ar()+box(t("brkF2"),t("brkF2b"),F.q)+ar("▼ "+t("brkF3"))+box(t("brkF4"),t("brkF4b"),F.a)+ar()
+    +box(t("brkF5"),"",F.q)+a2
+    +`<tr>${fb("p1",`<b>${t("brkF6a")}</b><br>${t("brkF6ab")}`)}${fb("p2",`<b>${t("brkF6b")}</b><br>${t("brkF6bb")}`)}</tr>`
+    +a2+`<tr>${fb("p1",t("brkF7a"))}${fb("p2",t("brkF7b"))}</tr>`
+    +a2+`<tr>${fb("p1",t("brkF8a"))}${fb("p2",t("brkF8b"))}</tr>`
+    +ar()+box(t("brkF9"),t("brkF9b"),F.se);
   return `<!doctype html><html dir="${rtl?"rtl":"ltr"}" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><title>${esc(t("brkBoardT"))} — ${dn} ${fmtD(bp.ds)}</title><style>
-    @page{size:A4 landscape;margin:10mm} @page WordSection1{size:841.9pt 595.3pt;mso-page-orientation:landscape;margin:28pt} div.WordSection1{page:WordSection1}
-    body{font-family:Arial,sans-serif;color:#000;margin:0} thead th{font-weight:700} h2{font-size:17px;margin:0 0 4px;text-align:center} .ln{font-size:12px;margin:0 0 8px;text-align:center}
-    table{border-collapse:collapse;width:100%} th,td{border:1px solid #000;padding:4px 3px;font-size:11px;text-align:center} th.tm{white-space:nowrap;width:44px} th.du{width:30px}
+    @page{size:A4 landscape;margin:8mm} @page WordSection1{size:841.9pt 595.3pt;mso-page-orientation:landscape;margin:22pt} div.WordSection1{page:WordSection1}
+    html,body{-webkit-print-color-adjust:exact;print-color-adjust:exact} @media screen{body{width:281mm}}
+    body{font-family:Arial,sans-serif;color:#000;margin:0} thead th{font-weight:700} thead{display:table-header-group} tr{page-break-inside:avoid} h2{font-size:17px;margin:0 0 4px;text-align:center} .ln{font-size:12px;margin:0 0 6px;text-align:center}
+    table{border-collapse:collapse;width:100%} th,td{border:1px solid #000;padding:3px 3px;font-size:11px;text-align:center} th.tm{white-space:nowrap}
+    table.bd{table-layout:fixed} table.bd th,table.bd td{font-size:${fs}px;height:${rowMm}mm;overflow:hidden} table.bd td.nm{white-space:nowrap;text-overflow:ellipsis}
     td.blk{color:#333} td.sp{border:1px dashed #000} .note{font-size:11px;color:#444;margin:6px 0 2px} .pb{page-break-before:always}
     table.ent{width:86%;margin:0 auto} table.ent td,table.ent th{font-size:12px;padding:5px} td.mn{font-weight:700;font-size:13px} td.bkH{font-weight:700;text-align:start} table.ent tr:last-child td{border-style:dashed}
     .ls{display:inline-block;padding:0 3px} .ls.L{font-weight:700} .tag{font-size:10px;font-weight:700}
     table.q{width:70%;margin:0 auto} table.fl{width:62%;margin:0 auto} table.fl td{font-size:12px;padding:7px} td.ar{border:none;padding:1px;font-size:13px}
     </style></head><body><div class="WordSection1">
-    ${proc?"":`<h2>${t("brkBoardT")}</h2>${ln}<table><thead>${h1}</tr>${h2}</tr></thead><tbody>${board}</tbody></table><p class="note">${t("brkBoardNote")}${named?" · "+t("brkLegLS"):""}</p>${entHtml}
+    ${proc?"":`<div class="bdw"><h2>${t("brkBoardT")}</h2>${ln}<table class="bd"><colgroup><col style="width:15mm">${`<col><col style="width:${durMm}mm">`.repeat(cap)}</colgroup><thead>${h1}</tr>${h2}</tr></thead><tbody>${board}</tbody></table><p class="note">${t("brkBoardNote")}${named?" · "+t("brkLegLS"):""}</p></div>${entHtml}
     <div class="pb"></div><h2>${t("brkQT")}</h2>`}${ln}<p class="note" style="text-align:center">${t("brkQN1")}<br>${t("brkQN2")}<br>${t("brkQN3")}</p>
     ${proc?"":`<table class="q"><thead><tr><th${st("#FFFFFF","border-bottom:2px solid #000")}>#</th><th${st("#FFFFFF","border-bottom:2px solid #000")}>${t("brkEmp")}</th><th${st("#FFFFFF","border-bottom:2px solid #000")}>${t("brkQPri")}</th><th${st("#FFFFFF","border-bottom:2px solid #000")}>${t("brkQSlot")}</th></tr></thead><tbody>${q}</tbody></table>`}
-    ${proc?`<h2>${t("brkFT")}</h2><table class="fl">${flow}</table>`:""}</div></body></html>`;
+    ${proc?`<h2>${t("brkFT")}</h2><table class="fl">${flow}</table>`:""}</div>
+    <script>(function(){ var w=document.querySelector(".bdw"); if(!w) return; var mm=w.getBoundingClientRect().height*25.4/96; if(mm>190) w.style.zoom=(190/mm).toFixed(3); })();<\/script></body></html>`; // the board on one page whatever the names
 }
 function brkExport(kind,mode){
   const bp=state._brkPlan; if(!bp) return; mode=mode||"tpl";
@@ -9920,16 +10081,16 @@ function brkExport(kind,mode){
         if(i<cap-1) row.push(sep); }
       R.push(row); });
     r=blank(); r[0]={v:t("brkBoardNote")+(named?" · "+t("brkLegLS"):""),s:"txt"}; R.push(r); mr(R.length,0,W-1);
-    const ent=brkEntitle(bp.ds)||[]; // the entitlement list, under the board (with blank lines for backups; empty without a sidur)
+    const brkAt=R.length, ent=brkEntitle(bp.ds)||[]; // the entitlement list, under the board (with blank lines for backups; empty without a sidur)
     { R.push(blank()); r=blank(); r[0]={v:t("brkEntT",{d:dn+" "+fmtD(bp.ds)}),s:"ttl"}; R.push(r); mr(R.length,0,W-1);
-      r=blank(); r[0]={v:t("brkEntNote"),s:"txt"}; R.push(r); mr(R.length,0,W-1);
+      r=blank(); r[0]={v:t("brkEntNote",{x:brkMaxRun()}),s:"txt"}; R.push(r); mr(R.length,0,W-1);
       R.push(["#",t("brkEmp"),t("brkEntShifts"),t("brkEntH"),t("brkEntMin"),t("brkEntSplit")].map(v=>({v,s:"lb"})));
       ent.forEach((o,i)=>R.push([{v:i+1,s:"c"},{v:o.name,s:"c"},{v:"‎"+o.sh.map(x=>x[0]+"–"+x[1]).join(" + ")+(o.sh.length>1?" ("+t("brkEntSplitTag")+")":""),s:o.sh.length>1?"warnc":"c"},
         {v:Math.round(o.h*10)/10,s:"c"},{v:o.d,s:"bc"},{v:o.p.join(" + "),s:"c"}]));
       r=blank(); r[0]={v:t(ent.length?"brkEntBackup":"brkEntNoSidur"),s:"sp"}; R.push(r); mr(R.length,0,5);
       for(let i=0;i<(ent.length?6:24);i++) R.push([{v:"+",s:"sp"},{v:"",s:"sp"},{v:"",s:"sp"},{v:"",s:"sp"},{v:"",s:"sp"},{v:"",s:"sp"}]); }
     const wd=[8]; for(let i=0;i<cap;i++){ wd.push(i===0?22:16,i===0?18:6); if(i<cap-1) wd.push(1.2); }
-    downloadBytes(name+".xlsx",xlsxBytes(R,{name:t("brkFile")+" "+fmtD(bp.ds).slice(0,5).replace("/","-"),rtl:lang==="he",widths:wd,merges:M}),
+    downloadBytes(name+".xlsx",xlsxBytes(R,{name:t("brkFile")+" "+fmtD(bp.ds).slice(0,5).replace("/","-"),rtl:lang==="he",widths:wd,merges:M,print:{land:true,brk:[brkAt]}}),
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"); }
   else if(kind==="text"){ const dn=t("days")[fromISO(bp.ds).getDay()];
     const txt=t("brkSheetT",{d:dn+" "+fmtD(bp.ds)})+"\n"+bp.slots.map(s=>s.tm+" — "+(s.names.length?s.names.map(x=>x[0]+" ("+x[1]+")").join(", "):s.places+" "+t("brkPlaces"))+(s.spare?" (+"+s.spare+" "+t("brkCatch")+")":"")).join("\n");
@@ -9946,6 +10107,7 @@ function brkSettings(){ // ⚙ the procedure's rules: first / last break (Friday
   box.innerHTML=f("start","brkFirst",hh("start",c.start,0))
     +f("end","brkLast",hh("end",c.end,0))+f("friEnd","brkLastFri",hh("friEnd",(state.settings.brk||{}).friEnd||"12:00",5))
     +f("step","brkStep",`<input type="number" min="5" max="60" step="5" class="hpIn" data-k="step" value="${c.step}" style="width:56px">`)
+    +f("maxRun","brkMaxRun",`<input type="number" min="5" max="60" step="5" class="hpIn" data-k="maxRun" value="${brkMaxRun()}" style="width:56px">`)
     +f("cap","brkCap",`<input type="number" min="1" max="30" class="hpIn" data-k="cap" value="${c.cap}" style="width:56px">`)
     +f("spare","brkSpare",`<input type="number" min="0" max="50" step="5" class="hpIn" data-k="spare" value="${c.spare??10}" style="width:56px">`)
     +`<p class="hpHint">${t("brkHoursHint")}</p>`;
@@ -11166,7 +11328,7 @@ function renderCohortTable(){
   const sel=state._cohSel=state._cohSel||new Set(); [...sel].forEach(i=>{ if(!state.cohorts[i]) sel.delete(i); });
   const bulk=sel.size?`<div class="cohBulk"><b>${t("crsSelN",{n:sel.size})}</b> <label class="mini">${t("cohYieldS")} <input type="number" min="10" max="100" id="cohBulkY" class="hpIn" style="width:58px"></label> <button type="button" class="btn ghost applymini" id="cohBulkYGo">${t("crsBulkApply")}</button> <button type="button" class="btn ghost applymini" id="cohBulkDel">🗑 ${t("crsBulkDelB")}</button> <button type="button" class="linklike" id="cohBulkNone">${t("crsSelNone")}</button></div>`:"";
   cl.innerHTML=bulk+`<div class="tablewrap"><table class="cohT"><thead><tr><th><input type="checkbox" id="cohAll"${sel.size&&sel.size===state.cohorts.length?" checked":""} title="${esc(t("crsSelAll"))}"></th><th>${t("cohName")}</th><th>${t("cohSite")}</th><th>${t("cohCount")}</th><th>${t("cohStart")}</th><th>${t("cohDurS")}</th><th>${t("cohYieldS")}</th><th>${t("cohFloor")}</th><th>${t("cohReps")}</th><th></th></tr></thead><tbody>`
-    +rows.map(([i,c])=>`<tr data-i="${i}"${ovl[i]?` class="ovl" title="${esc(t("crsOverlap",{n:ovl[i]}))}"`:""}><td><input type="checkbox" class="cohSel" data-i="${i}"${sel.has(i)?" checked":""}></td><td><input class="cohIn" data-k="name" value="${esc(c.name)}"></td>`
+    +rows.map(([i,c])=>`<tr data-i="${i}"${ovl[i]?` class="ovl" title="${esc(ovl[i].why==="site"?t("crsOverlapSite",{n:ovl[i].n,s:ovl[i].s,k:siteAtOnce(ovl[i].s)}):t("crsOverlapRule",{n:ovl[i].n,s:ovl[i].s}))}"`:""}><td><input type="checkbox" class="cohSel" data-i="${i}"${sel.has(i)?" checked":""}></td><td><input class="cohIn" data-k="name" value="${esc(c.name)}"></td>`
       +`<td><select class="cohIn cohSite" data-k="site">${[""].concat(SITES.map(s=>s[0])).map(s=>`<option value="${esc(s)}"${courseSite(c)===s?" selected":""}>${esc(s||t("hpOther"))}</option>`).join("")}</select></td>`
       +`<td><input class="cohIn n" type="number" min="1" max="500" data-k="count" value="${c.count}"></td>`
       +`<td><input class="cohIn" type="date" data-k="start" value="${c.start}"></td>`
@@ -11219,10 +11381,17 @@ function siteRules(){ const S=state.settings;
 function siteRulesClean(sites){ const S=state.settings, R=siteRules().map(r=>r.filter(x=>sites.includes(x))); // a row being built (empty) stays
   if(JSON.stringify(R)!==JSON.stringify(S.siteRules)) S.siteRules=R; return R; }
 function siteLane(s){ const out=new Set([s]); for(const r of siteRules()) if(r.length>1&&r.includes(s)) r.forEach(x=>out.add(x)); return [...out]; }
-/* two courses that may not run together (same location, or a ticked pair) and do: {i: the other course's name} */
-function courseOverlaps(){ const out={}, L=state.cohorts.map((c,i)=>({i,c,s:courseSite(c),a:c.start,b:cohortFloorDate(c)}));
-  for(const x of L) for(const y of L){ if(x.i>=y.i||!x.s||!y.s||!siteLane(x.s).includes(y.s)) continue;
-    if(x.a<y.b&&y.a<x.b){ out[x.i]=out[x.i]||y.c.name; out[y.i]=out[y.i]||x.c.name; } }
+/* how many courses a location runs at the same time (⚙ Course rules, settings.siteAtOnce; default 1) */
+function siteAtOnce(s){ return Math.max(1,Math.min(9,Math.round(+((state.settings.siteAtOnce||{})[s])||1))); }
+/* the most courses of list L running together at any moment of [a,b) */
+function crsPeak(L,a,b){ let pk=0; for(const p of [a].concat(L.map(x=>x.a).filter(d=>d>a&&d<b))) pk=Math.max(pk,L.filter(x=>x.a<=p&&p<x.b).length); return pk; }
+/* courses that break a rule and the rule they break: {i:{n: the other course, why: "site"|"rule", s: the location / the rule}}.
+   Same location: more courses at once than it runs (⚙). Different locations: only a rule you set ("not at the same time") */
+function courseOverlaps(){ const out={}, L=state.cohorts.map((c,i)=>({i,c,s:courseSite(c),a:c.start,b:cohortFloorDate(c)})).filter(x=>x.s&&x.a&&x.b>x.a);
+  const mark=(x,y,why,s)=>{ if(!out[x.i]) out[x.i]={n:y.c.name,why,s}; if(!out[y.i]) out[y.i]={n:x.c.name,why,s}; };
+  for(const x of L) for(const y of L){ if(x.i>=y.i||!(x.a<y.b&&y.a<x.b)) continue;
+    if(x.s===y.s){ const k=siteAtOnce(x.s), lo=x.a>y.a?x.a:y.a, hi=x.b<y.b?x.b:y.b; if(crsPeak(L.filter(z=>z.s===x.s),lo,hi)>k) mark(x,y,"site",x.s); }
+    else if(siteLane(x.s).includes(y.s)) mark(x,y,"rule",x.s+" + "+y.s); }
   return out; }
 /* 🎯 ARE YOUR COURSES ENOUGH — EVERY MONTH. For each month the forecast covers (up to 6):
    needed reps = today's reps × (staffing the forecast needs for the target ÷ today's team's staffing) — the
@@ -11236,7 +11405,7 @@ function wiScenario(){ const v=id=>+(document.getElementById(id)||{}).value||0;
   return s.ahtCut||s.attrCut||s.shrinkCut||s.absCut?s:null; }
 function hirePlan(sc){
   const S=state.settings, k=JSON.stringify([sc||null,state._serVer,state._crsVer||0,state._holVer||0,state.cohorts,S.headcount,S.attrition,S.target,S.primaryMetric,S.defYield,
-    S.siteMax,S.siteLen,S.siteRules,S.capSkills,state.capSkills,S.recruitBasis,S.capLens,state.maxDate,state.horizonISO,iso(new Date()),state.iron?state.iron.emps.size:0,state.rosterCap.size]);
+    S.siteMax,S.siteLen,S.siteRules,S.capSkills,state.capSkills,S.recruitBasis,S.capLens,state.maxDate,state.horizonISO,iso(new Date()),state.iron?state.iron.emps.size:0,state.rosterCap.size,planTo(),S.siteAtOnce]);
   const C=state._hpCs=state._hpCs||new Map(); if(C.has(k)) return C.get(k); // the real plan and one scenario at a time
   const v=hirePlanRaw(sc); if(C.size>=4) C.delete(C.keys().next().value); C.set(k,v); return v;
 }
@@ -11255,10 +11424,11 @@ function hirePlanRaw(sc){
   const early=1-Math.min(0.9,S.attrition*1.5/100), ramp=x=>x<0?0:Math.min(1,0.5+0.5*x/30);
   const months=[]; // needs are measured against TODAY's team (the iron, or the file's history without the lens scale)
   {
-    for(let k=0;k<6;k++){
+    const until=planTo();
+    for(let k=0;k<12;k++){
       const d0=new Date(fromISO(today)); d0.setDate(1); d0.setMonth(d0.getMonth()+k);
       const m=iso(d0).slice(0,7), from=k?m+"-01":today, last=iso(new Date(d0.getFullYear(),d0.getMonth()+1,0));
-      if(from>state.horizonISO) break;
+      if(from>state.horizonISO||from>until) break;
       let need=0,cap=0,needP=0;
       for(let ds=from;ds<=last&&ds<=state.horizonISO;ds=addDays(ds,1)){
         const di=fromISO(ds).getDay(); if(di>5||ds<=state.maxDate) continue;
@@ -11286,8 +11456,12 @@ function hirePlanRaw(sc){
     if(withPlan) for(const s of sug) e+=s.count*per(s,mo);
     return e; };
   // the next free slot of a location: the working day after its last course (planned or suggested) ends
-  const nextSlot=site=>{ const L=siteLane(site); let s=today; for(const x of courses.concat(sug)) if(L.includes(x.site)&&x.floor>s) s=x.floor;
-    while(!courseDayOK(s)) s=addDays(s,1); return s; };
+  const nextSlot=site=>{ const L=siteLane(site), k=siteAtOnce(site), dur=siteLen(site), all=courses.concat(sug).filter(x=>L.includes(x.site)).map(x=>({s:x.site,a:x.start,b:x.floor}));
+    const cand=[today].concat(all.map(x=>x.b).filter(d=>d>today)).sort();
+    for(let s0 of cand){ let s=s0; while(!courseDayOK(s)) s=addDays(s,1); const e=cohortFloorDate({start:s,duration:dur});
+      if(all.some(x=>x.s!==site&&x.a<e&&s<x.b)) continue; // a rule partner runs then
+      if(crsPeak(all.filter(x=>x.s===site),s,e)<k) return s; }
+    let s=cand[cand.length-1]; while(!courseDayOK(s)) s=addDays(s,1); return s; };
   const siteList=[...new Set(SITES.map(s=>s[0]).concat(courses.map(x=>x.site).filter(Boolean)))];
   for(const mo of months){
     mo.E0=expected(mo,false);
@@ -11360,9 +11534,10 @@ function renderHirePlan(){
   // how it works (3 steps) + the one limit you may want to change: class size per location
   const sites=[...new Set(SITES.map(s=>s[0]).concat(state.cohorts.map(courseSite).filter(Boolean)))];
   html+=`<details class="hpLim"><summary>${t("hpHow")}</summary><ol class="hpSteps"><li>${t("hpStep1")}</li><li>${t("hpStep2")}</li><li>${t("hpStep3")}</li></ol></details>`
-    +`<details class="hpLim"${state._hpRules?" open":""}><summary>${t("hpLimits")}</summary><table class="hpRules"><thead><tr><th></th><th>${t("hpClass")}</th><th>${t("hpDays")}</th></tr></thead><tbody>`
+    +`<details class="hpLim"${state._hpRules?" open":""}><summary>${t("hpLimits")}</summary><table class="hpRules"><thead><tr><th></th><th>${t("hpClass")}</th><th>${t("hpDays")}</th><th>${t("hpAtOnce")}</th></tr></thead><tbody>`
     +sites.map(s=>`<tr><th>${esc(s)}</th><td><input type="number" min="1" max="60" class="hpIn" style="width:52px" data-site="${esc(s)}" value="${siteMax(s)}"></td>`
-      +`<td><input type="number" min="1" max="120" class="hpIn" style="width:52px" data-len="${esc(s)}" value="${siteLen(s)}"></td></tr>`).join("")
+      +`<td><input type="number" min="1" max="120" class="hpIn" style="width:52px" data-len="${esc(s)}" value="${siteLen(s)}"></td>`
+      +`<td><input type="number" min="1" max="9" class="hpIn" style="width:46px" data-once="${esc(s)}" value="${siteAtOnce(s)}"></td></tr>`).join("")
     +`</tbody></table><div class="hpRuleBox"><b class="mini">${t("hpPairsT")}</b>`
     +(siteRulesClean(sites).length?siteRules():[[]]).map((r,ri)=>`<div class="hpRule" data-r="${ri}">${sites.map(s=>`<button type="button" class="hpChip${r.includes(s)?" on":""}" data-loc="${esc(s)}">${esc(s)}</button>`).join("")}`
       +(siteRules().length?`<button type="button" class="xbtn" data-rx="${ri}" title="${esc(t("remove"))}">✕</button>`:"")+`</div>`).join("")
@@ -11382,6 +11557,8 @@ function renderHirePlan(){
   { const rl=box.querySelector(".hpLim:last-of-type"); if(rl) rl.addEventListener("toggle",()=>{ state._hpRules=rl.open; }); }
   box.querySelectorAll("[data-site]").forEach(inp=>inp.addEventListener("change",()=>{
     (S.siteMax=S.siteMax||{})[inp.dataset.site]=Math.max(1,Math.min(60,+inp.value||20)); saveState(); renderHirePlan(); }));
+  box.querySelectorAll("[data-once]").forEach(inp=>inp.addEventListener("change",()=>{
+    (S.siteAtOnce=S.siteAtOnce||{})[inp.dataset.once]=Math.max(1,Math.min(9,Math.round(+inp.value)||1)); saveState(); renderRecruit(); }));
   // a shorter (or longer) course: the location's courses that haven't started take it too — undoable
   box.querySelectorAll("[data-len]").forEach(inp=>inp.addEventListener("change",()=>{ const s=inp.dataset.len, v=Math.max(1,Math.min(120,Math.round(+inp.value)||12)), today=iso(new Date());
     const hit=state.cohorts.filter(c=>courseSite(c)===s&&c.start>=today&&+c.duration!==v);
@@ -11416,6 +11593,9 @@ document.getElementById("rcRepMenu").addEventListener("change",e=>{ const x=e.ta
 document.getElementById("rcRepMenu").addEventListener("click",e=>{ const b=e.target.closest("[data-rep]"); if(b) rcReport(b.dataset.rep); });
 document.querySelector("#rcRepWrap > button").addEventListener("click",renderRepMenu);
 document.getElementById("rcRepWrap").addEventListener("click",e=>{ if(!e.target.closest("input,label")) e.preventDefault(); });
+{ const inp=document.getElementById("planTo"), back=document.getElementById("planToBack"), go=v=>{ state.settings.planTo=v||null; saveState(); renderRecruit(); };
+  inp.addEventListener("change",()=>{ const v=inp.value, today=iso(new Date()); if(v&&(v<addDays(today,14)||v>addDays(today,366))){ showToast("⚠ "+t("planToRange"),false); renderPlanTo(); return; } go(v); });
+  back.addEventListener("click",e=>{ e.preventDefault(); go(null); }); }
 document.getElementById("rcRepMenu").addEventListener("click",e=>{ const l=e.target.closest("label"); if(l&&!e.target.closest("input")){ e.preventDefault(); const x=l.querySelector("input"); x.checked=!x.checked; x.dispatchEvent(new Event("change",{bubbles:true})); } });
 function rcReportHtml(){
   const S=state.settings, rtl=lang==="he", on=new Set(repSecs()), esc=v=>String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;");
@@ -11465,16 +11645,16 @@ function rcReportHtml(){
       const pl=hirePlan(), ex=pl&&pl.total>0?pl.courses.filter(x=>pl.add.get(x.i)).map(x=>({...x.c,count:pl.add.get(x.i)}))
         .concat(pl.sug.map(s=>({start:s.start,duration:s.duration,count:s.count,yield:Math.round(s.y*100),site:s.site,name:"+"}))):null;
       const r2=ex?whatIfCurve(wi,ex):null;
-      const pts=r.curve.map((x,i)=>[d5(x.date),pc(x.m)].concat(r2?[pc(r2.curve[i].m)]:[])).filter((_,i)=>i%2===0);
+      const pts=r.curve.map((x,i)=>[d5(x.date),pc(x.m)].concat(r2?[pc(r2.curve[i].m)]:[])).filter((_,i,a)=>i%2===0||i===a.length-1);
       b+=sec(t("repWi"),`<p class="lead">${esc(primName())}: ${pc(r.now)} ${arr} ${pc(r.end)} · ${esc(r.meetWeek!=null?t("repTgt",{t:S.target,d:d5(r.curve[r.meetWeek].date)}):t("repNoReach",{t:S.target}))}</p>`
         +(lev?`<p class="sub">${esc(t("repLevers"))}: ${lev}</p>`:"")+tbl([t("repDate"),primName()+" — "+t("repWiNow")].concat(r2?[t("repWiAdds",{n:pl.total})]:[]),pts),"repHowWi"); } }
   if(on.has("shadow")){ const rows=shadowPrices(true), f=v=>(v>=0?"+":"")+v.toFixed(1);
-    if(rows) b+=sec(t("repShadow"),tbl([t("shLever"),t("shStep"),t("shNow"),t("shEnd"),t("shTr"),t("shAlone")],rows.map(r=>[esc(t(r.lab)),r.step+(r.unit==="pt"?" "+t("shPt"):"%"),sg(f(r.dNow)),sg(f(r.dEnd)),r.dT>0?sg("−"+r.dT):"0",
-      r.need==null?esc(t("shNoNeed")):r.need<0?esc(t("shNotAlone")):esc(t(r.unit==="pt"?"shTargetPt":"shTarget",{v:r.need}))])),"repHowShadow"); }
-  if(on.has("out")){ const SH=scopeHc(), pts=[0,30,60,90].map(d=>[d?d5(addDays(iso(new Date()),d)):esc(t("repToday")),Math.round(hcAtDay(d,true,SH.hc,SH.skillF))]);
+    if(rows) b+=sec(t("repShadow"),tbl([t("shLever"),t("shStep"),t("shNow"),t("shEnd",{d:d5(planTo())}),t("shAlone")],rows.map(r=>[esc(t(r.lab)),`<b>${r.step+(r.unit==="pt"?" "+t("shPt"):"%")}</b>${r.abs?`<br><span class="sub">${esc(r.abs)}</span>`:""}`,sg(f(r.dNow)),sg(f(r.dEnd)),
+      r.need==null?esc(t("shNoNeed")):r.need<0?esc(t("shNotAlone")):esc(t(r.unit==="pt"?"shTargetPt":"shTarget",{v:r.need}))+`<br><span class="sub">${esc(shAbs(r.k,r.need))}</span>`])),"repHowShadow"); }
+  if(on.has("out")){ const SH=scopeHc(), D=planDays(), pts=[0,1,2,3].map(k=>{ const d=Math.round(D*k/3); return [d?d5(addDays(iso(new Date()),d)):esc(t("repToday")),Math.round(hcAtDay(d,true,SH.hc,SH.skillF))]; });
     b+=sec(t("outlookTitle"),tbl([t("repDate"),t("repHc")],pts),"repHowOut"); }
   if(on.has("rules")){ const sites=[...new Set(SITES.map(s=>s[0]).concat(state.cohorts.map(courseSite).filter(Boolean)))], P=siteRules().filter(r=>r.length>1);
-    b+=sec(t("hpLimits").replace(/^⚙\s*/,""),tbl(["",t("hpClass"),t("hpDays")],sites.map(s=>[esc(s),siteMax(s),siteLen(s)]))
+    b+=sec(t("hpLimits").replace(/^⚙\s*/,""),tbl(["",t("hpClass"),t("hpDays"),t("hpAtOnce")],sites.map(s=>[esc(s),siteMax(s),siteLen(s),siteAtOnce(s)]))
       +`<p class="sub">${esc(t("hpPairsT"))} ${P.length?P.map(r=>esc(r.join(" + "))).join(" · "):"—"}</p>`,"repHowRules"); }
   const title=t("repTitle"), when=fmtD(iso(new Date()));
   return `<!doctype html><html dir="${rtl?"rtl":"ltr"}" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><title>${esc(title)} — ${when}</title><style>
@@ -11487,7 +11667,7 @@ function rcReportHtml(){
     td .bad,.bad{color:#b3261e} table.gantt th,table.gantt td{padding:2px;font-size:9px} table.gantt th.nm{text-align:start;font-size:10px;white-space:nowrap;background:#f2f5f9}
     table.gantt td.g{min-width:12px;height:18px} .now{outline:2px solid #b3261e} ul{margin:4px 0;padding-inline-start:18px}
     </style></head><body><h2>${esc(title)}</h2><p class="sub">${esc(t("repSub",{d:when}))}</p>
-    <p class="scope">🎧 ${esc(t("repScope",{s:(state.capSkills&&state.capSkills.length?state.capSkills.join(", "):t("repAll"))}))} · ${esc(t(S.capLens==="real"?"repLensReal":"repLensToday"))}</p>${b||`<p>${esc(t("repEmpty"))}</p>`}</body></html>`;
+    <p class="scope">📅 ${esc(t("repUntil",{d:fmtD(planTo())}))} · 🎧 ${esc(t("repScope",{s:(state.capSkills&&state.capSkills.length?state.capSkills.join(", "):t("repAll"))}))} · ${esc(t(S.capLens==="real"?"repLensReal":"repLensToday"))}</p>${b||`<p>${esc(t("repEmpty"))}</p>`}</body></html>`;
 }
 function rcReport(fmt){
   const html=rcReportHtml(), name=t("repFile")+" "+iso(new Date());
@@ -11696,7 +11876,7 @@ document.getElementById("trnClear").addEventListener("click",()=>{ if(state.trai
   document.getElementById("brkExpMenu").addEventListener("click",e=>{ const b=e.target.closest("[data-fmt]"); if(b) brkExport(b.dataset.fmt,b.dataset.mode); }); }
 // Friday rotation switch (in both Friday cards' titles): a click must not fold the card
 document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest(".friEverySeg button"); if(!b) return; e.preventDefault();
-  state.settings.friEvery=+b.dataset.v; saveState(); renderWorkforce(); renderFriday(); });
+  state.settings.friEvery=+b.dataset.v; saveState(); renderWorkforce(); renderScheduler(); });
 // folding cards: one click on the title; the choice is remembered (settings.fold)
 document.querySelectorAll("details.foldCard").forEach(d=>{
   d.addEventListener("toggle",()=>{ (state.settings.fold=state.settings.fold||{})[d.id]=d.open; saveState(); }); });

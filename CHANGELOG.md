@@ -4,6 +4,36 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### ☕ Breaks: up to 20 min in a row, one landscape A4 page, the procedure in color · 🎓 one plan date, shadow price in plain numbers, נציג · 🗓 constraints from the managers, Friday in "Before running"
+
+- Breaks: ⚙ Slots and rules → "Most break minutes in a row" (default 20). A rep's minutes split into breaks no longer
+  than that, as even as 5-minute steps allow: 7h → 20 + 15 · 8h → 20 + 20 (was 25 + 15) · 10h → 20 + 15 + 15. Bold on
+  the board only when the breaks differ.
+- Print: the board fits ONE landscape A4 page at the browser's default settings (font by places, row height by slots,
+  shrinks itself if names run long); Word the same; Excel prints landscape, one page wide, the entitlement list on
+  its own page. The delayed-break procedure is fully in color (start/end · question · action · priority 1 green ·
+  priority 2 orange) and prints its colors.
+- Recruitment: one 📅 "Plan until" date (top card) — both charts end on it, the plan's months run to it, the executive
+  report measures to it. Default = the forecast's end (30 days … 6 months), ↺ back to it.
+- Shadow price: one sentence per lever, in plain numbers ("1% shorter calls = 0:03 min (4:52 → 4:49) → answer rate
+  +0.5 pts now · +0.1 by 28/01"); the "trainees not needed" column is gone; the report's "alone" in numbers too.
+- Course overlap marks name their rule. The hidden "a location runs one course at a time" is now visible and
+  editable: ⚙ Course rules → "At once" per location (default 1); the plan finds the earliest free slot by it.
+- Words: a person is a נציג (in a course: נציג בקורס) — never חניך / עובד / סוכן (EN: rep).
+- Auto-Scheduler: "⚙ Before running" = what is required (tagged, only while missing) + the rest. Last Friday is
+  required only when building from the iron and it isn't known yet; "every Friday" keeps a one-line switch to come back.
+- Constraints work in both modes (from the iron: vacation / can't = off; "until 14" / "from 12" / "10-14" = only
+  those hours, a shorter shift if needed). One drop box takes all the managers' files at once (each file replaces only
+  its own reps); "⬇ template for the managers" comes ANSWERED: rep × day, each cell = the rep's iron shift. Can't →
+  delete it · only part → change the hours · vacation → write it. The sheet is locked except those cells; an untouched
+  file = no constraints. A split shift shows in one cell ("08:00-12:00 + 16:00-20:00"); delete a part = only the other.
+- The limit is enforced: in the file, a change beyond X (default 2, vacation free) is refused and a row over X turns
+  red; in the app, only a rep's first X changed days count — the rest are listed as not applied (your own manual
+  entries are never cut).
+- ✂ Split shifts in the iron: the reader kept only a day's first row (the second part was lost from the hours, the
+  capacity, the breaks and the generator). Every part is kept now; the generator keeps a split at its iron hours. Up to 2 per rep a week (vacation not counted; folded with the manual
+  entry); a day over the teams' share (by the room the forecast leaves) or a rep over the limit is flagged.
+
 ### ☕ Break sheets: entitlement list, the procedure on its own, black & white · 🎓 Recruitment: one skill list, no NaN, shadow price
 
 - Breaks export: by default the board + the day's break entitlement + the owed-break queue; the delayed-break

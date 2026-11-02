@@ -48,7 +48,8 @@ them is not done.
     included). Two numbers for the same thing must match exactly, at the same precision.
 11. **Explanations are short.** An "i" or a panel intro is two plain sentences at most: what
     happened / what it does, and what the user gets.
-12. **One word per concept.** Staff who leave = "עזיבה"; "נטישה" is only for abandoned calls.
+12. **One word per concept.** Staff who leave = "עזיבה"; "נטישה" is only for abandoned calls. A person is a
+    **נציג** — never חניך, עובד or סוכן; someone in a course = "נציג בקורס" (EN: rep / rep in course).
     A tool answers the user's question in its title ("Are your courses enough?"), the answer comes
     first, the knobs last.
 13. **Same control, same place, same look.** A control that appears on several pages sits in the same spot on
