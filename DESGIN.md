@@ -83,6 +83,18 @@ them is not done.
     letter, word and sentence: cut until nothing more can go without losing understanding, and use only the
     app's defined terms (rule 12). Titles are the user's question ("Where do the iron hours go?"), not the
     method ("Treemap").
+17. **One date look, one date picker.** Every date on screen reads `05-Jul-2026` (`fmtD`; `05-Jul` = `fmtDs`): the
+    day number on the left, the short month in the middle, the year on the right — in Hebrew too (`05-יולי-2026`).
+    Files Excel reads (CSV, xlsx, the sidur copy) keep `05/07/2026` (`fmtDx`) — that is data, not display. Every
+    date field is the one picker (`dpUpgrade`): a month, today ringed, the choice navy, out-of-range days off, and a
+    suggestion (e.g. the forecast's end) is a quiet teal dot + one line inside the calendar — never a button that
+    looks like it must be pressed. A date range reads in the page's direction (start first). A time cell says the
+    half hour it covers ("09:30–10:00").
+18. **A list filter is multi-select chips.** Each chip adds or removes its value (none chosen = everything), with a
+    quiet "✕ everyone" once something is chosen — like the 🎧 skill chips. A copy / export of a filtered list carries
+    only what the filter shows, down to the line (a rep with several reasons lists only the chosen ones).
+19. **Every mark has its key.** A chart or list that uses colors or shapes shows a small legend above it, in plain
+    words ("Reps in the iron", "Needed by the forecast") — never colors the user has to guess.
 
 ## Product Design Principles
 

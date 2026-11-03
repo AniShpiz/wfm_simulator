@@ -73,7 +73,7 @@ test("schedulerCore: uncovered demand is counted per interval", () => {
 const R = sandbox(["tikshuvRow", "pad"], ["TIKSHUV_HEADS", "HE_DAY", "toMinW"], {
   state: { rosterMeta: new Map([["כהן דנה", { site: "מושלם באר שבע", team: "לוי", skill: "נציג קו 1" }]]), iron: null },
   t: k => k,
-  fmtD: d => "05/07/2026",
+  fmtDx: d => "05/07/2026",
 });
 test("tikshuvRow: exact Tikshuv sidur-avoda column order and values", () => {
   assert.deepEqual(R.TIKSHUV_HEADS,
