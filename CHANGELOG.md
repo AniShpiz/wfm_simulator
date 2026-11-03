@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### ⚙ Forecasting models in one list · 🧪 "How accurate is the forecast?" in plain words · ↩ cause and effect, without words
+
+- Settings › Forecasting models: one list of switches — holidays, war/outage detection, 📈 sudden changes, ↩ returning
+  calls (the SAME setting as the switch on the matrix and Date Trends, connected both ways) with its optional known rate
+  right under it. The models fold away; the patience model shows only when the file has patience data. "AHT model" →
+  "Call-length model".
+- 🧪 The check window: "How accurate is the forecast?" — for each part the model in use, "off by X% on average" and
+  which way it leans; the other models fold; both returning-calls tests as plain results. No switch inside any more;
+  no PACE / MAPE / rolling jargon.
+- ↩ Why demand grew, without words: the day that sends calls back (a lost day, a day of heavy abandonment) carries a
+  small blue ▲, the calls coming back are hatched — in the matrix daily row (a thin bar under the day's calls), on the
+  Date Trends volume and answer-rate charts, and next to the date in the table. Keys appear with the marks; the hover
+  gives the numbers.
+- DESGIN.md rule 21 (cause and effect wear the same mark).
+
 ### 🤖 The analyst's choices, automatic: productivity method, forecast models, returning calls · 🔍 what changed in the iron
 
 - Productivity / net hours (Date Trends): the forecast's net hours are projected the way that tested more accurate on

@@ -99,6 +99,12 @@ them is not done.
     in numbers ("error 5.7% vs 9.0% on your last 14 days"). A hand-picked choice stays the user's, one click deep, with
     "🤖 Automatic" in the same place to give it back. A value the user may know better (e.g. from another
     measurement) is an optional field, marked "optional", empty = learned.
+21. **Cause and effect wear the same mark.** When a number grows because of another day (calls coming back after a lost
+    day or a day of heavy abandonment), the effect and its cause share one visual — hatched blue = the calls coming
+    back, a small blue ▲ = the day that sends them — on every page that shows the days (matrix, Date Trends charts and
+    table). No sentence: the eye links the low day to the hatched days after it, and the hover gives the number.
+    Settings show each forecast behavior once, as one switch in one list; a check window reports results in plain
+    words ("off by 3.4% on average · no lean either way") and holds no switch of its own.
 19. **Every mark has its key.** A chart or list that uses colors or shapes shows a small legend above it, in plain
     words ("Reps in the iron", "Needed by the forecast") — never colors the user has to guess.
 
