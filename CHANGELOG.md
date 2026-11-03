@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### 🤖 The analyst's choices, automatic: productivity method, forecast models, returning calls · 🔍 what changed in the iron
+
+- Productivity / net hours (Date Trends): the forecast's net hours are projected the way that tested more accurate on
+  your own past — the last 4 same weekdays, or scheduled hours × the login share of the last 8 weeks (on the real
+  June file: 5.7% vs 9.0% error → the ratio). The header hover says which and why; net hours now show on forecast days.
+- Forecast models: every volume / call-length / patience model is backtested on each load and the best is used
+  ("🤖 Automatic — <model>" in the list); a hand-picked one stays yours.
+- ↩ Returning calls, one model: besides a lost day's calls, the EXTRA abandoned callers who call again are learned from
+  your history (share + how they spread over the next 2 days) and tested — worse than without → they step aside by
+  themselves (the switch's hover says so, in numbers). The manual "call again" slider in the fast lane is gone; a
+  known rate (e.g. from your repeat-contacts measurement) is an optional field in Settings. Date Trends: the volume bar
+  shows new calls solid and returning ones hatched (estimated on past days, forecast ahead), with its key and hover.
+- 🔍 Workforce → "What changed in the iron?": each upload is kept (the last 12, on this computer) and compared with
+  the previous one — fewer / more hours, a day removed / added, a shift moved, a rep new / gone — by team manager, with
+  a trend line of the team's iron hours, multi-select chips and one message per manager. Silent when nothing changed.
+- DESGIN.md rule 20 (the analyst's choices are automatic — and tested).
+
 ### 📅 One date look + one date picker · ↩ returning calls as a switch · matrix crosshair · report fixes
 
 - Dates: everywhere on screen `05-Jul-2026` / `05-יולי-2026` (day left, month middle, year right; `fmtD`, short `fmtDs`).

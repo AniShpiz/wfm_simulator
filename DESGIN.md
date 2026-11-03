@@ -93,6 +93,12 @@ them is not done.
 18. **A list filter is multi-select chips.** Each chip adds or removes its value (none chosen = everything), with a
     quiet "✕ everyone" once something is chosen — like the 🎧 skill chips. A copy / export of a filtered list carries
     only what the filter shows, down to the line (a rep with several reasons lists only the chosen ones).
+20. **The analyst's choices are automatic — and tested.** A model or a forecast toggle is chosen by testing the
+    options on the user's own history (each past day predicted only from the days before it) and keeping the more
+    accurate one; a part that makes the forecast worse steps aside by itself. The hover says what was chosen and why,
+    in numbers ("error 5.7% vs 9.0% on your last 14 days"). A hand-picked choice stays the user's, one click deep, with
+    "🤖 Automatic" in the same place to give it back. A value the user may know better (e.g. from another
+    measurement) is an optional field, marked "optional", empty = learned.
 19. **Every mark has its key.** A chart or list that uses colors or shapes shows a small legend above it, in plain
     words ("Reps in the iron", "Needed by the forecast") — never colors the user has to guess.
 

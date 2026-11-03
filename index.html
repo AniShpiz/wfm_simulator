@@ -469,7 +469,14 @@ td.gapCell.closed{background:#d6f3e2!important;color:#0f6a3f;font-weight:700}
 .rdyDay{text-align:center;font-size:.8rem;font-weight:600;padding:6px 0 0} .rdyDay small{font-weight:400;opacity:.65}
 .rdyLeg{justify-content:center;margin-top:8px} .shList li.shOff{color:var(--muted)}
 .rdyLeg.top{justify-content:flex-end;margin:0 0 6px;font-size:.74rem;color:var(--ink);gap:14px} .rdyLeg.top i{vertical-align:-1px;margin-inline-end:5px}
-.rdyLeg.top i.lg-nd{width:16px} .rrLeg{justify-content:flex-start} .rrLeg .rrLgSep{color:var(--muted);margin-inline-start:10px}
+.rdyLeg.top i.lg-nd{width:16px} .rrLeg{justify-content:flex-start}
+.trBar.ret{fill:url(#trHatch)} .trRetKey{justify-content:flex-start;margin:2px 0 0;font-size:.68rem} .trRetKey i{width:10px;height:10px}
+.legend i.lg-fresh{background:#2c7fb8} .legend i.lg-ret{background:repeating-linear-gradient(45deg,#cfe6fb 0 2px,#3f8fd8 2px 3.5px)} .optTag{font-size:.66rem;font-weight:600;color:var(--muted);border:1px dashed #b9c4d0;border-radius:8px;padding:0 6px}
+.icTeam{border-top:1px solid var(--border);padding:8px 0 4px} .icTeam:first-of-type{border-top:none}
+.icTH{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px} .icTH b.neg{color:var(--crimson)}
+.icRow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:3px 0;font-size:.8rem} .icN{min-width:150px;font-weight:600}
+.icD{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--border);border-inline-start:3px solid var(--c);border-radius:6px;padding:1px 7px;font-size:.74rem;background:#fff}
+.icD b{color:var(--c)} .icSpark{vertical-align:middle} .rrLeg .rrLgSep{color:var(--muted);margin-inline-start:10px}
 .rdyLeg i{display:inline-block;width:12px;height:12px;border-radius:3px}
 /* iron vs sidur (people): iron light, sidur navy, side by side on one scale; the need is a tick */
 .ibPlot{position:relative;display:flex;justify-content:center;align-items:flex-end;gap:2px;background:#f4f7fa;border-bottom:2px solid var(--navy)}
@@ -1141,6 +1148,11 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
       </div>
       <div class="tablewrap" id="wfValWrap" style="max-height:260px;overflow-y:auto"></div>
     </details>
+    <!-- 🔍 what changed in the iron since the previous upload — silent when nothing did (renderIronChanges) -->
+    <details class="card foldCard" id="wfIronChg" style="display:none" open>
+      <summary><h2><span data-i18n="icTitle">What changed in the iron?</span> <span class="info" data-tipkey="tipIc" tabindex="0">i</span> <span class="foldSum" id="icSum"></span></h2></summary>
+      <div id="icBody"></div>
+    </details>
     <!-- the Friday rotation, its own section (people by team → messages to TLs); folds, remembered -->
     <details class="card foldCard friCard" id="wfFriIn" data-wk="wf" style="display:none" open>
       <summary><h2><span data-i18n="friT">Friday — last week vs this week</span> <span class="info" data-tipkey="tipFri" tabindex="0">i</span>
@@ -1385,6 +1397,8 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <div class="frow"><label data-i18n="fmMpt">MPT model</label><select id="setModelMpt" style="width:210px"></select></div>
         <div class="frow"><label><span data-i18n="fmProfile">Interval profile window</span> <button class="linklike" id="profBtn" type="button" data-i18n-title="profBtnTip" title="See and edit the intraday call weights">📊</button></label><select id="setProfile" style="width:210px"><option value="adaptive" data-i18n="fmProfAdapt">Adaptive (8w, fallback all)</option><option value="w12" data-i18n="fmProf12">12 weeks</option></select></div>
         <div class="frow"><label for="setAutoAnom" data-i18n="fmAutoAnom">Auto war/outage detection</label><input type="checkbox" class="sw" id="setAutoAnom"></div>
+        <!-- optional: a KNOWN share of abandoners who call again (e.g. from the repeat-contacts measurement) — empty = learned -->
+        <div class="frow"><label for="setRetryKnown"><span data-i18n="fmRetryK">↩ Abandoners who call again (%)</span> <span class="optTag" data-i18n="optTag">optional</span> <span class="info" data-tipkey="tipRetryK" tabindex="0">i</span></label><input type="number" id="setRetryKnown" min="0" max="100" step="5" style="width:110px"></div>
         <div class="frow" style="border:none;gap:8px;flex-wrap:wrap"><button class="btn ghost" id="backtestBtn" data-i18n="backtestBtn">🧪 Backtest models</button><button class="btn ghost" id="reviewExclBtn" data-i18n="reviewExclBtn">📅 Review excluded days</button></div>
         </details>
         <!-- planned one-off surges the history can't know (vendor change, campaign): sized once,
@@ -1409,8 +1423,6 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
           <div class="frow"><label for="faOn" data-i18n="faOnL">Follow sudden shifts</label><input type="checkbox" class="sw" id="faOn"></div>
           <div class="frow"><label data-i18n="faHalfL">Back to the regular model</label>
             <div class="seg" id="faHalf"><button type="button" data-h="5" data-i18n="faH5">~1 week</button><button type="button" data-h="10" data-i18n="faH10">~2 weeks</button><button type="button" data-h="20" data-i18n="faH20">~4 weeks</button></div></div>
-          <div class="frow"><label><span data-i18n="faRetryL">Abandoned callers who call again</span> <span class="info" data-tipkey="tipFaRetry" tabindex="0">i</span></label>
-            <span><input type="range" id="faRetry" min="0" max="80" step="5" style="width:130px;vertical-align:middle"> <b class="num" id="faRetryV"></b></span></div>
           <p class="mini" id="faFoot"></p>
           </details>
         </div>
@@ -1782,7 +1794,7 @@ en:{
   holOverridden:"(changed by you)",
   btDaily:"Daily-total pipeline (the real forecast)",
   btApplyCal:"⚙ Apply {c}% calibration", btCalDone:"Calibration set to {c}% — forecasts recentered.",
-  btCalActive:"active calibration: {c}%", btCalReset:"reset calibration", btFastNote:"a shift in the demand level is handled by '📈 Follow sudden changes in demand'", fmAdvT:"⚙ Models & checks", fmCu:"↩ Calls come back after a lost day", tipCu:"After a closed day or a day far under normal (elections, an outage), part of its calls come back over the next working days, fading — learned from your own history. Those days stop teaching the normal week.", cuNow:"↩ Calls of a lost day coming back in the next days: {n}.", cuBtT:"↩ Calls coming back after a lost day", cuBtRes:"after {n} lost days in your history, the next days' error: without {a}% · with {b}%", cuBtGuard:"on your history it does worse ({n} lost days: without {a}% · with {b}%) — so it steps aside by itself", cuBtRes1:"after the one lost day in your history, the next days' error: without {a}% · with {b}%", cuBtNone:"no lost day in your history to check it on yet (starts at half / half)", cuBtPar:"comes back {c}% of the lost calls, {q}% of them the first day", cuBtOn:"on", cuBtOff:"off — the regular models exactly", cuBtn:"↩ Returning calls", cuBtnTip:"Calls that didn't come on {d} come back over the next days: {l}. Switch off only if they won't come back to you (e.g. they moved to another channel).", cuBtnTipOff:"Off: shown without the calls of {d} coming back. Switch on when callers do call again after a day like that.", cuBtnIdle:"When a day goes unanswered (an outage, a closure), part of its callers call again over the next days — on, the forecast adds them. Right now no such day comes before the days on screen.", cuBtnIdleOff:"Off: after a day that goes unanswered (an outage, a closure), the forecast won't add the callers who call again. Switch on unless they move to another channel.", cuPill:"↩ +{n}", cuPillTip:"{n} calls that didn't come on {d}", cuChip:"↩ +{n} returning calls", cuChipTip:"Calls that didn't come on {d} come back in the next days: {l}.\nClick — without them (the regular model).", cuChipOff:"↩ without returning calls", cuChipOffTip:"Click — add back the calls of {d}.", cuLine:"↩ Calls that didn't come on {d} come back in the next days: {l}.", cuLineOff:"↩ Shown without the calls of {d} coming back.", cuWithout:"without them", cuBack:"add them back",
+  btCalActive:"active calibration: {c}%", btCalReset:"reset calibration", btFastNote:"a shift in the demand level is handled by '📈 Follow sudden changes in demand'", fmAdvT:"⚙ Models & checks", fmCu:"↩ Calls come back after a lost day", tipCu:"After a closed day or a day far under normal (elections, an outage), part of its calls come back over the next working days, fading — learned from your own history. Those days stop teaching the normal week.", cuNow:"↩ Calls of a lost day coming back in the next days: {n}.", cuBtT:"↩ Calls coming back after a lost day", cuBtRes:"after {n} lost days in your history, the next days' error: without {a}% · with {b}%", cuBtGuard:"on your history it does worse ({n} lost days: without {a}% · with {b}%) — so it steps aside by itself", cuBtRes1:"after the one lost day in your history, the next days' error: without {a}% · with {b}%", cuBtNone:"no lost day in your history to check it on yet (starts at half / half)", cuBtPar:"comes back {c}% of the lost calls, {q}% of them the first day", cuBtOn:"on", cuBtOff:"off — the regular models exactly", cuBtn:"↩ Returning calls", cuBtnTip:"Calls that didn't come on {d} come back over the next days: {l}. Switch off only if they won't come back to you (e.g. they moved to another channel).", cuBtnTipOff:"Off: shown without the calls of {d} coming back. Switch on when callers do call again after a day like that.", cuBtnTipAb:"Callers who abandoned on {d} call again over the next days: {l}. Switch off only if they won't come back to you (e.g. they moved to another channel).", cuBtnAutoAb:"Abandoned callers who call again: tested on your history ({n} days) — the forecast is more accurate without them ({a}% vs {b}%), so they step aside by themselves.", cuBtnIdle:"When a day goes unanswered (an outage, a closure), part of its callers call again over the next days — on, the forecast adds them. Right now no such day comes before the days on screen.", cuBtnIdleOff:"Off: after a day that goes unanswered (an outage, a closure), the forecast won't add the callers who call again. Switch on unless they move to another channel.", cuPill:"↩ +{n}", cuPillTip:"{n} calls that didn't come on {d}", cuChip:"↩ +{n} returning calls", cuChipTip:"Calls that didn't come on {d} come back in the next days: {l}.\nClick — without them (the regular model).", cuChipOff:"↩ without returning calls", cuChipOffTip:"Click — add back the calls of {d}.", cuLine:"↩ Calls that didn't come on {d} come back in the next days: {l}.", cuLineOff:"↩ Shown without the calls of {d} coming back.", cuWithout:"without them", cuBack:"add them back",
   cmAllDay:"all day", cmEdit:"Edit",
   tipExt:"Reps already scheduled next to a gap: staying up to 2h later or coming up to 2h earlier closes it with no new shift. Worst gaps first.",
   extNone:"No adjacent reps can close these gaps by extending — consider the overstaffing pool or hiring.",
@@ -2024,7 +2036,7 @@ en:{
   evRowCalls:"+{n} calls · {d} working days", evPeak:"first day +{p}% vs normal", evPast:"happened — kept out of learning",
   evDel:"Remove event", evAdded:"Planned event added: {n}", evPillTip:"+{n} extra calls planned this day",
   exclEvNote:"planned event — held out of learning", trHintLink:"📣 Plan a known event",
-  trHelpTip:"How to adjust the forecast", thNetH:"Net hours (actual)", fTipNetH:"Logged-in hours from your file — compare with hours to schedule.", trGDay:"Days", trGWeek:"Weeks", trGMonth:"Months",
+  trHelpTip:"How to adjust the forecast", thNetH:"Net hours", prodBtRatio:"Forecast days: scheduled hours × {r}% that reached login — chosen because its error on your last {n} days is {a}% vs {b}% for the 4-week average.", prodBtCarry:"Forecast days: the average of the last 4 same weekdays — chosen because its error on your last {n} days is {a}% vs {b}% for scheduled hours × {r}%.", fTipNetH:"Logged-in hours from your file; forecast days are projected (below) — compare with hours to schedule.", trGDay:"Days", trGWeek:"Weeks", trGMonth:"Months",
   thPeriod:"Period", thDaysMet:"Days on target", tipDaysMet:"Working days whose {m} reached your {t}% target, out of the days in the period.",
   grpTag_act:"actual", grpTag_fc:"forecast", grpTag_mix:"actual + forecast", trDrill:"Click to see this period's days",
   wkLbl:"Week {w} · {a}–{b}", trShare:"📤 Share summary", trBackTip:"Back to the grouped view (Backspace)",
@@ -2044,7 +2056,7 @@ en:{
   trShowMore:"Show {k} more days ({r} remaining) ▼",
   mxSum:"Daily",
   mxOffGrid:"incl. {n} calls outside the shift window (not shown as grid rows)",
-  rrNoWhy:"No status in the sidur — shorter shifts", rrWhyL:"Why:", rrWhyTip:"{n} reps — click to add to the filter (again = remove)", rrWhyAll:"✕ everyone", rrLgBig:"8h+ can come back", rrLgSome:"less than 8h", rrLgLeave:"the whole gap is leave", rrLgDay:"Days (open a rep):", rrLgFull:"full day", rrLgShort:"shorter shift", rrLgMiss:"missing day", rrLgRot:"not their Friday", rrCopyNone:"Nothing to add for the chosen reasons", rrShort:"shorter shift", rrTlPurpose:"Week {w}, below their iron — what can be added, day by day (in the sidur / iron):", rrFriOff:"off this Friday (every other Friday)",
+  rrNoWhy:"No status in the sidur — shorter shifts", rrWhyL:"Why:", rrWhyTip:"{n} reps — click to add to the filter (again = remove)", rrWhyAll:"✕ everyone", modelAuto:"🤖 Automatic — {m}", trFresh:"new calls", trRetL:"↩ returning calls (estimated · forecast ahead)", trRetTip:"↩ of them returning (estimated)", trRetTipFc:"↩ of them returning (forecast)", fmRetryK:"↩ Abandoners who call again (%)", optTag:"optional", tipRetryK:"Empty = learned from your file. If your repeat-contacts measurement knows how many abandoned callers call again, enter it — the model stops guessing that part.", retryAuto:"automatic · {p}%", retryAutoNone:"automatic", icTitle:"What changed in the iron?", tipIc:"Each upload is kept on this computer (the last 12) and compared with the one before: hours down or up, days removed or added, shifts moved within the same hours. The small line by each team = its iron hours across the uploads.", icSum:"since {d}: {n} reps · {h}", ic_down:"fewer hours", ic_del:"day removed", ic_up:"more hours", ic_add:"day added", ic_move:"shift moved", ic_new:"new in the iron", ic_gone:"left the iron", icTeamN:"{n} reps", icTlBtn:"📱 To the team manager", icTlPurpose:"Iron changes since the upload of {d} — please confirm:", icTrendTip:"The team's iron hours in each upload:", rrLgBig:"8h+ can come back", rrLgSome:"less than 8h", rrLgLeave:"the whole gap is leave", rrLgDay:"Days (open a rep):", rrLgFull:"full day", rrLgShort:"shorter shift", rrLgMiss:"missing day", rrLgRot:"not their Friday", rrCopyNone:"Nothing to add for the chosen reasons", rrShort:"shorter shift", rrTlPurpose:"Week {w}, below their iron — what can be added, day by day (in the sidur / iron):", rrFriOff:"off this Friday (every other Friday)",
   wfIronT:"Iron vs sidur — by day", tipWfIron:"Per day, in reps: the iron (light) vs the sidur (navy) vs the forecast need (orange tick); Friday by the rotation. Click a day to see its hours.",
   ibTipIron:"Iron: {n} reps ({h}h)", ibTipFri:"Friday by rotation (every other Friday)", ibTipSched:"Sidur: {n} reps ({h}h)", ibTipUtil:"{p}% of the iron hours are in the sidur", ibTipSchedH:"In the sidur {a}",
   ibLgIron:"Reps in the iron", ibLgSched:"Reps in the sidur", ibLgNeed:"Needed by the forecast", ibNarrow:"Filtered view — the forecast need shows for the whole center only.", ibPickHint:"Click a day — its hours",
@@ -2335,7 +2347,7 @@ he:{
   holOverridden:"(שונה על ידכם)",
   btDaily:"צינור הסך-היומי (התחזית האמיתית)",
   btApplyCal:"⚙ החלת כיול {c}%", btCalDone:"הכיול נקבע ל-{c}% — התחזיות מוּרכזו מחדש.",
-  btCalActive:"כיול פעיל: {c}%", btCalReset:"איפוס כיול", btFastNote:"שינוי ברמת הביקוש מטופל ע״י ״📈 התחזית עוקבת אחרי שינוי פתאומי בביקוש״", fmAdvT:"⚙ מודלים ובדיקות", fmCu:"↩ שיחות חוזרות אחרי יום שאבד", tipCu:"אחרי יום סגור או יום נמוך מאוד (בחירות, תקלה), חלק מהשיחות שלו חוזרות בימי העבודה הבאים ודועכות — לפי ההיסטוריה שלכם. הימים האלה כבר לא מלמדים את השבוע הרגיל.", cuNow:"↩ שיחות של יום שאבד חוזרות בימים הקרובים: {n}.", cuBtT:"↩ שיחות חוזרות אחרי יום חריג", cuBtRes:"נבדק על {n} ימים חריגים בהיסטוריה שלכם — הטעות בימים שאחריהם: בלי {a}% · עם {b}%", cuBtGuard:"בהיסטוריה שלכם זה מחמיר ({n} ימים חריגים: בלי {a}% · עם {b}%) — ולכן הוא לא מופעל, אוטומטית", cuBtRes1:"נבדק על יום חריג אחד בהיסטוריה שלכם — הטעות בימים שאחריו: בלי {a}% · עם {b}%", cuBtNone:"עדיין אין בהיסטוריה יום חריג לבדוק עליו (מתחיל מחצי / חצי)", cuBtPar:"חוזרות {c}% מהשיחות שאבדו, {q}% מהן ביום הראשון", cuBtOn:"פעיל", cuBtOff:"כבוי — המודלים הרגילים בדיוק", cuBtn:"↩ שיחות חוזרות", cuBtnTip:"שיחות שלא הגיעו ב־{d} חוזרות בימים הבאים: {l}. כבו רק אם הן לא יחזרו אליכם (למשל עברו לערוץ אחר).", cuBtnTipOff:"כבוי: מוצג בלי השיחות של {d} שחוזרות. הדליקו כשמתקשרים באמת חוזרים אחרי יום כזה.", cuBtnIdle:"כשיום לא נענה (תקלה, סגירה), חלק מהמתקשרים חוזרים בימים שאחריו — דולק, התחזית מוסיפה אותם. כרגע אין יום כזה לפני הימים שעל המסך.", cuBtnIdleOff:"כבוי: אחרי יום שלא נענה (תקלה, סגירה), התחזית לא תוסיף את מי שמתקשר שוב. הדליקו אלא אם הם עוברים לערוץ אחר.", cuPill:"↩ ‎+{n}", cuPillTip:"{n} שיחות שלא הגיעו ב־{d}", cuChip:"↩ ‎+{n} שיחות חוזרות", cuChipTip:"שיחות שלא הגיעו ב־{d} חוזרות בימים הבאים: {l}.\nלחיצה — בלי (המודל הרגיל).", cuChipOff:"↩ בלי שיחות חוזרות", cuChipOffTip:"לחיצה — להחזיר את השיחות של {d}.", cuLine:"↩ שיחות שלא הגיעו ב־{d} חוזרות בימים הבאים: {l}.", cuLineOff:"↩ מוצג בלי השיחות של {d} שחוזרות.", cuWithout:"בלי", cuBack:"להחזיר",
+  btCalActive:"כיול פעיל: {c}%", btCalReset:"איפוס כיול", btFastNote:"שינוי ברמת הביקוש מטופל ע״י ״📈 התחזית עוקבת אחרי שינוי פתאומי בביקוש״", fmAdvT:"⚙ מודלים ובדיקות", fmCu:"↩ שיחות חוזרות אחרי יום שאבד", tipCu:"אחרי יום סגור או יום נמוך מאוד (בחירות, תקלה), חלק מהשיחות שלו חוזרות בימי העבודה הבאים ודועכות — לפי ההיסטוריה שלכם. הימים האלה כבר לא מלמדים את השבוע הרגיל.", cuNow:"↩ שיחות של יום שאבד חוזרות בימים הקרובים: {n}.", cuBtT:"↩ שיחות חוזרות אחרי יום חריג", cuBtRes:"נבדק על {n} ימים חריגים בהיסטוריה שלכם — הטעות בימים שאחריהם: בלי {a}% · עם {b}%", cuBtGuard:"בהיסטוריה שלכם זה מחמיר ({n} ימים חריגים: בלי {a}% · עם {b}%) — ולכן הוא לא מופעל, אוטומטית", cuBtRes1:"נבדק על יום חריג אחד בהיסטוריה שלכם — הטעות בימים שאחריו: בלי {a}% · עם {b}%", cuBtNone:"עדיין אין בהיסטוריה יום חריג לבדוק עליו (מתחיל מחצי / חצי)", cuBtPar:"חוזרות {c}% מהשיחות שאבדו, {q}% מהן ביום הראשון", cuBtOn:"פעיל", cuBtOff:"כבוי — המודלים הרגילים בדיוק", cuBtn:"↩ שיחות חוזרות", cuBtnTip:"שיחות שלא הגיעו ב־{d} חוזרות בימים הבאים: {l}. כבו רק אם הן לא יחזרו אליכם (למשל עברו לערוץ אחר).", cuBtnTipOff:"כבוי: מוצג בלי השיחות של {d} שחוזרות. הדליקו כשמתקשרים באמת חוזרים אחרי יום כזה.", cuBtnTipAb:"מתקשרים שנטשו ב־{d} חוזרים בימים הבאים: {l}. כבו רק אם הם לא יחזרו אליכם (למשל עברו לערוץ אחר).", cuBtnAutoAb:"נוטשים שחוזרים: נבדק על ההיסטוריה שלכם ({n} ימים) — התחזית מדויקת יותר בלעדיהם ({a}% מול {b}%), ולכן הם לא נוספים, לבד.", cuBtnIdle:"כשיום לא נענה (תקלה, סגירה), חלק מהמתקשרים חוזרים בימים שאחריו — דולק, התחזית מוסיפה אותם. כרגע אין יום כזה לפני הימים שעל המסך.", cuBtnIdleOff:"כבוי: אחרי יום שלא נענה (תקלה, סגירה), התחזית לא תוסיף את מי שמתקשר שוב. הדליקו אלא אם הם עוברים לערוץ אחר.", cuPill:"↩ ‎+{n}", cuPillTip:"{n} שיחות שלא הגיעו ב־{d}", cuChip:"↩ ‎+{n} שיחות חוזרות", cuChipTip:"שיחות שלא הגיעו ב־{d} חוזרות בימים הבאים: {l}.\nלחיצה — בלי (המודל הרגיל).", cuChipOff:"↩ בלי שיחות חוזרות", cuChipOffTip:"לחיצה — להחזיר את השיחות של {d}.", cuLine:"↩ שיחות שלא הגיעו ב־{d} חוזרות בימים הבאים: {l}.", cuLineOff:"↩ מוצג בלי השיחות של {d} שחוזרות.", cuWithout:"בלי", cuBack:"להחזיר",
   cmAllDay:"כל היום", cmEdit:"עריכה",
   tipExt:"נציגים שכבר משובצים צמוד לפער: להישאר עד שעתיים או להקדים עד שעתיים סוגר אותו בלי משמרת חדשה. הפערים הכבדים קודם.",
   extNone:"אין נציגים צמודים שיכולים לסגור את הפערים בהרחבה — שקלו את מאגר העודפים או גיוס.",
@@ -2577,7 +2589,7 @@ he:{
   evRowCalls:"+{n} שיחות · {d} ימי עבודה", evPeak:"יום ראשון +{p}% מהרגיל", evPast:"התרחש — מוחרג מהלמידה",
   evDel:"הסרת האירוע", evAdded:"נוסף אירוע מתוכנן: {n}", evPillTip:"+{n} שיחות נוספות מתוכננות ביום הזה",
   exclEvNote:"אירוע מתוכנן — מוחרג מהלמידה", trHintLink:"📣 תכנון אירוע ידוע",
-  trHelpTip:"איך מתקנים את התחזית", thNetH:"שעות נטו (בפועל)", fTipNetH:"שעות הלוגין מהקובץ — השוו לשעות לשיבוץ.", trGDay:"ימים", trGWeek:"שבועות", trGMonth:"חודשים",
+  trHelpTip:"איך מתקנים את התחזית", thNetH:"שעות נטו", prodBtRatio:"בימי תחזית: שעות משובצות × {r}% שהגיעו ללוגין — נבחר כי השגיאה שלו על {n} הימים האחרונים שלכם היא {a}% מול {b}% לממוצע 4 השבועות.", prodBtCarry:"בימי תחזית: ממוצע 4 ימי השבוע הקודמים — נבחר כי השגיאה שלו על {n} הימים האחרונים שלכם היא {a}% מול {b}% לשעות משובצות × {r}%.", fTipNetH:"שעות הלוגין מהקובץ; בימי תחזית — לפי התחזית (למטה). השוו לשעות לשיבוץ.", trGDay:"ימים", trGWeek:"שבועות", trGMonth:"חודשים",
   thPeriod:"תקופה", thDaysMet:"ימים ביעד", tipDaysMet:"ימי עבודה שבהם {m} הגיע ליעד {t}%, מתוך ימי התקופה.",
   grpTag_act:"בפועל", grpTag_fc:"תחזית", grpTag_mix:"בפועל + תחזית", trDrill:"לחיצה מציגה את ימי התקופה",
   wkLbl:"שבוע {w} · {a}–{b}", trShare:"📤 שיתוף סיכום", trBackTip:"חזרה לתצוגה המקובצת (Backspace)",
@@ -2597,7 +2609,7 @@ he:{
   trShowMore:"הצג עוד {k} ימים (נותרו {r}) ▼",
   mxSum:"יומי",
   mxOffGrid:"כולל {n} שיחות מחוץ לחלון המשמרת (לא מוצגות כשורות בגריד)",
-  rrNoWhy:"אין סטטוס בסידור — משמרות קצרות", rrWhyL:"למה:", rrWhyTip:"{n} נציגים — לחיצה מוסיפה לסינון (שוב = מוריד)", rrWhyAll:"✕ כולם", rrLgBig:"8+ ש׳ אפשר להחזיר", rrLgSome:"פחות מ־8 ש׳", rrLgLeave:"כל הפער היעדרות", rrLgDay:"ימים (בפתיחת נציג):", rrLgFull:"יום מלא", rrLgShort:"משמרת קצרה", rrLgMiss:"יום חסר", rrLgRot:"לא בתורו בשישי", rrCopyNone:"אין מה להוסיף בסיבות שנבחרו", rrShort:"משמרת קצרה", rrTlPurpose:"שבוע {w}, מתחת לברזל — מה אפשר להוסיף, יום אחרי יום (בסידור / בברזל):", rrFriOff:"לא בשישי הזה (שישי לסירוגין)",
+  rrNoWhy:"אין סטטוס בסידור — משמרות קצרות", rrWhyL:"למה:", rrWhyTip:"{n} נציגים — לחיצה מוסיפה לסינון (שוב = מוריד)", rrWhyAll:"✕ כולם", modelAuto:"🤖 אוטומטי — {m}", trFresh:"שיחות חדשות", trRetL:"↩ שיחות חוזרות (הערכה · תחזית בהמשך)", trRetTip:"↩ מהן חוזרות (הערכה)", trRetTipFc:"↩ מהן חוזרות (תחזית)", fmRetryK:"↩ נוטשים שחוזרים (%)", optTag:"לא חובה", tipRetryK:"ריק = נלמד מהקובץ שלכם. אם מדידת הפניות החוזרות (סמ״ט) יודעת כמה מהנוטשים מתקשרים שוב — הזינו, והמודל יפסיק לנחש את החלק הזה.", retryAuto:"אוטומטי · {p}%", retryAutoNone:"אוטומטי", icTitle:"מה השתנה בברזל?", tipIc:"כל העלאה נשמרת במחשב שלכם (12 האחרונות) ומושווית לקודמת: שעות שירדו או עלו, ימים שהוסרו או נוספו, משמרות שזזו באותן שעות. הקו הקטן ליד כל צוות = שעות הברזל שלו לאורך ההעלאות.", icSum:"מאז {d}: {n} נציגים · {h}", ic_down:"פחות שעות", ic_del:"יום הוסר", ic_up:"יותר שעות", ic_add:"יום נוסף", ic_move:"משמרת זזה", ic_new:"חדש בברזל", ic_gone:"יצא מהברזל", icTeamN:"{n} נציגים", icTlBtn:"📱 למנהל/ת הצוות", icTlPurpose:"שינויים בברזל מאז ההעלאה של {d} — נא לאשר:", icTrendTip:"שעות הברזל של הצוות בכל העלאה:", rrLgBig:"8+ ש׳ אפשר להחזיר", rrLgSome:"פחות מ־8 ש׳", rrLgLeave:"כל הפער היעדרות", rrLgDay:"ימים (בפתיחת נציג):", rrLgFull:"יום מלא", rrLgShort:"משמרת קצרה", rrLgMiss:"יום חסר", rrLgRot:"לא בתורו בשישי", rrCopyNone:"אין מה להוסיף בסיבות שנבחרו", rrShort:"משמרת קצרה", rrTlPurpose:"שבוע {w}, מתחת לברזל — מה אפשר להוסיף, יום אחרי יום (בסידור / בברזל):", rrFriOff:"לא בשישי הזה (שישי לסירוגין)",
   wfIronT:"ברזל מול סידור — לפי יום", tipWfIron:"לכל יום, בנציגים: הברזל (בהיר) מול הסידור (כחול כהה) מול מה שהתחזית דורשת (קו כתום); שישי לפי הסבב. לחיצה על יום מראה את השעות.",
   ibTipIron:"ברזל: {n} נציגים ({h} ש׳)", ibTipFri:"שישי לפי סבב (לסירוגין)", ibTipSched:"סידור: {n} נציגים ({h} ש׳)", ibTipUtil:"{p}% משעות הברזל נכנסו לסידור", ibTipSchedH:"בסידור {a}",
   ibLgIron:"נציגים בברזל", ibLgSched:"נציגים בסידור", ibLgNeed:"נדרשים לפי התחזית", ibNarrow:"תצוגה מסוננת — הצורך מהתחזית מוצג רק לכל המוקד.", ibPickHint:"לחיצה על יום — לפי שעות",
@@ -3901,6 +3913,7 @@ function parseIronGrid(grid){
   }
   if(!emps.size) return false;
   state.iron={emps,total}; state.ironManual=false;
+  if(typeof recordIronHist==="function") recordIronHist(); // 🔍 this upload joins the iron's memory (the next one is compared against it)
   return true;
 }
 /* the parts of a rep's iron day: [[s,e],…] — one for a regular shift, more for a split one (an iron saved before splits: one) */
@@ -4634,6 +4647,61 @@ function renderHeadroom(){
     }).join("")+`</div>`;
   box.style.display="block";
 }
+/* 🔍 THE IRON'S MEMORY — one snapshot per upload (name → team + each day's shift parts), the last 12, on this computer
+   only; an identical upload adds nothing. ironChanges() = the latest vs the one before, per rep and per day:
+   down / up (fewer / more hours) · del / add (a day removed / added) · move (same hours, other times) · new / gone. */
+function ironSnap(){ if(!state.iron) return null; const reps={};
+  for(const [n,e] of state.iron.emps){ const d={}; for(let di=0;di<6;di++){ const P=ironParts(e.days&&e.days[di]); if(P.length) d[di]=P.map(([a,b])=>a+"-"+b).join("+"); }
+    reps[n]={t:e.team||"",d}; }
+  return reps; }
+function recordIronHist(){ const reps=ironSnap(); if(!reps) return; const H=state.settings.ironHist=state.settings.ironHist||[];
+  const last=H[H.length-1]; if(last&&JSON.stringify(last.reps)===JSON.stringify(reps)) return;
+  H.push({at:iso(new Date()),reps}); while(H.length>12) H.shift(); saveState(); }
+const icHrs=str=>str?str.split("+").reduce((s,p)=>{ const [a,b]=p.split("-"); return s+(toMinW(b)-toMinW(a))/60; },0):0;
+const icWeek=r=>Object.values(r.d).reduce((s,x)=>s+icHrs(x),0);
+function ironChanges(){ const H=state.settings.ironHist||[]; if(H.length<2) return null;
+  const A=H[H.length-2], B=H[H.length-1], list=[];
+  for(const n of new Set([...Object.keys(A.reps),...Object.keys(B.reps)])){ const a=A.reps[n], b=B.reps[n];
+    if(!a){ list.push({n,t:b.t,kinds:["new"],dh:icWeek(b),days:[]}); continue; }
+    if(!b){ list.push({n,t:a.t,kinds:["gone"],dh:-icWeek(a),days:[]}); continue; }
+    const days=[]; for(let di=0;di<6;di++){ const x=a.d[di]||"", y=b.d[di]||""; if(x===y) continue;
+      const hx=icHrs(x), hy=icHrs(y); days.push({di,from:x,to:y,dh:hy-hx,k:!x?"add":!y?"del":Math.abs(hy-hx)>0.01?(hy<hx?"down":"up"):"move"}); }
+    if(days.length) list.push({n,t:b.t||a.t,kinds:[...new Set(days.map(d=>d.k))],dh:days.reduce((s,d)=>s+d.dh,0),days}); }
+  return {from:A.at,to:B.at,list,H}; }
+const IC_KINDS=[["down","#cf5a46"],["del","#a11a1a"],["up","#2f9e66"],["add","#0f6a3f"],["move","#8a63d2"],["new","#3fa9f5"],["gone","#6b7c90"]];
+function renderIronChanges(){
+  const card=document.getElementById("wfIronChg"), box=document.getElementById("icBody"), sum=document.getElementById("icSum"); if(!card) return;
+  const C=state.iron?ironChanges():null; card.style.display=C&&C.list.length?"":"none"; if(!C||!C.list.length) return; // silence: nothing changed
+  const esc=v=>String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;"), dS=t("daysShort");
+  const teamOf=x=>(state.rosterMeta.get(x.n)||{}).team||x.t||"—", net=C.list.reduce((s,x)=>s+x.dh,0);
+  sum.textContent=t("icSum",{d:fmtDs(C.from),n:C.list.length,h:(net>0?"+":"")+hU(net)});
+  const sel=state._icSel instanceof Set?state._icSel:(state._icSel=new Set()), cnt={};
+  C.list.forEach(x=>x.kinds.forEach(k=>cnt[k]=(cnt[k]||0)+1)); [...sel].forEach(k=>{ if(!cnt[k]) sel.delete(k); });
+  const shown=sel.size?C.list.filter(x=>x.kinds.some(k=>sel.has(k))):C.list;
+  const col=Object.fromEntries(IC_KINDS);
+  // the key, then the filter chips (multi-select, like every list filter)
+  let html=`<div class="legend rdyLeg top rrLeg">${IC_KINDS.filter(([k])=>cnt[k]).map(([k,c])=>`<span><i style="background:${c}"></i>${t("ic_"+k)}</span>`).join("")}</div>`
+    +`<div class="rrWhyBar">${IC_KINDS.filter(([k])=>cnt[k]).map(([k,c])=>`<button type="button" class="rrWhy${sel.has(k)?" on":""}" data-k="${k}" title="${esc(t("rrWhyTip",{n:cnt[k]}))}"><i style="background:${c}"></i>${t("ic_"+k)} <b>${cnt[k]}</b></button>`).join("")}${sel.size?`<button type="button" class="linklike icAll">${t("rrWhyAll")}</button>`:""}</div>`;
+  // a team's iron hours in every upload: the small line beside its name (one axis, hover = the numbers)
+  const spark=tm=>{ const v=C.H.map(h=>Object.entries(h.reps).filter(([n,r])=>((state.rosterMeta.get(n)||{}).team||r.t||"—")===tm).reduce((s,[,r])=>s+icWeek(r),0));
+    if(v.length<2) return ""; const lo=Math.min(...v), hi=Math.max(...v), W=90, Hh=20, X=i=>4+i*(W-8)/(v.length-1), Y=x=>hi>lo?Hh-3-(x-lo)/(hi-lo)*(Hh-6):Hh/2;
+    const tip=C.H.map((h,i)=>fmtDs(h.at)+": "+hU(v[i])).join("\n");
+    return `<svg class="icSpark" viewBox="0 0 ${W} ${Hh}" width="${W}" height="${Hh}" style="direction:ltr"><title>${esc(t("icTrendTip")+"\n"+tip)}</title><polyline fill="none" stroke="var(--navy)" stroke-width="1.6" points="${v.map((x,i)=>X(i).toFixed(1)+","+Y(x).toFixed(1)).join(" ")}"/><circle cx="${X(v.length-1).toFixed(1)}" cy="${Y(v[v.length-1]).toFixed(1)}" r="2.4" fill="${v[v.length-1]<v[v.length-2]?"#cf5a46":"var(--navy)"}"/></svg>`; };
+  const tr=x=>x?"\u2066"+x.replace(/\+/g," + ")+"\u2069":"—", arr=lang==="he"?" ← ":" → ", fromTo=d=>tr(d.from)+arr+tr(d.to);
+  const dayChip=d=>`<span class="icD" style="--c:${col[d.k]}" title="${esc(t("ic_"+d.k))}">${dS[d.di]} ${esc(fromTo(d))}${d.k==="move"?"":" <b>"+hU(d.dh,d.dh>0)+"</b>"}</span>`;
+  const byTeam=new Map(); shown.forEach(x=>{ const tm=teamOf(x); if(!byTeam.has(tm)) byTeam.set(tm,[]); byTeam.get(tm).push(x); });
+  const teams=[...byTeam.entries()].sort((a,b)=>a[1].reduce((s,x)=>s+x.dh,0)-b[1].reduce((s,x)=>s+x.dh,0)); // the biggest drop first
+  html+=teams.map(([tm,xs])=>{ const th=xs.reduce((s,x)=>s+x.dh,0);
+    return `<div class="icTeam"><div class="icTH"><b>${esc(tm)}</b><span class="mini">${t("icTeamN",{n:xs.length})} · <b class="${th<0?"neg":""}">${hU(th,th>0)}</b></span>${spark(tm)}<span class="grow"></span><button type="button" class="linklike icMsg" data-tm="${esc(tm)}">${t("icTlBtn")}</button></div>`
+      +xs.sort((a,b)=>a.dh-b.dh).map(x=>`<div class="icRow"><span class="icN">${esc(x.n)}</span>${x.days.length?x.days.map(dayChip).join(""):`<span class="icD" style="--c:${col[x.kinds[0]]}">${t("ic_"+x.kinds[0])} · <b>${hU(x.dh,x.dh>0)}</b></span>`}</div>`).join("")+`</div>`; }).join("");
+  box.innerHTML=html;
+  box.querySelectorAll(".rrWhy").forEach(b=>b.addEventListener("click",()=>{ const k=b.dataset.k; if(sel.has(k)) sel.delete(k); else sel.add(k); renderIronChanges(); }));
+  { const a=box.querySelector(".icAll"); if(a) a.addEventListener("click",()=>{ sel.clear(); renderIronChanges(); }); }
+  // one message per team manager, the shape every message has (tlMsg) — only what the filter shows
+  box.querySelectorAll(".icMsg").forEach(b=>b.addEventListener("click",()=>{ const tm=b.dataset.tm, xs=byTeam.get(tm)||[];
+    const lines=xs.flatMap(x=>x.days.length?x.days.map(d=>"• "+x.n+" — "+dS[d.di]+": "+fromTo(d)+(d.k==="move"?"":" ("+hU(d.dh,d.dh>0)+")")):["• "+x.n+" — "+t("ic_"+x.kinds[0])]);
+    navigator.clipboard&&navigator.clipboard.writeText(tlMsg(tm,t("icTlPurpose",{d:fmtDs(C.from)}),lines)); showToast("📋 "+t("waCopied",{team:tm}),true); }));
+}
 function renderValidation(){
   const wrap=document.getElementById("wfValWrap"); wrap.innerHTML="";
   { const s=document.getElementById("valSum"), n=state.validationErrors.length; if(s) s.textContent=n?t("valSumN",{n}):""; }
@@ -4960,6 +5028,7 @@ function renderWorkforce(){
   renderFriday();
   renderImpactMatrix();
   renderValidation();
+  renderIronChanges();
   renderInternalRoster();
 }
 /* the "can come back" tile opens its list: one click from the number to the names */
@@ -7037,6 +7106,7 @@ function afterForecastLoad(){
   state.horizonDays=state.dataDepthDays>=730?365:92;
   state.horizonISO=addDays(state.maxDate,state.horizonDays);
   rebuildLearningSeries();
+  autoPickModels(); // 🤖 the analyst's model choice: tested on this file, the most accurate one is used (unless you picked one)
   state._hasMpt=false;
   outer: for(const dm of state.days.values())
     for(const r of dm.values()) if(r.mpt>0){ state._hasMpt=true; break outer; }
@@ -7319,6 +7389,34 @@ function rebuildLearningSeries(){
       if(state.cuCheck.n>=2&&state.cuCheck.with>state.cuCheck.without){ state.cuCheck.guard=true; state.cuParam.c=0; } } // worse on your history → it steps aside
     if(state.settings.cuOn!==false&&state.cuParam.c>0) for(const g of groups){ let d=g.ds; for(let k=1;k<=6;k++){ d=nextWork(d); if(!d||d>state.maxDate) break; const e=exp(d);
       if(!(e>0)||g.lost*cc*(1-qq)*Math.pow(qq,k-1)<0.03*e) break; state.cuDays.add(d); } }
+    /* ↩ part 2 — ABANDONED CALLERS WHO CALL AGAIN (the same switch, chosen automatically). A day that loses more calls
+       than usual to abandonment sends part of them back over the next working days. Learned from your history:
+       p = the share of the EXTRA abandoned calls (over the usual abandon rate) that comes back, q = the share of them
+       that comes on the 2nd day (the rest on the 1st). Shrunk toward the old fixed rule (40% · ¾ + ¼) while the history
+       is short; tested on the past — worse than without → it steps aside. A known rate (Settings, optional — e.g. from
+       your repeat-contacts measurement) replaces the learned p. Research: Hoffman & Harris 1986; Aguir et al. 2004;
+       Ding, Koole & van der Mei 2015 (one known parameter makes the rest estimable). */
+    state.rtParam=null;
+    { const ab=ds=>{ const m=state.days.get(ds); if(!m) return null; let v=0,a=0,vA=0; for(const r of m.values()){ v+=r.volume||0; if(r.answered>0){ a+=Math.max(0,r.volume-r.answered); vA+=r.volume; } } return v>0&&vA>=0.6*v?{v,a}:null; };
+      const rec=[]; for(let d=state.minDate;d&&d<=state.maxDate;d=addDays(d,1)){ if(fromISO(d).getDay()>5||isClosed(d)||lostDay.has(d)) continue; const x=ab(d); if(x) rec.push({d,x}); }
+      if(rec.length>=15){
+        const r0=rec.map(o=>o.x.a/o.x.v).sort((a,b)=>a-b)[rec.length>>1]; // the usual abandon rate
+        const X=new Map(rec.map(o=>[o.d,Math.max(0,o.x.a-r0*o.x.v)]));
+        const obs=[];
+        for(const o of rec){ const x=X.get(o.d); if(!(x>0.03*o.x.v)) continue;
+          const d1=nextWork(o.d), d2=d1&&nextWork(d1); if(!d1||!d2||d2>state.maxDate||lostDay.has(d1)||lostDay.has(d2)) continue;
+          const e1=exp(d1), e2=exp(d2); if(!(e1>0&&e2>0)) continue;
+          obs.push({x,y1:act(d1)-e1,y2:act(d2)-e2,a1:act(d1),a2:act(d2)}); }
+        const known=+state.settings.retryKnown>0?Math.min(1,+state.settings.retryKnown/100):null, p0=known??0.4;
+        const sc=obs.length?obs.reduce((a,o)=>a+o.x*o.x,0)/obs.length:1;
+        let best=null; for(let p=0;p<=1.0001;p+=0.05) for(let q=0.1;q<=0.6001;q+=0.05){ if(known!=null&&Math.abs(p-known)>0.026) continue;
+          let s=2*sc*(Math.pow(p-p0,2)+Math.pow(q-0.25,2)); // two "prior" observations at the old rule
+          for(const o of obs) s+=Math.pow(o.y1-p*(1-q)*o.x,2)+Math.pow(o.y2-p*q*o.x,2);
+          if(!best||s<best.s) best={s,p:known??p,q}; }
+        let e0=0,e1=0,sa=0; for(const o of obs){ const r1=best.p*(1-best.q)*o.x, r2=best.p*best.q*o.x;
+          e0+=Math.abs(o.y1)+Math.abs(o.y2); e1+=Math.abs(o.y1-r1)+Math.abs(o.y2-r2); sa+=o.a1+o.a2; }
+        const check=obs.length&&sa>0?{n:obs.length,without:e0/sa*100,with:e1/sa*100}:{n:0}, guard=check.n>=3&&check.with>check.without;
+        state.rtParam={p:guard?0:best.p,q:best.q,r0,n:obs.length,check,guard,known:known!=null,X}; } }
   }
   const holFactorObs={};
   for(const ds of keys){
@@ -7657,8 +7755,8 @@ function forecastDay(ds){
   const baseDay=Math.max(0,dailyNorm*cf*hf*(state.settings.volCal||1));
   // ⚡ fast lane: a sudden shift in the last days + callbacks of yesterday's extra abandons (fastFor)
   const fx=hf>0?fastFor(ds,di,((state.domFactorPre||state.domFactor||[])[+ds.slice(8,10)]||1)*hf*(state.settings.volCal||1),baseDay):null;
-  const cuX=hf>0?catchUpAt(ds):0; // ↩ calls of a lost day coming back (its own model; 0 when off)
-  const dayForecast=(fx?fx.day+fx.retry:baseDay)+evX+cuX;
+  const cuX=hf>0?catchUpAt(ds)+retryAt(ds):0; // ↩ calls coming back: of a lost day + of yesterday's extra abandons (one switch)
+  const dayForecast=(fx?fx.day:baseDay)+evX+cuX;
 
   /* HOLIDAY-EVE = FRIDAY: a holiday eve is a short, morning-heavy day just like a
      Friday. So for eve targets we borrow FRIDAY's interval-share profile (and its
@@ -7757,7 +7855,7 @@ function preDaily(di,from,ds){
 function fastState(){
   const S=state.settings;
   if(S.fastAdapt===false||!state.series||!state.maxDate) return null;
-  const key=[state._serVer,state.maxDate,S.fastHalf,S.retryShare,S.volCal,S.modelVolume,S.cuOn,JSON.stringify(S.demandEvents||[])].join("|");
+  const key=[state._serVer,state.maxDate,S.fastHalf,state.rtParam?state.rtParam.p+","+state.rtParam.q:"",S.volCal,S.modelVolume,S.cuOn,JSON.stringify(S.demandEvents||[])].join("|");
   if(state._fastKey===key) return state._fast;
   state._fastKey=key; state._fast=null;
   const domOf=d=>((state.domFactorPre||state.domFactor)||[])[+d.slice(8,10)]||1; // billing calendar from before the window
@@ -7772,11 +7870,11 @@ function fastState(){
   const win=all.slice(-W), from=win[0].ds;
   // usual abandon rate: median over the 40 working days before the window
   const pre=all.slice(Math.max(0,all.length-W-40),all.length-W).filter(x=>x.hasAns).map(x=>x.ab/x.vol).sort((a,b)=>a-b);
-  const hasAns=pre.length>=10&&win.every(x=>x.hasAns), ab0=hasAns?pre[pre.length>>1]:0, rho=hasAns?Math.max(0,Math.min(0.9,+S.retryShare||0)):0;
+  const RT=state.rtParam, rq=RT?RT.q:0.25, hasAns=pre.length>=10&&win.every(x=>x.hasAns), ab0=hasAns?pre[pre.length>>1]:0, rho=hasAns&&S.cuOn!==false&&RT?RT.p:0;
   all.forEach(x=>{ x.X=hasAns&&x.hasAns?Math.max(0,x.ab-ab0*x.vol):0; });
   const base=all.length-W; let num=0,den=0;
   const days=win.map((x,i)=>{ const p1=all[base+i-1], p2=all[base+i-2];
-    const back=rho*(0.75*((p1&&p1.X)||0)+0.25*((p2&&p2.X)||0))+catchUpAt(x.ds), fresh=Math.max(0,x.vol-back); // + ↩ comeback calls
+    const back=rho*((1-rq)*((p1&&p1.X)||0)+rq*((p2&&p2.X)||0))+catchUpAt(x.ds), fresh=Math.max(0,x.vol-back); // + ↩ comeback calls
     const hf=x.lvl&&state.holidayFactor?(state.holidayFactor[x.lvl]||1):1, pd=preDaily(x.di,from,x.ds);
     const ev=(evMap().get(x.ds)||{}).extra||0;
     const exp=pd==null?null:pd*domOf(x.ds)*hf*(S.volCal||1)+ev;
@@ -7790,11 +7888,17 @@ function fastState(){
   if(same){ let n2=0,d2=0; days.slice(-run).forEach((d,i,a)=>{ const w=Math.pow(0.85,a.length-1-i); n2+=w*d.fresh; d2+=w*d.exp; }); if(d2>0) L=n2/d2; }
   const active=same&&Math.abs(L-1)>=0.06;
   const l1=all[all.length-1], l2=all[all.length-2];
-  const retry1=rho*(0.75*(l1.X||0)+0.25*((l2&&l2.X)||0)), retry2=rho*0.25*(l1.X||0);
+  const retry1=rho*((1-rq)*(l1.X||0)+rq*((l2&&l2.X)||0)), retry2=rho*rq*(l1.X||0);
   state._fast={active,L,from,to:l1.ds,days,run,hasAns,ab0,rho,retry1,retry2,half:Math.max(1,+S.fastHalf||10),noBase:!den};
   return state._fast;
 }
 /* ↩ the calls of lost days coming back on ds — the history's lost days, and the forecast's own closed days */
+/* ↩ abandoned callers who call again, on ds: p × the EXTRA abandons of the working day before ((1−q)) and the one
+   before it (q) — learned in rebuildLearningSeries (rtParam). History days get it too (the split volume bar). */
+function retryAt(ds,force){ const P=state.rtParam; if(!(force||state.settings.cuOn!==false)||!P||!(P.p>0)||!state.maxDate) return 0;
+  const prevWork=d=>{ for(let g=0;g<14;g++){ d=addDays(d,-1); if(fromISO(d).getDay()<=5&&state.holidayDates.get(d)!=="closed") return d; } return null; };
+  const d1=prevWork(ds), d2=d1&&prevWork(d1), x=d=>d&&d<=state.maxDate?(P.X.get(d)||0):0; // the forecast's own abandons: the next stage (the loop)
+  return P.p*((1-P.q)*x(d1)+P.q*x(d2)); }
 function catchUpAt(ds,force){ // force: what it WOULD add (the chip offers it back when it is off)
   const P=state.cuParam; if(!(force||state.settings.cuOn!==false)||!P||!(P.c>0)) return 0;
   const ev=(state.cuEvents||[]).filter(e=>e.ds<ds);
@@ -7815,8 +7919,7 @@ function fastFor(ds,di,mult,baseDay){
   let day=baseDay, w=0;
   if(fs.active){ w=Math.pow(0.5,(k-1)/fs.half); const pd=preDaily(di,fs.from,ds);
     day=w*((pd!=null?pd*mult:baseDay)*fs.L)+(1-w)*baseDay; }
-  const retry=k===1?fs.retry1:k===2?fs.retry2:0;
-  return day!==baseDay||retry>0?{day,retry,w,k}:null;
+  return day!==baseDay?{day,retry:0,w,k}:null; // the callbacks themselves: retryAt (the ↩ switch), never twice
 }
 function sourceDay(ds){
   if(state.days.has(ds)) return {src:state.days.get(ds),forecast:false};
@@ -8775,6 +8878,8 @@ function trendDayStat(ds){
     if(!fc&&rec.occup>0){ occFileW+=rec.occup*rec.volume; occFileVol+=rec.volume;
       if(rec.login>0){ occFileWL+=rec.occup*rec.login; occFileL+=rec.login; } }
   }
+  { const bt=fc&&loginHrs>0?prodBacktest():null;
+    if(bt&&bt.pick==="ratio"&&schedHrs>0){ loginHrs=schedHrs*bt.rho; ansL=answered; volL=vol; workL=handledWork; workVL=work; } }
   if(!vol){
     // show a zero-volume day when it's a user-edited forecast OR a holiday (so a
     // CLOSED holiday reads explicitly as 0 demand + a 🕎 badge, not a silent gap)
@@ -8802,7 +8907,7 @@ function trendDayStat(ds){
     occ=Math.min(1,fo>1?fo/100:fo); occWork=occ*occDen; }
   const met=(S.primaryMetric==="ar"?ar:tsf)>=S.target/100;   // attainment on the Primary Target Metric
   return {ds,dayIdx,forecast:fc,vol,aht,ar,tsf,netProd,occ,tsf30,tsf60,met,holLvl,grossH,
-    prodN,prodD:netHrs,occN:occWork,occD:occDen,netH:fc?0:loginHrs}; // "actual" net hours: measured days only, never a projection
+    prodN,prodD:netHrs,occN:occWork,occD:occDen,netH:loginHrs}; // measured on past days, the tested projection on forecast days
 }
 /* ================================================================
    DATE TRENDS DASHBOARD — the same periods the table shows (days / weeks / months, the same date
@@ -8822,11 +8927,12 @@ const TR_METRICS=[
   {k:"netH",lk:"thNetH",fmt:v=>Math.round(v).toLocaleString(),zero:true,needNet:true}];
 const mLab=m=>m.k==="tsf30"?t("metricTsfDyn",{s:state.settings.tsfT}):t(m.lk); // TSF = Settings' window, like the matrix
 const TR_REL=[["vol","ar"],["netH","ar"],["aht","ar"],["occ","ar"],["vol","aht"]];
+function trRet(a,b){ let s=0; for(let d=a;d<=b;d=addDays(d,1)) s+=catchUpAt(d)+retryAt(d); return s; } // ↩ the returning calls of a range
 function trPoints(list,G){
   const dn=t("daysShort");
   return list.filter(r=>!r.zero).map(r=>G==="day"
-    ?{key:r.ds,lab:fmtDs(r.ds),long:dn[r.dayIdx]+" "+fmtD(r.ds),fc:!!r.forecast,vol:r.vol,ar:r.ar,aht:r.aht,occ:r.occ,prod:r.netProd,tsf30:r.tsf,netH:r.netH||0,src:r}
-    :{key:r.k,lab:G==="month"?r.label.split(" ")[0].slice(0,3)+" "+r.k.slice(2,4):"W"+isoWeek(r.k),long:r.label,fc:r.tag==="fc",mix:r.tag==="mix",vol:r.vol,ar:r.ar,aht:r.aht,occ:r.occ,prod:r.prod,tsf30:r.tsf,netH:r.netH||0,src:r});
+    ?{key:r.ds,lab:fmtDs(r.ds),long:dn[r.dayIdx]+" "+fmtD(r.ds),fc:!!r.forecast,vol:r.vol,ar:r.ar,aht:r.aht,occ:r.occ,prod:r.netProd,tsf30:r.tsf,netH:r.netH||0,ret:trRet(r.ds,r.ds),src:r}
+    :{key:r.k,lab:G==="month"?r.label.split(" ")[0].slice(0,3)+" "+r.k.slice(2,4):"W"+isoWeek(r.k),long:r.label,fc:r.tag==="fc",mix:r.tag==="mix",vol:r.vol,ar:r.ar,aht:r.aht,occ:r.occ,prod:r.prod,tsf30:r.tsf,netH:r.netH||0,ret:r.from&&r.to?trRet(r.from,r.to):0,src:r});
 }
 function niceStep(x){ if(!(x>0)) return 1; const p=Math.pow(10,Math.floor(Math.log10(x))), f=x/p; return (f<1.5?1:f<3.5?2:f<7.5?5:10)*p; }
 function renderTrendDash(list,G,onOpen){
@@ -8847,7 +8953,7 @@ function renderTrendDash(list,G,onOpen){
   const tiles=mets.filter(m=>onSet.has(m.k)).map(m=>{
     const vals=pts.map(p=>p[m.k]).filter(v=>v!=null&&isFinite(v)&&(!m.needNet||v>0));
     if(!vals.length) return "";
-    const tgt=m.k==="ar"&&S.primaryMetric==="ar"?S.target/100:null;
+    const tgt=m.k==="ar"&&S.primaryMetric==="ar"?S.target/100:null; let keyHtml="";
     let lo=m.zero?0:Math.min(...vals,tgt??Infinity), hi=Math.max(...vals,tgt??-Infinity);
     if(!m.zero){ const pad=(hi-lo)*0.12||0.02; lo=Math.max(0,lo-pad); hi=hi+pad; }
     if(m.pct) hi=Math.min(1,hi);
@@ -8859,9 +8965,12 @@ function renderTrendDash(list,G,onOpen){
     if(tgt!=null) g+=`<line x1="${pl}" x2="${W-pr}" y1="${Y(tgt).toFixed(1)}" y2="${Y(tgt).toFixed(1)}" class="trTgt"/><text x="${pl+3}" y="${(Y(tgt)-3).toFixed(1)}" class="trTick">${t("trTarget",{t:S.target})}</text>`;
     const lstep=Math.max(1,Math.ceil(n/8));
     g+=pts.map((p,i)=>i%lstep===0?`<text x="${X(i).toFixed(1)}" y="${H-5}" class="trTick" text-anchor="middle">${esc(p.lab)}</text>`:"").join("");
-    if(m.bar){ const bw=Math.max(2,Math.min(18,step*0.7));
+    if(m.bar){ const bw=Math.max(2,Math.min(18,step*0.7)), split=m.k==="vol"&&pts.some(p=>p.ret>=1);
+      if(split) g+=`<defs><pattern id="trHatch" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="4" height="4" fill="#cfe6fb"/><line x1="0" y1="0" x2="0" y2="4" stroke="#3f8fd8" stroke-width="1.6"/></pattern></defs>`;
       g+=pts.map((p,i)=>{ const v=p[m.k]; if(!(v>0)) return ""; const y=Y(v);
-        return `<rect x="${(X(i)-bw/2).toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(0,Y(lo)-y).toFixed(1)}" rx="2" class="trBar${p.fc?" fc":""}"/>`; }).join("");
+        const ret=split&&p.ret>=1?`<rect x="${(X(i)-bw/2).toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(0,Y(Math.max(lo,v-p.ret))-y).toFixed(1)}" class="trBar ret"/>`:"";
+        return `<rect x="${(X(i)-bw/2).toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(0,Y(lo)-y).toFixed(1)}" rx="2" class="trBar${p.fc?" fc":""}"/>`+ret; }).join("");
+      if(split) keyHtml=`<div class="legend rdyLeg top trRetKey"><span><i class="lg-fresh"></i>${t("trFresh")}</span><span><i class="lg-ret"></i>${t("trRetL")}</span></div>`;
     }else{
       const seg=(a,b,cls)=>{ const s=pts.slice(a,b).map((p,j)=>[X(a+j),p[m.k]]).filter(q=>q[1]!=null&&isFinite(q[1])&&(!m.needNet||q[1]>0));
         return s.length>1?`<polyline points="${s.map(q=>q[0].toFixed(1)+","+Y(q[1]).toFixed(1)).join(" ")}" class="${cls}"/>`:""; };
@@ -8870,7 +8979,7 @@ function renderTrendDash(list,G,onOpen){
     const last=[...pts].reverse().find(p=>!p.fc&&p[m.k]!=null&&(!m.needNet||p[m.k]>0));
     g+=`<line class="trXh" x1="-10" x2="-10" y1="${pt}" y2="${H-pb}"/><circle class="trDot" r="4" cx="-10" cy="-10"/>`;
     g+=pts.map((p,i)=>`<rect class="trHit" data-i="${i}" x="${(pl+step*i).toFixed(1)}" y="0" width="${step.toFixed(1)}" height="${H}"/>`).join("");
-    return `<div class="trTile" data-k="${m.k}"><div class="trTileH"><b>${mLab(m)}</b>${last?`<span>${esc(f(last[m.k]))} <small>${esc(last.lab)}</small></span>`:""}</div>`
+    return `<div class="trTile" data-k="${m.k}"><div class="trTileH"><b>${mLab(m)}</b>${last?`<span>${esc(f(last[m.k]))} <small>${esc(last.lab)}</small></span>`:""}</div>${keyHtml}`
       +`<svg viewBox="0 0 ${W} ${H}" width="100%" data-lo="${lo}" data-hi="${hi}" data-k="${m.k}">${g}</svg></div>`;
   }).join("");
   box.innerHTML=chips+`<div class="trTiles">${tiles}${showRel?trRelTile(pts,mets):""}</div><div class="trTip" hidden></div>`;
@@ -8885,6 +8994,7 @@ function renderTrendDash(list,G,onOpen){
       if(v!=null&&isFinite(v)&&(!m.needNet||v>0)){ dot.setAttribute("cx",x); dot.setAttribute("cy",(pt+(H-pt-pb)*(1-(v-lo)/(hi-lo))).toFixed(1)); } else dot.setAttribute("cx",-10); });
     tip.innerHTML=`<b>${esc(p.long)}</b>${p.fc?` <span class="grpTag fc">${t("grpTag_fc")}</span>`:p.mix?` <span class="grpTag mix">${t("grpTag_mix")}</span>`:""}`
       +mets.map(m=>{ const v=p[m.k]; return v!=null&&isFinite(v)&&(!m.needNet||v>0)?`<div><span>${mLab(m)}</span><b>${esc(metaF(m)(v))}</b></div>`:""; }).join("")
+      +(p.ret>=1?`<div><span>${t(p.fc?"trRetTipFc":"trRetTip")}</span><b>${Math.round(p.ret).toLocaleString()}</b></div>`:"")
       +`<div class="mini">${t(G==="day"?"trTipDay":"trTipOpen")}</div>`;
     tip.hidden=false; };
   box.querySelectorAll(".trHit").forEach(r=>{
@@ -8952,7 +9062,8 @@ function renderTrends(){
   hr.appendChild(thTip(t("thAr"),t("fTipAr")));
   hr.appendChild(thTip(t("thAht"),t("fTipAht")));
   const workTh=thTip(t("thWork")," "); hr.appendChild(workTh); // tip filled once totals exist
-  hr.appendChild(thTip(t("thNetProd"),t("fTipNetProd")));
+  const pbt=prodBacktest(), pbtLine=pbt?"\n"+t(pbt.pick==="ratio"?"prodBtRatio":"prodBtCarry",{r:Math.round(pbt.rho*100),a:(Math.min(pbt.eRatio,pbt.eCarry)*100).toFixed(1),b:(Math.max(pbt.eRatio,pbt.eCarry)*100).toFixed(1),n:pbt.n}):"";
+  hr.appendChild(thTip(t("thNetProd"),t("fTipNetProd")+pbtLine));
   hr.appendChild(thTip(t("thUtil"),t("fTipOcc")));
   const show60=+S.tsfT!==60; // the window IS 60 → one TSF column, not the same one twice
   hr.appendChild(thTip(t("metricTsfDyn",{s:S.tsfT}),t("fTipTsf",{s:S.tsfT})));
@@ -8977,7 +9088,7 @@ function renderTrends(){
   { const inf=workTh.querySelector(".info"); if(inf) inf.dataset.tip=t("fTipWork",{m:primName(),t:S.target,
       n:T.grossH>0?Math.round(T.ahtW/3600/T.grossH*100):"—"}); }
   const hasNet=rowsData.some(r=>r.netH>0);
-  if(hasNet) workTh.after(thTip(t("thNetH"),t("fTipNetH")));
+  if(hasNet) workTh.after(thTip(t("thNetH"),t("fTipNetH")+pbtLine));
   const NCOL=(hasNet?12:11)-(show60?0:1);
   const cuDays=cuInfo(rowsData.filter(r=>r.forecast).map(r=>r.ds)); // ↩ only when there is a real event on screen
   /* PASS 2 — DOM row factory */
@@ -9046,7 +9157,7 @@ function renderTrends(){
     }
     if(d.holLvl) dth.appendChild(holPill(ds,d.holLvl)); // 🕎 trails the date in reading order
     { const ep=evPill(ds); if(ep) dth.appendChild(ep); } // 📣 planned event
-    if(d.forecast&&cuDays){ const n=Math.round(catchUpAt(ds)); if(n>=1){ const s=document.createElement("span"); s.className="evPill"; s.textContent=t("cuPill",{n:n.toLocaleString()}); s.title=t("cuPillTip",{n:n.toLocaleString(),d:cuDays.d}); dth.appendChild(s); } }
+    if(d.forecast&&cuDays){ const n=Math.round(catchUpAt(ds)+retryAt(ds)); if(n>=1){ const s=document.createElement("span"); s.className="evPill"; s.textContent=t("cuPill",{n:n.toLocaleString()}); s.title=t("cuPillTip",{n:n.toLocaleString(),d:cuDays.d}); dth.appendChild(s); } }
     tr.appendChild(dth);
     const dayTd=document.createElement("td"); dayTd.textContent=dayNames[dayIdx]??""; tr.appendChild(dayTd);
     const volTd=plain(Math.round(d.vol).toLocaleString());
@@ -10953,24 +11064,37 @@ function fitMenu(m){ if(!m) return; m.style.transform=""; const r=m.getBoundingC
   let dx=0; if(r.right>W-8) dx=W-8-r.right; if(r.left+dx<8) dx=8-r.left; if(dx) m.style.transform=`translateX(${Math.round(dx)}px)`; }
 document.addEventListener("keydown",e=>{ if(e.key==="Escape") document.querySelectorAll(".splitbtn.open").forEach(w=>w.classList.remove("open")); });
 
+/* 🤖 THE ANALYST'S MODEL CHOICE, AUTOMATIC: after each forecast load every volume / AHT / patience model is backtested on
+   this file's own history (the same test and ranking as "🧪 Backtest models") and the most accurate one is used.
+   A model you pick by hand stays yours; "🤖 Automatic" in the same list gives the choice back. */
+const MODEL_KINDS=[["volume","modelVolume","setModelVol"],["aht","modelAht","setModelAht"],["mpt","modelMpt","setModelMpt"]];
+function rankModels(kind){ return Object.keys(Models[kind]).map(mid=>({mid,r:backtestModel(kind,mid)})).filter(s=>s.r)
+  .sort(kind==="aht"?(a,b)=>a.r.mape-b.r.mape:(a,b)=>(Math.abs((a.r.pace??999)-100)-Math.abs((b.r.pace??999)-100))||(a.r.mape-b.r.mape)); }
+function autoPickModels(){ const S=state.settings; if(S.modelUserSet||!state.series) return; let ch=false; state._modelAuto={};
+  for(const [kind,key] of MODEL_KINDS){ const sc=rankModels(kind); if(!sc.length) continue;
+    state._modelAuto[kind]={mid:sc[0].mid,r:sc[0].r,n:sc.length}; if(S[key]!==sc[0].mid){ S[key]=sc[0].mid; ch=true; } }
+  if(ch){ state.fcCache.clear(); memo.clear(); saveState(); }
+  if(typeof populateModelSelects==="function"&&document.getElementById("setModelVol")) populateModelSelects(); }
 /* Forecasting Models: registry-driven selectors + holdout backtest */
 function populateModelSelects(){
   [["setModelVol","volume","modelVolume"],["setModelAht","aht","modelAht"],["setModelMpt","mpt","modelMpt"]].forEach(([id,kind,key])=>{
     const sel=document.getElementById(id);
     sel.innerHTML="";
+    { const o=document.createElement("option"); o.value="auto"; const A=(state._modelAuto||{})[kind];
+      const cur=Models[kind][A?A.mid:state.settings[key]]; o.textContent=t("modelAuto",{m:cur?t(cur.label):"—"}); sel.appendChild(o); }
     for(const mid in Models[kind]){
       const o=document.createElement("option");
       o.value=mid; o.textContent=t(Models[kind][mid].label);
       sel.appendChild(o);
     }
-    sel.value=state.settings[key];
+    sel.value=state.settings.modelUserSet?state.settings[key]:"auto";
   });
 }
 [["setModelVol","modelVolume"],["setModelAht","modelAht"],["setModelMpt","modelMpt"]].forEach(([id,key])=>{
   document.getElementById(id).addEventListener("change",e=>{
-    state.settings[key]=e.target.value;
-    state.settings.modelUserSet=true; // explicit choice survives future default changes
-    state.fcCache.clear(); renderAll();
+    if(e.target.value==="auto"){ state.settings.modelUserSet=false; autoPickModels(); } // the choice back to the test
+    else{ state.settings[key]=e.target.value; state.settings.modelUserSet=true; } // a hand-picked model stays yours
+    state.fcCache.clear(); memo.clear(); saveState(); populateModelSelects(); renderAll();
   });
 });
 /* ingestion toggles: any change retrains the learning series from scratch */
@@ -10980,8 +11104,13 @@ function syncCleanUI(){
   if(a) a.checked=state.settings.autoAnomaly!==false;
   if(p) p.value=state.settings.profileMode||"adaptive";
   { const fsw=document.getElementById("setFastAdapt"); if(fsw) fsw.checked=state.settings.fastAdapt!==false; }
+  { const rk=document.getElementById("setRetryKnown"), P=state.rtParam; if(rk){ // optional: empty = learned (the placeholder says what)
+      if(document.activeElement!==rk) rk.value=+state.settings.retryKnown>0?state.settings.retryKnown:"";
+      rk.placeholder=P&&!P.known&&P.n>=3?t("retryAuto",{p:Math.round(P.p*100)}):t("retryAutoNone"); } } // a number only once it is learned (3+ days to learn from)
   if(typeof renderEvents==="function") renderEvents(); // 📣 list + counts follow language/state
 }
+document.getElementById("setRetryKnown").addEventListener("change",e=>{ const v=Math.max(0,Math.min(100,+e.target.value||0));
+  state.settings.retryKnown=v>0?v:null; rebuildLearningSeries(); state._fastKey=null; memo.clear(); state.fcCache.clear(); saveState(); renderAll(); syncCleanUI(); });
 document.getElementById("setAutoHol").addEventListener("change",e=>{
   state.settings.autoHolidays=e.target.checked; rebuildLearningSeries(); saveState(); saveData(); renderAll(); });
 document.getElementById("setAutoAnom").addEventListener("change",e=>{
@@ -10997,12 +11126,13 @@ function fastShift(fs){ return fs&&fs.active?(fs.L>=1?"+":"−")+Math.round(Math
 /* ↩ for a set of dates on screen: the lost day behind it and the calls coming back on its forecast days */
 function cuInfo(dates){
   if(!state.maxDate||!state.cuParam) return null; const fd=dates.filter(d=>d>state.maxDate&&fromISO(d).getDay()<=5);
-  const per=fd.map(d=>catchUpAt(d,true)), total=per.reduce((a,b)=>a+b,0);
+  const perL=fd.map(d=>catchUpAt(d,true)), perA=fd.map(d=>retryAt(d,true)), per=perL.map((v,i)=>v+perA[i]), total=per.reduce((a,b)=>a+b,0);
+  const fromAb=perA.reduce((a,b)=>a+b,0)>perL.reduce((a,b)=>a+b,0); // which one is the story here
   const B=state._wkBase||{}, full=[0,1,2,3,4].map(d=>B[d]).filter(x=>x>0).sort((a,b)=>a-b), ref=full.length?full[full.length>>1]:0;
   if(total<1||Math.max(...per)<0.03*ref) return null; // silent when it is only a trace (a week-old event)
   const first=fd[per.findIndex(v=>v>=1)], evs=(state.cuEvents||[]).filter(e=>e.ds<first).map(e=>e.ds);
   for(let d=addDays(first,-12);d<first;d=addDays(d,1)) if(d>state.maxDate&&state.holidayDates.get(d)==="closed") evs.push(d);
-  return {on:state.settings.cuOn!==false,total:Math.round(total),d:evs.length?fmtDs(evs.sort().pop()):"",
+  return {on:state.settings.cuOn!==false,total:Math.round(total),ab:fromAb,d:fromAb?fmtDs(state.maxDate):evs.length?fmtDs(evs.sort().pop()):"",
     list:per.filter(v=>v>=1).slice(0,3).map(v=>Math.round(v).toLocaleString()).join(" · ")};
 }
 /* ↩ the returning-calls switch (matrix + Date Trends, same place): shown only while returning calls touch the days on
@@ -11013,7 +11143,8 @@ function syncCu(page,dates){ const root=document.getElementById("page-"+page), b
   const fd=(dates||[]).filter(d=>state.maxDate&&d>state.maxDate); b.hidden=!(state.cuParam&&fd.length); if(b.hidden) return;
   const on=state.settings.cuOn!==false, cu=cuInfo(fd);
   b.classList.toggle("on",on); b.setAttribute("aria-pressed",String(on));
-  b.title=cu?(on?t("cuBtnTip",{d:cu.d,l:cu.list}):t("cuBtnTipOff",{d:cu.d})):t(on?"cuBtnIdle":"cuBtnIdleOff"); }
+  const RT=state.rtParam, auto=RT&&RT.guard&&RT.check&&RT.check.n?"\n"+t("cuBtnAutoAb",{a:RT.check.without.toFixed(1),b:RT.check.with.toFixed(1),n:RT.check.n}):"";
+  b.title=(cu?(on?t(cu.ab?"cuBtnTipAb":"cuBtnTip",{d:cu.d,l:cu.list}):t("cuBtnTipOff",{d:cu.d})):t(on?"cuBtnIdle":"cuBtnIdleOff"))+auto; }
 document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest(".cuBtn"); if(b) cuToggle(); });
 function cuToggle(){ state.settings.cuOn=state.settings.cuOn===false; rebuildLearningSeries(); state._fastKey=null; memo.clear(); saveState(); renderAll(); }
 function cuSentence(){
@@ -11036,7 +11167,7 @@ function renderFast(){
   const fsw=document.getElementById("setFastAdapt"); if(fsw) fsw.checked=S.fastAdapt!==false;
   $fa("faOn").checked=S.fastAdapt!==false;
   faPanel.querySelectorAll("#faHalf button").forEach(b=>b.classList.toggle("active",+b.dataset.h===(+S.fastHalf||10)));
-  $fa("faRetry").value=Math.round((+S.retryShare||0)*100); $fa("faRetryV").textContent=Math.round((+S.retryShare||0)*100)+"%";
+
   $fa("faNow").textContent=[fastSentence(fs),fastDetail(fs),cuSentence()].filter(Boolean).join(" ");
   const box=$fa("faChart"); box.innerHTML="";
   $fa("faFoot").textContent=fs?t("faFoot",{a:fmtDs(fs.from),b:fmtDs(fs.to),r:fs.hasAns?Math.round(fs.ab0*100)+"%":"—"}):"";
@@ -11062,8 +11193,6 @@ document.getElementById("faBtn").addEventListener("click",e=>{ e.preventDefault(
 document.getElementById("setFastAdapt").addEventListener("change",e=>{ state.settings.fastAdapt=e.target.checked; fastChanged(); });
 $fa("faOn").addEventListener("change",e=>{ state.settings.fastAdapt=e.target.checked; fastChanged(); });
 faPanel.querySelector("#faHalf").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return; state.settings.fastHalf=+b.dataset.h; fastChanged(); });
-$fa("faRetry").addEventListener("input",e=>{ $fa("faRetryV").textContent=e.target.value+"%"; });
-$fa("faRetry").addEventListener("change",e=>{ state.settings.retryShare=(+e.target.value||0)/100; fastChanged(); });
 /* ---- 📣 Planned demand events: list, live preview, add/remove ---- */
 const evPanel=document.getElementById("evPanel"), $ev=id=>evPanel.querySelector("#"+id); // panel moves into the shared modal
 function evFormVals(){
@@ -11607,6 +11736,28 @@ function hirePlan(sc){
 }
 /* the history's productivity: handled work per scheduled rep-second (the file's answered × AHT ÷ reps × ½ h),
    last 8 weeks — shrinkage is already inside it (a scheduled rep includes breaks and absence) */
+/* 🧪 the forecast's NET (login) hours — two ways, tested on the file's own past, the more accurate one is used:
+   "carry" = per half hour, the average of the last 4 same weekdays (as the forecast did) — blind to the sidur;
+   "ratio" = the day's scheduled hours × login ÷ scheduled over the 8 weeks before it — moves with the sidur / iron.
+   Each of the latest (up to 8 weeks of) past days is predicted ONLY from the days before it; error = |predicted −
+   actual| ÷ actual, averaged. Needs login hours (and, for "ratio", a staffing column). Memoized per data version. */
+function prodBacktest(){ const key=state._serVer+"|"+state.maxDate; if(state._prodBt&&state._prodBt.k===key) return state._prodBt.v;
+  const per=new Map();
+  for(const [ds,dm] of state.days){ if(!state.maxDate||ds>state.maxDate) continue; let L=0,A=0; const byTm={};
+    for(const [tm,r] of dm){ if(r.login>0){ L+=r.login; byTm[tm]=r.login; } A+=(r.agents||0)*0.5; }
+    if(L>0) per.set(ds,{L,A,byTm,di:fromISO(ds).getDay()}); }
+  const list=[...per.keys()].sort(); let eC=0,eR=0,n=0;
+  for(const ds of list.slice(-48)){ const d=per.get(ds), prior=list.filter(x=>x<ds);
+    const same=prior.filter(x=>per.get(x).di===d.di); if(same.length<2||!(d.A>0)) continue;
+    const tms=new Set(); same.forEach(x=>Object.keys(per.get(x).byTm).forEach(tm=>tms.add(tm)));
+    let pc=0; tms.forEach(tm=>{ pc+=movAvg4(same.map(x=>per.get(x).byTm[tm]||0).filter(v=>v>0)); });
+    const win=prior.filter(x=>x>=addDays(ds,-56)&&per.get(x).A>0); if(win.length<5) continue;
+    const rho=win.reduce((s,x)=>s+per.get(x).L,0)/win.reduce((s,x)=>s+per.get(x).A,0);
+    eC+=Math.abs(pc-d.L)/d.L; eR+=Math.abs(d.A*rho-d.L)/d.L; n++; }
+  const last=list.filter(x=>x>=addDays(state.maxDate,-56)&&per.get(x).A>0), sa=last.reduce((s,x)=>s+per.get(x).A,0);
+  const rho=sa>0?last.reduce((s,x)=>s+per.get(x).L,0)/sa:null;
+  const v=n>=10&&rho?{n,eCarry:eC/n,eRatio:eR/n,pick:eR<eC?"ratio":"carry",rho}:null;
+  state._prodBt={k:key,v}; return v; }
 function histProductivity(){ const key=state._serVer+"|"+state.maxDate; if(state._prodC&&state._prodC.k===key) return state._prodC.v;
   let w=0,cap=0; const from=state.maxDate?addDays(state.maxDate,-56):null;
   for(const [ds,dm] of state.days){ if(!from||ds<from) continue; for(const r of dm.values()) if(r.answered>0&&r.agents>0&&r.aht>0){ w+=r.answered*r.aht; cap+=r.agents*1800; } }
@@ -12269,7 +12420,7 @@ buildDayWins();
 // item 11: cached datasets re-populate the workspace (sidur-only restores without touching forecast state)
 // no auto-demo: a fresh workspace starts EMPTY so real uploads are unmistakable —
 // sample data loads only via the explicit button on the Home page
-if(loadData()){ recordFriHist(); // a sidur saved before the Friday memory existed joins it once
+if(loadData()){ recordFriHist(); if(!(state.settings.ironHist||[]).length) recordIronHist(); // a sidur / iron saved before their memories existed joins them once
   if(state.days.size) afterForecastLoad(); else { applyDataWeek(); updatePortalStatus(); renderAll(); } }
 else renderAll();
 document.getElementById("polEnable").checked=state.policy.enabled;
