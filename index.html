@@ -472,11 +472,15 @@ td.gapCell.closed{background:#d6f3e2!important;color:#0f6a3f;font-weight:700}
 .rdyLeg.top i.lg-nd{width:16px} .rrLeg{justify-content:flex-start}
 .trBar.ret{fill:url(#trHatch)} .retCauseMk{fill:#3f8fd8}
 .retCauseTag{display:inline-block;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:7px solid #3f8fd8;margin-inline-start:5px;vertical-align:1px;cursor:help}
-.mxRetBar{height:4px;border-radius:2px;background:#2c7fb8;opacity:.85;margin:3px auto 0;max-width:90px;position:relative;overflow:hidden;direction:ltr}
-.mxRetBar>i{position:absolute;right:0;top:0;bottom:0;background:repeating-linear-gradient(45deg,#cfe6fb 0 2px,#3f8fd8 2px 3.5px)}
+.evPill.retPill{color:#1d5f99;border-color:#3f8fd8;background:repeating-linear-gradient(45deg,#eaf4fd 0 3px,#cfe6fb 3px 5px);cursor:help} /* ↩ the effect = the charts' hatched blue */
 .legend i.lg-cause{width:0!important;height:0!important;border-radius:0!important;background:none!important;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:8px solid #3f8fd8} .trRetKey{justify-content:flex-start;margin:2px 0 0;font-size:.68rem} .trRetKey i{width:10px;height:10px}
 .legend i.lg-fresh{background:#2c7fb8} .legend i.lg-ret{background:repeating-linear-gradient(45deg,#cfe6fb 0 2px,#3f8fd8 2px 3.5px)} #mList details.btMore{margin-top:4px} #mList details.btMore summary{cursor:pointer;color:var(--muted)}
 .frow.fmSub{padding-inline-start:22px;border-top:none} .frow.fmSub.off{opacity:.45;pointer-events:none}
+/* Forecasting models: a list's whole text shows — the name above, the list full width under it */
+.fmCard .frow:has(>select){flex-direction:column;align-items:stretch;gap:3px} .fmCard .frow>select{width:100%!important;text-overflow:ellipsis}
+.fmCard .frow>label{min-width:0;flex-wrap:wrap;line-height:1.35} .optTag{white-space:nowrap}
+.profTest{display:flex;flex-direction:column;gap:3px;background:#f6f9fc;border:1px solid #e3eaf2;border-radius:8px;padding:7px 10px;margin-bottom:6px;font-size:.8rem}
+.profTest .pbRow{display:flex;justify-content:space-between;gap:10px;padding:2px 6px;border-radius:5px} .profTest .pbRow.win{background:#e6f6ee;color:#0f6b43}
 .optTag{font-size:.66rem;font-weight:600;color:var(--muted);border:1px dashed #b9c4d0;border-radius:8px;padding:0 6px}
 .icTeam{border-top:1px solid var(--border);padding:8px 0 4px} .icTeam:first-of-type{border-top:none}
 .icTH{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px} .icTH b.neg{color:var(--crimson)}
@@ -1394,7 +1398,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <p class="mini" data-i18n="setMptHint">Don't know your MPT? Pull the 'average delay of abandoned calls' from your telephony/ACD abandoned-calls report — that value in seconds is your MPT.</p>
         <div class="frow" style="border:none;margin-top:8px"><button class="btn ghost" id="revealLogic" data-i18n="revealLogic">🧮 Reveal Analytical Logic</button></div>
       </div>
-      <div class="card">
+      <div class="card fmCard">
         <h2><span data-i18n="fmTitle">Forecasting Models</span> <span class="info" data-tipkey="tipFm" tabindex="0">i</span></h2>
         <!-- what the forecast does by itself: ONE switch each, in one list. ↩ is the same setting as the switch on the
              matrix and Date Trends (connected both ways); its optional known rate sits right under it -->
@@ -1409,7 +1413,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <div class="frow"><label data-i18n="fmVol">Call volume model</label><select id="setModelVol" style="width:210px"></select></div>
         <div class="frow"><label data-i18n="fmAht">AHT model</label><select id="setModelAht" style="width:210px"></select></div>
         <div class="frow" id="mptModelRow"><label data-i18n="fmMpt">MPT model</label><select id="setModelMpt" style="width:210px"></select></div>
-        <div class="frow"><label><span data-i18n="fmProfile">Interval profile window</span> <button class="linklike" id="profBtn" type="button" data-i18n-title="profBtnTip" title="See and edit the intraday call weights">📊</button></label><select id="setProfile" style="width:210px"><option value="adaptive" data-i18n="fmProfAdapt">Adaptive (8w, fallback all)</option><option value="w12" data-i18n="fmProf12">12 weeks</option></select></div>
+        <div class="frow"><label><span data-i18n="fmProfile">Interval profile window</span> <button class="linklike" id="profBtn" type="button" data-i18n-title="profBtnTip" title="See and edit the intraday call weights">📊</button></label><select id="setProfile" style="width:210px"><option value="auto">🤖</option><option value="adaptive" data-i18n="fmProfAdapt">Adaptive (8w, fallback all)</option><option value="w12" data-i18n="fmProf12">12 weeks</option></select></div>
         <div class="frow" style="border:none;gap:8px;flex-wrap:wrap"><button class="btn ghost" id="backtestBtn" data-i18n="backtestBtn">🧪 Backtest models</button><button class="btn ghost" id="reviewExclBtn" data-i18n="reviewExclBtn">📅 Review excluded days</button></div>
         </details>
         <!-- planned one-off surges the history can't know (vendor change, campaign): sized once,
@@ -1419,9 +1423,10 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
              shared modal — switch window, see what changes, pin a share -->
         <div id="profPanel" class="mpanel" data-tkey="profTitle" hidden>
           <div class="toolbar" style="margin:0 0 6px;gap:8px">
-            <div class="seg" id="profWin"><button type="button" data-mode="adaptive" data-i18n="fmProfAdapt">Adaptive (8w, fallback all)</button><button type="button" data-mode="w12" data-i18n="fmProf12">12 weeks</button></div>
+            <div class="seg" id="profWin"><button type="button" data-mode="auto" data-i18n="profAutoBtn">🤖 Automatic</button><button type="button" data-mode="adaptive" data-i18n="fmProfAdapt">Adaptive (8w, fallback all)</button><button type="button" data-mode="w12" data-i18n="fmProf12">12 weeks</button></div>
             <div class="seg" id="profView"><button type="button" data-view="share" class="active" data-i18n="profViewShare">Weights</button><button type="button" data-view="diff" data-i18n="profViewDiff">Change vs other window</button></div>
           </div>
+          <div class="profTest" id="profTest" hidden></div>
           <p class="mini" id="profInsight"></p>
           <div class="tablewrap" style="max-height:52vh;overflow:auto"><table id="profTable"></table></div>
           <p class="mini" id="profFoot"></p>
@@ -1628,6 +1633,10 @@ en:{
   paceWord:"pace",
   fmAutoHol:"Auto Israeli-holiday calendar", fmAutoAnom:"Auto war/outage detection",
   fmProfile:"Interval profile window", fmProfAdapt:"Adaptive (8w, fallback all)", fmProf12:"12 weeks",
+  profAutoBtn:"🤖 Automatic", profTestT:"Which window places the calls right? Tested on {n} past days", profTestErr:"{e}% in the wrong half hour",
+  profTestAuto:"In use: {m} — the lower error. Each day is predicted only from the days before it.", profTestHand:"You picked the window by hand; the test prefers {m}.",
+  profTestTip:"Tested on {n} past days: 8 weeks puts {a}% of the calls in the wrong half hour, 12 weeks {b}%.",
+  btProfL:"Spread over the day",
   reviewExclBtn:"📅 Review excluded days", reviewExclTitle:"Excluded days — holidays & anomalies",
   reviewExclMsg:"Days the model leaves out of learning: holidays, and unusually low days (war, outage). Bring any day back to learning with one click.",
   hol_closed:"Holiday (closed)", hol_eve:"Holiday eve / partial", hol_chm:"Chol HaMoed",
@@ -2181,6 +2190,10 @@ he:{
   paceWord:"היחס",
   fmAutoHol:"לוח חגים ישראלי אוטומטי", fmAutoAnom:"זיהוי מלחמות/תקלות אוטומטי",
   fmProfile:"חלון פרופיל אינטרוולים", fmProfAdapt:"אדפטיבי (8 שב׳, גיבוי הכל)", fmProf12:"12 שבועות",
+  profAutoBtn:"🤖 אוטומטי", profTestT:"איזה חלון מפזר את השיחות נכון? נבדק על {n} ימים מהעבר", profTestErr:"‎{e}%‎ בחצי שעה הלא נכונה",
+  profTestAuto:"בשימוש: {m} — הטעות הנמוכה. כל יום נחזה רק מהימים שלפניו.", profTestHand:"בחרת חלון ידנית; הבדיקה מעדיפה את {m}.",
+  profTestTip:"נבדק על {n} ימים מהעבר: 8 שבועות — ‎{a}%‎ מהשיחות בחצי שעה הלא נכונה, 12 שבועות — ‎{b}%‎.",
+  btProfL:"פיזור על פני היום",
   reviewExclBtn:"📅 סקירת ימים שהוחרגו", reviewExclTitle:"ימים שהוחרגו — חגים וחריגות",
   reviewExclMsg:"ימים שהמודל משאיר מחוץ ללמידה: חגים, וימים נמוכים באופן חריג (מלחמה, תקלה). כל יום אפשר להחזיר ללמידה בלחיצה.",
   hol_closed:"חג (סגור)", hol_eve:"ערב חג / יום חלקי", hol_chm:"חול המועד",
@@ -3070,8 +3083,8 @@ const state={
   rosterNamed:false, roster:[],
   settings:{mode:"normal",target:90,tsfT:30,mpt:180,attrition:4,headcount:60,shrinkage:0,absence:0,
             primaryMetric:"ar",dayStart:8,dayEnd:18,friEnd:13,
-            modelVolume:"ensemble5",modelAht:"ma4",modelMpt:"ma4",mptOverride:false,hcOverride:false,modelUserSet:false,
-            autoHolidays:true,autoAnomaly:true,profileMode:"adaptive",
+            modelVolume:"ensemble5",modelAht:"ma4",modelMpt:"ma4",mptOverride:false,hcOverride:false,modelUserSet:false,modelUser:{},
+            autoHolidays:true,autoAnomaly:true,profileMode:"auto",
             holOverride:{},volCal:1,recruitBasis:"all",recruitSkills:[],skillReqs:[],
             schedMode:"optimizeCurrent", // scheduler page: optimizeCurrent | generateIron
             schGenWeek:null, // Mode 2 only: the week (Sunday ISO) to build from iron; null = sidur week
@@ -7657,16 +7670,38 @@ function updatePortalStatus(){
    Share of a weekday's calls landing in each half-hour. Forecast days spread their daily
    total by it. Learned from the last W clean weeks per interval (adaptive: a thin slot
    widens to all history); W = 8 (adaptive) or 12. */
-function profileShares(di,mode){
+/* the window in use: chosen by the test below unless the user picked one */
+const profMode=()=>{ const m=state.settings.profileMode; return m==="w12"||m==="adaptive"?m:(profBacktest()||{}).best||"adaptive"; };
+function profileShares(di,mode,cut){ // cut: {tm:n} = only the first n weeks of each slot (the test below)
   const s=state.series&&state.series[di]; if(!s) return null;
   const W=mode==="w12"?12:8, raw={}; let sum=0;
   for(const tm of Object.keys(s)){
-    const arr=s[tm].vols.filter(v=>v!=null&&isFinite(v)), recent=arr.slice(-W);
+    const arr=(cut?s[tm].vols.slice(0,cut[tm]||0):s[tm].vols).filter(v=>v!=null&&isFinite(v)), recent=arr.slice(-W);
     const use=recent.length>=Math.min(4,arr.length)?recent:arr; // adaptive: need support, else widen
     raw[tm]=use.length?use.reduce((a,b)=>a+b,0)/use.length:0; sum+=raw[tm];
   }
   for(const tm in raw) raw[tm]=sum>0?raw[tm]/sum:0;
   return raw;
+}
+/* 🧪 the interval-profile test: each of the last 8 learning days per weekday is spread over its half hours by each
+   window, using only the days BEFORE it; error = the share of that day's calls put in the wrong half hour
+   (½·Σ|predicted − actual share|), averaged by calls. The lower error wins (profMode). Memoized per series. */
+function profBacktest(){
+  if(!state.series||!state.learnDates) return null;
+  if(state._pbt&&state._pbt.v===state._serVer) return state._pbt.r;
+  const err={adaptive:0,w12:0}; let w=0,n=0;
+  for(let di=0;di<6;di++){ const L=state.learnDates[di]; if(!L||L.length<6) continue;
+    const cnt={}, has=ds=>{ const m=state.days.get(ds), o={}; if(m) for(const [tm,r] of m) if(!state.exceptions.has(ds+"|"+tm)&&state.series[di][tm]) o[tm]=r.volume||0; return o; };
+    for(let k=0;k<L.length;k++){ const a=has(L[k]);
+      if(k>=Math.max(4,L.length-8)){ const tot=Object.values(a).reduce((x,y)=>x+y,0);
+        if(tot>0){ for(const mode in err){ const p=profileShares(di,mode,cnt)||{}; let e=0;
+            for(const tm of new Set([...Object.keys(p),...Object.keys(a)])) e+=Math.abs((p[tm]||0)-(a[tm]||0)/tot);
+            err[mode]+=e/2*tot; }
+          w+=tot; n++; } }
+      for(const tm in a) cnt[tm]=(cnt[tm]||0)+1; } }
+  const r=n>=6&&w>0?{adaptive:err.adaptive/w*100,w12:err.w12/w*100,n}:null;
+  if(r) r.best=r.w12<r.adaptive?"w12":"adaptive"; // the lower error, as the screen shows it
+  state._pbt={v:state._serVer,r}; return r;
 }
 /* user-pinned intervals keep their share; the rest of the day rebalances so it stays 100% */
 function applyProfileEdits(di,shares){
@@ -7778,7 +7813,7 @@ function forecastDay(ds){
   const profDi=useFriProfile?5:di;
   const profSlots=Object.keys(state.series[profDi]);
   // intraday profile = learned shares for the chosen window, with any user-pinned intervals applied
-  const shareRaw=applyProfileEdits(profDi,profileShares(profDi,state.settings.profileMode))||{};
+  const shareRaw=applyProfileEdits(profDi,profileShares(profDi,profMode()))||{};
   let shareSum=0; for(const tm of profSlots) shareSum+=shareRaw[tm]||0;
   /* projected-headcount scale: grow/shrink the whole shift curve for this future date
      by (projected headcount at that date ÷ current headcount) — same hcAtDay() the
@@ -8569,9 +8604,10 @@ function renderMatrixBody(){
         const m=vol>0?acc/vol:0;
         const offGrid=Math.round(full-vol);
         const tc=tierMx(m,B); // same scale as the cells (was a fixed 90/80 rule)
-        const ret=catchUpAt(ds)+retryAt(ds), cz=retCause(ds), sh=full>0?Math.min(1,ret/full):0;
+        const ret=retShown(ds,full), cz=retCause(ds);
         td.innerHTML=`<span class="v" style="color:${tc==="tier-exc"||tc==="tier-good"?"var(--emerald)":tc==="tier-near"||tc==="tier-warn"?"var(--amber)":"var(--crimson)"}">${pct(m)}</span> <span class="sub">${Math.round(full).toLocaleString()}</span>`
-          +(cz>=1?`<span class="retCauseTag"></span>`:"")+(ret>=1?`<div class="mxRetBar"><i style="width:${Math.max(4,sh*100).toFixed(1)}%"></i></div>`:"");
+          +(cz>=1?`<span class="retCauseTag"></span>`:"");
+        if(ret) td.appendChild(retPill(ds,ret)); // ↩ the same tag as Date Trends
         td.title=`${t("tipVolume")}: ${Math.round(full).toLocaleString()} | ${state.metric==="tsf"?"TSF":t("metricAr")}: ${pct(m)}`
           +(offGrid>0?` | ${t("mxOffGrid",{n:offGrid})}`:"")
           +(ret>=1?"\n"+t(sdd&&sdd.forecast?"trRetTipFc":"trRetTip")+": "+Math.round(ret).toLocaleString():"")+(cz>=1?"\n"+t("retCauseTip",{n:Math.round(cz).toLocaleString()}):"");
@@ -8657,7 +8693,7 @@ function renderMatrixBody(){
     tbody.appendChild(tr);
   });
   tbl.appendChild(tbody);
-  { const l=document.getElementById("mxRetLeg"); if(l) l.style.display=tbl.querySelector(".mxRetBar,.retCauseTag")?"":"none"; } // the ↩ key, only with its marks
+  { const l=document.getElementById("mxRetLeg"); if(l) l.style.display=tbl.querySelector(".retPill,.retCauseTag")?"":"none"; } // the ↩ key, only with its marks
   // frame today's column top-to-bottom (box-shadow, so tier colors stay intact)
   if(todayIdx>=0) tbody.querySelectorAll("tr").forEach(tr=>{ const c=tr.children[todayIdx+1]; if(c) c.classList.add("todayCol"); });
   // (the Recruitment "short today" KPI is renderRecruit's alone — from today, with the plan's math, never this browsed week)
@@ -8950,7 +8986,14 @@ function retCause(ds){ if(state.settings.cuOn===false||!state.maxDate||ds>state.
   if(R&&R.p>0) n+=(R.X.get(ds)||0)*R.p;
   let vol=0; const m=state.days.get(ds); if(m) for(const r of m.values()) vol+=r.volume||0;
   return n>=Math.max(20,0.03*vol)?n:0; }
-function trRet(a,b){ let s=0; for(let d=a;d<=b;d=addDays(d,1)) s+=catchUpAt(d)+retryAt(d); return s; } // ↩ the returning calls of a range
+/* ↩ the effect, marked by the same rule as the cause: ≥3% of the day (or 20 calls) — history days too (a day after an
+   outage carries its returning calls). vol = the day's calls when the caller has it. */
+function dayVolOf(ds){ const m=state.days.get(ds)||(state.maxDate&&ds>state.maxDate?forecastDay(ds):null); let v=0; if(m) for(const r of m.values()) v+=r.volume||0; return v; }
+function retShown(ds,vol){ const n=catchUpAt(ds)+retryAt(ds); if(!(n>=1)) return 0; return n>=Math.max(20,0.03*(vol??dayVolOf(ds)))?n:0; }
+function retSrc(ds){ for(let d=addDays(ds,-1),g=0;g<14;g++,d=addDays(d,-1)){ if(retCause(d)>0||(state.maxDate&&d>state.maxDate&&fromISO(d).getDay()<=5&&state.holidayDates.get(d)==="closed")) return fmtDs(d); } return ""; }
+function retPill(ds,n){ const s=document.createElement("span"); s.className="evPill retPill"; s.textContent=t("cuPill",{n:Math.round(n).toLocaleString()});
+  const src=retSrc(ds); s.title=t(state.maxDate&&ds>state.maxDate?"trRetTipFc":"trRetTip")+": "+Math.round(n).toLocaleString()+(src?" · "+t("cuPillTip",{n:Math.round(n).toLocaleString(),d:src}):""); return s; }
+function trRet(a,b){ let s=0; for(let d=a;d<=b;d=addDays(d,1)) s+=retShown(d); return s; } // ↩ the returning calls of a range (marked days)
 function trCause(a,b){ let s=0; for(let d=a;d<=b;d=addDays(d,1)) s+=retCause(d); return s; }
 function trPoints(list,G){
   const dn=t("daysShort");
@@ -9184,7 +9227,7 @@ function renderTrends(){
     if(d.holLvl) dth.appendChild(holPill(ds,d.holLvl)); // 🕎 trails the date in reading order
     { const ep=evPill(ds); if(ep) dth.appendChild(ep); } // 📣 planned event
     { const c=retCause(ds); if(c>=1){ const s=document.createElement("span"); s.className="retCauseTag"; s.title=t("retCauseTip",{n:Math.round(c).toLocaleString()}); dth.appendChild(s); } }
-    if(d.forecast&&cuDays){ const n=Math.round(catchUpAt(ds)+retryAt(ds)); if(n>=1){ const s=document.createElement("span"); s.className="evPill"; s.textContent=t("cuPill",{n:n.toLocaleString()}); s.title=t("cuPillTip",{n:n.toLocaleString(),d:cuDays.d}); dth.appendChild(s); } }
+    { const n=retShown(ds,d.vol); if(n) dth.appendChild(retPill(ds,n)); } // ↩ the effect — history days too
     tr.appendChild(dth);
     const dayTd=document.createElement("td"); dayTd.textContent=dayNames[dayIdx]??""; tr.appendChild(dayTd);
     const volTd=plain(Math.round(d.vol).toLocaleString());
@@ -10465,6 +10508,7 @@ function loadState(){
     if(!Array.isArray(state.settings.skillReqs)) state.settings.skillReqs=[];
     if(!Array.isArray(state.settings.demandEvents)) state.settings.demandEvents=[];
     if(!state.settings.profileEdits||typeof state.settings.profileEdits!=="object") state.settings.profileEdits={};
+    if(!state.settings.profUserSet) state.settings.profileMode="auto"; // the window is chosen by its test until picked by hand
     if(!state.settings.friHist||typeof state.settings.friHist!=="object") state.settings.friHist={};
     if(!Array.isArray(state.settings.customHol)) state.settings.customHol=[];
     if(!Array.isArray(state.settings.trCharts)) state.settings.trCharts=["vol","ar","aht","occ"];
@@ -10475,6 +10519,8 @@ function loadState(){
     // migration: the ensemble is the new default unless the user actively picked a model
     if(!state.settings.modelUserSet&&state.settings.modelVolume==="holt_damped")
       state.settings.modelVolume="ensemble5";
+    // migration: one "picked by hand" flag for all three lists → one per list (a volume pick no longer locks AHT / MPT)
+    if(!state.settings.modelUser||typeof state.settings.modelUser!=="object"){ const u=!!state.settings.modelUserSet; state.settings.modelUser={modelVolume:u,modelAht:u,modelMpt:u}; }
     if(!Models.volume[state.settings.modelVolume]) state.settings.modelVolume="ensemble5";
     if(Array.isArray(s.cohorts)) state.cohorts=s.cohorts.map(c=>{ const o={...c,skill:""}; // every course = new hires to קו 1
       if(!o.wd&&o.start&&o.duration>0){ let n=0; for(let k=0;k<o.duration;k++) if(fromISO(addDays(o.start,k)).getDay()<=4) n++; o.duration=Math.max(1,n); o.wd=true; }
@@ -11097,9 +11143,10 @@ document.addEventListener("keydown",e=>{ if(e.key==="Escape") document.querySele
 const MODEL_KINDS=[["volume","modelVolume","setModelVol"],["aht","modelAht","setModelAht"],["mpt","modelMpt","setModelMpt"]];
 function rankModels(kind){ return Object.keys(Models[kind]).map(mid=>({mid,r:backtestModel(kind,mid)})).filter(s=>s.r)
   .sort(kind==="aht"?(a,b)=>a.r.mape-b.r.mape:(a,b)=>(Math.abs((a.r.pace??999)-100)-Math.abs((b.r.pace??999)-100))||(a.r.mape-b.r.mape)); }
-function autoPickModels(){ const S=state.settings; if(S.modelUserSet||!state.series) return; let ch=false; state._modelAuto={};
+const mUser=key=>!!(state.settings.modelUser||{})[key]; // this list was picked by hand (each list on its own)
+function autoPickModels(){ const S=state.settings; if(!state.series) return; let ch=false; state._modelAuto={};
   for(const [kind,key] of MODEL_KINDS){ const sc=rankModels(kind); if(!sc.length) continue;
-    state._modelAuto[kind]={mid:sc[0].mid,r:sc[0].r,n:sc.length}; if(S[key]!==sc[0].mid){ S[key]=sc[0].mid; ch=true; } }
+    state._modelAuto[kind]={mid:sc[0].mid,r:sc[0].r,n:sc.length}; if(!mUser(key)&&S[key]!==sc[0].mid){ S[key]=sc[0].mid; ch=true; } }
   if(ch){ state.fcCache.clear(); memo.clear(); saveState(); }
   if(typeof populateModelSelects==="function"&&document.getElementById("setModelVol")) populateModelSelects(); }
 /* Forecasting Models: registry-driven selectors + holdout backtest */
@@ -11108,19 +11155,22 @@ function populateModelSelects(){
     const sel=document.getElementById(id);
     sel.innerHTML="";
     { const o=document.createElement("option"); o.value="auto"; const A=(state._modelAuto||{})[kind];
-      const cur=Models[kind][A?A.mid:state.settings[key]]; o.textContent=t("modelAuto",{m:cur?t(cur.label):"—"}); sel.appendChild(o); }
+      const cur=Models[kind][A?A.mid:state.settings[key]], nm=cur?t(cur.label):"—";
+      o.textContent=t("modelAuto",{m:nm.replace(/\s*\([^)]*\)\s*$/,"")}); o.title=nm; sel.appendChild(o); } // the short name fits the list; the full one on hover
     for(const mid in Models[kind]){
       const o=document.createElement("option");
       o.value=mid; o.textContent=t(Models[kind][mid].label);
       sel.appendChild(o);
     }
-    sel.value=state.settings.modelUserSet?state.settings[key]:"auto";
+    sel.value=mUser(key)?state.settings[key]:"auto";
+    { const m=Models[kind][state.settings[key]]; sel.title=m?t(m.label):""; }
   });
 }
 [["setModelVol","modelVolume"],["setModelAht","modelAht"],["setModelMpt","modelMpt"]].forEach(([id,key])=>{
   document.getElementById(id).addEventListener("change",e=>{
-    if(e.target.value==="auto"){ state.settings.modelUserSet=false; autoPickModels(); } // the choice back to the test
-    else{ state.settings[key]=e.target.value; state.settings.modelUserSet=true; } // a hand-picked model stays yours
+    const U=state.settings.modelUser=state.settings.modelUser||{};
+    if(e.target.value==="auto"){ U[key]=false; autoPickModels(); } // this list back to the test — the others untouched
+    else{ state.settings[key]=e.target.value; U[key]=true; } // a hand-picked model stays yours, in this list only
     state.fcCache.clear(); memo.clear(); saveState(); populateModelSelects(); renderAll();
   });
 });
@@ -11129,7 +11179,10 @@ function syncCleanUI(){
   const h=document.getElementById("setAutoHol"), a=document.getElementById("setAutoAnom"), p=document.getElementById("setProfile");
   if(h) h.checked=state.settings.autoHolidays!==false;
   if(a) a.checked=state.settings.autoAnomaly!==false;
-  if(p) p.value=state.settings.profileMode||"adaptive";
+  if(p){ const ao=p.querySelector('option[value="auto"]'), PB=profBacktest();
+    if(ao) ao.textContent=t("modelAuto",{m:t(profMode()==="w12"?"fmProf12":"fmProfAdapt")});
+    p.value=state.settings.profUserSet?state.settings.profileMode:"auto";
+    p.title=PB?t("profTestTip",{a:PB.adaptive.toFixed(1),b:PB.w12.toFixed(1),n:PB.n}):""; }
   { const fsw=document.getElementById("setFastAdapt"); if(fsw) fsw.checked=state.settings.fastAdapt!==false; }
   { // ↩ the same setting as the switch on the matrix / Date Trends; its hover says what it does and what the test found
     const c=document.getElementById("setCuOn"), on=state.settings.cuOn!==false, RT=state.rtParam;
@@ -11150,7 +11203,7 @@ document.getElementById("setAutoHol").addEventListener("change",e=>{
 document.getElementById("setAutoAnom").addEventListener("change",e=>{
   state.settings.autoAnomaly=e.target.checked; rebuildLearningSeries(); saveState(); saveData(); renderAll(); });
 document.getElementById("setProfile").addEventListener("change",e=>{
-  state.settings.profileMode=e.target.value; state.fcCache.clear(); saveState(); renderAll(); });
+  state.settings.profileMode=e.target.value; state.settings.profUserSet=e.target.value!=="auto"; state.fcCache.clear(); saveState(); renderAll(); syncCleanUI(); });
 /* ---- ⚡ fast lane: one sentence, a 10-day picture (fresh calls vs the model), two knobs ---- */
 const faPanel=document.getElementById("faPanel"), $fa=id=>faPanel.querySelector("#"+id);
 /* pages speak ONLY when demand really shifted (never "all is fine" / "missing data" lines — they read as
@@ -11302,9 +11355,13 @@ const profPanel=document.getElementById("profPanel"), $pf=id=>profPanel.querySel
 const pp=v=>(v*100).toFixed(1)+"%";
 function renderProfile(){
   if(profPanel.hidden) return;
-  const S=state.settings, mode=S.profileMode||"adaptive", other=mode==="w12"?"adaptive":"w12";
+  const S=state.settings, mode=profMode(), other=mode==="w12"?"adaptive":"w12", auto=!S.profUserSet;
   const view=(profPanel.querySelector("#profView .active")||{dataset:{view:"share"}}).dataset.view;
-  profPanel.querySelectorAll("#profWin button").forEach(b=>b.classList.toggle("active",b.dataset.mode===mode));
+  profPanel.querySelectorAll("#profWin button").forEach(b=>b.classList.toggle("active",b.dataset.mode==="auto"?auto:!auto&&b.dataset.mode===mode));
+  { const PB=profBacktest(), el=$pf("profTest"), esc=v=>String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;"); // 🧪 the formal check: both windows on your own past, the winner in use
+    if(el){ el.hidden=!PB; if(PB){ const L=m=>t(m==="w12"?"fmProf12":"fmProfAdapt");
+      el.innerHTML=`<b>🧪 ${esc(t("profTestT",{n:PB.n}))}</b>`+["adaptive","w12"].map(m=>`<span class="pbRow${m===PB.best?" win":""}"><span>${esc(L(m))}</span><b>${esc(t("profTestErr",{e:PB[m].toFixed(1)}))}</b>${m===PB.best?" ✓":""}</span>`).join("")
+        +`<span class="mini">${esc(t(auto?"profTestAuto":"profTestHand",{m:L(PB.best)}))}</span>`; } } }
   const dn=t("days"), ds=t("daysShort"), edits=S.profileEdits||{};
   const cur={},alt={},tms=new Set();
   for(let di=0;di<6;di++){ cur[di]=applyProfileEdits(di,profileShares(di,mode)); alt[di]=applyProfileEdits(di,profileShares(di,other));
@@ -11382,7 +11439,7 @@ function openProfile(){
 }
 document.getElementById("profBtn").addEventListener("click",e=>{ e.preventDefault(); openProfile(); });
 profPanel.querySelector("#profWin").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return;
-  state.settings.profileMode=b.dataset.mode; document.getElementById("setProfile").value=b.dataset.mode; profChanged(); });
+  state.settings.profileMode=b.dataset.mode; state.settings.profUserSet=b.dataset.mode!=="auto"; syncCleanUI(); profChanged(); });
 profPanel.querySelector("#profView").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return;
   profPanel.querySelectorAll("#profView button").forEach(x=>x.classList.toggle("active",x===b)); renderProfile(); });
 // whichever path closes the modal (✕, Esc, backdrop) — or reuses it for another dialog
@@ -11537,10 +11594,14 @@ document.getElementById("backtestBtn").addEventListener("click",()=>{
     if(kind==="mpt"&&!state._hasMpt) continue; // no patience data in the file → nothing to test
     const sc=rankModels(kind); if(!sc.length) continue; any=true;
     const cur=sc.find(x=>x.mid===state.settings[key])||sc[0], best=sc[0], line=x=>`${esc(t(Models[kind][x.mid].label))} — ${t("btErr",{e:x.r.mape.toFixed(1)})}${x.r.pace!=null&&kind!=="aht"?" · "+bias(x.r.pace):""}`;
-    const li=add(`<span><b>${t(titleKey)}</b>: ${line(cur)} · <b>${t("btInUse")}</b>${cur.mid!==best.mid?" · "+t("btBetter",{m:esc(t(Models[kind][best.mid].label))}):state.settings.modelUserSet?"":" · 🤖"}</span>`,cur.mid===best.mid);
+    const li=add(`<span><b>${t(titleKey)}</b>: ${line(cur)} · <b>${t("btInUse")}</b>${cur.mid!==best.mid?" · "+t("btBetter",{m:esc(t(Models[kind][best.mid].label))}):mUser(key)?"":" · 🤖"}</span>`,cur.mid===best.mid);
     const rest=sc.filter(x=>x.mid!==cur.mid);
     if(rest.length){ const d=document.createElement("details"); d.className="btMore"; d.innerHTML=`<summary class="mini">${t("btOthers",{n:rest.length})}</summary>`+rest.map(x=>`<div class="mini">${line(x)}</div>`).join(""); li.appendChild(d); }
   }
+  // 📊 the interval profile: which window places the calls in the right half hour (profBacktest)
+  { const PB=profBacktest(); if(PB){ any=true; const L=m=>esc(t(m==="w12"?"fmProf12":"fmProfAdapt")), cur=profMode(), oth=cur==="w12"?"adaptive":"w12";
+    add(`<span><b>${t("btProfL")}</b>: ${L(cur)} — ${t("profTestErr",{e:PB[cur].toFixed(1)})} · <b>${t("btInUse")}</b>${cur!==PB.best?" · "+t("btBetter",{m:L(PB.best)}):state.settings.profUserSet?"":" · 🤖"}`
+      +` <span class="mini">(${L(oth)}: ${PB[oth].toFixed(1)}% · ${t("btDays",{n:PB.n})})</span></span>`,cur===PB.best); } }
   // ↩ the two parts of returning calls, as results (what the test on your history found)
   { const ck=state.cuCheck||{n:0}, P=state.cuParam;
     add(`<span><b>${t("cuBtT")}</b>: ${ck.guard?t("cuBtGuard",{n:ck.n,a:ck.without.toFixed(1),b:ck.with.toFixed(1)}):ck.n?t(ck.n===1?"cuBtRes1":"cuBtRes",{n:ck.n,a:ck.without.toFixed(1),b:ck.with.toFixed(1)}):t("cuBtNone")}`
