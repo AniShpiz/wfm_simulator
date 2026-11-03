@@ -130,6 +130,11 @@ workforce filter lists legitimately show only "(all)" for this file.
   - `renderIronDays` (iron vs sidur by day, people; folds)
   - `renderImpactMatrix` (folds; `#impSum` = the day leave hurts most) + `renderHeadroom` (+k can be off · −k missing)
   - `renderValidation`
+  - 🔍 `renderIronChanges` ("What changed in the iron?", `#wfIronChg`, silent when nothing did): `settings.ironHist` =
+    the last 12 iron uploads (`recordIronHist` from `parseIronGrid`; an identical upload adds nothing);
+    `ironChanges()` = the latest vs the one before, per rep and day: down / up / del / add / move / new / gone.
+    Multi-select kind chips, a key, groups per team manager with a trend line of its iron hours (`spark`), and a
+    `tlMsg` per manager; before ← after reads in the page's direction. Test: `tests/unit/iron-history.test.js`.
   - `renderInternalRoster` ("Below their iron — who and why": reasons from the sidur; multi-select reason chips
     `state._rrWhy` (a Set); a legend for the bar + day colors; "Copy list" = one `tlMsg` per team, each rep then a line
     per day with what can be added and why — only the chosen reasons' days when chips are on)
@@ -176,6 +181,20 @@ workforce filter lists legitimately show only "(all)" for this file.
 - Your own holidays: `settings.customHol` → `applyCustomHol` (wins over the Hebrew calendar,
   works with it off) and `customHolOn` (names); edited in the holidays table (`renderCustomHol`).
 - Date Trends charts: `renderTrendDash` + `trRelTile`, fed by the same rows as the table.
+- 🧪 `prodBacktest()`: the forecast's NET (login) hours, two ways tested on the file's past (each day predicted only
+  from the days before it): "carry" (last 4 same weekdays) vs "ratio" (scheduled hours × login÷scheduled of the 8 weeks
+  before). The lower error wins and `trendDayStat` uses it on forecast days; the productivity / net-hours header hover
+  says which and why. Net hours now show on forecast days too (projected). Test: `tests/unit/productivity.test.js`.
+- 🤖 `autoPickModels()` (after each forecast load): every volume / AHT / MPT model is ranked by `rankModels` (= the
+  🧪 backtest window's ranking) and the best is used unless `settings.modelUserSet`; the model lists start with
+  "🤖 Automatic — <model>" (value "auto") to give the choice back.
+- ↩ `state.rtParam` {p,q,r0,n,check,guard,known,X} (learned in `rebuildLearningSeries` next to the catch-up): the share
+  of EXTRA abandoned calls (over the usual rate r0) that call again and how they split over the next 2 working days;
+  shrunk toward 40% · ¾+¼; worse on the past → `guard` (p=0). `settings.retryKnown` (optional field in Settings) =
+  a known p. `retryAt(ds)` adds it in `forecastDay` (history days too, for the split bar) under the same ↩ switch as
+  `catchUpAt`; the fast lane takes it out before measuring its level and no longer adds callbacks itself (the
+  manual `retryShare` slider is gone). Trends: `trRet` → the volume bar's hatched "returning" layer + its key + hover.
+  Next stage (not built): the loop — forecast abandonment → returns on the following forecast days.
 - Date Trends table: the TSF column = Settings' window (`metricTsfDyn`, the matrix's TSF; `mLab` in the charts);
   TSF 60 stays as a labeled benchmark (hidden when the window is 60). Only the primary metric's column is tinted;
   the last column is the target bar (`goalCell`: 0–100% fill, navy tick at the target, "−x%" or ✓).
