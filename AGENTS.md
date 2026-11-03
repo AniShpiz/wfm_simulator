@@ -186,7 +186,8 @@ workforce filter lists legitimately show only "(all)" for this file.
   before). The lower error wins and `trendDayStat` uses it on forecast days; the productivity / net-hours header hover
   says which and why. Net hours now show on forecast days too (projected). Test: `tests/unit/productivity.test.js`.
 - 🤖 `autoPickModels()` (after each forecast load): every volume / AHT / MPT model is ranked by `rankModels` (= the
-  🧪 backtest window's ranking) and the best is used unless `settings.modelUserSet`; the model lists start with
+  🧪 backtest window's ranking) and the best is used unless that list was picked by hand (`settings.modelUser[key]`,
+  per list — `mUser(key)`; the old single `modelUserSet` only seeds it on load); the model lists start with
   "🤖 Automatic — <model>" (value "auto") to give the choice back.
 - ↩ `state.rtParam` {p,q,r0,n,check,guard,known,X} (learned in `rebuildLearningSeries` next to the catch-up): the share
   of EXTRA abandoned calls (over the usual rate r0) that call again and how they split over the next 2 working days;
@@ -197,8 +198,16 @@ workforce filter lists legitimately show only "(all)" for this file.
   Next stage (not built): the loop — forecast abandonment → returns on the following forecast days.
 - ↩ the CAUSE: `retCause(ds)` = what a past day sends back (a lost day's `g.lost×c` + its extra abandons `X×p`, ≥3% of the
   day). Marked with a blue ▲ (`.retCauseMk` in the Trends volume + answer-rate charts, `.retCauseTag` in the Trends date
-  cell and the matrix daily row); the effect = the hatched layer (`trRet`, the matrix daily row's `.mxRetBar`). The
-  matrix key `#mxRetLeg` shows only with its marks.
+  cell and the matrix daily row); the effect = hatched blue: the charts' layer (`trRet`) and ONE tag `retPill(ds,n)`
+  ("↩ +n", hatched) in the Trends date cell and the matrix daily row — history days too (the day after an outage).
+  `retShown(ds,vol)` = the same rule as the cause (≥3% of the day or 20 calls), else 0 — no trace marks. `retSrc(ds)` =
+  the day that sent them (the tag's hover). The matrix key `#mxRetLeg` shows only with its marks.
+- 📊 `profBacktest()` (memoized on `_serVer`): the interval-profile windows (8w adaptive · 12w) tested on the last 8
+  learning days per weekday, each spread from the days before it (`profileShares(di,mode,cut)`); error = % of the
+  day's calls in the wrong half hour. `profMode()` = the window in use: the lower error unless `settings.profUserSet`
+  (`profileMode` "auto" | "adaptive" | "w12"). Shown in the 📊 panel (`#profTest`), the 🧪 window and the list's hover.
+- Settings › Forecasting models (`.fmCard`): a row with a list stacks (name above, the list full width); the 🤖 option
+  shows the model's short name (the full one on hover).
 - Settings › Forecasting models: one list of switches (holidays · war/outage · 📈 fast lane · ↩ returning calls
   `#setCuOn` = the same `settings.cuOn` as every `.cuBtn`, synced both ways via `cuToggle` → `syncCleanUI`) + the
   optional `#setRetryKnown` under it; the models fold (the patience row only when the file has MPT data). The 🧪

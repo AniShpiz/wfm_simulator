@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### ↩ Returning calls marked from the first day back · 📊 the interval profile tested · tidy model lists
+
+- ↩ The day right after an outage now carries its "↩ +n" tag too (it was shown only from the first forecast day, so
+  a ▲ on the 27th seemed to send calls back from the 29th). The matrix's thin bar became the same hatched "↩ +n" tag
+  as Date Trends; tags (and the charts' hatched layer) appear only when returns are ≥3% of the day or 20 calls — the
+  same rule as the ▲. The hover names the day that sent them.
+- 📊 Interval profile window: tested on your own past — each of the last 8 days per weekday spread over its half hours
+  by each window using only the days before it; the one that puts fewer calls in the wrong half hour is used
+  ("🤖 Automatic", the default), shown in the 📊 window, the 🧪 window and the list's hover. Picking a window by hand stays.
+- Settings › Forecasting models: each list sits full width under its name, so its text shows whole; the "🤖 Automatic"
+  option shows the model's short name.
+- Fix: picking a call-volume model by hand no longer takes the AHT / patience lists off "🤖 Automatic" — each list keeps
+  its own choice (it was one shared "picked by hand" flag).
+
 ### ⚙ Forecasting models in one list · 🧪 "How accurate is the forecast?" in plain words · ↩ cause and effect, without words
 
 - Settings › Forecasting models: one list of switches — holidays, war/outage detection, 📈 sudden changes, ↩ returning
