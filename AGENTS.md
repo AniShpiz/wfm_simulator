@@ -195,6 +195,15 @@ workforce filter lists legitimately show only "(all)" for this file.
   `catchUpAt`; the fast lane takes it out before measuring its level and no longer adds callbacks itself (the
   manual `retryShare` slider is gone). Trends: `trRet` → the volume bar's hatched "returning" layer + its key + hover.
   Next stage (not built): the loop — forecast abandonment → returns on the following forecast days.
+- ↩ the CAUSE: `retCause(ds)` = what a past day sends back (a lost day's `g.lost×c` + its extra abandons `X×p`, ≥3% of the
+  day). Marked with a blue ▲ (`.retCauseMk` in the Trends volume + answer-rate charts, `.retCauseTag` in the Trends date
+  cell and the matrix daily row); the effect = the hatched layer (`trRet`, the matrix daily row's `.mxRetBar`). The
+  matrix key `#mxRetLeg` shows only with its marks.
+- Settings › Forecasting models: one list of switches (holidays · war/outage · 📈 fast lane · ↩ returning calls
+  `#setCuOn` = the same `settings.cuOn` as every `.cuBtn`, synced both ways via `cuToggle` → `syncCleanUI`) + the
+  optional `#setRetryKnown` under it; the models fold (the patience row only when the file has MPT data). The 🧪
+  window ("How accurate is the forecast?") = results in plain words via `rankModels`, the model in use first, the rest
+  folded — no switch inside.
 - Date Trends table: the TSF column = Settings' window (`metricTsfDyn`, the matrix's TSF; `mLab` in the charts);
   TSF 60 stays as a labeled benchmark (hidden when the window is 60). Only the primary metric's column is tinted;
   the last column is the target bar (`goalCell`: 0–100% fill, navy tick at the target, "−x%" or ✓).
