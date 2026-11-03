@@ -4,6 +4,32 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### 📅 One date look + one date picker · ↩ returning calls as a switch · matrix crosshair · report fixes
+
+- Dates: everywhere on screen `05-Jul-2026` / `05-יולי-2026` (day left, month middle, year right; `fmtD`, short `fmtDs`).
+  Files Excel reads keep `05/07/2026` (`fmtDx`). Every date field is one picker (a month; today ringed; the choice navy;
+  out-of-range days off). "Plan until": the forecast's end is a quiet teal dot + one line in the calendar — the
+  "↺ forecast end" button is gone. Date ranges read in the page's direction.
+- Recruitment: the shadow price lists the four What-If sliders (fewer no-shows and less unavailable time each get a
+  row; a 0% lever says "nothing to improve"); "↺ Back to current" only after a slider moved; the "How many reps will
+  we have?" tip says it runs to the plan date; the What-If headline reads right in Hebrew.
+- Executive report: always counts attrition and courses (whatever the on-screen switch); the Gantt fills each week by
+  days — a course starts on its own start day and ends on its last day, so head-to-tail courses show head to tail.
+- Workforce: the iron-by-day legend sits on top in plain words ("Reps in the iron", "Needed by the forecast");
+  "Below their iron" gets a legend, colored day cells (they were always gray — a CSS bug), multi-select reason chips,
+  and a copy that is one message per team manager with each rep's days, what can be added and why — only the chosen
+  reasons. "How many more can be off?": an empty cell (sidur still being filled) counts at the rep's iron hours —
+  no more absurd −57 (Friday: only reps due by the rotation).
+- Scheduler: the likelihood filter of extension offers = multi-select chips, like every list filter.
+- Weekly matrix: hover = a crosshair (the row, the column and both headers light up); the tooltip starts with the day,
+  date and half hour (09:30–10:00); the daily cumulative ends at the interval's end (08:00–08:30, not 08:00–08:00).
+- ↩ Returning calls: one switch in the same place on the matrix and Date Trends, always there for forecast days (it sets
+  how the forecast behaves); its hover says what it does and when to switch it off, with the numbers when an event
+  touches the days on screen; each affected day carries a "↩ +n" mark — the sentence banner and the toggle chip are gone.
+- Hours in Hebrew: the number (with its sign) is isolated — "+40 ש׳" reads right inside any layout.
+- DESGIN.md: rules 17 (one date look, one picker), 18 (a list filter is multi-select chips; exports follow the filter),
+  19 (every mark has its key).
+
 ### 🎨 Design-rules pass: one number per question, titles that ask, the target bar, one switch, one message shape
 
 - Workforce: the three KPIs now add up — ① in the sidur ÷ iron · ② "of the iron is on leave" (who + the biggest

@@ -130,7 +130,11 @@ workforce filter lists legitimately show only "(all)" for this file.
   - `renderIronDays` (iron vs sidur by day, people; folds)
   - `renderImpactMatrix` (folds; `#impSum` = the day leave hurts most) + `renderHeadroom` (+k can be off · −k missing)
   - `renderValidation`
-  - `renderInternalRoster` ("Below their iron — who and why": reasons from the sidur, chip filter)
+  - `renderInternalRoster` ("Below their iron — who and why": reasons from the sidur; multi-select reason chips
+    `state._rrWhy` (a Set); a legend for the bar + day colors; "Copy list" = one `tlMsg` per team, each rep then a line
+    per day with what can be added and why — only the chosen reasons' days when chips are on)
+  - `renderHeadroom`: a rep with an EMPTY cell that day (sidur still being filled) counts at their iron hours; Friday
+    only if due by the rotation (`friW`=1). Typed statuses / leave = not coming.
 - Friday rotation (each rep works every other Friday; `settings.friEvery`): every iron total reads
   Friday through `friW` → `ironDayH`/`ironWeekH` (worked last Friday → 0, didn't → 1, unknown → ½).
   The Friday memory `settings.friHist` (names only, last 12 Fridays) is filled by `recordFriHist`
@@ -161,7 +165,8 @@ workforce filter lists legitimately show only "(all)" for this file.
 
 - ↩ Catch-up layer: learned in `rebuildLearningSeries` (`state.cuParam` {c,q}, `state.cuEvents`, `state.cuDays`
   kept out of learning) → `catchUpAt(ds,force)` added in `forecastDay` and taken out in `fastState`; `cuInfo` /
-  `cuToggle` drive the matrix chip and `#trCu`; `state.cuCheck` (error without/with on past lost days) + the switch
+  `cuToggle` drive ONE switch `.cuBtn` (`syncCu(page,dates)`, matrix + Date Trends, before the lens; ALWAYS shown when forecast days are on screen — the hover says what it does + the numbers while
+  returning calls touch the days on screen) + a "↩ +n" mark on each affected Trends day (no sentence line; `#trCu` stays hidden); `state.cuCheck` (error without/with on past lost days) + the switch
   live in the backtest window. `settings.cuOn` (on unless false). 0 on a regular week.
 - `settings.volCal` is retired (forced to 1 on load; no UI) — the fast lane owns level corrections.
 - 📈 Fast lane for sudden demand changes: `fastState` (memoized on `_serVer` + settings) /
@@ -202,6 +207,8 @@ workforce filter lists legitimately show only "(all)" for this file.
 - `hirePlan()` is memoized (`state._hpC`, keyed on courses + settings + `_crsVer`) → `hirePlanRaw`; `lensScale` per
   date (`state._lensC`). `cohortsChanged` bumps `state._crsVer`. Lanes: `settings.siteRules` ([[location…]…], chip rows) → `siteLane`;
   `courseOverlaps()` marks rows. 📄 `rcReportHtml` / `rcReport(fmt)`, sections `settings.repSec` (`REP_SECS`).
+  `rcReport` always builds with the "realistic" lens (attrition + courses), then restores the screen's lens. The Gantt
+  fills each week cell by days (start day → last day), a gradient in print, the whole cell in Word.
 - `hirePlan` / `renderHirePlan` ("are your courses enough?") implement `RECRUIT_PLAN_SPEC.md` —
   read it before touching them. Course calendar: `courseDayOK` + `cohortFloorDate` (working days,
   closed holidays push; cached by `state._holVer`, bumped in `holChanged`). Locations: `SITES`,
@@ -212,6 +219,19 @@ workforce filter lists legitimately show only "(all)" for this file.
   `sug[].for` = the month each addition is for. Rules: `settings.siteMax` / `siteLen` (per location;
   `siteLen(s)` falls back to the median) and `settings.crsNoOverlap` → `siteLane` (ב"ש + רחובות share a lane).
 - What-If / trajectory measure `wiSun()` (the first forecast week, else the last measured) via `wiRows`.
+- 💲 `WI_LEVERS` = the four What-If sliders (ahtCut, attrCut, shrinkCut, absCut) — the shadow price lists exactly them;
+  a lever at 0% in Settings reads "nothing to improve". `#wiReset` shows only while `wiScenario()` (a slider moved).
+
+## Dates and pickers (app-wide)
+
+- Display: `fmtD(ds)` = 05-Jul-2026 / 05-יולי-2026 (LRI…PDI isolate + an LRM after the month), `fmtDs` = 05-Jul.
+  Files Excel reads: `fmtDx` = 05/07/2026 (tikshuvRow, the analyst copy, CSV exports, the course + constraints
+  templates). `csvQuote` strips the direction marks; the Trends CSV writes `fmtDx` from `.trDate[data-ds]`.
+- `dpUpgrade(root)` turns every `input[type=date]` (and new ones, via a MutationObserver) into the one picker: the input
+  hides (`.dpOn`) and keeps the value + its change listeners; `.dpBtn` shows `fmtD`; `dpOpen` / `dpPaint` / `dpPick`
+  draw the month in `#dpPop`. `data-reco` + `data-reco-l` = a quiet suggestion (the plan date's forecast end).
+- Matrix: hover = a crosshair (row + column + both headers, `.xh` / `.xhc`); a cell's tooltip starts with its day, date
+  and half hour (09:30–10:00); the cumulative line ends at the interval's end (`addHalf`).
 - 📅 `planTo()` (settings.planTo, else `planToAuto()` = the forecast's end, 30 days … 6 months): the What-If curve,
   the capacity outlook, `hirePlanRaw`'s months and the report all run to it. `shAbs(k,v)` = a lever step in plain numbers.
 - Course rules: `siteAtOnce(s)` (settings.siteAtOnce, 1) = courses a location runs together; `courseOverlaps()`
