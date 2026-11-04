@@ -472,6 +472,15 @@ td.gapCell.closed{background:#d6f3e2!important;color:#0f6a3f;font-weight:700}
 .rdyLeg.top i.lg-nd{width:16px} .rrLeg{justify-content:flex-start}
 .trBar.ret{fill:url(#trHatch)} .retCauseMk{fill:#3f8fd8}
 .retCauseTag{display:inline-block;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:7px solid #3f8fd8;margin-inline-start:5px;vertical-align:1px;cursor:help}
+/* 👥 the reps number is a button: dotted at rest; under the pointer it becomes a chip "👥 41" (one cell at a time — no clutter) */
+.whoLnk{cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px;border-radius:6px;padding:0 2px;border:1px solid transparent}
+td.cell:hover .whoLnk{text-decoration:none;background:#fff;border-color:#3f8fd8;color:var(--navy);font-weight:700;box-shadow:0 1px 3px #0b254433;padding:0 4px}
+td.cell:hover .whoLnk::before{content:"👥 ";font-size:.9em} .whoLnk:hover{background:#3f8fd8!important;color:#fff!important}
+.legend i.lg-who{width:auto!important;height:auto!important;background:none!important;font-style:normal;font-size:.8rem}
+#mList li.whoTeam{display:block;list-style:none} .whoReps{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:2px 10px;margin-top:4px}
+.whoRep{display:flex;align-items:center;gap:6px;font-size:.8rem;cursor:pointer;padding:2px 4px;border-radius:5px} .whoRep .mini{margin-inline-start:auto;direction:ltr;unicode-bidi:isolate}
+.whoRep:has(input:checked){background:#fdecec;color:var(--crimson)} .whoRep:has(input:checked) span:first-of-type{text-decoration:line-through}
+.whoGap{font-weight:700;color:var(--crimson);margin-inline-end:10px}
 .evPill.retPill{color:#1d5f99;border-color:#3f8fd8;background:repeating-linear-gradient(45deg,#eaf4fd 0 3px,#cfe6fb 3px 5px);cursor:help} /* ↩ the effect = the charts' hatched blue */
 .legend i.lg-cause{width:0!important;height:0!important;border-radius:0!important;background:none!important;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:8px solid #3f8fd8} .trRetKey{justify-content:flex-start;margin:2px 0 0;font-size:.68rem} .trRetKey i{width:10px;height:10px}
 .legend i.lg-fresh{background:#2c7fb8} .legend i.lg-ret{background:repeating-linear-gradient(45deg,#cfe6fb 0 2px,#3f8fd8 2px 3.5px)} #mList details.btMore{margin-top:4px} #mList details.btMore summary{cursor:pointer;color:var(--muted)}
@@ -784,6 +793,9 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
 #footerBar{position:fixed;bottom:6px;left:0;right:0;height:32px;background:var(--navy);color:#bcd9f2;display:flex;align-items:center;gap:12px;padding:0 16px;z-index:90;font-size:.74rem;box-shadow:0 -2px 8px rgba(13,42,77,.12)}
 #footerBar b{color:#fff}
 #footerBar .mail{direction:ltr;unicode-bidi:isolate;color:#8fc6ef}
+.sidurChip{border:1px solid #9cc3ea;background:#e8f3fd;color:var(--navy);border-radius:999px;padding:3px 11px;font-size:.74rem;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit}
+.sidurChip b{font-weight:800;margin-inline-start:4px;padding:0 6px;border-radius:999px;background:#fff}
+.sidurChip.now b{color:#0f6b43} .sidurChip.next b{color:#1d5f99} .sidurChip.past b{color:#a15c00} .sidurChip:hover{background:#fff}
 #langBox{margin-inline-start:auto;display:flex;align-items:center;gap:7px}
 #langBox select{padding:3px 7px;font-size:.75rem}
 #stripe{position:fixed;bottom:0;left:0;right:0;height:6px;background:var(--stripe);z-index:91}
@@ -793,6 +805,8 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
 
 <header>
   <div class="brand"><span class="dot"></span><span data-i18n="appTitle">WFM Simulator</span></div>
+  <!-- 📅 the loaded sidur — the same chip, in the same place, on every page (it sets the iron behind every number) -->
+  <button type="button" class="sidurChip" id="sidurChip" hidden></button>
   <nav>
     <button id="tab-home" class="active" data-i18n="tabHome">Home</button>
     <button id="tab-matrix" data-i18n="tabMatrix">Weekly Matrix</button>
@@ -914,6 +928,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <span><i style="background:#c22;border-radius:50%"></i><span data-i18n="legShort">understaffed — fewer scheduled than the target needs</span></span>
         <span><i style="background:transparent;border-radius:50%;box-shadow:inset 0 0 0 1.5px #c22"></i><span data-i18n="legShortSoft">fewer than the model sizes for — yet service is on target</span></span>
         <span><i style="background:#8a63d2"></i><span data-i18n="legOver">overstaffed — more than the target needs (answer rate won't be 100% — that's normal)</span></span>
+        <span id="mxWhoLeg" style="display:none"><i class="lg-who">👥</i><span data-i18n="mxWhoLeg">click the reps number — who should be on</span></span>
         <!-- legDecay belongs to the hidden Policy Optimizer (see #polSection) -->
         <span style="display:none"><i style="background:var(--magenta)"></i><span data-i18n="legDecay">flex-policy dip applied</span></span>
         <!-- ↩ the returning-calls marks — only while they are on screen -->
@@ -1633,6 +1648,16 @@ en:{
   paceWord:"pace",
   fmAutoHol:"Auto Israeli-holiday calendar", fmAutoAnom:"Auto war/outage detection",
   fmProfile:"Interval profile window", fmProfAdapt:"Adaptive (8w, fallback all)", fmProf12:"12 weeks",
+  cuPillIn:"↩ {n} of them", cuPillInTip:"A measured day: about {n} of its calls were returning ones — the day's count already holds them and stays as measured",
+  scChip:"📅 Sidur week {w}", scNow:"this week", scNext:"next week", scLast:"last week", scAgo:"{n} weeks ago", scAhead:"in {n} weeks",
+  scIronOnly:"⛓ Iron only — no sidur loaded", scTip:"The sidur loaded now — its iron sets the forecasts and calculations on every page. Click to load another.",
+  prodFcHow:"Forecast days: the hours the sidur / iron gives, on your file's net basis (× {r}% = your net ÷ scheduled hours), and the calls they answer at the forecast call length — at most {o}% busy, like your busiest days.",
+  prodFcHowNo:"Forecast days: the hours the sidur / iron gives × availability, and the calls they answer at the forecast call length — at most {o}% busy.",
+  whoTip:"Who should be on in this half hour", whoT:"Who should be on? {d} · ⁦{a}–{b}⁩", whoNoTeam:"No team",
+  whoCoreSidur:"{n} reps by the sidur. Tick who isn't on the floor.", whoCoreIron:"{n} reps by the iron (no sidur for this day). Tick who isn't on the floor.",
+  whoNone:"No rep's shift covers this half hour.", whoGap:"Missing {m} of {n}", whoImpact:"{a}: {x} → {y}", mxWhoLeg:"click the reps number — who should be on",
+  whoTlImpact:"Without your {m}, this half hour's {a} goes from {x} down to {y} (target {t}%).",
+  whoCopy:"📋 Copy for the team managers", whoTlPurpose:"{d} {a}–{b} — on the sidur but not on the floor:", whoCopied:"Copied — one message per team",
   profAutoBtn:"🤖 Automatic", profTestT:"Which window places the calls right? Tested on {n} past days", profTestErr:"{e}% in the wrong half hour",
   profTestAuto:"In use: {m} — the lower error. Each day is predicted only from the days before it.", profTestHand:"You picked the window by hand; the test prefers {m}.",
   profTestTip:"Tested on {n} past days: 8 weeks puts {a}% of the calls in the wrong half hour, 12 weeks {b}%.",
@@ -2190,6 +2215,16 @@ he:{
   paceWord:"היחס",
   fmAutoHol:"לוח חגים ישראלי אוטומטי", fmAutoAnom:"זיהוי מלחמות/תקלות אוטומטי",
   fmProfile:"חלון פרופיל אינטרוולים", fmProfAdapt:"אדפטיבי (8 שב׳, גיבוי הכל)", fmProf12:"12 שבועות",
+  cuPillIn:"↩ {n} מתוכן", cuPillInTip:"יום שנמדד: כ־{n} מהשיחות שלו היו שיחות חוזרות — הן כבר בתוך המספר של היום, והוא נשאר כפי שנמדד",
+  scChip:"📅 סידור שבוע {w}", scNow:"השבוע", scNext:"שבוע הבא", scLast:"שבוע שעבר", scAgo:"לפני {n} שבועות", scAhead:"בעוד {n} שבועות",
+  scIronOnly:"⛓ ברזל בלבד — לא טעון סידור", scTip:"הסידור שטעון עכשיו — הברזל שלו קובע את החיזויים והחישובים בכל העמודים. לחיצה לטעינת סידור אחר.",
+  prodFcHow:"ימי תחזית: השעות שהסידור / הברזל נותן, על בסיס נטו כמו בקובץ שלך (× ‎{r}%‎ = נטו ÷ שעות משובצות אצלך), והשיחות שהן עונות במשך השיחה החזוי — לכל היותר ‎{o}%‎ תעסוקה, כמו בימים העמוסים שלך.",
+  prodFcHowNo:"ימי תחזית: השעות שהסידור / הברזל נותן × זמינות, והשיחות שהן עונות במשך השיחה החזוי — לכל היותר ‎{o}%‎ תעסוקה.",
+  whoTip:"מי אמור/ה לעבוד בחצי השעה הזו", whoT:"מי אמור לעבוד? {d} · ⁦{a}–{b}⁩", whoNoTeam:"בלי צוות",
+  whoCoreSidur:"{n} נציגים לפי הסידור. סמנו מי לא נמצא/ת בפועל.", whoCoreIron:"{n} נציגים לפי הברזל (אין סידור ליום הזה). סמנו מי לא נמצא/ת בפועל.",
+  whoNone:"אין נציג שהמשמרת שלו מכסה את חצי השעה הזו.", whoGap:"חסרים {m} מתוך {n}", whoImpact:"{a}: ⁦{x}⁩ ← ⁦{y}⁩", mxWhoLeg:"לחצו על מספר הנציגים — מי אמור לעבוד",
+  whoTlImpact:"בלי ה־{m} מהצוות שלך, {a} בחצי השעה הזו יורד מ־{x} ל־{y} (יעד {t}%).",
+  whoCopy:"📋 העתקה למנהלי הצוות", whoTlPurpose:"{d} {a}–{b} — בסידור אבל לא נמצאים בפועל:", whoCopied:"הועתק — הודעה לכל צוות",
   profAutoBtn:"🤖 אוטומטי", profTestT:"איזה חלון מפזר את השיחות נכון? נבדק על {n} ימים מהעבר", profTestErr:"‎{e}%‎ בחצי שעה הלא נכונה",
   profTestAuto:"בשימוש: {m} — הטעות הנמוכה. כל יום נחזה רק מהימים שלפניו.", profTestHand:"בחרת חלון ידנית; הבדיקה מעדיפה את {m}.",
   profTestTip:"נבדק על {n} ימים מהעבר: 8 שבועות — ‎{a}%‎ מהשיחות בחצי שעה הלא נכונה, 12 שבועות — ‎{b}%‎.",
@@ -8657,7 +8692,7 @@ function renderMatrixBody(){
         if(state._optView){ state._optView=false; const base=capacityFor(ds,fromISO(ds).getDay(),tm,row.rec)+injectionAgents(fromISO(ds).getDay(),tm)+traineeAt(ds,fromISO(ds).getDay(),tm); state._optView=true;
           const dlt=row.sched-base; if(dlt) mv=`<span class="mvd ${dlt>0?"up":"dn"}" title="${t("exCellTip",{b:base,a:row.sched})}">${dlt>0?"▲":"▼"}${Math.abs(dlt)}</span>`; }
         td.innerHTML=`<div class="v">${pct(v)}${mv}${row.dropped?'<span class="decay">▼</span>':''}${short?`<span class="short${soft?" soft":""}"></span>`:''}${over?'<span class="overm"></span>':''}${edited?'<span class="edmark">✎</span>':''}</div>
-          <div class="sub">${row.sched}/${row.reqEff} • ${Math.round(row.rec.volume)}</div>`;
+          <div class="sub">${state.iron||state.schedRows.some(r=>r.ds===ds&&r.h>0)?`<span class="whoLnk" title="${t("whoTip")}">${row.sched}</span>`:row.sched}/${row.reqEff} • ${Math.round(row.rec.volume)}</div>`;
         // edited cells carry their own tiny undo — one click back to the original value
         if(edited&&(state.cellOrig.has(ds+"|"+tm)||wiOn)){
           const ub=document.createElement("button");
@@ -8685,15 +8720,16 @@ function renderMatrixBody(){
           +(cu.vol>0?t("mxCum",{a:cu.from,b:addHalf(tm),v:pct(cu.acc/cu.vol),n:Math.round(cu.vol).toLocaleString()})+"\n":"")
           +t("mxTipBody",{t:tgt,s:row.sched,r:row.reqEff})+"\n"+verd
           +(()=>{ const tr=traineeAt(ds,di,tm), o=(state.trainees||{})[sundayOf(ds)]; return tr>0?"\n🎓 "+t("trnCell",{t:tr,n:traineeN(ds,di),p:o.pct}):""; })()
-          +(offPrim&&(short||over)?"\n"+t("mxVerdMetric",{p:primName()}):"");
-        td.addEventListener("click",e=>openEditor(e,ds,tm,di));
+          +(offPrim&&(short||over)?"\n"+t("mxVerdMetric",{p:primName()}):"")+(td.querySelector(".whoLnk")?"\n👥 "+t("mxWhoLeg"):"");
+        td.addEventListener("click",e=>{ if(e.target.closest(".whoLnk")){ e.stopPropagation(); openWho(ds,tm); return; } openEditor(e,ds,tm,di); }); // 👥 the reps number = who
       }
       tr.appendChild(td);
     });
     tbody.appendChild(tr);
   });
   tbl.appendChild(tbody);
-  { const l=document.getElementById("mxRetLeg"); if(l) l.style.display=tbl.querySelector(".retPill,.retCauseTag")?"":"none"; } // the ↩ key, only with its marks
+  { const l=document.getElementById("mxRetLeg"); if(l) l.style.display=tbl.querySelector(".retPill,.retCauseTag")?"":"none"; }
+  { const l=document.getElementById("mxWhoLeg"); if(l) l.style.display=tbl.querySelector(".whoLnk")?"":"none"; } // 👥 the key, only when the names exist // the ↩ key, only with its marks
   // frame today's column top-to-bottom (box-shadow, so tier colors stay intact)
   if(todayIdx>=0) tbody.querySelectorAll("tr").forEach(tr=>{ const c=tr.children[todayIdx+1]; if(c) c.classList.add("todayCol"); });
   // (the Recruitment "short today" KPI is renderRecruit's alone — from today, with the plan's math, never this browsed week)
@@ -8888,6 +8924,11 @@ function trendDayStat(ds){
   // calls with the hours of the same intervals (an interval with calls but no login must not
   // inflate the numerator; with login on every interval these equal the full-day sums)
   let ansL=0,workL=0,volL=0,workVL=0,occFileWL=0,occFileL=0;
+  /* 📈 a FORECAST day's productivity comes from what the day will GIVE: its hours (the sidur / iron / file's staffing,
+     on the file's net basis = × login÷scheduled ρ) and the calls those hours answer at the forecast AHT (the matrix's
+     answer rate), never above the busiest occupancy the file reached. (Carrying the old login average + the old
+     answer rate made it jump on busy or thin days.) */
+  const fcB=fc?prodBacktest():null, fcRho=fcB?fcB.rho:null, fcOcc=fc?occMaxHist():0; let fcServed=0,fcWork=0;
   for(const [tm,rec] of sd.src){
     if(state.exceptions.has(ds+"|"+tm)) continue;
     const sched=capacityFor(ds,dayIdx,tm,rec)+injectionAgents(dayIdx,tm)+traineeAt(ds,dayIdx,tm); // 🎓 same as the matrix
@@ -8912,6 +8953,7 @@ function trendDayStat(ds){
     work+=rec.volume*rec.aht; cap+=agents*1800; schedHrs+=sched*0.5;
     // GROSS hours to schedule = the matrix's "needed" (target-sized, ÷ shrinkage & absence) × ½h
     grossH+=Math.round(requiredAgentsMemo(rec.volume,rec.aht,S.target,S,rec.mpt)/effShareG)*0.5;
+    if(fc){ const netIv=sched*0.5*(fcRho??availShare(S)), sv=Math.min(rec.volume*perf.ar,netIv*3600*fcOcc/Math.max(1,rec.aht)); fcServed+=sv; fcWork+=sv*rec.aht; }
     if(rec.login>0){ loginHrs+=rec.login; volL+=rec.volume; workVL+=rec.volume*rec.aht; }
     if(rec.answered){
       // forecast rows carry the RECENT answer rate forward — anchored to measured
@@ -8929,8 +8971,8 @@ function trendDayStat(ds){
     if(!fc&&rec.occup>0){ occFileW+=rec.occup*rec.volume; occFileVol+=rec.volume;
       if(rec.login>0){ occFileWL+=rec.occup*rec.login; occFileL+=rec.login; } }
   }
-  { const bt=fc&&loginHrs>0?prodBacktest():null;
-    if(bt&&bt.pick==="ratio"&&schedHrs>0){ loginHrs=schedHrs*bt.rho; ansL=answered; volL=vol; workL=handledWork; workVL=work; } }
+  if(fc&&schedHrs>0){ answered=fcServed; handledWork=fcWork; // the hours given × the forecast AHT (see above)
+    if(fcRho!=null){ loginHrs=schedHrs*fcRho; ansL=fcServed; volL=vol; workL=fcWork; workVL=work; } else loginHrs=0; }
   if(!vol){
     // show a zero-volume day when it's a user-edited forecast OR a holiday (so a
     // CLOSED holiday reads explicitly as 0 demand + a 🕎 badge, not a silent gap)
@@ -8989,10 +9031,15 @@ function retCause(ds){ if(state.settings.cuOn===false||!state.maxDate||ds>state.
 /* ↩ the effect, marked by the same rule as the cause: ≥3% of the day (or 20 calls) — history days too (a day after an
    outage carries its returning calls). vol = the day's calls when the caller has it. */
 function dayVolOf(ds){ const m=state.days.get(ds)||(state.maxDate&&ds>state.maxDate?forecastDay(ds):null); let v=0; if(m) for(const r of m.values()) v+=r.volume||0; return v; }
-function retShown(ds,vol){ const n=catchUpAt(ds)+retryAt(ds); if(!(n>=1)) return 0; return n>=Math.max(20,0.03*(vol??dayVolOf(ds)))?n:0; }
+function retShown(ds,vol){ const n=catchUpAt(ds)+retryAt(ds); if(!(Math.round(n)>=1)) return 0; if(n>=Math.max(20,0.03*(vol??dayVolOf(ds)))) return n;
+  // a ▲ is always followed by its effect: the 2 working days right after a marked cause carry their tag, however small
+  for(let d=addDays(ds,-1),k=0,g=0;k<2&&g<10;g++,d=addDays(d,-1)){ if(fromISO(d).getDay()>5||state.holidayDates.get(d)==="closed") continue; if(retCause(d)>0) return n; k++; }
+  return 0; }
 function retSrc(ds){ for(let d=addDays(ds,-1),g=0;g<14;g++,d=addDays(d,-1)){ if(retCause(d)>0||(state.maxDate&&d>state.maxDate&&fromISO(d).getDay()<=5&&state.holidayDates.get(d)==="closed")) return fmtDs(d); } return ""; }
-function retPill(ds,n){ const s=document.createElement("span"); s.className="evPill retPill"; s.textContent=t("cuPill",{n:Math.round(n).toLocaleString()});
-  const src=retSrc(ds); s.title=t(state.maxDate&&ds>state.maxDate?"trRetTipFc":"trRetTip")+": "+Math.round(n).toLocaleString()+(src?" · "+t("cuPillTip",{n:Math.round(n).toLocaleString(),d:src}):""); return s; }
+// a forecast day ADDS them ("↩ +n"); a measured day already holds them — its count stays, the tag says how many of it ("↩ n of them")
+function retPill(ds,n){ const s=document.createElement("span"); s.className="evPill retPill"; const fc=state.maxDate&&ds>state.maxDate, N=Math.round(n).toLocaleString();
+  s.textContent=t(fc?"cuPill":"cuPillIn",{n:N});
+  const src=retSrc(ds); s.title=(fc?t("trRetTipFc")+": "+N:t("cuPillInTip",{n:N}))+(src?" · "+t("cuPillTip",{n:N,d:src}):""); return s; }
 function trRet(a,b){ let s=0; for(let d=a;d<=b;d=addDays(d,1)) s+=retShown(d); return s; } // ↩ the returning calls of a range (marked days)
 function trCause(a,b){ let s=0; for(let d=a;d<=b;d=addDays(d,1)) s+=retCause(d); return s; }
 function trPoints(list,G){
@@ -9131,7 +9178,7 @@ function renderTrends(){
   hr.appendChild(thTip(t("thAr"),t("fTipAr")));
   hr.appendChild(thTip(t("thAht"),t("fTipAht")));
   const workTh=thTip(t("thWork")," "); hr.appendChild(workTh); // tip filled once totals exist
-  const pbt=prodBacktest(), pbtLine=pbt?"\n"+t(pbt.pick==="ratio"?"prodBtRatio":"prodBtCarry",{r:Math.round(pbt.rho*100),a:(Math.min(pbt.eRatio,pbt.eCarry)*100).toFixed(1),b:(Math.max(pbt.eRatio,pbt.eCarry)*100).toFixed(1),n:pbt.n}):"";
+  const pbt=prodBacktest(), pbtLine="\n"+t(pbt?"prodFcHow":"prodFcHowNo",{r:pbt?Math.round(pbt.rho*100):0,o:Math.round(occMaxHist()*100)}); // forecast days: the hours given × the forecast AHT
   hr.appendChild(thTip(t("thNetProd"),t("fTipNetProd")+pbtLine));
   hr.appendChild(thTip(t("thUtil"),t("fTipOcc")));
   const show60=+S.tsfT!==60; // the window IS 60 → one TSF column, not the same one twice
@@ -10478,8 +10525,21 @@ function brkSettings(){ // ⚙ the procedure's rules: first / last break (Friday
   box.querySelectorAll("[data-k]").forEach(inp=>inp.addEventListener("change",()=>{ const k=inp.dataset.k, b=state.settings.brk=state.settings.brk||{};
     b[k]=inp.type==="number"?+inp.value:inp.value; state._brkUndo=null; saveState(); renderBreaks(); }));
 }
+/* 📅 the loaded sidur's week + where it stands in time (this week · next week · n weeks ago / ahead) — the header chip
+   on every page; a click goes to Home to load another. Iron without a sidur says so; nothing loaded = no chip. */
+function sidurWeek(){ const rows=state.schedRows.length?state.schedRows:(state.unallocRows||[]).concat(state.vacations||[]);
+  const ds=rows.map(r=>r.ds).filter(Boolean).sort()[0]; return ds?sundayOf(ds):null; }
+function renderSidurChip(){ const el=document.getElementById("sidurChip"); if(!el) return;
+  const wk=sidurWeek(); if(!wk&&!state.iron){ el.hidden=true; return; } el.hidden=false;
+  const d=wk?Math.round((fromISO(wk)-fromISO(sundayOf(iso(new Date()))))/(7*864e5)):null;
+  const when=d==null?"":d===0?t("scNow"):d===1?t("scNext"):d===-1?t("scLast"):d<0?t("scAgo",{n:-d}):t("scAhead",{n:d});
+  el.className="sidurChip"+(d==null?"":d===0?" now":d===1?" next":d<0?" past":"");
+  const esc=v=>String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+  el.innerHTML=wk?esc(t("scChip",{w:isoWeek(wk)}))+`<b>${esc(when)}</b>`:esc(t("scIronOnly"));
+  el.title=(wk?t("schWkFix",{w:isoWeek(wk),a:fmtDs(wk),b:fmtDs(addDays(wk,5))})+"\n":"")+t("scTip"); }
+document.getElementById("sidurChip").addEventListener("click",()=>document.getElementById("tab-home").click());
 function renderAll(){
-  renderSetSkills();
+  renderSetSkills(); renderSidurChip();
   dirtyPages.add("matrix"); dirtyPages.add("trends"); dirtyPages.add("recruit");
   dirtyPages.add("workforce"); dirtyPages.add("scheduler"); dirtyPages.add("breaks");
   renderDirty(); saveState();
@@ -11350,6 +11410,60 @@ function openEvents(){
   renderEvents(); $ev("evName").focus();
 }
 document.getElementById("evBtn").addEventListener("click",openEvents);
+/* ---- 👥 Who should be on in a half hour (matrix: the reps number in a cell) — to compare with the floor ----
+   The sidur of that day, else the iron's weekday (Friday by the rotation, leave out); the 🎧 answering skills, like
+   the matrix's capacity. Tick who isn't there → the gap, what it costs the half hour, one message per team. */
+function whoOn(ds,tm){
+  const di=fromISO(ds).getDay(), wk=sundayOf(ds), m=toMinW(tm), sc=state.capSkills, meta=n=>state.rosterMeta.get(n)||{};
+  const inSc=sk=>{ sk=String(sk||"").trim(); return !sc||!sc.length||!sk||sc.includes(sk); };
+  const span=(s,e)=>{ const a=toMinW(s), b=toMinW(e); return [a,b>a?b:b+1440]; }, on=iv=>iv.some(([a,b])=>a<m+30&&b>m);
+  const by=new Map(), add=(n,team,s,e)=>{ const o=by.get(n)||{name:n,team:team||"",sh:[]}; o.sh.push(s+"–"+e); by.set(n,o); };
+  const sr=state.schedRows.filter(r=>r.ds===ds&&r.h>0);
+  if(sr.length){ for(const r of sr) if(inSc(r.skill||meta(r.name).skill)&&on([span(r.s,r.e)])) add(r.name,meta(r.name).team||r.team,r.s,r.e);
+    return {src:"sidur",reps:[...by.values()]}; }
+  if(!state.iron) return null;
+  const off=new Set((state.vacations||[]).filter(v=>v.ds===ds).map(v=>v.name)); let half=0;
+  for(const [n,e] of state.iron.emps){ const w=e.days&&e.days[di]; if(!w||!w.h||off.has(n)||!inSc(meta(n).skill||e.skill)) continue;
+    const k=di===5?friW(n,wk):1; if(!k||(k<1&&half++%2)) continue; // Friday: every other one, like the breaks plan
+    const parts=ironParts(w); if(on(parts.map(([a,b])=>span(a,b)))) for(const [a,b] of parts) add(n,meta(n).team||e.team,a,b); }
+  return {src:"iron",reps:[...by.values()]};
+}
+function openWho(ds,tm){
+  const W=whoOn(ds,tm); if(!W) return;
+  const di=fromISO(ds).getDay(), dl=t("days")[di]+" "+fmtDs(ds), key=ds+"|"+tm, miss=(state._whoMiss=state._whoMiss||{})[key]=state._whoMiss[key]||new Set();
+  const esc=v=>String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+  document.getElementById("mTitle").textContent=t("whoT",{d:dl,a:tm,b:addHalf(tm)});
+  document.getElementById("mCore").textContent=W.reps.length?t(W.src==="sidur"?"whoCoreSidur":"whoCoreIron",{n:W.reps.length}):t("whoNone");
+  document.getElementById("mExport").style.display="none";
+  const mL=document.getElementById("mList"); mL.innerHTML="";
+  const teams=new Map(); for(const r of W.reps.sort((a,b)=>a.name.localeCompare(b.name,"he"))){ const k=r.team||t("whoNoTeam"); (teams.get(k)||teams.set(k,[]).get(k)).push(r); }
+  for(const [team,list] of [...teams].sort((a,b)=>a[0].localeCompare(b[0],"he"))){
+    const li=document.createElement("li"); li.className="whoTeam";
+    li.innerHTML=`<b>${esc(team)}</b> <span class="mini">${list.length}</span><div class="whoReps">`+list.map(r=>
+      `<label class="whoRep"><input type="checkbox" data-n="${esc(r.name)}"${miss.has(r.name)?" checked":""}><span>${esc(r.name)}</span><span class="mini">${esc(r.sh.join(" · "))}</span></label>`).join("")+`</div>`;
+    mL.appendChild(li); }
+  // the gap: only once someone is ticked (silence while all are there)
+  const msg=document.getElementById("mMsg");
+  // the half hour's rate without n of its reps: the shown value + the model's difference (null without a forecast row)
+  const S=state.settings, day=computeDay(ds), row=day&&day.rows.find(r=>r.tm===tm&&r.rec&&!r.exc&&!r.closed), mk=state.metric==="tsf"?"tsf":"ar";
+  const mName=state.metric==="tsf"?"TSF "+S.tsfT:t("metricAr");
+  const rateW=n=>{ if(!row||!(row.sched>0)) return null; const f=row.agents/row.sched, base=evalInterval(row.rec.volume,row.rec.aht,row.agents,S,row.rec.mpt)[mk],
+    after=evalInterval(row.rec.volume,row.rec.aht,Math.max(0,Math.round((row.sched-n)*f)),S,row.rec.mpt)[mk], x=row.perf[mk]; return {x:pct(x),y:pct(Math.max(0,x+after-base))}; };
+  const paint=()=>{ msg.innerHTML=""; if(!miss.size) return;
+    let line=t("whoGap",{m:miss.size,n:W.reps.length}); const R=rateW(miss.size);
+    if(R) line+=" · "+t("whoImpact",{a:mName,...R});
+    const s=document.createElement("span"); s.className="whoGap"; s.textContent=line; msg.appendChild(s);
+    const b=document.createElement("button"); b.className="btn ghost"; b.type="button"; b.textContent=t("whoCopy");
+    b.addEventListener("click",()=>{ const by=new Map(); for(const r of W.reps) if(miss.has(r.name)){ const k=r.team||t("whoNoTeam"); (by.get(k)||by.set(k,[]).get(k)).push("• "+r.name+" — "+r.sh.join(" · ")); }
+      // each team manager reads what THEIR team's missing reps cost the half hour, against the target
+      const txt=[...by].map(([team,lines])=>{ const r=rateW(lines.length);
+        return tlMsg(team,t("whoTlPurpose",{d:dl,a:tm,b:addHalf(tm)}),r?lines.concat("",t("whoTlImpact",{m:lines.length,a:mName,x:r.x,y:r.y,t:S.target})):lines); }).join("\n\n");
+      navigator.clipboard&&navigator.clipboard.writeText(txt); showToast("📋 "+t("whoCopied"),true); });
+    msg.appendChild(b); };
+  mL.querySelectorAll(".whoRep input").forEach(cb=>cb.addEventListener("change",()=>{ cb.checked?miss.add(cb.dataset.n):miss.delete(cb.dataset.n); paint(); }));
+  paint();
+  document.getElementById("modalBg").classList.add("show");
+}
 /* ---- 📊 Intraday profile matrix: see the weights, what the window choice changes, pin a share ---- */
 const profPanel=document.getElementById("profPanel"), $pf=id=>profPanel.querySelector("#"+id);
 const pp=v=>(v*100).toFixed(1)+"%";
@@ -11824,6 +11938,12 @@ function hirePlan(sc){
    "ratio" = the day's scheduled hours × login ÷ scheduled over the 8 weeks before it — moves with the sidur / iron.
    Each of the latest (up to 8 weeks of) past days is predicted ONLY from the days before it; error = |predicted −
    actual| ÷ actual, averaged. Needs login hours (and, for "ratio", a staffing column). Memoized per data version. */
+/* the busiest occupancy the floor really reached (95th percentile of the file's days, on its net hours) — the ceiling
+   of a forecast day's productivity; 92% when the file has no hours */
+function occMaxHist(){ if(state._occMx&&state._occMx.v===state._serVer) return state._occMx.r; const o=[];
+  for(const [ds,dm] of state.days){ if(!state.maxDate||ds>state.maxDate) continue; let L=0,W=0; for(const r of dm.values()) if(r.login>0&&r.answered>0){ L+=r.login; W+=r.answered*r.aht; } if(L>0) o.push(W/(L*3600)); }
+  o.sort((a,b)=>a-b); const r=o.length>=10?Math.min(0.97,Math.max(0.6,o[Math.floor(o.length*0.95)])):0.92;
+  state._occMx={v:state._serVer,r}; return r; }
 function prodBacktest(){ const key=state._serVer+"|"+state.maxDate; if(state._prodBt&&state._prodBt.k===key) return state._prodBt.v;
   const per=new Map();
   for(const [ds,dm] of state.days){ if(!state.maxDate||ds>state.maxDate) continue; let L=0,A=0; const byTm={};
