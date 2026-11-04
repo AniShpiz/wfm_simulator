@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### 👥 Who should be on in this half hour · 📅 the loaded sidur on every page · steady forecast productivity · ↩ a ▲ is always followed by its tag
+
+- 📅 One chip in the header, the same on every page: "Sidur week 27 · 17 weeks ago" (this week / next week / last week /
+  n weeks ago or ahead) — the sidur whose iron sets every forecast and calculation; the dates on hover; a click goes
+  to Home to load another. Iron without a sidur says so; nothing loaded = no chip.
+- 📈 Forecast-day productivity (Date Trends): the hours the sidur / iron gives (on the file's net basis, × login÷scheduled)
+  and the calls they answer at the forecast call length (the matrix's answer rate), never busier than the file's 95th
+  percentile occupancy (`occMaxHist`). It no longer carries the old login average and answer rate, which jumped on busy
+  or thin days (sample file: 7.6–7.9 forecast vs 7.7–7.9 history, was up to 9.3).
+
+- Matrix: click the reps number in a cell → who should be on in that half hour (the sidur, else the iron), by team
+  manager with each shift. Tick who isn't on the floor → "missing m of n", what it does to the half hour's answer rate,
+  and 📋 one message per team manager — each says what that team's missing reps cost the half hour against the target.
+  The number shows it is a button: dotted at rest, a "👥 41" chip under the pointer, a 👥 key under the matrix and a
+  line in the cell's hover. Before → after reads in the page's direction (Hebrew: 77.0% ← 75.2%).
+- ↩ A measured day's tag reads "↩ 711 of them" (its count already holds them and stays as measured — the switch can't
+  change it); "↩ +n" stays for forecast days, where they are added.
+- ↩ The working days right after a ▲ always carry their "↩ +n" tag (a full day hid it under the 3% rule while the ▲
+  showed).
+
 ### ↩ Returning calls marked from the first day back · 📊 the interval profile tested · tidy model lists
 
 - ↩ The day right after an outage now carries its "↩ +n" tag too (it was shown only from the first forecast day, so

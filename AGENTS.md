@@ -181,6 +181,11 @@ workforce filter lists legitimately show only "(all)" for this file.
 - Your own holidays: `settings.customHol` → `applyCustomHol` (wins over the Hebrew calendar,
   works with it off) and `customHolOn` (names); edited in the holidays table (`renderCustomHol`).
 - Date Trends charts: `renderTrendDash` + `trRelTile`, fed by the same rows as the table.
+- 📅 `renderSidurChip()` (in `renderAll`): the header chip `#sidurChip` = `sidurWeek()` (the loaded sidur's first date)
+  + where it stands vs today's week; the ONE place every page shows which sidur is loaded. Click → Home.
+- 📈 Forecast-day productivity in `trendDayStat`: answered = Σ vol × the matrix's AR, capped at net hours × 3600 ×
+  `occMaxHist()` ÷ AHT; net hours = scheduled (capacity) × `prodBacktest().rho` (else × availability). The carry /
+  ratio pick below no longer drives forecast days (only ρ is used).
 - 🧪 `prodBacktest()`: the forecast's NET (login) hours, two ways tested on the file's past (each day predicted only
   from the days before it): "carry" (last 4 same weekdays) vs "ratio" (scheduled hours × login÷scheduled of the 8 weeks
   before). The lower error wins and `trendDayStat` uses it on forecast days; the productivity / net-hours header hover
@@ -267,6 +272,10 @@ workforce filter lists legitimately show only "(all)" for this file.
 - `dpUpgrade(root)` turns every `input[type=date]` (and new ones, via a MutationObserver) into the one picker: the input
   hides (`.dpOn`) and keeps the value + its change listeners; `.dpBtn` shows `fmtD`; `dpOpen` / `dpPaint` / `dpPick`
   draw the month in `#dpPop`. `data-reco` + `data-reco-l` = a quiet suggestion (the plan date's forecast end).
+- 👥 Matrix "who should be on": the reps number in a cell (`.whoLnk`, only with a sidur or an iron) → `openWho(ds,tm)`;
+  `whoOn(ds,tm)` = the day's sidur (`schedRows`), else the iron's weekday (Friday via `friW`, leave out), 🎧 skills like
+  capacity. Tick who isn't on the floor (`state._whoMiss`, session only) → "missing m of n" + the half hour's rate
+  without them (`evalInterval` delta on the shown value) + 📋 one `tlMsg` per team. Silent until someone is ticked.
 - Matrix: hover = a crosshair (row + column + both headers, `.xh` / `.xhc`); a cell's tooltip starts with its day, date
   and half hour (09:30–10:00); the cumulative line ends at the interval's end (`addHalf`).
 - 📅 `planTo()` (settings.planTo, else `planToAuto()` = the forecast's end, 30 days … 6 months): the What-If curve,
