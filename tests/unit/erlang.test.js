@@ -52,3 +52,11 @@ test("requiredAgents: scales with volume", () => {
   const r2 = S.requiredAgents(120, 300, 80, SETTINGS);
   assert.ok(r2 > r1, `${r2} should exceed ${r1}`);
 });
+
+test("erlangB: infinite or absurd agents → nobody blocked, at once (headcount 0 once made the trajectory divide by 0 and grow the factorial table for 9 s)", () => {
+  const t = Date.now();
+  assert.strictEqual(S.erlangB(Infinity, 50), 0);
+  assert.strictEqual(S.erlangB(1e9, 50), 0);
+  assert.ok(S.erlangB(120, 100) > 0, "a normal floor still computes");
+  assert.ok(Date.now() - t < 200);
+});

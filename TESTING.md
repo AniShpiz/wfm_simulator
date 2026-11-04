@@ -22,6 +22,8 @@ Headless-browser scripts (load the real page, drive it, report `ok`/`not ok`):
 ```
 node tests/browser/smoke.js
 node tests/browser/forecast-logic.js
+node tests/browser/recruit-page.js       # Recruitment: no NaN, opens fast, the plan computed once
+node tests/browser/this-week-sidur.js   # this week's kept sidur + iron/Friday memories under alternating uploads
 ```
 
 They need `puppeteer-core` (kept **outside** the repo — the app stays

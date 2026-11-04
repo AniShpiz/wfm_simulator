@@ -131,8 +131,9 @@ workforce filter lists legitimately show only "(all)" for this file.
   - `renderImpactMatrix` (folds; `#impSum` = the day leave hurts most) + `renderHeadroom` (+k can be off · −k missing)
   - `renderValidation`
   - 🔍 `renderIronChanges` ("What changed in the iron?", `#wfIronChg`, silent when nothing did): `settings.ironHist` =
-    the last 12 iron uploads (`recordIronHist` from `parseIronGrid`; an identical upload adds nothing);
-    `ironChanges()` = the latest vs the one before, per rep and day: down / up / del / add / move / new / gone.
+    one snapshot per WEEK of the file's sidur (`recordIronHist(sidurWeek())` in `parseTikshuvWorkbook`; `state.iron.wk`;
+    the latest file of a week replaces it, week order, a week equal to the one before keeps nothing, last 12 changes) —
+    alternating this/next week's files never flips it. `ironChanges()` = the loaded iron's week vs the week before, per rep and day: down / up / del / add / move / new / gone.
     Multi-select kind chips, a key, groups per team manager with a trend line of its iron hours (`spark`), and a
     `tlMsg` per manager; before ← after reads in the page's direction. Test: `tests/unit/iron-history.test.js`.
   - `renderInternalRoster` ("Below their iron — who and why": reasons from the sidur; multi-select reason chips
@@ -168,6 +169,8 @@ workforce filter lists legitimately show only "(all)" for this file.
 
 ## Forecast extras
 
+- ↩ The days after a lost day keep teaching WITHOUT their comeback calls: `state.cuAmt` (ds → calls, min(model, the day's rise
+  over normal); computed with ↩ off too, applied only on) — `catchUpAt` of a past day returns it; `cuLearnNote()` = the switch's hover line.
 - ↩ Catch-up layer: learned in `rebuildLearningSeries` (`state.cuParam` {c,q}, `state.cuEvents`, `state.cuDays`
   kept out of learning) → `catchUpAt(ds,force)` added in `forecastDay` and taken out in `fastState`; `cuInfo` /
   `cuToggle` drive ONE switch `.cuBtn` (`syncCu(page,dates)`, matrix + Date Trends, before the lens; ALWAYS shown when forecast days are on screen — the hover says what it does + the numbers while
@@ -246,6 +249,9 @@ workforce filter lists legitimately show only "(all)" for this file.
   `whatIfCurve(wi,extra)` (extra = planned courses); `shadowPrices(full)` (levers incl. `availPts`).
 - `hirePlan(sc)`: `sc` = `wiScenario()` (the What-If levers, null at 0) — AHT × (1−cut), shrinkage / absence / attrition
   cut; memoized per scenario. `histProductivity()` → `mo.Np` (the productivity check in a month's numbers).
+- `hirePlan()` key = `siteRules()` (not the raw setting) — else every first open computed it twice; `hirePlanRaw` reads
+  each forecast day once per data key (`state._hpDays`, shared by the lever checks); `warmPlan()` (renderAll) computes it
+  when idle. A row's `reqEff` is 0, never undefined, for a half hour with no calls.
 - `hirePlan()` is memoized (`state._hpC`, keyed on courses + settings + `_crsVer`) → `hirePlanRaw`; `lensScale` per
   date (`state._lensC`). `cohortsChanged` bumps `state._crsVer`. Lanes: `settings.siteRules` ([[location…]…], chip rows) → `siteLane`;
   `courseOverlaps()` marks rows. 📄 `rcReportHtml` / `rcReport(fmt)`, sections `settings.repSec` (`REP_SECS`).
@@ -308,7 +314,15 @@ workforce filter lists legitimately show only "(all)" for this file.
 
 - `saveState`/`loadState` persist settings/policy/courses/injections/language.
 - `saveData`/`loadData` persist uploaded datasets and derived operational structures.
-- Workspace reset action clears both persisted layers and restores defaults.
+- 📅 `wfmSimNow` = THIS WEEK's sidur, kept for the matrix while another week is loaded (`keepNowSidur` in `renderAll`:
+  copies the loaded sidur's days of today's week — cap, cap by skill, shifts; drops it once the week is over). Read only
+  through `nowSidOn(ds)` (a day the loaded sidur doesn't cover) in `capacityFor` / `skillCountAt` / `capSource` and
+  `sidurRowsOn(ds)` (👥 `whoOn`, ☕ `breakPlan` / `brkEntitle`); the chip shows "27 · this week" (`.scKeep`, click → matrix).
+  Planning pages (Workforce, scheduler) never read it. ⛓ `ironEmpsFor(ds)` = the iron in effect that week (latest `ironHist` week ≤ ds; else the loaded
+  iron) — `ironCapAt` (per-week cache by reference) and the 👥 / ☕ iron fallbacks; `ironNewerWk()` → the chip's hover. Test: `tests/unit/this-week-sidur.test.js` + `tests/browser/this-week-sidur.js`.
+- A single-sheet sidur with names + start/end runs `walkRosterExtras` too; other sidurim `dropRosterRows()` — the shifts
+  always belong to the file just loaded.
+- Workspace reset action clears the persisted layers (incl. `wfmSimNow`) and restores defaults.
 
 When debugging ingestion or rendering, clear localStorage or use UI reset to avoid stale cached state.
 
