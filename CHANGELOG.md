@@ -4,6 +4,43 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### 📅 This week's sidur stays in the matrix while next week's is loaded · the iron and Friday memories survive alternating uploads
+
+- 📅 A manager loads next week's sidur to plan while this week runs. This week's sidur is now kept (on this computer,
+  `wfmSimNow`) for this week's days only: the matrix, Date Trends, 👥 who should be on and ☕ breaks keep reading it for
+  those days; next week's days read the loaded sidur. The latest upload of this week replaces it; once the week is over
+  it is dropped — never carried into the next week. The header chip adds "27 · this week" while another week is loaded
+  (hover = when it was uploaded); a click on it opens this week in the matrix. The Workforce, scheduler and other
+  planning pages stay on the loaded sidur.
+- 🔍 What changed in the iron: one snapshot per WEEK of the file's sidur (was: one per upload). Loading this week's file,
+  then next week's, then this week's again used to add a snapshot each time and flip the comparison (fewer hours ↔ more
+  hours); now each week keeps its latest file, the list is in week order, and the card compares the loaded week with
+  the week before ("vs week 27"). Older saves are read by their upload's week.
+- A single-sheet sidur (no iron sheet) now also replaces the shifts by name; before, the previous file's shifts stayed
+  (who-on / breaks could show another week's names). An anonymous sidur clears them; the chip reads its dates.
+- ⛓ Last week's file, loaded to look back, no longer rolls the future back to its iron: a forecast day without a sidur
+  reads the iron in effect that week = the latest week's iron known up to it (`ironEmpsFor` — the matrix, Date Trends,
+  the outlook, 👥 / ☕ fallbacks). The chip's hover says so while an older file is loaded. The Workforce page and the
+  scheduler stay on the loaded file's iron.
+- 🎓 Recruitment: NaN in the courses plan and its chart (root cause: a half hour with 0 forecast calls — holiday half-days
+  — left its need undefined in `computeDay`, and one undefined turned every monthly sum into NaN). Headcount 0 / empty in
+  Settings made the trajectory divide by 0 → infinite agents → 9 s and an error (now: today's team is the scale, and
+  `erlangB` returns at once for an absurd agent count). First open ~3× faster: the plan was computed twice (the location
+  rules were created during the render, after the cache key), every lever check recomputed all forecast days, and
+  `ironCapAt` built a text key with last Friday's names per half hour; the plan is now also prepared while the browser is idle.
+- ↩ Returning calls on lowered the next weeks with no sign (sample file, week 45: Wednesday 4,412 → 4,099, under every
+  normal Wednesday). Root cause: a day after an outage was dropped from learning WHOLE — the file's last Wednesday (4,967)
+  held ~711 returning calls and ~4,250 normal ones. Now it keeps teaching without its returning calls (`state.cuAmt`),
+  never more than it rose above its normal level (a day that didn't rise loses nothing): Wednesday 4,159. The benchmark
+  (`tests/browser/forecast-events.js`) passes again (set 8 failed: 3.3 → 3.5, now 3.3 → 2.3).
+- ↩ The switch's hover says what it does to the weeks ahead ("the 711 extra calls of 28-Oct, callers coming back after
+  27-Oct, aren't learned as a normal day") — it said "no such day before the days on screen" while the week moved. The
+  past day's tag ("↩ 711 of them") is that same number. No new marks on the matrix.
+- The Friday memory was already keyed by Friday's date — tests now prove alternating uploads leave it unchanged.
+- Tests: `tests/unit/this-week-sidur.test.js`, `tests/unit/iron-history.test.js` (weeks), `tests/browser/this-week-sidur.js`
+  (the real .xls as week 27 + a week-28 copy, loaded 27/28/27/28, last week's file, a refresh, the week ending),
+  `tests/browser/recruit-page.js` (no NaN, open time, the plan computed once).
+
 ### 👥 Who should be on in this half hour · 📅 the loaded sidur on every page · steady forecast productivity · ↩ a ▲ is always followed by its tag
 
 - 📅 One chip in the header, the same on every page: "Sidur week 27 · 17 weeks ago" (this week / next week / last week /

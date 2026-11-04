@@ -72,6 +72,7 @@ week demand + employee windows + optional constraints -> schedulerCore -> render
   names only, last 12 Fridays), `customHol`, `fastAdapt`/`fastHalf`/`retryShare`, `trDash`/
   `trCharts`/`trRel`, `fold` (which cards are folded)
 - wfmSimData: uploaded operational data and derived structures
+- wfmSimNow: this week's sidur (its days only), kept for the matrix while another week is loaded; dropped when the week ends
 
 ## Design Constraints
 

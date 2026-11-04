@@ -795,7 +795,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
 #footerBar .mail{direction:ltr;unicode-bidi:isolate;color:#8fc6ef}
 .sidurChip{border:1px solid #9cc3ea;background:#e8f3fd;color:var(--navy);border-radius:999px;padding:3px 11px;font-size:.74rem;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit}
 .sidurChip b{font-weight:800;margin-inline-start:4px;padding:0 6px;border-radius:999px;background:#fff}
-.sidurChip.now b{color:#0f6b43} .sidurChip.next b{color:#1d5f99} .sidurChip.past b{color:#a15c00} .sidurChip:hover{background:#fff}
+.sidurChip.now b,.sidurChip b.scKeep{color:#0f6b43} .sidurChip.next b{color:#1d5f99} .sidurChip.past b{color:#a15c00} .sidurChip:hover{background:#fff}
 #langBox{margin-inline-start:auto;display:flex;align-items:center;gap:7px}
 #langBox select{padding:3px 7px;font-size:.75rem}
 #stripe{position:fixed;bottom:0;left:0;right:0;height:6px;background:var(--stripe);z-index:91}
@@ -1650,11 +1650,11 @@ en:{
   fmProfile:"Interval profile window", fmProfAdapt:"Adaptive (8w, fallback all)", fmProf12:"12 weeks",
   cuPillIn:"↩ {n} of them", cuPillInTip:"A measured day: about {n} of its calls were returning ones — the day's count already holds them and stays as measured",
   scChip:"📅 Sidur week {w}", scNow:"this week", scNext:"next week", scLast:"last week", scAgo:"{n} weeks ago", scAhead:"in {n} weeks",
-  scIronOnly:"⛓ Iron only — no sidur loaded", scTip:"The sidur loaded now — its iron sets the forecasts and calculations on every page. Click to load another.",
+  scIronOnly:"⛓ Iron only — no sidur loaded", scIronNewer:"From week {w} on, forecast days use week {w}'s newer iron — an older file never rolls the future back.", scKeepTip:"This week's sidur (week {w}, uploaded {at}) still shows in the matrix for its days — until the week ends. Upload it again to update it. Click it → this week in the matrix.", scTip:"The sidur loaded now — its iron sets the forecasts and calculations on every page. Click to load another.",
   prodFcHow:"Forecast days: the hours the sidur / iron gives, on your file's net basis (× {r}% = your net ÷ scheduled hours), and the calls they answer at the forecast call length — at most {o}% busy, like your busiest days.",
   prodFcHowNo:"Forecast days: the hours the sidur / iron gives × availability, and the calls they answer at the forecast call length — at most {o}% busy.",
   whoTip:"Who should be on in this half hour", whoT:"Who should be on? {d} · ⁦{a}–{b}⁩", whoNoTeam:"No team",
-  whoCoreSidur:"{n} reps by the sidur. Tick who isn't on the floor.", whoCoreIron:"{n} reps by the iron (no sidur for this day). Tick who isn't on the floor.",
+  whoCoreSidur:"{n} reps by the sidur. Tick who isn't on the floor.", whoCoreIron:"{n} reps by the iron (no sidur for this day). Tick who isn't on the floor.", whoCoreNow:"{n} reps by this week's sidur (week {w}). Tick who isn't on the floor.",
   whoNone:"No rep's shift covers this half hour.", whoGap:"Missing {m} of {n}", whoImpact:"{a}: {x} → {y}", mxWhoLeg:"click the reps number — who should be on",
   whoTlImpact:"Without your {m}, this half hour's {a} goes from {x} down to {y} (target {t}%).",
   whoCopy:"📋 Copy for the team managers", whoTlPurpose:"{d} {a}–{b} — on the sidur but not on the floor:", whoCopied:"Copied — one message per team",
@@ -1839,7 +1839,7 @@ en:{
   holOverridden:"(changed by you)",
   btDaily:"Daily totals (the real forecast)",
   btApplyCal:"⚙ Apply {c}% calibration", btCalDone:"Calibration set to {c}% — forecasts recentered.",
-  btCalActive:"active calibration: {c}%", btCalReset:"reset calibration", btFastNote:"a sudden shift in demand is handled by '📈 Follow sudden changes in demand'", fmAdvT:"⚙ Models & checks", fmCu:"↩ Calls come back after a lost day", tipCu:"After a closed day or a day far under normal (elections, an outage), part of its calls come back over the next working days, fading — learned from your own history. Those days stop teaching the normal week.", cuNow:"↩ Calls of a lost day coming back in the next days: {n}.", cuBtT:"↩ Calls coming back after a lost day", cuBtRes:"after {n} lost days in your history, the next days' error: without {a}% · with {b}%", cuBtGuard:"on your history it does worse ({n} lost days: without {a}% · with {b}%) — so it steps aside by itself", cuBtRes1:"after the one lost day in your history, the next days' error: without {a}% · with {b}%", cuBtNone:"no lost day in your history to check it on yet (starts at half / half)", cuBtPar:"comes back {c}% of the lost calls, {q}% of them the first day",   cuBtn:"↩ Returning calls", cuBtnTip:"Calls that didn't come on {d} come back over the next days: {l}. Switch off only if they won't come back to you (e.g. they moved to another channel).", cuBtnTipOff:"Off: shown without the calls of {d} coming back. Switch on when callers do call again after a day like that.", cuBtnTipAb:"Callers who abandoned on {d} call again over the next days: {l}. Switch off only if they won't come back to you (e.g. they moved to another channel).", cuBtnAutoAb:"Abandoned callers who call again: tested on your history ({n} days) — the forecast is more accurate without them ({a}% vs {b}%), so they step aside by themselves.", cuBtnIdle:"When a day goes unanswered (an outage, a closure), part of its callers call again over the next days — on, the forecast adds them. Right now no such day comes before the days on screen.", cuBtnIdleOff:"Off: after a day that goes unanswered (an outage, a closure), the forecast won't add the callers who call again. Switch on unless they move to another channel.", cuPill:"↩ +{n}", cuPillTip:"{n} calls that didn't come on {d}", cuChip:"↩ +{n} returning calls", cuChipTip:"Calls that didn't come on {d} come back in the next days: {l}.\nClick — without them (the regular model).", cuChipOff:"↩ without returning calls", cuChipOffTip:"Click — add back the calls of {d}.", cuLine:"↩ Calls that didn't come on {d} come back in the next days: {l}.", cuLineOff:"↩ Shown without the calls of {d} coming back.", cuWithout:"without them", cuBack:"add them back",
+  btCalActive:"active calibration: {c}%", btCalReset:"reset calibration", btFastNote:"a sudden shift in demand is handled by '📈 Follow sudden changes in demand'", fmAdvT:"⚙ Models & checks", fmCu:"↩ Calls come back after a lost day", tipCu:"After a closed day or a day far under normal (elections, an outage), part of its calls come back over the next working days, fading — learned from your own history. Those days stop teaching the normal week.", cuNow:"↩ Calls of a lost day coming back in the next days: {n}.", cuBtT:"↩ Calls coming back after a lost day", cuBtRes:"after {n} lost days in your history, the next days' error: without {a}% · with {b}%", cuBtGuard:"on your history it does worse ({n} lost days: without {a}% · with {b}%) — so it steps aside by itself", cuBtRes1:"after the one lost day in your history, the next days' error: without {a}% · with {b}%", cuBtNone:"no lost day in your history to check it on yet (starts at half / half)", cuBtPar:"comes back {c}% of the lost calls, {q}% of them the first day",   cuBtn:"↩ Returning calls", cuBtnTip:"Calls that didn't come on {d} come back over the next days: {l}. Switch off only if they won't come back to you (e.g. they moved to another channel).", cuBtnTipOff:"Off: shown without the calls of {d} coming back. Switch on when callers do call again after a day like that.", cuBtnTipAb:"Callers who abandoned on {d} call again over the next days: {l}. Switch off only if they won't come back to you (e.g. they moved to another channel).", cuBtnAutoAb:"Abandoned callers who call again: tested on your history ({n} days) — the forecast is more accurate without them ({a}% vs {b}%), so they step aside by themselves.", cuBtnIdle:"When a day goes unanswered (an outage, a closure), part of its callers call again over the next days — on, the forecast adds them. Right now no such day comes before the days on screen.", cuLearnOn:"The {n} extra calls of {d} (callers coming back after {c}) aren't learned as a normal day — the weeks ahead don't repeat them.", cuLearnOff:"Off: the {n} extra calls of {d} (callers coming back after {c}) are learned as a normal day — the weeks ahead repeat them.", cuBtnIdleOff:"Off: after a day that goes unanswered (an outage, a closure), the forecast won't add the callers who call again. Switch on unless they move to another channel.", cuPill:"↩ +{n}", cuPillTip:"{n} calls that didn't come on {d}", cuChip:"↩ +{n} returning calls", cuChipTip:"Calls that didn't come on {d} come back in the next days: {l}.\nClick — without them (the regular model).", cuChipOff:"↩ without returning calls", cuChipOffTip:"Click — add back the calls of {d}.", cuLine:"↩ Calls that didn't come on {d} come back in the next days: {l}.", cuLineOff:"↩ Shown without the calls of {d} coming back.", cuWithout:"without them", cuBack:"add them back",
   cmAllDay:"all day", cmEdit:"Edit",
   tipExt:"Reps already scheduled next to a gap: staying up to 2h later or coming up to 2h earlier closes it with no new shift. Worst gaps first.",
   extNone:"No adjacent reps can close these gaps by extending — consider the overstaffing pool or hiring.",
@@ -2101,7 +2101,7 @@ en:{
   trShowMore:"Show {k} more days ({r} remaining) ▼",
   mxSum:"Daily",
   mxOffGrid:"incl. {n} calls outside the shift window (not shown as grid rows)",
-  rrNoWhy:"No status in the sidur — shorter shifts", rrWhyL:"Why:", rrWhyTip:"{n} reps — click to add to the filter (again = remove)", rrWhyAll:"✕ everyone", trCauseL:"a day that sends calls back", trCauseTip:"↩ sends back to the next days", retCauseTip:"↩ about {n} of this day's calls come back over the next days (lost calls / extra abandonment)", btNoBias:"no lean either way", btHigh:"forecasts {d}% too high on average", btLow:"forecasts {d}% too low on average", btDays:"{n} days tested", btErr:"off by {e}% on average", btInUse:"✓ in use", btBetter:"more accurate: {m}", btOthers:"{n} more models", rtBtT:"↩ Abandoned callers who call again", rtBtRes:"tested on {n} days after high abandonment — the next days' error: without {a}% · with {b}% (learned: {p}% call again)", rtBtGuard:"on your history it does worse ({n} days: without {a}% · with {b}%) — so it steps aside by itself", rtBtNone:"no day with high abandonment in your history to test it on yet", rtBtNoAns:"your file has no answered calls — it needs them to see abandonment", modelAuto:"🤖 Automatic — {m}", trFresh:"new calls", trRetL:"↩ returning calls (estimated · forecast ahead)", trRetTip:"↩ of them returning (estimated)", trRetTipFc:"↩ of them returning (forecast)", fmRetryK:"Abandoners who call again (%)", optTag:"optional", tipRetryK:"Empty = learned from your file. If your repeat-contacts measurement knows how many abandoned callers call again, enter it — the model stops guessing that part.", retryAuto:"automatic · {p}%", retryAutoNone:"automatic", icTitle:"What changed in the iron?", tipIc:"Each upload is kept on this computer (the last 12) and compared with the one before: hours down or up, days removed or added, shifts moved within the same hours. The small line by each team = its iron hours across the uploads.", icSum:"since {d}: {n} reps · {h}", ic_down:"fewer hours", ic_del:"day removed", ic_up:"more hours", ic_add:"day added", ic_move:"shift moved", ic_new:"new in the iron", ic_gone:"left the iron", icTeamN:"{n} reps", icTlBtn:"📱 To the team manager", icTlPurpose:"Iron changes since the upload of {d} — please confirm:", icTrendTip:"The team's iron hours in each upload:", rrLgBig:"8h+ can come back", rrLgSome:"less than 8h", rrLgLeave:"the whole gap is leave", rrLgDay:"Days (open a rep):", rrLgFull:"full day", rrLgShort:"shorter shift", rrLgMiss:"missing day", rrLgRot:"not their Friday", rrCopyNone:"Nothing to add for the chosen reasons", rrShort:"shorter shift", rrTlPurpose:"Week {w}, below their iron — what can be added, day by day (in the sidur / iron):", rrFriOff:"off this Friday (every other Friday)",
+  rrNoWhy:"No status in the sidur — shorter shifts", rrWhyL:"Why:", rrWhyTip:"{n} reps — click to add to the filter (again = remove)", rrWhyAll:"✕ everyone", trCauseL:"a day that sends calls back", trCauseTip:"↩ sends back to the next days", retCauseTip:"↩ about {n} of this day's calls come back over the next days (lost calls / extra abandonment)", btNoBias:"no lean either way", btHigh:"forecasts {d}% too high on average", btLow:"forecasts {d}% too low on average", btDays:"{n} days tested", btErr:"off by {e}% on average", btInUse:"✓ in use", btBetter:"more accurate: {m}", btOthers:"{n} more models", rtBtT:"↩ Abandoned callers who call again", rtBtRes:"tested on {n} days after high abandonment — the next days' error: without {a}% · with {b}% (learned: {p}% call again)", rtBtGuard:"on your history it does worse ({n} days: without {a}% · with {b}%) — so it steps aside by itself", rtBtNone:"no day with high abandonment in your history to test it on yet", rtBtNoAns:"your file has no answered calls — it needs them to see abandonment", modelAuto:"🤖 Automatic — {m}", trFresh:"new calls", trRetL:"↩ returning calls (estimated · forecast ahead)", trRetTip:"↩ of them returning (estimated)", trRetTipFc:"↩ of them returning (forecast)", fmRetryK:"Abandoners who call again (%)", optTag:"optional", tipRetryK:"Empty = learned from your file. If your repeat-contacts measurement knows how many abandoned callers call again, enter it — the model stops guessing that part.", retryAuto:"automatic · {p}%", retryAutoNone:"automatic", icTitle:"What changed in the iron?", tipIc:"Each week's iron is kept on this computer (the latest file of that week · the last 12 changes) and compared with the week before: hours down or up, days removed or added, shifts moved within the same hours. Loading this week's and next week's files in turn changes nothing. The small line by each team = its iron hours week by week.", icSum:"vs week {w}: {n} reps · {h}", wkN:"week {w}", ic_down:"fewer hours", ic_del:"day removed", ic_up:"more hours", ic_add:"day added", ic_move:"shift moved", ic_new:"new in the iron", ic_gone:"left the iron", icTeamN:"{n} reps", icTlBtn:"📱 To the team manager", icTlPurpose:"Iron changes vs week {w} — please confirm:", icTrendTip:"The team's iron hours, week by week:", rrLgBig:"8h+ can come back", rrLgSome:"less than 8h", rrLgLeave:"the whole gap is leave", rrLgDay:"Days (open a rep):", rrLgFull:"full day", rrLgShort:"shorter shift", rrLgMiss:"missing day", rrLgRot:"not their Friday", rrCopyNone:"Nothing to add for the chosen reasons", rrShort:"shorter shift", rrTlPurpose:"Week {w}, below their iron — what can be added, day by day (in the sidur / iron):", rrFriOff:"off this Friday (every other Friday)",
   wfIronT:"Iron vs sidur — by day", tipWfIron:"Per day, in reps: the iron (light) vs the sidur (navy) vs the forecast need (orange tick); Friday by the rotation. Click a day to see its hours.",
   ibTipIron:"Iron: {n} reps ({h}h)", ibTipFri:"Friday by rotation (every other Friday)", ibTipSched:"Sidur: {n} reps ({h}h)", ibTipUtil:"{p}% of the iron hours are in the sidur", ibTipSchedH:"In the sidur {a}",
   ibLgIron:"Reps in the iron", ibLgSched:"Reps in the sidur", ibLgNeed:"Needed by the forecast", ibNarrow:"Filtered view — the forecast need shows for the whole center only.", ibPickHint:"Click a day — its hours",
@@ -2217,11 +2217,11 @@ he:{
   fmProfile:"חלון פרופיל אינטרוולים", fmProfAdapt:"אדפטיבי (8 שב׳, גיבוי הכל)", fmProf12:"12 שבועות",
   cuPillIn:"↩ {n} מתוכן", cuPillInTip:"יום שנמדד: כ־{n} מהשיחות שלו היו שיחות חוזרות — הן כבר בתוך המספר של היום, והוא נשאר כפי שנמדד",
   scChip:"📅 סידור שבוע {w}", scNow:"השבוע", scNext:"שבוע הבא", scLast:"שבוע שעבר", scAgo:"לפני {n} שבועות", scAhead:"בעוד {n} שבועות",
-  scIronOnly:"⛓ ברזל בלבד — לא טעון סידור", scTip:"הסידור שטעון עכשיו — הברזל שלו קובע את החיזויים והחישובים בכל העמודים. לחיצה לטעינת סידור אחר.",
+  scIronOnly:"⛓ ברזל בלבד — לא טעון סידור", scIronNewer:"משבוע {w} והלאה ימי התחזית לפי הברזל החדש יותר של שבוע {w} — קובץ ישן לא מחזיר את העתיד לאחור.", scKeepTip:"סידור השבוע (שבוע {w}, הועלה {at}) ממשיך להופיע במטריצה בימים שלו — עד סוף השבוע. העלאה חוזרת שלו מעדכנת אותו. לחיצה עליו ← השבוע במטריצה.", scTip:"הסידור שטעון עכשיו — הברזל שלו קובע את החיזויים והחישובים בכל העמודים. לחיצה לטעינת סידור אחר.",
   prodFcHow:"ימי תחזית: השעות שהסידור / הברזל נותן, על בסיס נטו כמו בקובץ שלך (× ‎{r}%‎ = נטו ÷ שעות משובצות אצלך), והשיחות שהן עונות במשך השיחה החזוי — לכל היותר ‎{o}%‎ תעסוקה, כמו בימים העמוסים שלך.",
   prodFcHowNo:"ימי תחזית: השעות שהסידור / הברזל נותן × זמינות, והשיחות שהן עונות במשך השיחה החזוי — לכל היותר ‎{o}%‎ תעסוקה.",
   whoTip:"מי אמור/ה לעבוד בחצי השעה הזו", whoT:"מי אמור לעבוד? {d} · ⁦{a}–{b}⁩", whoNoTeam:"בלי צוות",
-  whoCoreSidur:"{n} נציגים לפי הסידור. סמנו מי לא נמצא/ת בפועל.", whoCoreIron:"{n} נציגים לפי הברזל (אין סידור ליום הזה). סמנו מי לא נמצא/ת בפועל.",
+  whoCoreSidur:"{n} נציגים לפי הסידור. סמנו מי לא נמצא/ת בפועל.", whoCoreIron:"{n} נציגים לפי הברזל (אין סידור ליום הזה). סמנו מי לא נמצא/ת בפועל.", whoCoreNow:"{n} נציגים לפי סידור השבוע (שבוע {w}). סמנו מי לא נמצא/ת בפועל.",
   whoNone:"אין נציג שהמשמרת שלו מכסה את חצי השעה הזו.", whoGap:"חסרים {m} מתוך {n}", whoImpact:"{a}: ⁦{x}⁩ ← ⁦{y}⁩", mxWhoLeg:"לחצו על מספר הנציגים — מי אמור לעבוד",
   whoTlImpact:"בלי ה־{m} מהצוות שלך, {a} בחצי השעה הזו יורד מ־{x} ל־{y} (יעד {t}%).",
   whoCopy:"📋 העתקה למנהלי הצוות", whoTlPurpose:"{d} {a}–{b} — בסידור אבל לא נמצאים בפועל:", whoCopied:"הועתק — הודעה לכל צוות",
@@ -2406,7 +2406,7 @@ he:{
   holOverridden:"(שונה על ידכם)",
   btDaily:"סך יומי (התחזית עצמה)",
   btApplyCal:"⚙ החלת כיול {c}%", btCalDone:"הכיול נקבע ל-{c}% — התחזיות מוּרכזו מחדש.",
-  btCalActive:"כיול פעיל: {c}%", btCalReset:"איפוס כיול", btFastNote:"שינוי פתאומי בביקוש מטופל ע״י ״📈 התחזית עוקבת אחרי שינוי פתאומי בביקוש״", fmAdvT:"⚙ מודלים ובדיקות", fmCu:"↩ שיחות חוזרות אחרי יום שאבד", tipCu:"אחרי יום סגור או יום נמוך מאוד (בחירות, תקלה), חלק מהשיחות שלו חוזרות בימי העבודה הבאים ודועכות — לפי ההיסטוריה שלכם. הימים האלה כבר לא מלמדים את השבוע הרגיל.", cuNow:"↩ שיחות של יום שאבד חוזרות בימים הקרובים: {n}.", cuBtT:"↩ שיחות חוזרות אחרי יום חריג", cuBtRes:"נבדק על {n} ימים חריגים בהיסטוריה שלכם — הטעות בימים שאחריהם: בלי {a}% · עם {b}%", cuBtGuard:"בהיסטוריה שלכם זה מחמיר ({n} ימים חריגים: בלי {a}% · עם {b}%) — ולכן הוא לא מופעל, אוטומטית", cuBtRes1:"נבדק על יום חריג אחד בהיסטוריה שלכם — הטעות בימים שאחריו: בלי {a}% · עם {b}%", cuBtNone:"עדיין אין בהיסטוריה יום חריג לבדוק עליו (מתחיל מחצי / חצי)", cuBtPar:"חוזרות {c}% מהשיחות שאבדו, {q}% מהן ביום הראשון",   cuBtn:"↩ שיחות חוזרות", cuBtnTip:"שיחות שלא הגיעו ב־{d} חוזרות בימים הבאים: {l}. כבו רק אם הן לא יחזרו אליכם (למשל עברו לערוץ אחר).", cuBtnTipOff:"כבוי: מוצג בלי השיחות של {d} שחוזרות. הדליקו כשמתקשרים באמת חוזרים אחרי יום כזה.", cuBtnTipAb:"מתקשרים שנטשו ב־{d} חוזרים בימים הבאים: {l}. כבו רק אם הם לא יחזרו אליכם (למשל עברו לערוץ אחר).", cuBtnAutoAb:"נוטשים שחוזרים: נבדק על ההיסטוריה שלכם ({n} ימים) — התחזית מדויקת יותר בלעדיהם ({a}% מול {b}%), ולכן הם לא נוספים, לבד.", cuBtnIdle:"כשיום לא נענה (תקלה, סגירה), חלק מהמתקשרים חוזרים בימים שאחריו — דולק, התחזית מוסיפה אותם. כרגע אין יום כזה לפני הימים שעל המסך.", cuBtnIdleOff:"כבוי: אחרי יום שלא נענה (תקלה, סגירה), התחזית לא תוסיף את מי שמתקשר שוב. הדליקו אלא אם הם עוברים לערוץ אחר.", cuPill:"↩ ‎+{n}", cuPillTip:"{n} שיחות שלא הגיעו ב־{d}", cuChip:"↩ ‎+{n} שיחות חוזרות", cuChipTip:"שיחות שלא הגיעו ב־{d} חוזרות בימים הבאים: {l}.\nלחיצה — בלי (המודל הרגיל).", cuChipOff:"↩ בלי שיחות חוזרות", cuChipOffTip:"לחיצה — להחזיר את השיחות של {d}.", cuLine:"↩ שיחות שלא הגיעו ב־{d} חוזרות בימים הבאים: {l}.", cuLineOff:"↩ מוצג בלי השיחות של {d} שחוזרות.", cuWithout:"בלי", cuBack:"להחזיר",
+  btCalActive:"כיול פעיל: {c}%", btCalReset:"איפוס כיול", btFastNote:"שינוי פתאומי בביקוש מטופל ע״י ״📈 התחזית עוקבת אחרי שינוי פתאומי בביקוש״", fmAdvT:"⚙ מודלים ובדיקות", fmCu:"↩ שיחות חוזרות אחרי יום שאבד", tipCu:"אחרי יום סגור או יום נמוך מאוד (בחירות, תקלה), חלק מהשיחות שלו חוזרות בימי העבודה הבאים ודועכות — לפי ההיסטוריה שלכם. הימים האלה כבר לא מלמדים את השבוע הרגיל.", cuNow:"↩ שיחות של יום שאבד חוזרות בימים הקרובים: {n}.", cuBtT:"↩ שיחות חוזרות אחרי יום חריג", cuBtRes:"נבדק על {n} ימים חריגים בהיסטוריה שלכם — הטעות בימים שאחריהם: בלי {a}% · עם {b}%", cuBtGuard:"בהיסטוריה שלכם זה מחמיר ({n} ימים חריגים: בלי {a}% · עם {b}%) — ולכן הוא לא מופעל, אוטומטית", cuBtRes1:"נבדק על יום חריג אחד בהיסטוריה שלכם — הטעות בימים שאחריו: בלי {a}% · עם {b}%", cuBtNone:"עדיין אין בהיסטוריה יום חריג לבדוק עליו (מתחיל מחצי / חצי)", cuBtPar:"חוזרות {c}% מהשיחות שאבדו, {q}% מהן ביום הראשון",   cuBtn:"↩ שיחות חוזרות", cuBtnTip:"שיחות שלא הגיעו ב־{d} חוזרות בימים הבאים: {l}. כבו רק אם הן לא יחזרו אליכם (למשל עברו לערוץ אחר).", cuBtnTipOff:"כבוי: מוצג בלי השיחות של {d} שחוזרות. הדליקו כשמתקשרים באמת חוזרים אחרי יום כזה.", cuBtnTipAb:"מתקשרים שנטשו ב־{d} חוזרים בימים הבאים: {l}. כבו רק אם הם לא יחזרו אליכם (למשל עברו לערוץ אחר).", cuBtnAutoAb:"נוטשים שחוזרים: נבדק על ההיסטוריה שלכם ({n} ימים) — התחזית מדויקת יותר בלעדיהם ({a}% מול {b}%), ולכן הם לא נוספים, לבד.", cuBtnIdle:"כשיום לא נענה (תקלה, סגירה), חלק מהמתקשרים חוזרים בימים שאחריו — דולק, התחזית מוסיפה אותם. כרגע אין יום כזה לפני הימים שעל המסך.", cuLearnOn:"{n} השיחות העודפות של {d} (מתקשרים שחזרו אחרי {c}) לא נלמדות כיום רגיל — השבועות הבאים לא חוזרים עליהן.", cuLearnOff:"כבוי: {n} השיחות העודפות של {d} (מתקשרים שחזרו אחרי {c}) נלמדות כיום רגיל — השבועות הבאים חוזרים עליהן.", cuBtnIdleOff:"כבוי: אחרי יום שלא נענה (תקלה, סגירה), התחזית לא תוסיף את מי שמתקשר שוב. הדליקו אלא אם הם עוברים לערוץ אחר.", cuPill:"↩ ‎+{n}", cuPillTip:"{n} שיחות שלא הגיעו ב־{d}", cuChip:"↩ ‎+{n} שיחות חוזרות", cuChipTip:"שיחות שלא הגיעו ב־{d} חוזרות בימים הבאים: {l}.\nלחיצה — בלי (המודל הרגיל).", cuChipOff:"↩ בלי שיחות חוזרות", cuChipOffTip:"לחיצה — להחזיר את השיחות של {d}.", cuLine:"↩ שיחות שלא הגיעו ב־{d} חוזרות בימים הבאים: {l}.", cuLineOff:"↩ מוצג בלי השיחות של {d} שחוזרות.", cuWithout:"בלי", cuBack:"להחזיר",
   cmAllDay:"כל היום", cmEdit:"עריכה",
   tipExt:"נציגים שכבר משובצים צמוד לפער: להישאר עד שעתיים או להקדים עד שעתיים סוגר אותו בלי משמרת חדשה. הפערים הכבדים קודם.",
   extNone:"אין נציגים צמודים שיכולים לסגור את הפערים בהרחבה — שקלו את מאגר העודפים או גיוס.",
@@ -2668,7 +2668,7 @@ he:{
   trShowMore:"הצג עוד {k} ימים (נותרו {r}) ▼",
   mxSum:"יומי",
   mxOffGrid:"כולל {n} שיחות מחוץ לחלון המשמרת (לא מוצגות כשורות בגריד)",
-  rrNoWhy:"אין סטטוס בסידור — משמרות קצרות", rrWhyL:"למה:", rrWhyTip:"{n} נציגים — לחיצה מוסיפה לסינון (שוב = מוריד)", rrWhyAll:"✕ כולם", trCauseL:"יום ששולח שיחות חזרה", trCauseTip:"↩ שולח חזרה לימים הבאים", retCauseTip:"↩ כ־{n} משיחות היום הזה חוזרות בימים הבאים (שיחות שאבדו / נטישה עודפת)", btNoBias:"בלי נטייה לשום כיוון", btHigh:"חוזה בממוצע {d}% יותר מדי", btLow:"חוזה בממוצע {d}% פחות מדי", btDays:"נבדקו {n} ימים", btErr:"סוטה בממוצע ב־{e}%", btInUse:"✓ בשימוש", btBetter:"מדויק יותר: {m}", btOthers:"עוד {n} מודלים", rtBtT:"↩ נוטשים שחוזרים", rtBtRes:"נבדק על {n} ימים אחרי נטישה גבוהה — הטעות בימים שאחריהם: בלי {a}% · עם {b}% (נלמד: {p}% חוזרים)", rtBtGuard:"בהיסטוריה שלכם זה מחמיר ({n} ימים: בלי {a}% · עם {b}%) — ולכן הוא לא מופעל, אוטומטית", rtBtNone:"עדיין אין בהיסטוריה יום עם נטישה גבוהה לבדוק עליו", rtBtNoAns:"בקובץ אין שיחות נענות — בלעדיהן אין איך לראות נטישה", modelAuto:"🤖 אוטומטי — {m}", trFresh:"שיחות חדשות", trRetL:"↩ שיחות חוזרות (הערכה · תחזית בהמשך)", trRetTip:"↩ מהן חוזרות (הערכה)", trRetTipFc:"↩ מהן חוזרות (תחזית)", fmRetryK:"נוטשים שחוזרים (%)", optTag:"לא חובה", tipRetryK:"ריק = נלמד מהקובץ שלכם. אם מדידת הפניות החוזרות (סמ״ט) יודעת כמה מהנוטשים מתקשרים שוב — הזינו, והמודל יפסיק לנחש את החלק הזה.", retryAuto:"אוטומטי · {p}%", retryAutoNone:"אוטומטי", icTitle:"מה השתנה בברזל?", tipIc:"כל העלאה נשמרת במחשב שלכם (12 האחרונות) ומושווית לקודמת: שעות שירדו או עלו, ימים שהוסרו או נוספו, משמרות שזזו באותן שעות. הקו הקטן ליד כל צוות = שעות הברזל שלו לאורך ההעלאות.", icSum:"מאז {d}: {n} נציגים · {h}", ic_down:"פחות שעות", ic_del:"יום הוסר", ic_up:"יותר שעות", ic_add:"יום נוסף", ic_move:"משמרת זזה", ic_new:"חדש בברזל", ic_gone:"יצא מהברזל", icTeamN:"{n} נציגים", icTlBtn:"📱 למנהל/ת הצוות", icTlPurpose:"שינויים בברזל מאז ההעלאה של {d} — נא לאשר:", icTrendTip:"שעות הברזל של הצוות בכל העלאה:", rrLgBig:"8+ ש׳ אפשר להחזיר", rrLgSome:"פחות מ־8 ש׳", rrLgLeave:"כל הפער היעדרות", rrLgDay:"ימים (בפתיחת נציג):", rrLgFull:"יום מלא", rrLgShort:"משמרת קצרה", rrLgMiss:"יום חסר", rrLgRot:"לא בתורו בשישי", rrCopyNone:"אין מה להוסיף בסיבות שנבחרו", rrShort:"משמרת קצרה", rrTlPurpose:"שבוע {w}, מתחת לברזל — מה אפשר להוסיף, יום אחרי יום (בסידור / בברזל):", rrFriOff:"לא בשישי הזה (שישי לסירוגין)",
+  rrNoWhy:"אין סטטוס בסידור — משמרות קצרות", rrWhyL:"למה:", rrWhyTip:"{n} נציגים — לחיצה מוסיפה לסינון (שוב = מוריד)", rrWhyAll:"✕ כולם", trCauseL:"יום ששולח שיחות חזרה", trCauseTip:"↩ שולח חזרה לימים הבאים", retCauseTip:"↩ כ־{n} משיחות היום הזה חוזרות בימים הבאים (שיחות שאבדו / נטישה עודפת)", btNoBias:"בלי נטייה לשום כיוון", btHigh:"חוזה בממוצע {d}% יותר מדי", btLow:"חוזה בממוצע {d}% פחות מדי", btDays:"נבדקו {n} ימים", btErr:"סוטה בממוצע ב־{e}%", btInUse:"✓ בשימוש", btBetter:"מדויק יותר: {m}", btOthers:"עוד {n} מודלים", rtBtT:"↩ נוטשים שחוזרים", rtBtRes:"נבדק על {n} ימים אחרי נטישה גבוהה — הטעות בימים שאחריהם: בלי {a}% · עם {b}% (נלמד: {p}% חוזרים)", rtBtGuard:"בהיסטוריה שלכם זה מחמיר ({n} ימים: בלי {a}% · עם {b}%) — ולכן הוא לא מופעל, אוטומטית", rtBtNone:"עדיין אין בהיסטוריה יום עם נטישה גבוהה לבדוק עליו", rtBtNoAns:"בקובץ אין שיחות נענות — בלעדיהן אין איך לראות נטישה", modelAuto:"🤖 אוטומטי — {m}", trFresh:"שיחות חדשות", trRetL:"↩ שיחות חוזרות (הערכה · תחזית בהמשך)", trRetTip:"↩ מהן חוזרות (הערכה)", trRetTipFc:"↩ מהן חוזרות (תחזית)", fmRetryK:"נוטשים שחוזרים (%)", optTag:"לא חובה", tipRetryK:"ריק = נלמד מהקובץ שלכם. אם מדידת הפניות החוזרות (סמ״ט) יודעת כמה מהנוטשים מתקשרים שוב — הזינו, והמודל יפסיק לנחש את החלק הזה.", retryAuto:"אוטומטי · {p}%", retryAutoNone:"אוטומטי", icTitle:"מה השתנה בברזל?", tipIc:"הברזל של כל שבוע נשמר במחשב שלכם (הקובץ האחרון של אותו שבוע · 12 השינויים האחרונים) ומושווה לשבוע שלפניו: שעות שירדו או עלו, ימים שהוסרו או נוספו, משמרות שזזו באותן שעות. טעינה לסירוגין של קובץ השבוע ושל שבוע הבא לא משנה כלום. הקו הקטן ליד כל צוות = שעות הברזל שלו, שבוע אחרי שבוע.", icSum:"לעומת שבוע {w}: {n} נציגים · {h}", wkN:"שבוע {w}", ic_down:"פחות שעות", ic_del:"יום הוסר", ic_up:"יותר שעות", ic_add:"יום נוסף", ic_move:"משמרת זזה", ic_new:"חדש בברזל", ic_gone:"יצא מהברזל", icTeamN:"{n} נציגים", icTlBtn:"📱 למנהל/ת הצוות", icTlPurpose:"שינויים בברזל לעומת שבוע {w} — נא לאשר:", icTrendTip:"שעות הברזל של הצוות, שבוע אחרי שבוע:", rrLgBig:"8+ ש׳ אפשר להחזיר", rrLgSome:"פחות מ־8 ש׳", rrLgLeave:"כל הפער היעדרות", rrLgDay:"ימים (בפתיחת נציג):", rrLgFull:"יום מלא", rrLgShort:"משמרת קצרה", rrLgMiss:"יום חסר", rrLgRot:"לא בתורו בשישי", rrCopyNone:"אין מה להוסיף בסיבות שנבחרו", rrShort:"משמרת קצרה", rrTlPurpose:"שבוע {w}, מתחת לברזל — מה אפשר להוסיף, יום אחרי יום (בסידור / בברזל):", rrFriOff:"לא בשישי הזה (שישי לסירוגין)",
   wfIronT:"ברזל מול סידור — לפי יום", tipWfIron:"לכל יום, בנציגים: הברזל (בהיר) מול הסידור (כחול כהה) מול מה שהתחזית דורשת (קו כתום); שישי לפי הסבב. לחיצה על יום מראה את השעות.",
   ibTipIron:"ברזל: {n} נציגים ({h} ש׳)", ibTipFri:"שישי לפי סבב (לסירוגין)", ibTipSched:"סידור: {n} נציגים ({h} ש׳)", ibTipUtil:"{p}% משעות הברזל נכנסו לסידור", ibTipSchedH:"בסידור {a}",
   ibLgIron:"נציגים בברזל", ibLgSched:"נציגים בסידור", ibLgNeed:"נדרשים לפי התחזית", ibNarrow:"תצוגה מסוננת — הצורך מהתחזית מוצג רק לכל המוקד.", ibPickHint:"לחיצה על יום — לפי שעות",
@@ -2746,6 +2746,7 @@ function ladd(a,b){ if(a===-Infinity)return b; if(b===-Infinity)return a;
 function erlangB(m,a){
   if(m<=0) return 1;
   if(a<=0) return 0;
+  if(!isFinite(m)||m>2*a+500) return 0; // far more agents than calls: nobody is blocked (and an absurd m would grow the factorial table for minutes)
   const lna=Math.log(a);
   let lnDen=-Infinity;
   for(let k=0;k<=m;k++) lnDen=ladd(lnDen,k*lna-lnFact(k));
@@ -3147,7 +3148,7 @@ const state={
   holidayFactor:{},              // learned reduced-demand factor per holiday level (eve/chm)
   anomalyDates:new Map(),        // auto-detected war/outage dates: iso -> {ratio,dir}
   excMode:false,
-  rosterDates:new Set(), rosterDays:new Set(), // dates/weekdays a roster claims as ground truth
+  rosterDates:new Set(), rosterDays:new Set(), nowSidur:null,// dates/weekdays a roster claims as ground truth
   rosterSort:"deficit",
   policy:{enabled:false,maxDrops:3,gapHours:3,floor:75},
   policyApplied:false,          // set only after the Schedule Optimizer engine has actually run
@@ -3971,12 +3972,12 @@ function parseIronGrid(grid){
     }else e.missing.add(di); // no hours in the cell (חוזה / ללא שישי / empty / any text) = does NOT work that day — never a validation error
   }
   if(!emps.size) return false;
-  state.iron={emps,total}; state.ironManual=false;
-  if(typeof recordIronHist==="function") recordIronHist(); // 🔍 this upload joins the iron's memory (the next one is compared against it)
+  state.iron={emps,total}; state.ironManual=false; // 🔍 it joins the iron's memory under its sidur's week (parseTikshuvWorkbook)
   return true;
 }
 /* the parts of a rep's iron day: [[s,e],…] — one for a regular shift, more for a split one (an iron saved before splits: one) */
 function ironParts(w){ return w?(w.parts&&w.parts.length?w.parts:w.s&&w.e?[[w.s,w.e]]:[]):[]; }
+function dropRosterRows(){ state.schedRows=[]; state.unallocRows=[]; state.vacations=[]; }
 function walkRosterExtras(grid,hd){
   const m=hd.map;
   state.rosterMeta=new Map(); state.vacations=[]; state.schedRows=[]; state.unallocRows=[];
@@ -4073,6 +4074,7 @@ function parseTikshuvWorkbook(sheets){
   const rstats=buildRosterGrid(rosterSheet.grid,hdR);
   parseIronGrid(ironSheet.grid);
   walkRosterExtras(rosterSheet.grid,hdR);
+  recordIronHist(sidurWeek()); // 🔍 the iron's memory: one snapshot per week of the file's sidur
   crossValidateIron();
   if(rstats.named&&state.roster.length&&!state.settings.hcOverride){
     state.settings.headcount=state.roster.length;
@@ -4713,12 +4715,19 @@ function ironSnap(){ if(!state.iron) return null; const reps={};
   for(const [n,e] of state.iron.emps){ const d={}; for(let di=0;di<6;di++){ const P=ironParts(e.days&&e.days[di]); if(P.length) d[di]=P.map(([a,b])=>a+"-"+b).join("+"); }
     reps[n]={t:e.team||"",d}; }
   return reps; }
-function recordIronHist(){ const reps=ironSnap(); if(!reps) return; const H=state.settings.ironHist=state.settings.ironHist||[];
-  const last=H[H.length-1]; if(last&&JSON.stringify(last.reps)===JSON.stringify(reps)) return;
-  H.push({at:iso(new Date()),reps}); while(H.length>12) H.shift(); saveState(); }
+/* one snapshot per WEEK the iron belongs to (wk = the week of the sidur in the same file): the latest file of a week
+   replaces that week, the list stays in week order and a week equal to the week before keeps nothing — so loading this
+   week's file, then next week's, then this week's again never flips the comparison or fills the memory. */
+function recordIronHist(wk){ const reps=ironSnap(); if(!reps) return; wk=wk||sundayOf(iso(new Date())); state.iron.wk=wk;
+  const J=x=>JSON.stringify(x), byWk=new Map();
+  for(const h of (state.settings.ironHist||[]).concat({wk,at:iso(new Date()),reps})) byWk.set(h.wk||sundayOf(h.at),{...h,wk:h.wk||sundayOf(h.at)}); // an older save: its upload's week
+  const H=[]; for(const h of [...byWk.values()].sort((a,b)=>a.wk<b.wk?-1:a.wk>b.wk?1:0)) if(!H.length||J(H[H.length-1].reps)!==J(h.reps)) H.push(h);
+  while(H.length>12) H.shift();
+  if(J(H)!==J(state.settings.ironHist||[])){ state.settings.ironHist=H; saveState(); } }
 const icHrs=str=>str?str.split("+").reduce((s,p)=>{ const [a,b]=p.split("-"); return s+(toMinW(b)-toMinW(a))/60; },0):0;
 const icWeek=r=>Object.values(r.d).reduce((s,x)=>s+icHrs(x),0);
-function ironChanges(){ const H=state.settings.ironHist||[]; if(H.length<2) return null;
+function ironChanges(){ const H0=state.settings.ironHist||[], wk=state.iron&&state.iron.wk;
+  const H=wk?H0.filter(h=>!h.wk||h.wk<=wk):H0; if(H.length<2) return null; // the loaded iron's week vs the week before it (a later week's file stays out)
   const A=H[H.length-2], B=H[H.length-1], list=[];
   for(const n of new Set([...Object.keys(A.reps),...Object.keys(B.reps)])){ const a=A.reps[n], b=B.reps[n];
     if(!a){ list.push({n,t:b.t,kinds:["new"],dh:icWeek(b),days:[]}); continue; }
@@ -4726,14 +4735,14 @@ function ironChanges(){ const H=state.settings.ironHist||[]; if(H.length<2) retu
     const days=[]; for(let di=0;di<6;di++){ const x=a.d[di]||"", y=b.d[di]||""; if(x===y) continue;
       const hx=icHrs(x), hy=icHrs(y); days.push({di,from:x,to:y,dh:hy-hx,k:!x?"add":!y?"del":Math.abs(hy-hx)>0.01?(hy<hx?"down":"up"):"move"}); }
     if(days.length) list.push({n,t:b.t||a.t,kinds:[...new Set(days.map(d=>d.k))],dh:days.reduce((s,d)=>s+d.dh,0),days}); }
-  return {from:A.at,to:B.at,list,H}; }
+  return {from:A.wk||sundayOf(A.at),to:B.wk||sundayOf(B.at),list,H}; }
 const IC_KINDS=[["down","#cf5a46"],["del","#a11a1a"],["up","#2f9e66"],["add","#0f6a3f"],["move","#8a63d2"],["new","#3fa9f5"],["gone","#6b7c90"]];
 function renderIronChanges(){
   const card=document.getElementById("wfIronChg"), box=document.getElementById("icBody"), sum=document.getElementById("icSum"); if(!card) return;
   const C=state.iron?ironChanges():null; card.style.display=C&&C.list.length?"":"none"; if(!C||!C.list.length) return; // silence: nothing changed
   const esc=v=>String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;"), dS=t("daysShort");
   const teamOf=x=>(state.rosterMeta.get(x.n)||{}).team||x.t||"—", net=C.list.reduce((s,x)=>s+x.dh,0);
-  sum.textContent=t("icSum",{d:fmtDs(C.from),n:C.list.length,h:(net>0?"+":"")+hU(net)});
+  sum.textContent=t("icSum",{w:isoWeek(C.from),n:C.list.length,h:(net>0?"+":"")+hU(net)});
   const sel=state._icSel instanceof Set?state._icSel:(state._icSel=new Set()), cnt={};
   C.list.forEach(x=>x.kinds.forEach(k=>cnt[k]=(cnt[k]||0)+1)); [...sel].forEach(k=>{ if(!cnt[k]) sel.delete(k); });
   const shown=sel.size?C.list.filter(x=>x.kinds.some(k=>sel.has(k))):C.list;
@@ -4744,7 +4753,7 @@ function renderIronChanges(){
   // a team's iron hours in every upload: the small line beside its name (one axis, hover = the numbers)
   const spark=tm=>{ const v=C.H.map(h=>Object.entries(h.reps).filter(([n,r])=>((state.rosterMeta.get(n)||{}).team||r.t||"—")===tm).reduce((s,[,r])=>s+icWeek(r),0));
     if(v.length<2) return ""; const lo=Math.min(...v), hi=Math.max(...v), W=90, Hh=20, X=i=>4+i*(W-8)/(v.length-1), Y=x=>hi>lo?Hh-3-(x-lo)/(hi-lo)*(Hh-6):Hh/2;
-    const tip=C.H.map((h,i)=>fmtDs(h.at)+": "+hU(v[i])).join("\n");
+    const tip=C.H.map((h,i)=>t("wkN",{w:isoWeek(h.wk||sundayOf(h.at))})+": "+hU(v[i])).join("\n");
     return `<svg class="icSpark" viewBox="0 0 ${W} ${Hh}" width="${W}" height="${Hh}" style="direction:ltr"><title>${esc(t("icTrendTip")+"\n"+tip)}</title><polyline fill="none" stroke="var(--navy)" stroke-width="1.6" points="${v.map((x,i)=>X(i).toFixed(1)+","+Y(x).toFixed(1)).join(" ")}"/><circle cx="${X(v.length-1).toFixed(1)}" cy="${Y(v[v.length-1]).toFixed(1)}" r="2.4" fill="${v[v.length-1]<v[v.length-2]?"#cf5a46":"var(--navy)"}"/></svg>`; };
   const tr=x=>x?"\u2066"+x.replace(/\+/g," + ")+"\u2069":"—", arr=lang==="he"?" ← ":" → ", fromTo=d=>tr(d.from)+arr+tr(d.to);
   const dayChip=d=>`<span class="icD" style="--c:${col[d.k]}" title="${esc(t("ic_"+d.k))}">${dS[d.di]} ${esc(fromTo(d))}${d.k==="move"?"":" <b>"+hU(d.dh,d.dh>0)+"</b>"}</span>`;
@@ -4759,7 +4768,7 @@ function renderIronChanges(){
   // one message per team manager, the shape every message has (tlMsg) — only what the filter shows
   box.querySelectorAll(".icMsg").forEach(b=>b.addEventListener("click",()=>{ const tm=b.dataset.tm, xs=byTeam.get(tm)||[];
     const lines=xs.flatMap(x=>x.days.length?x.days.map(d=>"• "+x.n+" — "+dS[d.di]+": "+fromTo(d)+(d.k==="move"?"":" ("+hU(d.dh,d.dh>0)+")")):["• "+x.n+" — "+t("ic_"+x.kinds[0])]);
-    navigator.clipboard&&navigator.clipboard.writeText(tlMsg(tm,t("icTlPurpose",{d:fmtDs(C.from)}),lines)); showToast("📋 "+t("waCopied",{team:tm}),true); }));
+    navigator.clipboard&&navigator.clipboard.writeText(tlMsg(tm,t("icTlPurpose",{w:isoWeek(C.from)}),lines)); showToast("📋 "+t("waCopied",{team:tm}),true); }));
 }
 function renderValidation(){
   const wrap=document.getElementById("wfValWrap"); wrap.innerHTML="";
@@ -4867,6 +4876,7 @@ function skillCountAt(ds,di,tm,skill){
   const dk=ds+"|"+tm;
   if(rcs[dk]) return rcs[dk][skill]||0;
   if(state.rosterDates&&state.rosterDates.has(ds)) return 0; // dated day covered, skill absent here
+  const ns=nowSidOn(ds); if(ns) return ns.sk[dk]?ns.sk[dk][skill]||0:0; // 📅 this week's kept sidur
   const wk=di+"|"+tm;
   if(rcs[wk]) return rcs[wk][skill]||0;
   if(state.rosterDays&&state.rosterDays.has(String(di))) return 0;
@@ -6957,6 +6967,7 @@ function ingestRows(res,hint){
     throw lastErr||{code:"noheader",headers:[]};
   }
   const applyMx=mx=>{
+    dropRosterRows(); // an anonymous sidur: no shifts by name — the previous file's are not this one's
     // matrix sidur (anonymous): headcount defaults to the matrix's peak concurrency
     if(mx.peak>0&&!state.rosterNamed&&!state.settings.hcOverride){
       state.settings.headcount=mx.peak;
@@ -6981,6 +6992,8 @@ function ingestRows(res,hint){
   }
   if(kind==="roster"){
     const stats=buildRosterGrid(grid,hd);
+    // the shifts follow the file just loaded — never the previous file's week (who-on, breaks, this week's kept copy)
+    if(hd.map.name!=null&&hd.map.start!=null&&hd.map.end!=null) walkRosterExtras(grid,hd); else dropRosterRows();
     // item 10: a validated schedule instantly refreshes headcount metrics everywhere
     if(stats.named&&state.roster.length&&!state.settings.hcOverride){
       state.settings.headcount=state.roster.length;
@@ -7341,7 +7354,7 @@ function detectAnomalies(dayTot,dom,median){
 
 function rebuildLearningSeries(){
   if(!state.days.size){ state.series=null; return; }
-  state.anomalyDates=new Map(); state.cuDays=new Set(); // measured fresh each rebuild (never from the previous one)
+  state.anomalyDates=new Map(); state.cuDays=new Set(); state.cuAmt=new Map(); // measured fresh each rebuild (never from the previous one)
   const keys=[...state.days.keys()].sort();
   /* ================================================================
      CALENDAR LAYER — billing day-of-month uplift (ported from the
@@ -7365,8 +7378,8 @@ function rebuildLearningSeries(){
   const isHolidayExcluded=ds=>{ if(kept(ds)) return false; const l=holLvl(ds); return l&&HOLIDAY_EXCLUDE(l); };
   const isFactored=ds=>{ if(kept(ds)) return false; const l=holLvl(ds); return l&&HOLIDAY_FACTORED(l); };
   // fully excluded from ALL learning: painted, closed-holidays, detected anomalies
-  const isExcluded=ds=>state.exceptions.has(ds)||isHolidayExcluded(ds)||(state.anomalyDates.has(ds)&&!kept(ds))||(state.cuDays.has(ds)&&!kept(ds))
-    ||(evMap().has(ds)&&!kept(ds)); // a planned event's surge must not teach the normal baseline
+  const isExcluded=ds=>state.exceptions.has(ds)||isHolidayExcluded(ds)||(state.anomalyDates.has(ds)&&!kept(ds))
+    ||(evMap().has(ds)&&!kept(ds)); // (↩ comeback days stay in — without their comeback calls, state.cuAmt) // a planned event's surge must not teach the normal baseline
   // days that teach the NORMAL baseline/series: everything except excluded AND factored
   const teachesNormal=ds=>!isExcluded(ds)&&!isFactored(ds);
   const dayTot=new Map();
@@ -7446,8 +7459,14 @@ function rebuildLearningSeries(){
         if(k>=3){ n++; e0+=part.e0; e1+=part.e1; sa+=part.sa; } }
       state.cuCheck=n&&sa>0?{n,without:e0/sa*100,with:e1/sa*100}:{n:0};
       if(state.cuCheck.n>=2&&state.cuCheck.with>state.cuCheck.without){ state.cuCheck.guard=true; state.cuParam.c=0; } } // worse on your history → it steps aside
-    if(state.settings.cuOn!==false&&state.cuParam.c>0) for(const g of groups){ let d=g.ds; for(let k=1;k<=6;k++){ d=nextWork(d); if(!d||d>state.maxDate) break; const e=exp(d);
-      if(!(e>0)||g.lost*cc*(1-qq)*Math.pow(qq,k-1)<0.03*e) break; state.cuDays.add(d); } }
+    // the comeback days keep teaching — WITHOUT their comeback calls (state.cuAmt: ds → calls): dropping the whole day threw
+    // away its normal calls too (the file's last Wednesday, 4,250 of 4,967) and pulled the forecast under a normal week
+    if(state.cuParam.c>0){ const full=[0,1,2,3,4].map(d=>weekdayBase[d]).filter(x=>x>0).sort((a,b)=>a-b), ref=full.length?full[full.length>>1]:0;
+      for(const g of groups){ let d=g.ds; for(let k=1;k<=6;k++){ d=nextWork(d); if(!d||d>state.maxDate) break; const e=exp(d); if(!(e>0)||lostDay.has(d)) break;
+        const size=ref>0?Math.min(1,(weekdayBase[fromISO(d).getDay()]||ref)/ref):1, n0=g.lost*state.cuParam.c*(1-qq)*Math.pow(qq,k-1)*size;
+        if(n0<0.01*e) break;
+        const n=Math.min(n0,Math.max(0,act(d)-e-(state.cuAmt.get(d)||0))); // never more than the day rose above its normal — a day that didn't rise loses nothing
+        if(n>0){ state.cuAmt.set(d,(state.cuAmt.get(d)||0)+n); state.cuDays.add(d); } } } }
     /* ↩ part 2 — ABANDONED CALLERS WHO CALL AGAIN (the same switch, chosen automatically). A day that loses more calls
        than usual to abandonment sends part of them back over the next working days. Learned from your history:
        p = the share of the EXTRA abandoned calls (over the usual abandon rate) that comes back, q = the share of them
@@ -7499,7 +7518,10 @@ function rebuildLearningSeries(){
   for(const ds of keys){
     const di=fromISO(ds).getDay(); if(di>5) continue;
     if(!teachesNormal(ds)) continue;
-    const f=domOf(ds);
+    let f=domOf(ds);
+    // ↩ its comeback calls out, spread like its own calls (measured with ↩ off too — the switch's hover says what it would change)
+    { const cu=state.settings.cuOn!==false&&!kept(ds)&&state.cuAmt.get(ds); if(cu>0){ let tot=0; for(const r of state.days.get(ds).values()) tot+=r.volume;
+      if(tot>0) f/=Math.max(0.2,1-cu/tot); } }
     ser[di]=ser[di]||{}; (learn[di]=learn[di]||[]).push(ds); // the date behind each week of the series (⚡ fast lane)
     for(const [tm,rec] of state.days.get(ds)){
       if(state.exceptions.has(ds+"|"+tm)) continue;
@@ -7982,6 +8004,7 @@ function retryAt(ds,force){ const P=state.rtParam; if(!(force||state.settings.cu
   return P.p*((1-P.q)*x(d1)+P.q*x(d2)); }
 function catchUpAt(ds,force){ // force: what it WOULD add (the chip offers it back when it is off)
   const P=state.cuParam; if(!(force||state.settings.cuOn!==false)||!P||!(P.c>0)) return 0;
+  if(state.maxDate&&ds<=state.maxDate&&state.cuAmt) return state.cuAmt.get(ds)||0; // a past day: what the learning took out (never more than it rose) — one number with its tag
   const ev=(state.cuEvents||[]).filter(e=>e.ds<ds);
   for(let d=addDays(ds,-12);d<ds;d=addDays(d,1)){ const di=fromISO(d).getDay();
     if(state.maxDate&&d>state.maxDate&&di<=5&&state.holidayDates.get(d)==="closed"){ const b=(state._wkBase||{})[di];
@@ -8279,13 +8302,34 @@ function lensScaleRaw(ds){
 }
 /* today's team for a forecast half-hour = the reps whose IRON window covers it that weekday — Friday by that
    week's rotation, only the answering skills (🎧; untagged always count). Cached per week / skills / iron. */
+/* ⛓ THE IRON IN EFFECT ON A DAY = the latest week's iron known up to that day (settings.ironHist, week order) — so an
+   older week's file, loaded to look back, never rolls the future back to its iron. The loaded iron when it is the latest
+   one for that day (or there is no memory). A memory snapshot carries the shifts + team; skill / site come from the
+   loaded iron (untagged = always counts). Read by ironCapAt (matrix · Trends · outlook) and the 👥 / ☕ iron fallbacks. */
+function ironEmpsFor(ds){
+  const I=state.iron; if(!I) return null; const H=state.settings.ironHist||[], wk=sundayOf(ds);
+  let h=null; if(I.wk) for(const x of H) if(x.wk&&x.wk<=wk) h=x;
+  if(!h||h.wk<=I.wk) return I.emps;
+  const c=state._ironAt; if(c&&c.h===h&&c.I===I) return c.m;
+  const m=new Map();
+  for(const [n,r] of Object.entries(h.reps||{})){ const e=I.emps.get(n), days={};
+    for(const di in r.d){ const parts=r.d[di].split("+").map(p=>p.split("-")); days[di]={s:parts[0][0],e:parts[0][1],h:icHrs(r.d[di]),parts}; }
+    m.set(n,{days,team:r.t||(e&&e.team)||"",skill:(e&&e.skill)||"",site:(e&&e.site)||""}); }
+  state._ironAt={h,I,m}; return m;
+}
+/* the week of the newest iron known, when it is newer than the loaded one (the chip's hover says so) */
+function ironNewerWk(){ const I=state.iron, H=state.settings.ironHist||[], L=H[H.length-1]; return I&&I.wk&&L&&L.wk>I.wk?L.wk:null; }
 function ironCapAt(ds,dayIdx,tm){
-  const wk=sundayOf(ds), sc=state.capSkills, S=state.settings;
-  const key=[wk,JSON.stringify(sc||null),S.friEvery,JSON.stringify((S.friHist||{})[addDays(wk,-2)]||null),state.iron.emps.size,state.iron.total].join("|");
-  let c=state._ironCap; if(!c||c.key!==key) c=state._ironCap={key,by:{}};
+  const wk=sundayOf(ds), sc=state.capSkills, S=state.settings, E=ironEmpsFor(ds), I=state.iron;
+  // one cache per week, checked by reference (a text key per half hour — with last Friday's names in it — was most of the
+  // Recruitment page's first-open time); a new iron / Friday list / skill choice rebuilds that week
+  const scK=sc&&sc.length?sc.join("\u0001"):"", fri=(S.friHist||{})[addDays(wk,-2)]||null, W=state._ironCapW=state._ironCapW||new Map();
+  let c=W.get(wk);
+  if(!c||c.E!==E||c.I!==I||c.sc!==scK||c.fe!==S.friEvery||c.fri!==fri||c.n!==I.emps.size||c.t!==I.total||c.meta!==state.rosterMeta){
+    if(W.size>80) W.clear(); c={E,I,sc:scK,fe:S.friEvery,fri,n:I.emps.size,t:I.total,meta:state.rosterMeta,by:{}}; W.set(wk,c); }
   let day=c.by[dayIdx];
   if(!day){ day=c.by[dayIdx]={};
-    for(const [n,e] of state.iron.emps){ const w=e.days&&e.days[dayIdx]; if(!w||!w.s||!w.e) continue;
+    for(const [n,e] of E){ const w=e.days&&e.days[dayIdx]; if(!w||!w.s||!w.e) continue;
       const m=state.rosterMeta.get(n)||{}, sk=String(m.skill||e.skill||"").trim();
       if(sc&&sc.length&&sk&&!sc.includes(sk)) continue;
       const k=dayIdx===5?friW(n,wk):1; if(!k) continue;
@@ -8355,6 +8399,8 @@ function capacityFor(ds,dayIdx,tm,rec){
   // a roster that covers this date/weekday is the FULL ground truth:
   // blocks it doesn't mention mean nobody is scheduled — never fall back to baseline
   if(state.rosterDates.has(ds)) return 0;
+  const ns=nowSidOn(ds); // 📅 this week's sidur, kept for its days while another week is loaded — the same ground truth
+  if(ns){ const v=ns.cap[dk]||0, by=ns.sk[dk], sc=state.capSkills; return v&&by&&sc&&sc.length?capCountedFrom(by):v; }
   const wk=dayIdx+"|"+tm;
   if(state.rosterCapWeekly.has(wk)) return capCounted(wk,state.rosterCapWeekly.get(wk));
   if(state.rosterDays.has(String(dayIdx))) return 0;
@@ -8369,6 +8415,30 @@ function rebuildRosterCoverage(){
   state.agWhatIf.clear(); state.schedLocks=new Set(); state.schedLockTL=new Set(); state.schedDeclined={}; state._sentTL={};
   state.optimizedCapSkill=null; state.optimizedWeek=null; state.matrixView="original";
 }
+/* 📅 THIS WEEK'S SIDUR, kept for the matrix — a manager loads next week's sidur to plan while this week runs.
+   Whenever the loaded sidur touches today's week, those days are copied here (reps per half hour, by skill, + the
+   shifts for 👥 who-on and ☕ breaks). It answers only for a day of this week the loaded sidur doesn't cover; the
+   latest upload of this week replaces it; once the week is over it is dropped — never carried into the next one.
+   Its own small key, so a forecast too big for wfmSimData never takes it down. */
+const PERSIST_NOW="wfmSimNow";
+function setNowSidur(o){ state.nowSidur=o&&o.wk&&o.cap?{...o,sk:o.sk||{},rows:o.rows||[],dates:new Set(Object.keys(o.cap).map(k=>k.slice(0,10)))}:null; }
+function nowSidOn(ds){ const ns=state.nowSidur; return ns&&ns.dates.has(ds)&&!state.rosterDates.has(ds)?ns:null; }
+function keepNowSidur(today){
+  const wk=sundayOf(today||iso(new Date())), days=new Set(weekDates(wk)), J=x=>JSON.stringify(x), old=state.nowSidur;
+  let o=old&&old.wk===wk?old:null; // last week's copy is gone
+  const cap={}, sk={}, rcs=state.rosterCapSkill||{};
+  for(const [k,v] of state.rosterCap) if(days.has(k.slice(0,10))){ cap[k]=v; if(rcs[k]) sk[k]=rcs[k]; }
+  const rows=state.schedRows.filter(r=>days.has(r.ds)&&r.h>0).map(r=>({name:r.name,ds:r.ds,di:r.di,s:r.s,e:r.e,h:r.h,team:r.team||"",skill:r.skill||"",site:r.site||""}));
+  if(Object.keys(cap).length||rows.length||(state.unallocRows||[]).concat(state.vacations||[]).some(r=>days.has(r.ds))){ // the loaded sidur is this week's (even still empty) → it is the copy
+    if(!o||J([o.cap,o.sk,o.rows])!==J([cap,sk,rows])){ const d=new Date(); o={wk,at:iso(d)+" "+pad(d.getHours())+":"+pad(d.getMinutes()),cap,sk,rows}; } }
+  if(o===old||(!o&&!old)) return false;
+  setNowSidur(o);
+  try{ if(o) localStorage.setItem(PERSIST_NOW,J({wk:o.wk,at:o.at,cap:o.cap,sk:o.sk,rows:o.rows})); else localStorage.removeItem(PERSIST_NOW); }catch(e){}
+  memo.clear(); return true;
+}
+/* the shifts on a day: the loaded sidur's, else this week's kept copy (who-on, breaks) */
+function sidurRowsOn(ds){ const r=state.schedRows.filter(x=>x.ds===ds&&x.h>0); if(r.length) return r;
+  const ns=nowSidOn(ds); return ns?ns.rows.filter(x=>x.ds===ds):r; }
 function computeDay(ds){
   const S=state.settings, P=state.policy;
   const sd=sourceDay(ds); if(!sd) return null;
@@ -8435,7 +8505,8 @@ function computeDay(ds){
       }
       if(!r.dropped) r.reqEff=r.req;
     });
-  }else rows.forEach(r=>{ if(r.req) r.reqEff=r.req; });
+  }
+  rows.forEach(r=>{ if(r.req!=null&&r.reqEff==null) r.reqEff=r.req; }); // a half hour with no calls needs 0 — never undefined (it turned every monthly sum into NaN)
   return {rows,saved,drops,forecast:sd.forecast};
 }
 
@@ -8692,7 +8763,7 @@ function renderMatrixBody(){
         if(state._optView){ state._optView=false; const base=capacityFor(ds,fromISO(ds).getDay(),tm,row.rec)+injectionAgents(fromISO(ds).getDay(),tm)+traineeAt(ds,fromISO(ds).getDay(),tm); state._optView=true;
           const dlt=row.sched-base; if(dlt) mv=`<span class="mvd ${dlt>0?"up":"dn"}" title="${t("exCellTip",{b:base,a:row.sched})}">${dlt>0?"▲":"▼"}${Math.abs(dlt)}</span>`; }
         td.innerHTML=`<div class="v">${pct(v)}${mv}${row.dropped?'<span class="decay">▼</span>':''}${short?`<span class="short${soft?" soft":""}"></span>`:''}${over?'<span class="overm"></span>':''}${edited?'<span class="edmark">✎</span>':''}</div>
-          <div class="sub">${state.iron||state.schedRows.some(r=>r.ds===ds&&r.h>0)?`<span class="whoLnk" title="${t("whoTip")}">${row.sched}</span>`:row.sched}/${row.reqEff} • ${Math.round(row.rec.volume)}</div>`;
+          <div class="sub">${state.iron||sidurRowsOn(ds).length?`<span class="whoLnk" title="${t("whoTip")}">${row.sched}</span>`:row.sched}/${row.reqEff} • ${Math.round(row.rec.volume)}</div>`;
         // edited cells carry their own tiny undo — one click back to the original value
         if(edited&&(state.cellOrig.has(ds+"|"+tm)||wiOn)){
           const ub=document.createElement("button");
@@ -9737,10 +9808,11 @@ function computeTrajectory(base,skillF){
   const hc30=hcAtDay(30,false,hc,skillF);
   // scale is relative to the CURRENT scheduled capacity — planning bases >
   // scheduled read as "if my whole workforce were on the floor"
-  const now=weightedTSF(hc/S.headcount), in30=weightedTSF(hc30/S.headcount);
+  const den=+S.headcount>0?+S.headcount:hc; // Settings' headcount empty / 0 → today's team is the scale (÷0 = infinite agents froze the page)
+  const now=weightedTSF(hc/den), in30=weightedTSF(hc30/den);
   if(now===null||in30===null) return null;
   // the fewest extra reps that reach the target (0…80): the service level only grows with reps → binary search
-  const ok=n=>weightedTSF((hc30+n)/S.headcount)>=S.target/100;
+  const ok=n=>weightedTSF((hc30+n)/den)>=S.target/100;
   let need=null; if(ok(0)) need=0; else if(ok(80)){ let lo=0,hi=80; while(hi-lo>1){ const m=(lo+hi)>>1; if(ok(m)) hi=m; else lo=m; } need=hi; }
   // need===null → the target is unreachable within any sane hiring range;
   // that's a target/demand conversation, not a "hire 80 people" recommendation
@@ -10252,7 +10324,7 @@ function downloadBytes(name,bytes,mime){
 }
 function breakPlan(ds,over){
   const di=fromISO(ds).getDay(), c={...brkCfg(di),...(over||{})}, day=computeDay(ds), wk=sundayOf(ds), S=state.settings;
-  const sidur=state.rosterDates.has(ds)||state.schedRows.some(r=>r.ds===ds&&r.h>0);
+  const sidur=state.rosterDates.has(ds)||sidurRowsOn(ds).length>0||!!nowSidOn(ds);
   const present=null; // nothing to type: the sidur per half-hour, else today's team (the iron)
   const rows={}; if(day) day.rows.forEach(r=>{ if(r.rec&&!r.closed&&!r.exc&&!r.nodata) rows[r.tm]=r; });
   const hasFc=Object.keys(rows).length>0, step=Math.max(5,+c.step||20), cap=Math.max(1,+c.cap||6);
@@ -10260,9 +10332,9 @@ function breakPlan(ds,over){
   // the reps on shift (answering skills) — each with their shift(s): the sidur, else today's team (the iron's weekday)
   const span=(s,e)=>{ const a=toMinW(s), b=toMinW(e); return [a,b>a?b:b+1440]; };
   let reps=[];
-  const sr=state.schedRows.filter(r=>r.ds===ds&&r.h>0&&inSc(r.skill||(state.rosterMeta.get(r.name)||{}).skill));
+  const sr=sidurRowsOn(ds).filter(r=>inSc(r.skill||(state.rosterMeta.get(r.name)||{}).skill));
   if(sr.length){ const by=new Map(); for(const r of sr){ const o=by.get(r.name)||{name:r.name,h:0,iv:[]}; o.h+=r.h; o.iv.push(span(r.s,r.e)); by.set(r.name,o); } reps=[...by.values()]; }
-  else if(state.iron){ let half=0; for(const [n,e] of state.iron.emps){ const w=e.days&&e.days[di];
+  else if(state.iron){ let half=0; for(const [n,e] of ironEmpsFor(ds)){ const w=e.days&&e.days[di];
     if(!w||!w.h||!inSc((state.rosterMeta.get(n)||{}).skill||e.skill)) continue;
     const k=di===5?friW(n,wk):1; if(!k||(k<1&&half++%2)) continue; reps.push({name:n,h:w.h,iv:ironParts(w).map(([a,b])=>span(a,b))}); } } // Friday ½ → every other one · a split shift: its parts
   if(!reps.length){ const n=Math.round(Object.values(rows).reduce((x,r)=>x+r.sched*0.5,0)/8); reps=Array.from({length:n},()=>({h:8,iv:[[0,2880]]})); } // no names: the file's staffing ÷ 8h
@@ -10350,7 +10422,7 @@ function renderBreaks(){
   const ds=brkDay(), bp=breakPlan(ds), c=bp.c, esc=v=>String(v??"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");
   document.getElementById("brkDate").value=ds;
   document.getElementById("brkDayName").textContent=t("days")[fromISO(ds).getDay()];
-  { const el=document.getElementById("brkWk"), wk=state.rosterMeta.size||state.schedRows.length?wfWeek():null;
+  { const el=document.getElementById("brkWk"), wk=nowSidOn(ds)?state.nowSidur.wk:state.rosterMeta.size||state.schedRows.length?wfWeek():null; // a day of this week's kept sidur: its week
     el.style.display=wk?"":"none";
     if(wk){ const inWk=weekDates(wk).includes(ds);
       el.textContent=t("schWkFix",{w:isoWeek(wk),a:fmtDs(wk),b:fmtDs(addDays(wk,5))});
@@ -10411,7 +10483,7 @@ function brkLS(p,i){ const mx=Math.max(...p); return p.length>1&&mx>Math.min(...
    (a split shift = its hours added up), 5 min per working hour, the long + short split. null when the sidur doesn't cover the day */
 function brkEntitle(ds){
   const sc=state.capSkills, inSc=sk=>{ sk=String(sk||"").trim(); return !sc||!sc.length||!sk||sc.includes(sk); };
-  const rows=state.schedRows.filter(r=>r.ds===ds&&r.h>0&&inSc(r.skill||(state.rosterMeta.get(r.name)||{}).skill)); if(!rows.length) return null;
+  const rows=sidurRowsOn(ds).filter(r=>inSc(r.skill||(state.rosterMeta.get(r.name)||{}).skill)); if(!rows.length) return null;
   const by=new Map(); for(const r of rows){ const o=by.get(r.name)||{name:r.name,sh:[],h:0}; o.sh.push([r.s,r.e]); o.h+=r.h; by.set(r.name,o); }
   return [...by.values()].map(o=>{ o.sh.sort((a,b)=>a[0]<b[0]?-1:1); o.d=Math.max(5,Math.round(o.h)*5); o.p=brkParts(o.d); return o; })
     .sort((a,b)=>a.sh[0][0]<b.sh[0][0]?-1:a.sh[0][0]>b.sh[0][0]?1:a.name.localeCompare(b.name,"he")); }
@@ -10528,22 +10600,34 @@ function brkSettings(){ // ⚙ the procedure's rules: first / last break (Friday
 /* 📅 the loaded sidur's week + where it stands in time (this week · next week · n weeks ago / ahead) — the header chip
    on every page; a click goes to Home to load another. Iron without a sidur says so; nothing loaded = no chip. */
 function sidurWeek(){ const rows=state.schedRows.length?state.schedRows:(state.unallocRows||[]).concat(state.vacations||[]);
-  const ds=rows.map(r=>r.ds).filter(Boolean).sort()[0]; return ds?sundayOf(ds):null; }
+  const ds=rows.map(r=>r.ds).filter(Boolean).sort()[0]||[...(state.rosterDates||[])].sort()[0]; return ds?sundayOf(ds):null; } // an anonymous sidur: its dates
 function renderSidurChip(){ const el=document.getElementById("sidurChip"); if(!el) return;
-  const wk=sidurWeek(); if(!wk&&!state.iron){ el.hidden=true; return; } el.hidden=false;
+  const wk=sidurWeek(), ns=state.nowSidur, kw=ns&&ns.wk!==wk&&ns.dates.size?ns.wk:null; // + this week's kept sidur, while another week is loaded
+  if(!wk&&!state.iron&&!kw){ el.hidden=true; return; } el.hidden=false;
   const d=wk?Math.round((fromISO(wk)-fromISO(sundayOf(iso(new Date()))))/(7*864e5)):null;
   const when=d==null?"":d===0?t("scNow"):d===1?t("scNext"):d===-1?t("scLast"):d<0?t("scAgo",{n:-d}):t("scAhead",{n:d});
   el.className="sidurChip"+(d==null?"":d===0?" now":d===1?" next":d<0?" past":"");
   const esc=v=>String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;");
-  el.innerHTML=wk?esc(t("scChip",{w:isoWeek(wk)}))+`<b>${esc(when)}</b>`:esc(t("scIronOnly"));
-  el.title=(wk?t("schWkFix",{w:isoWeek(wk),a:fmtDs(wk),b:fmtDs(addDays(wk,5))})+"\n":"")+t("scTip"); }
-document.getElementById("sidurChip").addEventListener("click",()=>document.getElementById("tab-home").click());
+  el.innerHTML=(wk?esc(t("scChip",{w:isoWeek(wk)}))+`<b>${esc(when)}</b>`:esc(t("scIronOnly")))
+    +(kw?`<b class="scKeep">${isoWeek(kw)} · ${esc(t("scNow"))}</b>`:"");
+  el.title=(wk?t("schWkFix",{w:isoWeek(wk),a:fmtDs(wk),b:fmtDs(addDays(wk,5))})+"\n":"")+t("scTip")
+    +(kw?"\n\n"+t("scKeepTip",{w:isoWeek(kw),at:fmtDs(ns.at.slice(0,10))+" "+ns.at.slice(11)}):"")
+    +(ironNewerWk()?"\n\n"+t("scIronNewer",{w:isoWeek(ironNewerWk())}):""); }
+// the chip → Home (load another); its "this week" part → this week in the matrix
+document.getElementById("sidurChip").addEventListener("click",e=>{ const k=e.target.closest(".scKeep")&&state.nowSidur&&state.nowSidur.wk, sel=document.getElementById("weekSelect");
+  if(k&&[...sel.options].some(o=>o.value===k)){ if(sel.value!==k){ sel.value=k; sel.dispatchEvent(new Event("change")); } document.getElementById("tab-matrix").click(); return; }
+  document.getElementById("tab-home").click(); });
 function renderAll(){
-  renderSetSkills(); renderSidurChip();
+  keepNowSidur(); renderSetSkills(); renderSidurChip();
   dirtyPages.add("matrix"); dirtyPages.add("trends"); dirtyPages.add("recruit");
   dirtyPages.add("workforce"); dirtyPages.add("scheduler"); dirtyPages.add("breaks");
-  renderDirty(); saveState();
+  renderDirty(); saveState(); warmPlan();
 }
+/* ⏳ the courses plan measures every forecast day up to the plan date — the Recruitment page's first open (~1 s on a
+   slow PC). Computed once while the browser is idle after a change; the click then reads the cached plan. */
+let _warmId=null;
+function warmPlan(){ if(typeof requestIdleCallback!=="function") return; if(_warmId) cancelIdleCallback(_warmId);
+  _warmId=requestIdleCallback(()=>{ _warmId=null; if(state.days.size&&state.maxDate) try{ hirePlan(); }catch(e){} }); }
 
 /* ---------------- Workspace persistence (settings only — data files stay transient) ---------------- */
 const PERSIST="wfmSimWorkspace";
@@ -10729,7 +10813,7 @@ let ceCtx=null;
 /* where does a cell's "scheduled" number come from? mirrors capacityFor's precedence:
    a loaded sidur is the ground truth; otherwise the file's own staffing baseline */
 function capSource(ds,dayIdx,tm){
-  if(state.rosterCap.has(ds+"|"+tm)||state.rosterDates.has(ds)) return "roster";
+  if(state.rosterCap.has(ds+"|"+tm)||state.rosterDates.has(ds)||nowSidOn(ds)) return "roster";
   if(state.rosterCapWeekly.has(dayIdx+"|"+tm)||state.rosterDays.has(String(dayIdx))) return "roster";
   return "file";
 }
@@ -11291,7 +11375,15 @@ function syncCu(page,dates){ const root=document.getElementById("page-"+page), b
   const on=state.settings.cuOn!==false, cu=cuInfo(fd);
   b.classList.toggle("on",on); b.setAttribute("aria-pressed",String(on));
   const RT=state.rtParam, auto=RT&&RT.guard&&RT.check&&RT.check.n?"\n"+t("cuBtnAutoAb",{a:RT.check.without.toFixed(1),b:RT.check.with.toFixed(1),n:RT.check.n}):"";
-  b.title=(cu?(on?t(cu.ab?"cuBtnTipAb":"cuBtnTip",{d:cu.d,l:cu.list}):t("cuBtnTipOff",{d:cu.d})):t(on?"cuBtnIdle":"cuBtnIdleOff"))+auto; }
+  const ln=cuLearnNote(), lnT=ln?t(on?"cuLearnOn":"cuLearnOff",ln):""; // what it does to the weeks ahead even when it adds little to them
+  b.title=(cu?(on?t(cu.ab?"cuBtnTipAb":"cuBtnTip",{d:cu.d,l:cu.list}):t("cuBtnTipOff",{d:cu.d}))+(lnT?"\n"+lnT:""):lnT||t(on?"cuBtnIdle":"cuBtnIdleOff"))+auto; }
+/* ↩ the newest comeback the learning takes out of the normal level (the day after an outage, the last 4 weeks) — the
+   reason the days ahead read lower with ↩ on; the same number as that day's "↩ n" tag. {n,d,c} or null */
+function cuLearnNote(){ const A=state.cuAmt; if(!A||!A.size||!state.maxDate) return null; const from=addDays(state.maxDate,-28); let best=null;
+  for(const [d,n] of A){ if(d<from) continue; const m=state.days.get(d); let v=0; if(m) for(const r of m.values()) v+=r.volume;
+    if(n>=Math.max(20,0.03*v)&&(!best||d>best.d)) best={d,n}; }
+  if(!best) return null; const c=(state.cuEvents||[]).map(e=>e.ds).filter(x=>x<best.d).sort().pop();
+  return {n:Math.round(best.n).toLocaleString(),d:fmtDs(best.d),c:c?fmtDs(c):"—"}; }
 document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest(".cuBtn"); if(b) cuToggle(); });
 function cuToggle(){ state.settings.cuOn=state.settings.cuOn===false; rebuildLearningSeries(); state._fastKey=null; memo.clear(); saveState(); renderAll(); syncCleanUI(); } // every ↩ switch reads the same setting
 function cuSentence(){
@@ -11418,12 +11510,12 @@ function whoOn(ds,tm){
   const inSc=sk=>{ sk=String(sk||"").trim(); return !sc||!sc.length||!sk||sc.includes(sk); };
   const span=(s,e)=>{ const a=toMinW(s), b=toMinW(e); return [a,b>a?b:b+1440]; }, on=iv=>iv.some(([a,b])=>a<m+30&&b>m);
   const by=new Map(), add=(n,team,s,e)=>{ const o=by.get(n)||{name:n,team:team||"",sh:[]}; o.sh.push(s+"–"+e); by.set(n,o); };
-  const sr=state.schedRows.filter(r=>r.ds===ds&&r.h>0);
+  const sr=sidurRowsOn(ds); // the loaded sidur, else this week's kept one
   if(sr.length){ for(const r of sr) if(inSc(r.skill||meta(r.name).skill)&&on([span(r.s,r.e)])) add(r.name,meta(r.name).team||r.team,r.s,r.e);
-    return {src:"sidur",reps:[...by.values()]}; }
+    return {src:state.schedRows.some(x=>x.ds===ds&&x.h>0)?"sidur":"now",reps:[...by.values()]}; }
   if(!state.iron) return null;
   const off=new Set((state.vacations||[]).filter(v=>v.ds===ds).map(v=>v.name)); let half=0;
-  for(const [n,e] of state.iron.emps){ const w=e.days&&e.days[di]; if(!w||!w.h||off.has(n)||!inSc(meta(n).skill||e.skill)) continue;
+  for(const [n,e] of ironEmpsFor(ds)){ const w=e.days&&e.days[di]; if(!w||!w.h||off.has(n)||!inSc(meta(n).skill||e.skill)) continue;
     const k=di===5?friW(n,wk):1; if(!k||(k<1&&half++%2)) continue; // Friday: every other one, like the breaks plan
     const parts=ironParts(w); if(on(parts.map(([a,b])=>span(a,b)))) for(const [a,b] of parts) add(n,meta(n).team||e.team,a,b); }
   return {src:"iron",reps:[...by.values()]};
@@ -11433,7 +11525,7 @@ function openWho(ds,tm){
   const di=fromISO(ds).getDay(), dl=t("days")[di]+" "+fmtDs(ds), key=ds+"|"+tm, miss=(state._whoMiss=state._whoMiss||{})[key]=state._whoMiss[key]||new Set();
   const esc=v=>String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
   document.getElementById("mTitle").textContent=t("whoT",{d:dl,a:tm,b:addHalf(tm)});
-  document.getElementById("mCore").textContent=W.reps.length?t(W.src==="sidur"?"whoCoreSidur":"whoCoreIron",{n:W.reps.length}):t("whoNone");
+  document.getElementById("mCore").textContent=W.reps.length?t(W.src==="sidur"?"whoCoreSidur":W.src==="now"?"whoCoreNow":"whoCoreIron",{n:W.reps.length,w:state.nowSidur?isoWeek(state.nowSidur.wk):""}):t("whoNone");
   document.getElementById("mExport").style.display="none";
   const mL=document.getElementById("mList"); mL.innerHTML="";
   const teams=new Map(); for(const r of W.reps.sort((a,b)=>a.name.localeCompare(b.name,"he"))){ const k=r.team||t("whoNoTeam"); (teams.get(k)||teams.set(k,[]).get(k)).push(r); }
@@ -11926,10 +12018,12 @@ function wiScenario(){ const v=id=>+(document.getElementById(id)||{}).value||0;
   const s={ahtCut:v("wiAht"),attrCut:v("wiAttr"),shrinkCut:v("wiShrink"),absCut:v("wiAbsence")};
   return s.ahtCut||s.attrCut||s.shrinkCut||s.absCut?s:null; }
 function hirePlan(sc){
-  const S=state.settings, k=JSON.stringify([sc||null,state._serVer,state._crsVer||0,state._holVer||0,state.cohorts,S.headcount,S.attrition,S.target,S.primaryMetric,S.defYield,
-    S.siteMax,S.siteLen,S.siteRules,S.capSkills,state.capSkills,S.recruitBasis,S.capLens,state.maxDate,state.horizonISO,iso(new Date()),state.iron?state.iron.emps.size:0,state.rosterCap.size,planTo(),S.siteAtOnce]);
+  const S=state.settings, kb=JSON.stringify([state._serVer,state._crsVer||0,state._holVer||0,state.cohorts,S.headcount,S.attrition,S.target,S.primaryMetric,S.defYield,
+    S.siteMax,S.siteLen,siteRules(), // siteRules() — the rules made on first use (S.siteRules was still empty here: every first open computed the plan twice)S.capSkills,state.capSkills,S.recruitBasis,S.capLens,state.maxDate,state.horizonISO,iso(new Date()),state.iron?state.iron.emps.size:0,state.rosterCap.size,planTo(),S.siteAtOnce,
+    state.iron&&state.iron.wk,(S.ironHist||[]).map(h=>h.wk+h.at).join(), // the iron in effect on future days (ironEmpsFor)
+    S.shrinkage,S.absence,S.mode,S.mpt,S.tsfT,state.calib,state.agWhatIf.size,state.trainees]), k=JSON.stringify(sc||null)+kb;
   const C=state._hpCs=state._hpCs||new Map(); if(C.has(k)) return C.get(k); // the real plan and one scenario at a time
-  const v=hirePlanRaw(sc); if(C.size>=4) C.delete(C.keys().next().value); C.set(k,v); return v;
+  const v=hirePlanRaw(sc,kb); if(C.size>=4) C.delete(C.keys().next().value); C.set(k,v); return v;
 }
 /* the history's productivity: handled work per scheduled rep-second (the file's answered × AHT ÷ reps × ½ h),
    last 8 weeks — shrinkage is already inside it (a scheduled rep includes breaks and absence) */
@@ -11965,7 +12059,13 @@ function histProductivity(){ const key=state._serVer+"|"+state.maxDate; if(state
   let w=0,cap=0; const from=state.maxDate?addDays(state.maxDate,-56):null;
   for(const [ds,dm] of state.days){ if(!from||ds<from) continue; for(const r of dm.values()) if(r.answered>0&&r.agents>0&&r.aht>0){ w+=r.answered*r.aht; cap+=r.agents*1800; } }
   const v=cap>0?w/cap:null; state._prodC={k:key,v}; return v; }
-function hirePlanRaw(sc){
+function hirePlanRaw(sc,kb){
+  // a day's rows (calls, need, today's team) don't depend on the scenario — read once per data state, shared by the plan
+  // and every lever check of the shadow price (each used to recompute all the forecast days: half the first open)
+  const DC=state._hpDays&&kb&&state._hpDays.k===kb?state._hpDays:(state._hpDays={k:kb,m:new Map()});
+  const dayRows=(ds,di)=>{ if(DC.m.has(ds)) return DC.m.get(ds); const c=computeDay(ds);
+    const r=c?c.rows.filter(r=>r.rec&&!r.closed&&!r.exc&&!r.nodata).map(r=>({rec:r.rec,reqEff:r.reqEff,base:state.iron?ironCapAt(ds,di,r.tm):(r.rec.agents||0)/lensScale(ds)})):null;
+    DC.m.set(ds,r); return r; };
   const SH=scopeHc(), S0=state.settings, S=sc?{...S0,attrition:(+S0.attrition||0)*(1-sc.attrCut/100)}:S0, H0=SH.hc; // the answering skills' reps
   const ahtMul=sc?1-sc.ahtCut/100:1, eff2=sc?Math.max(0.05,(+sc.availPts||0)/100*(state.calib||1)+availShare({...S0,shrinkage:S0.shrinkage*(1-sc.shrinkCut/100),absence:S0.absence*(1-sc.absCut/100)})*(state.calib||1)):0;
   const P=histProductivity(), tgt=S0.target/100;
@@ -11982,9 +12082,8 @@ function hirePlanRaw(sc){
       let need=0,cap=0,needP=0;
       for(let ds=from;ds<=last&&ds<=state.horizonISO;ds=addDays(ds,1)){
         const di=fromISO(ds).getDay(); if(di>5||ds<=state.maxDate) continue;
-        const c=computeDay(ds); if(!c) continue;
-        for(const r of c.rows){ if(!r.rec||r.closed||r.exc||r.nodata) continue;
-          const base=state.iron?ironCapAt(ds,di,r.tm):(r.rec.agents||0)/lensScale(ds);
+        const rows=dayRows(ds,di); if(!rows) continue;
+        for(const r of rows){ const base=r.base;
           // the scenario: the same Erlang need with its shorter calls and its availability
           need+=sc?requiredAgentsMemo(r.rec.volume,Math.max(1,r.rec.aht*ahtMul),S0.target,S0,r.rec.mpt)/eff2:r.reqEff; cap+=base;
           if(P) needP+=r.rec.volume*tgt*r.rec.aht*ahtMul/(P*1800); } // the check: the target's calls ÷ the history's productivity
@@ -12512,7 +12611,7 @@ function saveData(){
       cap:Object.fromEntries(state.rosterCap), capW:Object.fromEntries(state.rosterCapWeekly),
       extraCols:state.extraCols, extraFmt:state.extraFmt, weekly:!!state._rosterWeekly,
       exceptions:[...state.exceptions], volAdj:state.volAdj,
-      iron:state.iron?{total:state.iron.total,
+      iron:state.iron?{total:state.iron.total,wk:state.iron.wk||null,
         emps:Object.fromEntries([...state.iron.emps].map(([n,v])=>[n,{...v,missing:[...v.missing]}]))}:null,
       meta:Object.fromEntries(state.rosterMeta), vac:state.vacations,
       schedRows:state.schedRows, valErr:state.validationErrors,
@@ -12536,7 +12635,7 @@ function loadData(){
     state.extraCols=s.extraCols||[]; state.extraFmt=s.extraFmt||{}; state._rosterWeekly=!!s.weekly;
     state.exceptions=new Set(s.exceptions||[]);
     state.volAdj=Array.isArray(s.volAdj)?s.volAdj:[];
-    state.iron=s.iron?{total:s.iron.total,
+    state.iron=s.iron?{total:s.iron.total,wk:s.iron.wk||null,
       emps:new Map(Object.entries(s.iron.emps||{}).map(([n,v])=>[n,{...v,missing:new Set(v.missing||[])}]))}:null;
     state.rosterMeta=new Map(Object.entries(s.meta||{}));
     state.vacations=s.vac||[]; state.schedRows=s.schedRows||[];
@@ -12580,7 +12679,7 @@ document.getElementById("confirmNo").addEventListener("click",()=>{
   document.getElementById("modalBg2").style.display="none";
 });
 document.getElementById("confirmYes").addEventListener("click",()=>{
-  try{ localStorage.removeItem(PERSIST); localStorage.removeItem(PERSIST_DATA); }catch(e){}
+  try{ localStorage.removeItem(PERSIST); localStorage.removeItem(PERSIST_DATA); localStorage.removeItem(PERSIST_NOW); }catch(e){}
   location.reload();
 });
 
@@ -12623,7 +12722,8 @@ buildDayWins();
 // item 11: cached datasets re-populate the workspace (sidur-only restores without touching forecast state)
 // no auto-demo: a fresh workspace starts EMPTY so real uploads are unmistakable —
 // sample data loads only via the explicit button on the Home page
-if(loadData()){ recordFriHist(); if(!(state.settings.ironHist||[]).length) recordIronHist(); // a sidur / iron saved before their memories existed joins them once
+try{ setNowSidur(JSON.parse(localStorage.getItem(PERSIST_NOW)||"null")); }catch(e){} // 📅 this week's kept sidur (renderAll drops it once the week is over)
+if(loadData()){ recordFriHist(); if(state.iron&&(!state.iron.wk||!(state.settings.ironHist||[]).length)) recordIronHist(sidurWeek()); // a sidur / iron saved before their memories (or the week) existed joins them once
   if(state.days.size) afterForecastLoad(); else { applyDataWeek(); updatePortalStatus(); renderAll(); } }
 else renderAll();
 document.getElementById("polEnable").checked=state.policy.enabled;
