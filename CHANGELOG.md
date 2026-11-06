@@ -4,6 +4,54 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### 📤 The monthly summary (Date Trends), polished
+
+- The window opened as "💲 Shadow price" (its title key `shTitle` was defined twice; the shadow price's won) — now its own
+  `shWinT`. The answer first: the picture and its buttons on top, the options folded under one line ("⚙ 3 months back · 2
+  ahead · 5 columns", remembered).
+- The picture says its time without words: no "Data" column — the forecast months are lighter, under a dashed line marked
+  "forecast"; the mixed month carries "*" ("measured through 28-Oct, forecast after"); the sub-line ends "measured through
+  28-Oct". The main metric is the app's target bar (fill toward the target, a navy tick at it), as in the Trends table.
+- Dates read the app's way in the picture (a canvas dropped the isolates: "2026-נוב׳-06").
+- Insights: no "strongest month — 0/26 days on target"; the forecast line is about the forecast months ("Forecast
+  November–January: 73.0%–74.0% — below the 90% target"), not a mostly-measured month; the courses are one line, all of
+  them ("+59 reps from 9 courses by 27-Jan — already in the forecast"; was the first two, "Course \"Course …\"").
+- The productivity column carries its unit (the Trends name: "calls / net hr"); a header that doesn't fit takes two lines.
+- The text copy (WhatsApp): a bold title, a dot per month (🟢 on target · 🟡 close · 🔴 below), the forecast months under
+  their own line.
+- Test: `tests/unit/share-summary.test.js`.
+
+### 🧭 The matrix toolbar, rethought: one row in three zones (matrix + Date Trends)
+
+- One row, three zones in a fixed order: ① when (‹ week › + where it stands vs today) · ② how the numbers read (🎧 ·
+  metric · current | optimized ✨ · ✎ edits) · ③ the forecast's assumptions + tools at the far end (🎓 · ↩ · attrition &
+  courses · ⋯). Measured: one line in every state, 1024–1920 px, Hebrew and English (was 2–3 lines: 82–128 px, the matrix
+  started up to 130 px lower).
+- The week list: "שבוע 27 · 05-יולי" (was a 316 px line, its dates reversed — "2026-יולי-05" — a select drops the
+  direction marks), grouped under בפועל / תחזית / סידור בלבד instead of "(תחזית)" on every line. "שבוע:" is gone.
+- Edits = ONE chip "✎ n" (only while there are some): hover = what changed, menu = ↺ back to the original · ⬇ the
+  what-if changes (were a badge + two links). The same chip on Date Trends.
+- ⋯ holds the rare tools: holidays & exceptions (while on, its switch shows in the row — one click out) and the demand
+  export (matrix) · the CSV (Date Trends).
+- Narrow rows: the switches keep their place and icon, their name moves into the hover (it starts with it); the 🎧
+  button keeps its icon (the skills in the hover); "↩ to this week" keeps the ↩.
+- Date Trends: the same end zone in the same order; the range = two dates with a dash (no "Start / End date" words).
+- Fix: an empty "✎" chip showed with no edits (`[hidden]` lost to the menu's display) · `/^d{4}-/` never matched, so a
+  sidur's dated weeks didn't join the week list from its capacity.
+
+### Matrix hover: only what the cell doesn't show · no crash from a huge number · files are read only
+
+- Matrix hover: one line — the day so far up to this half hour ("day so far (08:00–10:00): 77.9% · 648 calls"). Gone: the
+  day / date / hour (the headers + crosshair show them), the cell's % and measured / forecast, target · scheduled ·
+  needed (the cell shows reps/needed), the plain status sentence and the 👥 hint. A sentence stays only when the marks seem
+  to contradict the % (a short ring while on target · more reps yet below target); trainees and the metric note stay.
+  The daily row: only what it doesn't show (calls outside the window, returning calls, the cause).
+- A crash that reloaded the app on Home: Erlang B kept a factorial table as long as the largest agent count ever asked —
+  a huge number in the cell editor (an accidental paste) froze the tab and grew it by hundreds of MB. Now the standard
+  recurrence (same result, no table, faster) and the editor takes at most 50,000 calls / 5,000 reps a half hour.
+  A day-long session measured flat (≈25 MB, listeners and DOM steady).
+- Files are read only (checked: the loaded sidur stays writable and renamable while the page is open) — see DATA_PRIVACY.md.
+
 ### 📅 This week's sidur stays in the matrix while next week's is loaded · the iron and Friday memories survive alternating uploads
 
 - 📅 A manager loads next week's sidur to plan while this week runs. This week's sidur is now kept (on this computer,

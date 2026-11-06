@@ -108,6 +108,14 @@ them is not done.
 19. **Every mark has its key.** A chart or list that uses colors or shapes shows a small legend above it, in plain
     words ("Reps in the iron", "Needed by the forecast") — never colors the user has to guess.
 
+22. **A page toolbar is ONE row in three zones, always in this order** (matrix · Date Trends): ① *when* — the week /
+    range and where it stands vs today · ② *how the numbers read* — 🎧 skills, the metric, current vs optimized, and the
+    edits as ONE chip "✎ n" (only while there are some; its menu holds ↺ / ⬇) · ③ *the forecast's assumptions + tools*,
+    at the far end, in the same order on every page (🎓 · ↩ · attrition & courses · page extras · ⋯). Rare tools live in
+    ⋯ (holidays & exceptions, exports); a mode turned on from ⋯ shows in the row while it is on (its state + one click
+    out). A zone never breaks inside; on a narrow row the switches keep their place and icon and their name moves into the
+    hover — the row never takes a second line before the content does. A list shows its time zones as group headings
+    (בפועל · תחזית), not a suffix on every line.
 ## Product Design Principles
 
 1. Keep one-screen clarity
