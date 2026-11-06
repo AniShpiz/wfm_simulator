@@ -184,6 +184,10 @@ workforce filter lists legitimately show only "(all)" for this file.
 - Your own holidays: `settings.customHol` → `applyCustomHol` (wins over the Hebrew calendar,
   works with it off) and `customHolOn` (names); edited in the holidays table (`renderCustomHol`).
 - Date Trends charts: `renderTrendDash` + `trRelTile`, fed by the same rows as the table.
+- 📤 Monthly summary (`openShare` → `#shPanel`, title key `shWinT`): `shareMonths` → `shareInsights` (forecast lines about
+  `tag==="fc"` months only; courses = one line) → `shareCanvas` (no status column: forecast rows lighter under a dashed line,
+  the mixed month "*", the target bar; every canvas string through `cvDir` — a canvas drops isolates) + `shareText`
+  (WhatsApp: *title*, 🟢🟡🔴 per month). Columns = `SHARE_METRICS`; options folded in `#shOptsD` (`shareOpts().open`).
 - 📅 `renderSidurChip()` (in `renderAll`): the header chip `#sidurChip` = `sidurWeek()` (the loaded sidur's first date)
   + where it stands vs today's week; the ONE place every page shows which sidur is loaded. Click → Home.
 - 📈 Forecast-day productivity in `trendDayStat`: answered = Σ vol × the matrix's AR, capped at net hours × 3600 ×
@@ -231,6 +235,12 @@ workforce filter lists legitimately show only "(all)" for this file.
   for a forecast date with an iron: `ironCapAt` (today's team) × `lensScale` → else the file's
   history `rec.agents` (scaled by `lensScale` inside `forecastDay`).
 - `lensFrom()` = the projection's day 0: today, or the first forecast day when the file ends before today.
+- 🧭 The page toolbar (`.toolbar.tbBar`, matrix + Date Trends) = three `.tbZone`s (DESGIN rule 22); `.tbEnd` = the shared end
+  zone (↩ `.cuBtn` · `.lensBtn` · … · `.moreBtn` ⋯). A switch = `<span class="swI">icon</span><span class="swL">name</span>`; an
+  `@container` rule hides `.swL` on a narrow row (its hover starts with the name). `edChip(id,n,show,tip)` = the "✎ n"
+  edits chip (`#mxEdits`, `#trEdits`). Holidays mode: `setExcMode` (on from ⋯ `#excModeOn`, the row's `#excModeBtn` = off).
+  The week list: `wkOptTxt` ("Week 27 · 05-Jul", an LTR embedding — a <select> drops isolates) in `<optgroup>`s per
+  time zone (wkGrpAct / wkGrpFc / wkGrpOut). `.splitbtn[hidden]` must stay display:none.
 - `settings.capLens`: "today" (default) | "real" — the single `.lensBtn` switch, rendered by
   `syncLens` on both pages, ALWAYS shown in the same place (it acts on forecast days without a sidur — its hover says so).
 - 🎓 `traineeAt(ds,di,tm)` from `state.trainees[Sunday]` ({n,s,e,days,pct}, saved with the data) is
@@ -282,8 +292,8 @@ workforce filter lists legitimately show only "(all)" for this file.
   `whoOn(ds,tm)` = the day's sidur (`schedRows`), else the iron's weekday (Friday via `friW`, leave out), 🎧 skills like
   capacity. Tick who isn't on the floor (`state._whoMiss`, session only) → "missing m of n" + the half hour's rate
   without them (`evalInterval` delta on the shown value) + 📋 one `tlMsg` per team. Silent until someone is ticked.
-- Matrix: hover = a crosshair (row + column + both headers, `.xh` / `.xhc`); a cell's tooltip starts with its day, date
-  and half hour (09:30–10:00); the cumulative line ends at the interval's end (`addHalf`).
+- Matrix: hover = a crosshair (row + column + both headers, `.xh` / `.xhc`); a cell's tooltip = only what the cell doesn't show:
+  the day so far up to its half hour (`mxCum`), a sentence only when the marks seem to contradict the %, trainees; the cumulative line ends at the interval's end (`addHalf`).
 - 📅 `planTo()` (settings.planTo, else `planToAuto()` = the forecast's end, 30 days … 6 months): the What-If curve,
   the capacity outlook, `hirePlanRaw`'s months and the report all run to it. `shAbs(k,v)` = a lever step in plain numbers.
 - Course rules: `siteAtOnce(s)` (settings.siteAtOnce, 1) = courses a location runs together; `courseOverlaps()`

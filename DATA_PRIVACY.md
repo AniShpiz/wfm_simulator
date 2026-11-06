@@ -13,6 +13,11 @@ No server backend is required for core functionality.
 - Parsing and calculations run in-browser.
 - The app does not require cloud upload to function.
 
+- Files are only READ, once, into memory (`FileReader`); the app never writes, renames or locks them and creates no
+  `~$` owner file. Checked in Edge: with the page still open, the loaded sidur opens for exclusive writing and renames.
+  "Locked for editing by <you>" in Excel comes from Excel itself (another open window, a leftover `EXCEL.EXE`, a stale
+  `~$` file) or OneDrive syncing — not from the app.
+
 ## Local Storage
 
 The app stores workspace/data state in browser localStorage to improve continuity across refreshes.

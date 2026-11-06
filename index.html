@@ -81,6 +81,23 @@ input.sw:disabled{opacity:.45;cursor:default}
 .btn.sw.on::after{background:radial-gradient(circle at calc(100% - 9px) 50%,var(--navy) 6px,transparent 6.5px),#e7edf4}
 [dir=rtl] .btn.sw.on::after{background:radial-gradient(circle at 9px 50%,var(--navy) 6px,transparent 6.5px),#e7edf4}
 .btn.ghost.sw.on{border-color:var(--navy);color:var(--navy)}
+/* THE PAGE TOOLBAR (matrix · Date Trends): ONE row, three zones — ① when · ② how the numbers read · ③ the forecast's
+   assumptions + tools, at the far end, in the same order on both pages. A zone never breaks inside; on a narrow row ③'s
+   switches keep their place and icon, and their name moves into the hover (it starts with it). Rare tools sit in ⋯. */
+.tbBar{container-type:inline-size;gap:8px 14px} .splitbtn[hidden]{display:none} /* hidden wins over the menu's display */
+.tbZone{display:inline-flex;align-items:center;gap:6px;flex-wrap:nowrap}
+.tbZone.tbEnd{margin-inline-start:auto}
+.tbBar .btn.sw .swI{font-size:.95em;line-height:1}
+.tbBar #skillScopeBtn{max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.edChip > button{color:var(--navy);border-color:#9cc3ea;background:#e8f3fd;font-weight:700}
+.moreBtn > button{padding-inline:11px;font-weight:800;letter-spacing:1px} .splitbtn.moreBtn > button::after,.splitbtn.moreBtn.open > button::after{content:none}
+.splitbtn .menu.pad .mnItem{border-radius:6px;padding:8px 10px;font-weight:600;color:var(--navy)}
+.splitbtn .menu.pad .mnItem:hover{background:var(--sky-soft);color:var(--navy)}
+.splitbtn .menu .mnSep{height:1px;background:var(--border);margin:8px 0}
+.splitbtn .menu .mnH{font-size:.8rem;font-weight:700;color:var(--navy);margin:0 0 6px}
+.dpRange{gap:4px}
+@container (max-width:1240px){ .tbEnd .btn.sw .swL{display:none} .tbEnd .btn.sw{gap:6px;padding-inline:9px} }
+@container (max-width:1060px){ .tbBar .wkctx .jmpL,.tbBar #matrixViewSeg .swL{display:none} .tbBar #skillScopeBtn{max-width:60px;padding-inline:9px} .tbBar .seg button{padding:5px 9px} .tbZone{gap:4px} .tbBar{column-gap:10px} }
 .btn{background:var(--sky);color:#06233f;border:none;padding:8px 15px;border-radius:7px;font-weight:600;font-size:.86rem;cursor:pointer}
 .btn:hover{filter:brightness(1.07)}
 .btn.navy{background:var(--navy);color:#fff}
@@ -717,7 +734,8 @@ details.foldCard:not([open])>summary h3::before{transform:rotate(-90deg)} [dir=r
 .xChips{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;align-items:center;margin-top:8px;font-size:.72rem;color:var(--muted)}
 .xChip{border:1px dashed #b9c7d6;border-radius:999px;padding:2px 9px;background:#fff;cursor:help;color:#4a5a6e}
 .xChip.on{border-style:solid;border-color:#9fd8b8;background:#e9f8ef;color:#0f6a3f;font-weight:600}
-.shOpts{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:0 0 10px;padding:8px 10px;background:#f6f9fc;border:1px solid var(--border);border-radius:8px}
+.shOptsD{margin:12px 0 0} .shOptsD>summary{cursor:pointer;font-size:.8rem;font-weight:600;color:var(--navy);padding:4px 0} .shOptsD[open]>summary{margin-bottom:6px}
+.shOpts{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:0;padding:8px 10px;background:#f6f9fc;border:1px solid var(--border);border-radius:8px}
 .shOpts input[type=number]{width:52px}.shOpts #shNote{flex:1 1 260px}
 .shDrag{cursor:grab}.shDrag.dragging{opacity:.4}.shDrag.dropAt{box-shadow:inset 3px 0 0 var(--navy)}
 [dir=rtl] .shDrag.dropAt{box-shadow:inset -3px 0 0 var(--navy)}
@@ -853,67 +871,74 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
   <!-- ============ MATRIX ============ -->
   <section class="page" id="page-matrix">
     <div class="card">
-      <div class="toolbar">
-        <label data-i18n="weekLabel">Week:</label>
-        <button class="btn ghost wknav" id="wkPrev" title="◀">‹</button>
-        <select id="weekSelect" style="min-width:238px"></select>
-        <button class="btn ghost wknav" id="wkNext" title="▶">›</button>
-        <!-- where is this week vs TODAY (past / current / future) + where actual ends -->
-        <span class="pill wkctx" id="wkCtx" style="display:none"></span>
-        <!-- 🎓 trainees answering this week (the instructor's number) — counted at a share inside a window you set -->
-        <div class="splitbtn" id="trnWrap"><button class="btn ghost" id="trnBtn" type="button" data-i18n-title="trnTip">🎓</button>
-          <div class="menu pad trnMenu" id="trnMenu">
-            <div class="trnRow"><label data-i18n="trnHours">Hours</label><span id="trnPre" class="trnPre"></span></div>
-            <div class="trnRow" id="trnCustom"><span></span><span><select id="trnS" class="hpIn" style="width:76px"></select> – <select id="trnE" class="hpIn" style="width:76px"></select></span></div>
-            <div class="trnLbl" data-i18n="trnN">Trainees answering each day</div>
-            <div id="trnDays" class="trnGrid"></div>
-            <div class="trnRow"><label for="trnPct" data-i18n="trnPct">Counted as</label><span><input type="number" id="trnPct" min="10" max="100" step="5" class="hpIn" style="width:56px"> %</span></div>
-            <p class="mini" id="trnSum"></p>
-            <div class="trnActs"><button type="button" class="btn navy" id="trnSave" data-i18n="trnSave">✓ Save</button><button type="button" class="linklike" id="trnClear" data-i18n="trnClear">Remove</button></div>
-          </div></div>
-        <span id="mxFlags" style="display:contents"></span>
-        <span class="pill" id="editBadge" style="display:none"></span>
-        <button class="linklike" id="wiExport" style="display:none" data-i18n="wiExport">⬇ What-if changes</button>
-        <button class="linklike" id="resetEdits" style="display:none" data-i18n="resetEdits">↺ Reset to Original Forecast</button>
-        <div class="splitbtn" id="skillScopeWrap" style="display:none">
-          <button class="btn ghost" id="skillScopeBtn"></button>
-          <div class="menu pad" id="skillScopeMenu" style="min-width:230px"></div>
-        </div>
-        <div class="seg" id="metricSeg">
-          <button data-metric="tsf" id="btnTsf">TSF</button>
-          <button data-metric="ar" class="active" data-i18n="metricAr">Answer Rate %</button>
-        </div>
-        <!-- appears only after the optimizer runs: preview the optimized sidur's coverage
-             on this same grid, non-destructively (the loaded sidur is untouched) -->
-        <div class="seg" id="matrixViewSeg" style="display:none">
-          <button data-view="original" class="active" data-i18n="mxViewOrig">Current sidur</button>
-          <button data-view="optimized" data-i18n="mxViewOpt">Optimized</button>
-        </div>
-        <span style="margin-inline-start:auto;display:inline-flex;align-items:center;gap:4px">
-          <!-- ONE switch for forecast weeks without a sidur (off = today's team) — same place as on Date Trends (syncLens) -->
-          <button type="button" class="btn ghost sw cuBtn" aria-pressed="true" hidden data-i18n="cuBtn">↩ Returning calls</button>
-          <button type="button" class="btn ghost sw lensBtn" aria-pressed="false" data-i18n="lensBtn">Include attrition &amp; courses</button>
-          <button class="btn ghost sw" id="excModeBtn" aria-pressed="false" data-i18n="excBtn" data-i18n-title="tipExc">🗓 Holiday / Exception Control</button></span>
-        <div class="splitbtn" id="expWrap">
-          <button class="btn ghost" id="expToggle" data-i18n="exportDemand">⬇ Export Demand Profile</button>
-          <div class="menu pad">
-            <div class="frow"><label data-i18n="expMetricL">Content</label>
-              <select id="expMetric" style="width:170px">
-                <option value="current" data-i18n="expMCur">Current view</option>
-                <option value="tsf">TSF</option>
-                <option value="ar" data-i18n="metricAr">Answer Rate %</option>
-                <option value="staff" data-i18n="expMStaff">Staffing (scheduled / required)</option>
-                <option value="vol" data-i18n="expMVol">Inbound calls</option>
-                <option value="all" data-i18n="expMAll">All metrics</option>
-              </select></div>
-            <div class="frow"><label data-i18n="expResL">Resolution</label>
-              <select id="expRes" style="width:170px">
-                <option value="half" data-i18n="expHalf">Half-hourly intervals</option>
-                <option value="hourly" data-i18n="expHourly">Hourly consolidation</option>
-              </select></div>
-            <button class="btn navy wide" id="expGo" style="margin-top:8px" data-i18n="expGo">⬇ Export CSV</button>
+      <!-- ONE row, three zones, always in this order (Date Trends shares zone ③):
+           ① when — the week and where it stands vs today · ② how the numbers read · ③ the forecast's assumptions + tools.
+           Rare tools live in ⋯; an edit state is one chip; on a narrow screen ③'s switches keep their place and icon. -->
+      <div class="toolbar tbBar">
+        <span class="tbZone">
+          <button class="btn ghost wknav" id="wkPrev" title="◀">‹</button>
+          <select id="weekSelect"></select>
+          <button class="btn ghost wknav" id="wkNext" title="▶">›</button>
+          <!-- where is this week vs TODAY (past / current / future) — the 📈 shift and "↩ this week" live inside it -->
+          <span class="pill wkctx" id="wkCtx" style="display:none"></span>
+        </span>
+        <span class="tbZone">
+          <div class="splitbtn" id="skillScopeWrap" style="display:none">
+            <button class="btn ghost" id="skillScopeBtn"></button>
+            <div class="menu pad" id="skillScopeMenu" style="min-width:230px"></div>
           </div>
-        </div>
+          <div class="seg" id="metricSeg">
+            <button data-metric="tsf" id="btnTsf">TSF</button>
+            <button data-metric="ar" class="active" data-i18n="metricAr">Answer Rate %</button>
+          </div>
+          <!-- appears only after the optimizer runs: the optimized sidur's coverage on this same grid (the loaded sidur is untouched) -->
+          <div class="seg" id="matrixViewSeg" style="display:none">
+            <button data-view="original" class="active" data-i18n="mxViewOrig">Current</button>
+            <button data-view="optimized" data-i18n="mxViewOpt">Optimized</button>
+          </div>
+          <!-- the week's edits: ONE chip, only while there are some — what was changed + its actions -->
+          <div class="splitbtn edChip" id="mxEdits" hidden><button class="btn ghost" type="button" id="mxEditsBtn"></button>
+            <div class="menu"><button type="button" id="wiExport" data-i18n="wiExport">⬇ What-if changes</button><button type="button" id="resetEdits" data-i18n="resetEdits">↺ Reset to Original Forecast</button></div></div>
+          <span id="mxFlags" style="display:contents"></span>
+        </span>
+        <span class="tbZone tbEnd">
+          <!-- 🎓 trainees answering this week (the instructor's number) — counted at a share inside a window you set -->
+          <div class="splitbtn" id="trnWrap"><button class="btn ghost" id="trnBtn" type="button" data-i18n-title="trnTip">🎓</button>
+            <div class="menu pad trnMenu" id="trnMenu">
+              <div class="trnRow"><label data-i18n="trnHours">Hours</label><span id="trnPre" class="trnPre"></span></div>
+              <div class="trnRow" id="trnCustom"><span></span><span><select id="trnS" class="hpIn" style="width:76px"></select> – <select id="trnE" class="hpIn" style="width:76px"></select></span></div>
+              <div class="trnLbl" data-i18n="trnN">Trainees answering each day</div>
+              <div id="trnDays" class="trnGrid"></div>
+              <div class="trnRow"><label for="trnPct" data-i18n="trnPct">Counted as</label><span><input type="number" id="trnPct" min="10" max="100" step="5" class="hpIn" style="width:56px"> %</span></div>
+              <p class="mini" id="trnSum"></p>
+              <div class="trnActs"><button type="button" class="btn navy" id="trnSave" data-i18n="trnSave">✓ Save</button><button type="button" class="linklike" id="trnClear" data-i18n="trnClear">Remove</button></div>
+            </div></div>
+          <button type="button" class="btn ghost sw cuBtn" aria-pressed="true" hidden><span class="swI">↩</span><span class="swL" data-i18n="cuBtnL">Returning calls</span></button>
+          <button type="button" class="btn ghost sw lensBtn" aria-pressed="false"><span class="swI">🔭</span><span class="swL" data-i18n="lensBtn">Attrition &amp; courses</span></button>
+          <!-- the holidays mode shows here only while it is on (its state + one click out); it is turned on from ⋯ -->
+          <button class="btn ghost sw on" id="excModeBtn" aria-pressed="true" hidden data-i18n-title="tipExc"><span class="swI">🗓</span><span class="swL" data-i18n="excBtnL">Holidays &amp; exceptions</span></button>
+          <div class="splitbtn moreBtn" id="mxMore"><button class="btn ghost" type="button" data-i18n-title="moreTipMx">⋯</button>
+            <div class="menu pad">
+              <button type="button" class="mnItem" id="excModeOn" data-i18n="excBtn">🗓 Holiday / Exception Control</button>
+              <div class="mnSep"></div>
+              <div class="mnH" data-i18n="exportDemand">⬇ Export Demand Profile</div>
+              <div class="frow"><label data-i18n="expMetricL">Content</label>
+                <select id="expMetric" style="width:170px">
+                  <option value="current" data-i18n="expMCur">Current view</option>
+                  <option value="tsf">TSF</option>
+                  <option value="ar" data-i18n="metricAr">Answer Rate %</option>
+                  <option value="staff" data-i18n="expMStaff">Staffing (scheduled / required)</option>
+                  <option value="vol" data-i18n="expMVol">Inbound calls</option>
+                  <option value="all" data-i18n="expMAll">All metrics</option>
+                </select></div>
+              <div class="frow"><label data-i18n="expResL">Resolution</label>
+                <select id="expRes" style="width:170px">
+                  <option value="half" data-i18n="expHalf">Half-hourly intervals</option>
+                  <option value="hourly" data-i18n="expHourly">Hourly consolidation</option>
+                </select></div>
+              <button class="btn navy wide" id="expGo" style="margin-top:8px" data-i18n="expGo">⬇ Export CSV</button>
+            </div></div>
+        </span>
       </div>
       <div class="banner good" id="decayBanner"></div>
       <div class="tablewrap"><table id="matrixTable"></table></div>
@@ -973,20 +998,25 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
       <h2><span data-i18n="trendsTitle">Date Trends — history &amp; forward projection</span>
         <!-- the guidance line is opt-in: a quiet "?" reveals it, nothing nags by default -->
         <button class="linklike trHelp" id="trHelpBtn" type="button" data-i18n-title="trHelpTip" title="How to adjust the forecast">?</button></h2>
-      <div class="toolbar">
+      <div class="toolbar tbBar">
         <!-- one control for the time grain; each grain opens on its own sensible window -->
         <div class="seg" id="trGroup"><button type="button" data-g="day" class="active" data-i18n="trGDay">Days</button><button type="button" data-g="week" data-i18n="trGWeek">Weeks</button><button type="button" data-g="month" data-i18n="trGMonth">Months</button></div>
-        <label data-i18n="trFromL">Start Date</label><input type="date" id="trFrom">
-        <label data-i18n="trToL">End Date</label><input type="date" id="trTo">
-        <button class="linklike" id="resetTrends" style="display:none" data-i18n="resetEdits">↺ Reset to Original Forecast</button>
+        <span class="tbZone dpRange"><input type="date" id="trFrom"><span class="mini">–</span><input type="date" id="trTo"></span> <!-- the range, start first: two dates, no words -->
+        <div class="splitbtn edChip" id="trEdits" hidden><button class="btn ghost" type="button" id="trEditsBtn"></button><div class="menu"><button type="button" id="resetTrends" data-i18n="resetEdits">↺ Reset to Original Forecast</button></div></div>
         <!-- the charts / summary controls, together: attrition & courses · charts (the group holds its place) -->
-        <span style="margin-inline-start:auto;display:inline-flex;gap:8px;align-items:center"><button type="button" class="btn ghost sw cuBtn" aria-pressed="true" hidden data-i18n="cuBtn">↩ Returning calls</button><button type="button" class="btn ghost sw lensBtn" aria-pressed="false" data-i18n="lensBtn">Include attrition &amp; courses</button><button class="btn ghost sw" id="trDashBtn" type="button" aria-pressed="true" data-i18n="trDashBtn">📊 Charts</button></span>
-        <button class="btn navy" id="trShareBtn" data-i18n="trShare">📤 Monthly summary</button>
-        <button class="btn ghost" id="exportTrends" data-i18n="exportCsv">⬇ Download CSV</button>
+        <span class="tbZone tbEnd"><button type="button" class="btn ghost sw cuBtn" aria-pressed="true" hidden><span class="swI">↩</span><span class="swL" data-i18n="cuBtnL">Returning calls</span></button><button type="button" class="btn ghost sw lensBtn" aria-pressed="false"><span class="swI">🔭</span><span class="swL" data-i18n="lensBtn">Attrition &amp; courses</span></button><button class="btn ghost sw" id="trDashBtn" type="button" aria-pressed="true"><span class="swI">📊</span><span class="swL" data-i18n="trDashL">Charts</span></button><button class="btn navy" id="trShareBtn" data-i18n="trShare">📤 Monthly summary</button><div class="splitbtn moreBtn" id="trMore"><button class="btn ghost" type="button" data-i18n-title="moreTipTr">⋯</button><div class="menu"><button type="button" id="exportTrends" data-i18n="exportCsv">⬇ Download CSV</button></div></div></span>
       </div>
       <!-- shareable monthly snapshot (opened in the shared modal): image + text, one click each -->
       <div id="exPanel" class="mpanel" data-tkey="exTitle" hidden></div>
-      <div id="shPanel" class="mpanel" data-tkey="shTitle" hidden>
+      <div id="shPanel" class="mpanel" data-tkey="shWinT" hidden>
+        <!-- the answer first: the picture and its buttons — the knobs after, folded (one click, remembered) -->
+        <img id="shImg" alt="" style="width:100%;border:1px solid var(--border);border-radius:8px;display:block">
+        <div class="toolbar" style="margin:10px 0 0">
+          <button class="btn navy" id="shCopyImg" type="button" data-i18n="shCopyImg">📋 Copy image</button>
+          <button class="btn ghost" id="shPng" type="button" data-i18n="shPng">⬇ PNG</button>
+          <button class="btn ghost" id="shCopyTxt" type="button" data-i18n="shCopyTxt">📋 Copy as text</button>
+        </div>
+        <details class="shOptsD" id="shOptsD"><summary id="shOptsSum"></summary>
         <!-- every option re-draws the preview instantly; choices are remembered for next time -->
         <div class="shOpts">
           <label class="mini"><span data-i18n="shBack">Months back</span> <input type="number" id="shBack" min="1" max="12"></label>
@@ -994,13 +1024,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
           <label class="chk mini"><input type="checkbox" class="sw" id="shIns"> <span data-i18n="shInsL">Insights</span></label>
           <div id="shMetrics" class="skChips" style="margin:0"></div>
           <input type="text" id="shNote" maxlength="140" data-i18n-ph="shNotePh" placeholder="Add a line for the reader (optional)">
-        </div>
-        <img id="shImg" alt="" style="width:100%;border:1px solid var(--border);border-radius:8px;display:block">
-        <div class="toolbar" style="margin:10px 0 0">
-          <button class="btn navy" id="shCopyImg" type="button" data-i18n="shCopyImg">📋 Copy image</button>
-          <button class="btn ghost" id="shPng" type="button" data-i18n="shPng">⬇ PNG</button>
-          <button class="btn ghost" id="shCopyTxt" type="button" data-i18n="shCopyTxt">📋 Copy as text</button>
-        </div>
+        </div></details>
       </div>
       <!-- one quiet line of guidance: how to adjust a forecast day, and where known events belong -->
       <p class="mini" id="trHint" style="display:none"></p>
@@ -1488,10 +1512,10 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
   <h4><span id="ceTitle"></span> <span class="ceSrc" id="ceSrc"></span></h4>
   <!-- live mirror of the cell (scheduled · needed · metric) — shows the effect BEFORE applying -->
   <div class="ceLive" id="ceLive"></div>
-  <div class="row"><label id="ceVolL"></label><input type="number" id="ceVol" min="0" step="1"></div>
+  <div class="row"><label id="ceVolL"></label><input type="number" id="ceVol" min="0" max="50000" step="1"></div>
   <div class="ceHint" id="ceVolH"></div>
   <div class="row"><label id="ceAhtL"></label><input type="text" id="ceAht" inputmode="numeric" placeholder="mm:ss" style="direction:ltr"></div>
-  <div class="row" id="ceAgRow"><label id="ceAgL"></label><input type="number" id="ceAg" min="0" step="0.5"><b id="ceAgRO" style="display:none"></b></div>
+  <div class="row" id="ceAgRow"><label id="ceAgL"></label><input type="number" id="ceAg" min="0" max="5000" step="0.5"><b id="ceAgRO" style="display:none"></b></div>
   <div class="ceHint" id="ceAgH"></div>
   <div class="row" id="ceFutRow" style="display:none"><label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox" class="sw" id="ceFut" checked><span id="ceFutL"></span></label></div>
   <div class="acts">
@@ -1677,16 +1701,16 @@ en:{
   legShort:"understaffed — fewer scheduled than the target needs",
   legOver:"overstaffed — more than the target needs (answer rate won't be 100% — that's normal)",
   stateUnder:"Understaffing", stateOver:"Overstaffing", stateBalanced:"Balanced",
-  mxTipHead:"{m}: {v} — {src}", mxSrcMeas:"measured", mxSrcFc:"forecast",
-  mxTipBody:"target {t}% · scheduled {s} · needed for target {r}",
-  mxVerdOverOk:"More reps than the target needs — service is above target (100% is neither realistic nor economical).",
+  
+  
+  
   mxVerdOverLow:"More reps than the model needs, yet measured service came in below target — check that day's real abandonment and no-shows.",
   mxVerdShortOk:"Fewer reps than the model wants, yet measured service still met the target that day.",
   mxVerdShortOkMeas:"Fewer in the sidur than the model sizes for, yet measured service met the target. Usual reasons: people outside the sidur/queue scope also answered (other skills, overtime), or a low-volume slot where the model is cautious.",
   mxVerdShortOkFc:"Fewer than the model sizes for, yet the forecast is on target — this slot has historically done better than the raw model, and the % includes that. Treat the ring as a caution, not a gap.",
   mxVerdMetric:"Note: 'needed' is sized for your primary metric ({p}), not the metric shown here.",
-  mxVerdShortLow:"Short of the reps the target needs — service is below target here.",
-  mxVerdBalanced:"Staffing matches what the target needs.",
+  
+  
   setPrimary:"Primary Target Metric",
   tipPrimary:"The metric everything is measured against: answer speed (TSF) or share of calls answered (answer rate).",
   optTsf:"TSF — speed of answer", optAr:"Answer Rate — capture every call",
@@ -1709,7 +1733,7 @@ en:{
   tipShrink:"Unavailable time of reps who did come: breaks, training, meetings (typically 10–20%). Productive = present × (1 − unavailable).",
   resetWs:"↺ Reset workspace",
   resetNote:"Clears saved settings, policies, courses, simulations and cached datasets from this browser.",
-  weekLabel:"Week:", thInterval:"Interval",
+  thInterval:"Interval",
   weekOpt:"Week {w} | {a} – {b}", forecastTag:" (forecast)",
   wkNow:"This week", wkPast1:"Last week", wkPast:"{n} weeks ago", wkFut1:"Next week", wkFut:"In {n} weeks",
   wkActUntil:"actual through {d}, forecast after", wkNoAct:"no actual data yet — forecast", wkJump:"Jump to the current week", wkJumpShort:"↩ this week", wkNoJump:"The current week is outside your data — the forecast reaches {d}. Load a newer forecast file to view it.",
@@ -1730,7 +1754,7 @@ en:{
   legEdit:"Click any cell to edit values.",
   closed:"Closed", noData:"—",
   trendsTitle:"Date Trends — history & forward projection",
-  trFromL:"Start Date", trToL:"End Date",
+  
   trFcNote:"Rows beyond your last data date are forward projections (Holt volume forecast + 4-week AHT average).",
   sumRow:"Total",
   thDate:"Date", thAr:"Answer Rate %", thUtil:"Projected Occupancy Rate %",
@@ -1867,7 +1891,7 @@ en:{
   skipRVol:"invalid call volume", skipRAht:"invalid handle time",
   auditDl:"⬇ Download all {n} skipped rows (CSV with reasons)",
   fcAuditWarn:"Data audit:", auditImp:"{n} intervals with more answered than offered calls (AR>100% — capped)", auditAht:"{n} intervals with AHT outside 1–60 min", auditFar:"{n} dates more than ~13 months from today — check the date column format",
-  mxViewOrig:"Current sidur", mxViewOpt:"Optimized",
+  mxViewOrig:"Current", mxViewOpt:"Optimized",
   exTitle:"How the sidur was moved", exHow:"Each shift keeps its length and slides up to 2 hours — out of surplus, toward where reps were missing.",
   exSum:"This day: {n} shifts moved from {from} to {to} — the day’s shortage fell from {a} to {b} rep-hours.", exNone:"No shift needed moving on this day.",
   exBefore:"before", exAfter:"after ✓", exReplayTip:"Play again", schPrepT:"⚙ Before running", prepReq:"Required", friReqT:"Last Friday — who worked", friRotT:"Friday rotation", prepReqFri:"Required: last Friday", conPerRepL:"Up to", conPerRepR:"constraints per rep a week (vacation not counted)", conTplBtn:"⬇ template for the managers", conTplNone:"No reps to list — load an iron or a sidur first", conTplT:"Constraints — week {w} ({a}–{b}) · up to {p} changes per rep (vacation not counted)", conXlT:"Too many changes", conXlErr:"Up to {p} changes per rep a week (vacation not counted). A red row = over the limit.", conCutN:"{n} reps above {p} — only their first {p} days count; not applied", schConCut:"{c} beyond the limit of {p} not applied", conTplHow:"Each cell = the rep's shift from the iron. Can't come → delete it · only part of it → change the hours · vacation → write vacation. Leave the rest as is.", conTplTeam:"Team manager", conTplName:"Rep name", conTplFile:"constraints week {w}", conTplSheet:"Constraints w{w}", conOverRep:"{n} reps above {p} constraints", conOverDay:"{d}: {n} reps limited, the teams' total for the day is {q}", schConReps:"{r} reps", schConBad:"{b} cells not understood — left out", schPrepCon:"{n} constraints", schPrepRules:"{n} coverage rules", exLgMiss:"short (darker = more)", exLgOver:"surplus", exLgOk:"balanced", exLgShift:"shift (×n identical)", exLgWas:"where it was", exMoreLanes:"+{n} more move patterns — see who moved", exCellGap:"short {b} → {a}", exWho:"Who moved ({n})", exReplay:"▶ Replay", exMore:"+{n} more moved shifts on this day", exOpen:"How this day's shifts moved",
@@ -2086,16 +2110,16 @@ en:{
   grpTag_act:"actual", grpTag_fc:"forecast", grpTag_mix:"actual + forecast", trDrill:"Click to see this period's days",
   wkLbl:"Week {w} · {a}–{b}", trShare:"📤 Share summary", trBackTip:"Back to the grouped view (Backspace)",
   shBack:"Months back", shDragTip:"Click to show · drag to reorder", shAhead:"Months ahead", shInsL:"Insights", shNotePh:"Add a line for the reader (optional)", shColGross:"Hours to schedule", shColAht:"AHT",
-  shTitle:"📤 Monthly summary", shIntro:"How we did and where we're heading, ready to send — the courses ahead included. Your choices are remembered.",
+  shWinT:"📤 Monthly summary", shThrough:"measured through {d}", shFcStart:"forecast", shMixNote:"* measured through {d}, forecast after", insRiskAll:"Forecast {m}–{z}: {v}–{w} — below the {t}% target.", insRiskSome:"Forecast: {k} of the next {n} months below the {t}% target — the lowest {m} ({v}).", insCourse1:"On the way: +{n} reps from \"{c}\" on {d} — already in the forecast.", insCourses:"On the way: +{n} reps from {k} courses by {d} — already in the forecast.", shOptsSum:"{b} months back · {a} ahead · {n} columns", shIntro:"How we did and where we're heading — ready to send, the courses ahead included.",
   shCopyImg:"📋 Copy image", shPng:"⬇ PNG", shCopyTxt:"📋 Copy as text", shCopied:"Image copied — paste it in WhatsApp / email", shCopiedTxt:"Summary text copied",
   shCopyFail:"This browser blocked the clipboard — use ⬇ PNG instead",
   shHead:"Call center — monthly summary", shSub:"{m} target {t}% · {a} – {b}", shFoot:"WFM Simulator · {d}",
-  shColMonth:"Month", shColStatus:"Data", shColOcc:"Occupancy", shColProd:"Productivity", shColVol:"Calls",
+  shColMonth:"Month", shColStatus:"Data", shColOcc:"Occupancy", shColVol:"Calls",
   shLine:"{m} ({s}): {P} {v} · {a}/{n} days on target · occupancy {o} · productivity {p}",
   insMoM:"{P} in {m}: {v} ({d} pts vs {p}).", insOne:"{P} in {m}: {v}.", insBest:"Strongest month: {m} — {a}/{n} days on target.",
   insRisk:"Forecast: {m} at {v} — below the {t}% target.", insOk:"Forecast: on target in the next {n} month(s).",
-  insCourse:"Course \"{c}\" joins on {d} (+{n} reps) — already in the forecast.",
-  trHint:"Forecast rows: click the calls number to adjust a single day. Know of an upcoming surge (campaign, vendor change)?", lensBtn:"Include attrition & courses", trnTip:"Reps in course answering this week (from the instructor)", trnN:"Reps in course answering each day", trnHours:"Hours", trnDays:"Days", trnPct:"Counted as", trnSave:"✓ Save", trnClear:"Remove", trnSumTxt:"Adds up to ~{a} reps, {s}–{e}", trnCell:"incl. {t} reps in course ({n} × {p}%)", tipLens:"Off: your team as it is today (the iron). On: minus monthly attrition, plus course graduates. Only for weeks without a sidur.", lensWeekTip:"This week vs today: +{g} course graduates · −{l} leaving",
+  
+  trHint:"Forecast rows: click the calls number to adjust a single day. Know of an upcoming surge (campaign, vendor change)?", lensBtn:"Attrition & courses", cuBtnL:"Returning calls", excBtnL:"Holidays & exceptions", trDashL:"Charts", weekOptS:"Week {w} · {a}", wkGrpAct:"Measured", wkGrpFc:"Forecast", wkGrpOut:"Sidur only", moreTipMx:"More: holidays & exceptions · export the demand", moreTipTr:"More: download CSV", trnTip:"Reps in course answering this week (from the instructor)", trnN:"Reps in course answering each day", trnHours:"Hours", trnDays:"Days", trnPct:"Counted as", trnSave:"✓ Save", trnClear:"Remove", trnSumTxt:"Adds up to ~{a} reps, {s}–{e}", trnCell:"incl. {t} reps in course ({n} × {p}%)", tipLens:"Off: your team as it is today (the iron). On: minus monthly attrition, plus course graduates. Only for weeks without a sidur.", lensWeekTip:"This week vs today: +{g} course graduates · −{l} leaving",
   tipEv:"For a known surge history can't predict: total extra calls and working days. Front-loaded = most calls early, then fading.",
   cleanNote:"🧹 {k} outlier points auto-clipped (billing peaks kept)",
   trShowMore:"Show {k} more days ({r} remaining) ▼",
@@ -2121,7 +2145,7 @@ en:{
   faDown:"📉 Calls fell {p}% in the last {n} days — the next days are lowered to match, easing back over {h}.",
   faCalm:"The last days match the forecast.", faRetryNow:"Tomorrow's forecast includes ~{n} calls from people who hung up and will call again.", faNoAns:"With an answered-calls column in the queue file, callers who call again are counted too.",
   faFoot:"Window {a}–{b} · usual abandon rate {r}. Each new day of data measures it again.", faTipAct:"Actual {n}", faTipExp:"The model expected {n}", faTipBack:"of them callbacks ~{n}", faLgUp:"More calls than forecast", faLgDn:"Fewer calls than forecast", faMore:"details",
-  trDashBtn:"📊 Charts", trPickL:"Show:", relT:"How they relate", trDashHint:"hover = the period's numbers · click = open it", trDashFew:"Pick a longer range to see trends.", trTarget:"target {t}%",
+  trPickL:"Show:", relT:"How they relate", trDashHint:"hover = the period's numbers · click = open it", trDashFew:"Pick a longer range to see trends.", trTarget:"target {t}%",
   trTipDay:"click = its row in the table", trTipOpen:"click = open its days", relNeed:"Needs at least 6 actual periods — pick days or a longer range.",
   relWeak:"Weakly", relMod:"Moderately", relStrong:"Strongly", relSent:"{s} related (r = {r}): every {dx} ({x}) ≈ {dy} ({y}).", relNone:"{x} and {y} barely move together here (r = {r}).",
   ibSum:"{p}% of the iron in the sidur",
@@ -2244,16 +2268,16 @@ he:{
   legShort:"תת-איוש — פחות משובצים מהנדרש ליעד",
   legOver:"איוש יתר — יותר מהנדרש ליעד (אחוז המענה לא יהיה 100% — וזה תקין)",
   stateUnder:"תת-איוש", stateOver:"איוש יתר", stateBalanced:"מאוזן",
-  mxTipHead:"{m}: {v} — {src}", mxSrcMeas:"נמדד", mxSrcFc:"חזוי",
-  mxTipBody:"יעד {t}% · משובצים {s} · נדרשים ליעד {r}",
-  mxVerdOverOk:"יותר נציגים מהנדרש ליעד — השירות מעל היעד (100% אינו מציאותי ולא כלכלי).",
+  
+  
+  
   mxVerdOverLow:"יותר נציגים מהנדרש לפי המודל, אך השירות שנמדד היה מתחת ליעד — בדקו נטישה וחוסרים בפועל באותו יום.",
   mxVerdShortOk:"פחות נציגים ממה שהמודל דורש, אך השירות שנמדד עמד ביעד באותו יום.",
   mxVerdShortOkMeas:"בסידור פחות ממה שהמודל מחשב, אך השירות שנמדד עמד ביעד. סיבות נפוצות: ענו גם נציגים מחוץ לסידור/לתחום התור (מיומנויות אחרות, שעות נוספות), או אינטרוול דל-שיחות שבו המודל שמרני.",
   mxVerdShortOkFc:"פחות ממה שהמודל מחשב, אך התחזית ביעד — היסטורית האינטרוול הזה ביצע טוב מהמודל הגולמי, והאחוז כולל זאת. הטבעת היא אזהרה, לא פער.",
   mxVerdMetric:"שימו לב: 'נדרשים' מחושב למדד היעד הראשי ({p}), לא למדד המוצג כאן.",
-  mxVerdShortLow:"חסרים נציגים ליעד — השירות כאן מתחת ליעד.",
-  mxVerdBalanced:"האיוש תואם את הנדרש ליעד.",
+  
+  
   setPrimary:"מדד יעד מוביל",
   tipPrimary:"המדד שהכול נמדד מולו: מהירות מענה (TSF) או אחוז השיחות שנענו (אחוז מענה).",
   optTsf:"TSF — מהירות מענה", optAr:"אחוז מענה — קליטת כל שיחה",
@@ -2276,7 +2300,7 @@ he:{
   tipShrink:"זמן של מי שהגיע ולא עונה: הפסקות, הדרכות, ישיבות (לרוב 10–20%). עונים = מגיעים × (1 − זמן לא זמין).",
   resetWs:"↺ איפוס סביבת עבודה",
   resetNote:"מוחק הגדרות, מדיניות, קורסים, סימולציות ומערכי נתונים שנשמרו בדפדפן זה.",
-  weekLabel:"שבוע:", thInterval:"אינטרוול",
+  thInterval:"אינטרוול",
   weekOpt:"שבוע {w} | {a} – {b}", forecastTag:" (תחזית)",
   wkNow:"השבוע", wkPast1:"שבוע שעבר", wkPast:"לפני {n} שבועות", wkFut1:"שבוע הבא", wkFut:"בעוד {n} שבועות",
   wkActUntil:"בפועל עד יום {d}, משם תחזית", wkNoAct:"אין עדיין נתוני אמת — תחזית", wkJump:"מעבר לשבוע הנוכחי", wkJumpShort:"↩ להשבוע", wkNoJump:"השבוע הנוכחי מחוץ לטווח הנתונים — התחזית מגיעה עד {d}. טענו קובץ תחזית עדכני כדי לראות אותו.",
@@ -2297,7 +2321,7 @@ he:{
   legEdit:"לחצו על תא לעריכת ערכים.",
   closed:"סגור", noData:"—",
   trendsTitle:"מגמות תאריכים — היסטוריה ותחזית קדימה",
-  trFromL:"תאריך התחלה", trToL:"תאריך סיום",
+  
   trFcNote:"שורות מעבר לתאריך הנתונים האחרון הן תחזיות קדימה (חיזוי נפח Holt + ממוצע AHT של 4 שבועות).",
   sumRow:"סיכום",
   thDate:"תאריך", thAr:"אחוז מענה", thUtil:"אחוז תעסוקה משוער",
@@ -2434,7 +2458,7 @@ he:{
   skipRVol:"כמות שיחות לא תקינה", skipRAht:"משך שיחה לא תקין",
   auditDl:"⬇ הורדת כל {n} השורות שדולגו (CSV עם סיבות)",
   fcAuditWarn:"בקרת נתונים:", auditImp:"{n} אינטרוולים עם יותר שיחות נענות מנכנסות (מענה>100% — נחסם)", auditAht:"{n} אינטרוולים עם אורך שיחה מחוץ לטווח 1–60 דק'", auditFar:"{n} תאריכים רחוקים מהיום ביותר מ־13 חודשים — בדקו את פורמט עמודת התאריך",
-  mxViewOrig:"הסידור הנוכחי", mxViewOpt:"מיטבי",
+  mxViewOrig:"נוכחי", mxViewOpt:"מיטבי",
   exTitle:"איך הסידור הוזז", exHow:"כל משמרת שומרת על אורכה ומחליקה עד שעתיים — מהעודף, אל המקום שבו חסרו נציגים.",
   exSum:"ביום הזה: {n} משמרות הוזזו מ־{from} אל {to} — החוסר של היום ירד מ־{a} ל־{b} שעות נציג.", exNone:"ביום הזה לא היה צורך להזיז משמרות.",
   exBefore:"לפני", exAfter:"אחרי ✓", exReplayTip:"הפעלה מחדש", schPrepT:"⚙ לפני ההרצה", prepReq:"חובה", friReqT:"שישי שעבר — מי עבד", friRotT:"סבב שישי", prepReqFri:"חובה: שישי שעבר", conPerRepL:"עד", conPerRepR:"אילוצים לנציג בשבוע (חופש לא נספר)", conTplBtn:"⬇ תבנית למנהלות", conTplNone:"אין נציגים לרשימה — טענו קודם ברזל או סידור", conTplT:"אילוצים — שבוע {w} ({a}–{b}) · עד {p} שינויים לנציג (חופש לא נספר)", conXlT:"יותר מדי שינויים", conXlErr:"עד {p} שינויים לנציג בשבוע (חופש לא נספר). שורה אדומה = מעל המותר.", conCutN:"{n} נציגים מעל {p} — נכנסים רק {p} הימים הראשונים; לא נכנסו", schConCut:"{c} מעבר למותר ({p}) לא נכנסו", conTplHow:"בכל תא — המשמרת של הנציג/ה מהברזל. לא יכול/ה לבוא ← מוחקים · יכול/ה רק חלק ← משנים את השעות · חופש ← כותבים חופש. שאר התאים — לא נוגעים.", conTplTeam:"מנהל/ת צוות", conTplName:"שם הנציג/ה", conTplFile:"אילוצים שבוע {w}", conTplSheet:"אילוצים שבוע {w}", conOverRep:"{n} נציגים מעל {p} אילוצים", conOverDay:"{d}: {n} נציגים מוגבלים, סך הצוותים ליום הוא {q}", schConReps:"{r} נציגים", schConBad:"{b} תאים לא הובנו — לא נכנסו", schPrepCon:"{n} אילוצים", schPrepRules:"{n} כללי כיסוי", exLgMiss:"חסר (כהה = יותר)", exLgOver:"עודף", exLgOk:"מאוזן", exLgShift:"משמרת (×מספר זהות)", exLgWas:"איפה הייתה", exMoreLanes:"+{n} דפוסי הזזה נוספים — ראו מי הוזז", exCellGap:"חסר {b} ← {a}", exWho:"מי הוזז ({n})", exReplay:"▶ הפעלה מחדש", exMore:"+{n} משמרות נוספות הוזזו ביום הזה", exOpen:"איך המשמרות של היום הוזזו",
@@ -2653,16 +2677,16 @@ he:{
   grpTag_act:"בפועל", grpTag_fc:"תחזית", grpTag_mix:"בפועל + תחזית", trDrill:"לחיצה מציגה את ימי התקופה",
   wkLbl:"שבוע {w} · {a}–{b}", trShare:"📤 שיתוף סיכום", trBackTip:"חזרה לתצוגה המקובצת (Backspace)",
   shBack:"חודשים אחורה", shDragTip:"לחיצה להצגה · גרירה לשינוי הסדר", shAhead:"חודשים קדימה", shInsL:"תובנות", shNotePh:"שורה אישית לקורא (לא חובה)", shColGross:"שעות לשיבוץ", shColAht:"משך שיחה",
-  shTitle:"📤 סיכום חודשי", shIntro:"איך עמדנו ולאן הולכים, מוכן לשליחה — כולל הקורסים שבדרך. הבחירות נשמרות.",
+  shWinT:"📤 סיכום חודשי", shThrough:"בפועל עד {d}", shFcStart:"תחזית", shMixNote:"* בפועל עד {d}, משם תחזית", insRiskAll:"צפי ל{m}–{z}: {v}–{w} — מתחת ליעד {t}%.", insRiskSome:"צפי: {k} מתוך {n} החודשים הבאים מתחת ליעד {t}% — הנמוך {m} ({v}).", insCourse1:"בדרך: +{n} נציגים מ\"{c}\" ב־{d} — כבר בצפי.", insCourses:"בדרך: +{n} נציגים מ־{k} קורסים עד {d} — כבר בצפי.", shOptsSum:"{b} חודשים אחורה · {a} קדימה · {n} עמודות", shIntro:"איך עמדנו ולאן הולכים — מוכן לשליחה, כולל הקורסים שבדרך.",
   shCopyImg:"📋 העתקת תמונה", shPng:"⬇ PNG", shCopyTxt:"📋 העתקה כטקסט", shCopied:"התמונה הועתקה — הדביקו בוואטסאפ / במייל", shCopiedTxt:"טקסט הסיכום הועתק",
   shCopyFail:"הדפדפן חסם את ההעתקה — השתמשו ב־⬇ PNG",
   shHead:"מוקד — סיכום חודשי", shSub:"יעד {m} {t}% · {a} – {b}", shFoot:"סימולטור WFM · {d}",
-  shColMonth:"חודש", shColStatus:"נתונים", shColOcc:"תעסוקה", shColProd:"פריון", shColVol:"שיחות",
+  shColMonth:"חודש", shColStatus:"נתונים", shColOcc:"תעסוקה", shColVol:"שיחות",
   shLine:"{m} ({s}): {P} {v} · {a}/{n} ימים ביעד · תעסוקה {o} · פריון {p}",
   insMoM:"{P} ב{m}: {v} ({d} נק׳ מול {p}).", insOne:"{P} ב{m}: {v}.", insBest:"החודש החזק: {m} — {a}/{n} ימים ביעד.",
   insRisk:"צפי: {m} ב־{v} — מתחת ליעד {t}%.", insOk:"צפי: עמידה ביעד ב־{n} החודשים הקרובים.",
-  insCourse:"קורס \"{c}\" מצטרף ב־{d} (+{n} נציגים) — כבר כלול בצפי.",
-  trHint:"בשורות התחזית: לחיצה על מספר השיחות מתקנת יום בודד. יודעים על גל צפוי (קמפיין, החלפת ספק)?", lensBtn:"כולל עזיבה וקורסים", trnTip:"נציגים בקורס במענה השבוע (לפי המדריכה)", trnN:"כמה נציגים בקורס עונים בכל יום", trnHours:"שעות", trnDays:"ימים", trnPct:"נספרים כ־", trnSave:"✓ שמירה", trnClear:"הסרה", trnSumTxt:"מוסיף עד ~{a} נציגים, {s}–{e}", trnCell:"כולל {t} נציגים בקורס ({n} × {p}%)", tipLens:"כבוי: הצוות שלך כמו היום (הברזל). דולק: פחות עזיבה חודשית, ועוד בוגרי קורסים. רק לשבועות בלי סידור.", lensWeekTip:"השבוע מול היום: +{g} בוגרי קורסים · −{l} עוזבים",
+  
+  trHint:"בשורות התחזית: לחיצה על מספר השיחות מתקנת יום בודד. יודעים על גל צפוי (קמפיין, החלפת ספק)?", lensBtn:"עזיבה וקורסים", cuBtnL:"שיחות חוזרות", excBtnL:"חגים וחריגים", trDashL:"גרפים", weekOptS:"שבוע {w} · {a}", wkGrpAct:"בפועל", wkGrpFc:"תחזית", wkGrpOut:"סידור בלבד", moreTipMx:"עוד: חגים וחריגים · ייצוא דרישת איוש", moreTipTr:"עוד: הורדת CSV", trnTip:"נציגים בקורס במענה השבוע (לפי המדריכה)", trnN:"כמה נציגים בקורס עונים בכל יום", trnHours:"שעות", trnDays:"ימים", trnPct:"נספרים כ־", trnSave:"✓ שמירה", trnClear:"הסרה", trnSumTxt:"מוסיף עד ~{a} נציגים, {s}–{e}", trnCell:"כולל {t} נציגים בקורס ({n} × {p}%)", tipLens:"כבוי: הצוות שלך כמו היום (הברזל). דולק: פחות עזיבה חודשית, ועוד בוגרי קורסים. רק לשבועות בלי סידור.", lensWeekTip:"השבוע מול היום: +{g} בוגרי קורסים · −{l} עוזבים",
   tipEv:"לגל ידוע שההיסטוריה לא יכולה לחזות: סה״כ שיחות נוספות וימי עבודה. מרוכז בהתחלה = רוב השיחות בהתחלה ואז דועכות.",
   cleanNote:"🧹 {k} נקודות חריגות נוקו אוטומטית (שיאי ימי חיוב נשמרו)",
   trShowMore:"הצג עוד {k} ימים (נותרו {r}) ▼",
@@ -2688,7 +2712,7 @@ he:{
   faDown:"📉 בימים האחרונים ({n}) השיחות ירדו ב־{p}% — הימים הקרובים הורדו בהתאם, וחוזרים בהדרגה תוך {h}.",
   faCalm:"הימים האחרונים תואמים את התחזית.", faRetryNow:"התחזית למחר כוללת ~{n} שיחות של מי שניתק ויתקשר שוב.", faNoAns:"עם עמודת שיחות נענות בקובץ התור, נספרים גם מי שיתקשרו שוב.",
   faFoot:"חלון {a}–{b} · שיעור נטישה רגיל {r}. כל יום נתונים חדש מודד מחדש.", faTipAct:"בפועל {n}", faTipExp:"המודל ציפה ל־{n}", faTipBack:"מתוכן שיחות חוזרות ~{n}", faLgUp:"יותר שיחות מהתחזית", faLgDn:"פחות שיחות מהתחזית", faMore:"פרטים",
-  trDashBtn:"📊 גרפים", trPickL:"הצגה:", relT:"קשר בין מדדים", trDashHint:"ריחוף = נתוני התקופה · לחיצה = פתיחה", trDashFew:"בחרו טווח ארוך יותר כדי לראות מגמה.", trTarget:"יעד {t}%",
+  trPickL:"הצגה:", relT:"קשר בין מדדים", trDashHint:"ריחוף = נתוני התקופה · לחיצה = פתיחה", trDashFew:"בחרו טווח ארוך יותר כדי לראות מגמה.", trTarget:"יעד {t}%",
   trTipDay:"לחיצה = השורה בטבלה", trTipOpen:"לחיצה = פתיחת הימים", relNeed:"נדרשות לפחות 6 תקופות בפועל — בחרו ימים או טווח ארוך יותר.",
   relWeak:"קשר חלש", relMod:"קשר בינוני", relStrong:"קשר חזק", relSent:"{s} (r = {r}): כל {dx} ({x}) ≈ {dy} ({y}).", relNone:"{x} ו־{y} כמעט לא זזים יחד כאן (r = {r}).",
   ibSum:"{p}% מהברזל בסידור",
@@ -2746,11 +2770,11 @@ function ladd(a,b){ if(a===-Infinity)return b; if(b===-Infinity)return a;
 function erlangB(m,a){
   if(m<=0) return 1;
   if(a<=0) return 0;
-  if(!isFinite(m)||m>2*a+500) return 0; // far more agents than calls: nobody is blocked (and an absurd m would grow the factorial table for minutes)
-  const lna=Math.log(a);
-  let lnDen=-Infinity;
-  for(let k=0;k<=m;k++) lnDen=ladd(lnDen,k*lna-lnFact(k));
-  return Math.exp(m*lna-lnFact(m)-lnDen);
+  if(!isFinite(m)||m>2*a+500) return 0; // far more agents than calls: nobody is blocked
+  // the standard recurrence B(k) = a·B(k−1) / (k + a·B(k−1)): exact, stable, no factorial table — the old table grew to
+  // the largest m ever asked (a huge number in the cell editor → hundreds of MB, the tab crashed and reloaded on Home)
+  let B=1; for(let k=1;k<=m;k++) B=a*B/(k+a*B);
+  return B;
 }
 function lnKummerA(x,y){
   if(y<=0) return 0;
@@ -3202,6 +3226,10 @@ const MON={en:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov"
 function monShort(m){ return MON[lang==="he"?"he":"en"][m]; }
 function fmtD(ds){ if(!ds) return ""; const d=fromISO(ds); return "\u2066"+pad(d.getDate())+"-"+monShort(d.getMonth())+"\u200e-"+d.getFullYear()+"\u2069"; } // the LRM after a Hebrew month keeps the year on the right
 function fmtDs(ds){ if(!ds) return ""; const d=fromISO(ds); return "\u2066"+pad(d.getDate())+"-"+monShort(d.getMonth())+"\u2069"; }
+/* a week in a list: "Week 27 \u00b7 05-Jul" (week + day + month = one week within a file's range). A <select> drops the isolates (it showed
+   "2026-\u05d9\u05d5\u05dc\u05d9-05"), so the date is an LTR embedding (LRE\u2026PDF) \u2014 the day on the left, as everywhere */
+function wkOptTxt(sun){ const d=fmtDs(sun).replace(/\u2066/g,"\u202a").replace(/\u2069/g,"\u202c");
+  return t("weekOptS",{w:isoWeek(sun),a:d}); }
 function fmtDx(ds){ const d=fromISO(ds); return pad(d.getDate())+"/"+pad(d.getMonth()+1)+"/"+d.getFullYear(); }
 function addDays(ds,n){ const d=fromISO(ds); d.setDate(d.getDate()+n); return iso(d); }
 function addHalf(tm){ let[h,m]=tm.split(":").map(Number); m+=30; if(m>=60){m=0;h++;} return pad(h)+":"+pad(m); }
@@ -4055,10 +4083,10 @@ function applyDataWeek(){
   if(![...sel.options].some(o=>o.value===sun)){
     const o=document.createElement("option");
     o.value=sun;
-    o.textContent=t("weekOpt",{w:isoWeek(sun),a:fmtD(sun),b:fmtD(addDays(sun,5))});
+    o.textContent=wkOptTxt(sun);
     let before=null;
     for(const opt of sel.options) if(opt.value>sun){ before=opt; break; }
-    sel.insertBefore(o,before);
+    (before?before.parentNode:sel).insertBefore(o,before); // the options sit in time-zone groups
   }
   sel.value=sun;
   state.week=sun;
@@ -8044,7 +8072,7 @@ function syncLens(page){ // always shown, same place on both pages: it sets how 
   b.classList.toggle("on",real); b.setAttribute("aria-pressed",String(real));
   // the hover says what it does, in people, for the week on screen
   const wk=page==="matrix"?state.week:null, d=wk?lensWeekDelta(wk):null;
-  b.title=t("tipLens")+(d?"\n"+t("lensWeekTip",{g:d.g,l:d.l}):"");
+  b.title=t("lensBtn")+" — "+t("tipLens")+(d?"\n"+t("lensWeekTip",{g:d.g,l:d.l}):""); // its name first: on a narrow screen only the icon shows
 }
 document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest(".lensBtn"); if(!b) return;
   state.settings.capLens=state.settings.capLens==="real"?"today":"real"; state.fcCache.clear(); memo.clear(); saveState(); renderAll(); });
@@ -8075,7 +8103,7 @@ function renderWeekContext(dates){
   const canJump=n!==0&&sel&&[...sel.options].some(o=>o.value===nowWk);
   el.classList.toggle("jump",canJump);
   // the chip reads as a button only when it IS one; otherwise its hover says why it can't jump
-  if(canJump) el.insertAdjacentHTML("beforeend",` <span class="jmp">${t("wkJumpShort")}</span>`); // keeps the 📈 listener
+  if(canJump) el.insertAdjacentHTML("beforeend",` <span class="jmp">↩<span class="jmpL"> ${t("wkJumpShort").replace(/^↩\s*/,"")}</span></span>`); // a narrow row keeps the ↩ only // keeps the 📈 listener
   el.title=[sub,canJump?t("wkJump"):(n!==0?t("wkNoJump",{d:state.horizonISO?fmtD(state.horizonISO):"—"}):"")].filter(Boolean).join("\n");
   el.onclick=canJump?()=>{ sel.value=nowWk; sel.dispatchEvent(new Event("change")); }:null;
   el.style.display="inline-block";
@@ -8090,16 +8118,19 @@ function buildWeekSelect(keepValue){
   const wks=new Set();
   if(state.minDate) for(let cur=sundayOf(state.minDate);cur<=state.horizonISO;cur=addDays(cur,7)) wks.add(cur);
   const sw=new Set();
-  for(const k of state.rosterCap.keys()){ const d=k.slice(0,10); if(/^d{4}-/.test(d)) sw.add(sundayOf(d)); }
+  for(const k of state.rosterCap.keys()){ const d=k.slice(0,10); if(/^\d{4}-/.test(d)) sw.add(sundayOf(d)); }
   for(const r of (state.schedRows||[]).concat(state.unallocRows||[],state.vacations||[])) if(r.ds) sw.add(sundayOf(r.ds));
   sw.forEach(w=>wks.add(w));
   const opts=[...wks].sort();
+  // the list in its time zones (measured · forecast · a sidur beyond the forecast): a heading per group, not a suffix on
+  // every line — the closed list is as wide as its longest line, so the suffix widened the whole toolbar
+  const grp={};
   for(const cur of opts){
     const o=document.createElement("option");
-    o.value=cur;
-    o.textContent=t("weekOpt",{w:isoWeek(cur),a:fmtD(cur),b:fmtD(addDays(cur,5))})
-      +(state.maxDate&&cur>state.maxDate&&cur<=state.horizonISO?t("forecastTag"):"");
-    sel.appendChild(o);
+    o.value=cur; o.textContent=wkOptTxt(cur);
+    const k=!state.maxDate||cur<=state.maxDate?"wkGrpAct":cur<=state.horizonISO?"wkGrpFc":"wkGrpOut";
+    if(!grp[k]){ grp[k]=document.createElement("optgroup"); grp[k].label=t(k); sel.appendChild(grp[k]); }
+    grp[k].appendChild(o);
   }
   if(!opts.length) return;
   const sidur0=[...sw].sort()[0];
@@ -8216,7 +8247,7 @@ function renderScopeMenu(wrapId,btnId,menuId,hintKey,label){
   wrap.style.display=skills.length?"inline-block":"none";
   if(!skills.length) return;
   const sc=state.capSkills;
-  document.getElementById(btnId).textContent=label(sc);
+  { const b=document.getElementById(btnId); b.textContent=label(sc); b.title=(sc&&sc.length?sc:[t("skillScopeAll")]).join(" · "); } // a narrow row cuts the name — the hover holds it whole
   const menu=document.getElementById(menuId);
   if(menu._skills!==skills.join("|")+"@"+lang){ // stable menu: rebuilt only when the list changes
     menu._skills=skills.join("|")+"@"+lang; menu.innerHTML="";
@@ -8622,7 +8653,7 @@ function renderMatrix(){
   const card=document.querySelector("#page-matrix > .card");
   if(card) card.classList.toggle("optView",canOpt&&state.matrixView==="optimized");
   if(seg){ const ob=seg.querySelector('[data-view="optimized"]');
-    if(ob){ ob.classList.toggle("pending",!canOpt); ob.textContent=t("mxViewOpt")+" ✨"; /* constant label → the toolbar never shifts */ ob.title=canOpt?t("mxViewOptNote"):t("mxOptHint"); }
+    if(ob){ ob.classList.toggle("pending",!canOpt); ob.innerHTML=`<span class="swL">${t("mxViewOpt")}</span> ✨`; /* constant label → the toolbar never shifts; a narrow row keeps the ✨ */ ob.title=t("mxViewOpt")+" — "+(canOpt?t("mxViewOptNote"):t("mxOptHint")); }
   }
   if(seg){ seg.style.display=(canOpt||hasSidur)?"inline-flex":"none";
     seg.querySelectorAll("button").forEach(b=>b.classList.toggle("active",b.dataset.view===state.matrixView)); }
@@ -8714,9 +8745,8 @@ function renderMatrixBody(){
         td.innerHTML=`<span class="v" style="color:${tc==="tier-exc"||tc==="tier-good"?"var(--emerald)":tc==="tier-near"||tc==="tier-warn"?"var(--amber)":"var(--crimson)"}">${pct(m)}</span> <span class="sub">${Math.round(full).toLocaleString()}</span>`
           +(cz>=1?`<span class="retCauseTag"></span>`:"");
         if(ret) td.appendChild(retPill(ds,ret)); // ↩ the same tag as Date Trends
-        td.title=`${t("tipVolume")}: ${Math.round(full).toLocaleString()} | ${state.metric==="tsf"?"TSF":t("metricAr")}: ${pct(m)}`
-          +(offGrid>0?` | ${t("mxOffGrid",{n:offGrid})}`:"")
-          +(ret>=1?"\n"+t(sdd&&sdd.forecast?"trRetTipFc":"trRetTip")+": "+Math.round(ret).toLocaleString():"")+(cz>=1?"\n"+t("retCauseTip",{n:Math.round(cz).toLocaleString()}):"");
+        td.title=[offGrid>0?t("mxOffGrid",{n:offGrid}):"", // the day's calls and % are on screen — only what isn't
+          ret>=1?t(sdd&&sdd.forecast?"trRetTipFc":"trRetTip")+": "+Math.round(ret).toLocaleString():"", cz>=1?t("retCauseTip",{n:Math.round(cz).toLocaleString()}):""].filter(Boolean).join("\n");
       } else td.textContent="—";
       sr.appendChild(td);
     });
@@ -8779,19 +8809,15 @@ function renderMatrixBody(){
         const tgt=state.settings.target;
         const meets=v*100>=tgt;
         const measured=c&&!c.forecast;
-        const mName=state.metric==="tsf"?("TSF "+state.settings.tsfT):t("metricAr");
-        const verd=over?(meets?t("mxVerdOverOk"):t("mxVerdOverLow"))
-          :short?(meets?t(measured?"mxVerdShortOkMeas":"mxVerdShortOkFc"):t("mxVerdShortLow"))
-          :t("mxVerdBalanced");
+        // the hover = only what the cell doesn't show (the day / hour / %, reps / needed and the marks are all on screen):
+        // the day so far up to this half hour, and a sentence only when the marks seem to say the opposite of the %
+        const verd=over&&!meets?t("mxVerdOverLow"):short&&meets?t(measured?"mxVerdShortOkMeas":"mxVerdShortOkFc"):"";
         // "needed" is sized for the PRIMARY metric — say so when the toggle shows the other one
         const offPrim=(state.metric==="tsf")!==(state.settings.primaryMetric==="tsf");
         const cu=cum[di]; if(row.rec.volume>0){ cu.vol+=row.rec.volume; cu.acc+=v*row.rec.volume; if(!cu.from) cu.from=tm; }
-        // first line = where you are: the day, the date and the half hour this cell covers (09:30–10:00)
-        td.title=t("days")[di]+" "+fmtDs(ds)+" · "+tm+"–"+addHalf(tm)+"\n"+t("mxTipHead",{m:mName,v:pct(v),src:t(measured?"mxSrcMeas":"mxSrcFc")})+"\n"
-          +(cu.vol>0?t("mxCum",{a:cu.from,b:addHalf(tm),v:pct(cu.acc/cu.vol),n:Math.round(cu.vol).toLocaleString()})+"\n":"")
-          +t("mxTipBody",{t:tgt,s:row.sched,r:row.reqEff})+"\n"+verd
-          +(()=>{ const tr=traineeAt(ds,di,tm), o=(state.trainees||{})[sundayOf(ds)]; return tr>0?"\n🎓 "+t("trnCell",{t:tr,n:traineeN(ds,di),p:o.pct}):""; })()
-          +(offPrim&&(short||over)?"\n"+t("mxVerdMetric",{p:primName()}):"")+(td.querySelector(".whoLnk")?"\n👥 "+t("mxWhoLeg"):"");
+        const trn=traineeAt(ds,di,tm), trO=(state.trainees||{})[sundayOf(ds)];
+        td.title=[cu.vol>0?t("mxCum",{a:cu.from,b:addHalf(tm),v:pct(cu.acc/cu.vol),n:Math.round(cu.vol).toLocaleString()}):"", verd,
+          trn>0?"🎓 "+t("trnCell",{t:trn,n:traineeN(ds,di),p:trO.pct}):"", offPrim&&(short||over)?t("mxVerdMetric",{p:primName()}):""].filter(Boolean).join("\n");
         td.addEventListener("click",e=>{ if(e.target.closest(".whoLnk")){ e.stopPropagation(); openWho(ds,tm); return; } openEditor(e,ds,tm,di); }); // 👥 the reps number = who
       }
       tr.appendChild(td);
@@ -8809,16 +8835,17 @@ function renderMatrixBody(){
   else b.classList.remove("show");
   // kpiShort / kpiShortL were removed with the recruit-page declutter (renderRecruit
   // now owns the deficit KPI); don't write to elements that no longer exist.
-  const eb=document.getElementById("editBadge");
+  // the week's edits = ONE chip "✎ n" (only while there are some): its hover says what, its menu holds the actions
   const wiN=whatIfRows(state.week).length;
-  if(state.edits.size||wiN){
-    eb.textContent=(state.edits.size?t("editsBadge",{n:state.edits.size}):"")+(state.edits.size&&wiN?" · ":"")+(wiN?t("wiBadge",{n:wiN}):"");
-    eb.style.display="inline-block"; }
-  else eb.style.display="none";
+  edChip("mxEdits",state.edits.size+wiN,state.edits.size||state.simDays.size||wiN,
+    [state.edits.size?t("editsBadge",{n:state.edits.size}):"",wiN?t("wiBadge",{n:wiN}):""].filter(Boolean).join(" · "));
   const wx=document.getElementById("wiExport"); if(wx) wx.style.display=wiN?"":"none";
-  const rb=document.getElementById("resetEdits");
-  rb.style.display=(state.edits.size||state.simDays.size||wiN)?"inline-block":"none";
 }
+
+/* ✎ the edits of what is on screen — ONE chip (matrix + Date Trends): "✎ n", its hover = what was changed, its menu = the
+   actions (↺ back to the original · ⬇ the what-if changes). Hidden while nothing was edited. */
+function edChip(id,n,show,tip){ const w=document.getElementById(id); if(!w) return; w.hidden=!show; if(!show){ w.classList.remove("open"); return; }
+  const b=w.querySelector(":scope > button"); b.textContent="✎"+(n>0?" "+n:""); b.title=tip||""; }
 
 /* ---- Holiday / Exception registry (item 5): drag-paint zero-overrides ---- */
 let excPainting=false, excPaintVal=true;
@@ -9123,7 +9150,7 @@ function niceStep(x){ if(!(x>0)) return 1; const p=Math.pow(10,Math.floor(Math.l
 function renderTrendDash(list,G,onOpen){
   const box=document.getElementById("trDash"); if(!box) return;
   const S=state.settings, btn=document.getElementById("trDashBtn");
-  if(btn){ btn.setAttribute("aria-pressed",S.trDash!==false?"true":"false"); btn.classList.toggle("on",S.trDash!==false); }
+  if(btn){ btn.setAttribute("aria-pressed",S.trDash!==false?"true":"false"); btn.classList.toggle("on",S.trDash!==false); btn.title=t("trDashL"); }
   box.hidden=S.trDash===false; if(box.hidden) return;
   const pts=trPoints(list,G), hasNet=pts.some(p=>p.netH>0);
   const mets=TR_METRICS.filter(m=>!m.needNet||hasNet);
@@ -9470,9 +9497,8 @@ function renderTrends(){
   { const w=document.getElementById("trendsWrap"); const h=thead.getBoundingClientRect().height; if(w&&h>0) w.style.setProperty("--trHeadH",h+"px"); }
   // page-scoped reset visibility: any forecast edits inside the selected range?
   const from=state.trendFrom||state.minDate, to=state.trendTo||state.horizonISO;
-  const anySim=[...state.simDays.keys()].some(ds=>ds>=from&&ds<=to);
-  const rt=document.getElementById("resetTrends");
-  if(rt) rt.style.display=anySim?"inline-block":"none";
+  const nSim=[...state.simDays.keys()].filter(ds=>ds>=from&&ds<=to).length;
+  edChip("trEdits",nSim,nSim>0,t("editsBadge",{n:nSim}));
 }
 
 /* Intraday overlay: this forecast day's curve vs the same weekday's historical average */
@@ -10817,13 +10843,17 @@ function capSource(ds,dayIdx,tm){
   if(state.rosterCapWeekly.has(dayIdx+"|"+tm)||state.rosterDays.has(String(dayIdx))) return "roster";
   return "file";
 }
+/* a number typed in the cell editor, within what a half hour can hold (50,000 calls · 5,000 reps) — an accidental paste
+   (a phone number, an ID) once froze the queue math and crashed the tab */
+const CE_MAX={ceVol:50000,ceAg:5000};
+function ceNum(id){ const v=+document.getElementById(id).value; return isFinite(v)?Math.min(CE_MAX[id]||1e5,Math.max(0,v)):0; }
 /* live mirror of the cell while editing: scheduled · needed · primary metric (before → after) */
 function ceRenderLive(){
   const c=ceCtx; if(!c||c.trend||!c.base) return;
   const S=state.settings, effShare=Math.max(0.05,availShare(S)*(state.calib||1));
-  const vol=Math.max(0,+document.getElementById("ceVol").value||0);
-  const aht=Math.max(1,Math.round(toDurationSec(document.getElementById("ceAht").value)||c.base.aht));
-  const sched=Math.max(0,+document.getElementById("ceAg").value||0)+injectionAgents(c.dayIdx,c.tm);
+  const vol=ceNum("ceVol");
+  const aht=Math.max(1,Math.round(Math.min(7200,toDurationSec(document.getElementById("ceAht").value)||0)||c.base.aht));
+  const sched=ceNum("ceAg")+injectionAgents(c.dayIdx,c.tm);
   const req=Math.round(requiredAgents(vol,aht,S.target,S,c.base.mpt)/effShare);
   const m=primVal(evalInterval(vol,aht,Math.max(0,Math.round(sched*effShare)),S,c.base.mpt));
   const col=v=>v>=S.target/100?"var(--emerald)":v>=S.target/100-0.1?"var(--amber)":"var(--crimson)";
@@ -10882,16 +10912,16 @@ document.getElementById("ceApply").addEventListener("click",()=>{
     const ds=ceCtx.ds;
     ce.style.display="none"; ceCtx=null;
     document.getElementById("ceAgRow").style.display="";
-    applyTrendEdit(ds,Math.max(0,+document.getElementById("ceVol").value||0),
-                      Math.max(0,Math.round(toDurationSec(document.getElementById("ceAht").value)||0)));
+    applyTrendEdit(ds,ceNum("ceVol"),
+                      Math.max(0,Math.round(Math.min(7200,toDurationSec(document.getElementById("ceAht").value)||0)||0)));
     return;
   }
   const {ds,tm,forecast}=ceCtx;
   if(ceCtx.roster){
-    const k=ds+"|"+tm, n=Math.max(0,Math.round(+document.getElementById("ceAg").value||0));
+    const k=ds+"|"+tm, n=Math.round(ceNum("ceAg"));
     if(n===ceCtx.sidurN) state.agWhatIf.delete(k); else state.agWhatIf.set(k,n); // back to the sidur's number = no what-if
     const r0=sourceDay(ds).src.get(tm);
-    const volN=Math.max(0,+document.getElementById("ceVol").value||0), ahtN=Math.max(1,Math.round(toDurationSec(document.getElementById("ceAht").value)||1));
+    const volN=ceNum("ceVol"), ahtN=Math.max(1,Math.round(Math.min(7200,toDurationSec(document.getElementById("ceAht").value)||0)||1));
     if(r0&&volN===r0.volume&&ahtN===r0.aht){ ce.style.display="none"; ceCtx=null; memo.clear(); saveData(); renderAll(); return; }
   }
   let dayMap;
@@ -10915,9 +10945,9 @@ document.getElementById("ceApply").addEventListener("click",()=>{
   state.edits.add(ds+"|"+tm);
   if(!state.cellOrig.has(ds+"|"+tm)) state.cellOrig.set(ds+"|"+tm,{...rec}); // per-cell restore point
   const prevVol=rec.volume;
-  rec.volume=Math.max(0,+document.getElementById("ceVol").value||0);
-  rec.aht=Math.max(1,Math.round(toDurationSec(document.getElementById("ceAht").value)||1));
-  if(!ceCtx.roster) rec.agents=Math.max(0,+document.getElementById("ceAg").value||0); // sidur cells keep theirs (what-if layer above)
+  rec.volume=ceNum("ceVol");
+  rec.aht=Math.max(1,Math.round(Math.min(7200,toDurationSec(document.getElementById("ceAht").value)||0)||1));
+  if(!ceCtx.roster) rec.agents=ceNum("ceAg"); // sidur cells keep theirs (what-if layer above)
   /* forward propagation: a volume edit with the "future weeks" box checked
      becomes a persistent scale factor on this weekday+interval from here on.
      GUARDED: a near-empty cell (e.g. a closed block edited to 40 calls) must not
@@ -10983,7 +11013,7 @@ function fitHeader(){ const h=document.querySelector("header"); if(h) document.d
 window.addEventListener("resize",()=>{ fitHeader(); fitMatrix(); });
 function showPage(p){
   closeEditor(); // bug fix: an open cell popover must not survive page switches
-  document.getElementById("expWrap").classList.remove("open");
+  document.querySelectorAll(".splitbtn.open").forEach(w=>w.classList.remove("open")); // no menu survives a page switch
   pages.forEach(q=>{ document.getElementById("tab-"+q).classList.toggle("active",q===p);
     document.getElementById("page-"+q).classList.toggle("active",q===p); });
   document.body.classList.toggle("mxFit",p==="matrix"); fitHeader();
@@ -11015,12 +11045,10 @@ document.getElementById("matrixViewSeg").addEventListener("click",async e=>{
   renderMatrix();
 });
 document.getElementById("weekSelect").addEventListener("change",e=>{ closeEditor(); state.week=e.target.value; renderMatrix(); dirtyPages.add("recruit"); renderDirty(); saveData(); });
-document.getElementById("excModeBtn").addEventListener("click",()=>{
-  state.excMode=!state.excMode;
-  document.getElementById("excModeBtn").classList.toggle("on",state.excMode);
-  document.getElementById("excModeBtn").setAttribute("aria-pressed",String(!!state.excMode));
-  closeEditor(); renderMatrix();
-});
+function setExcMode(on){ state.excMode=!!on; const b=document.getElementById("excModeBtn"); b.hidden=!state.excMode; // its state, one click out
+  closeEditor(); renderMatrix(); }
+document.getElementById("excModeBtn").addEventListener("click",()=>setExcMode(false));
+document.getElementById("excModeOn").addEventListener("click",()=>setExcMode(true));
 document.getElementById("resetEdits").addEventListener("click",resetWeekEdits);
 document.getElementById("wiExport").addEventListener("click",()=>exportWhatIf(state.week));
 document.getElementById("resetTrends").addEventListener("click",()=>{ closeEditor(); resetTrendEdits(); });
@@ -11047,7 +11075,7 @@ document.getElementById("trHelpBtn").addEventListener("click",()=>{ state._trHel
 const SHARE_METRICS=[
   {k:"dm",   l:()=>t("thDaysMet"),  v:g=>g.met+"/"+g.n, tone:g=>{ const r=g.n?g.met/g.n:0; return r>=0.8?"g":r>=0.5?"a":"r"; }},
   {k:"occ",  l:()=>t("shColOcc"),   v:g=>pct(g.occ)},
-  {k:"prod", l:()=>t("shColProd"),  v:g=>g.prod.toFixed(1)},
+  {k:"prod", l:()=>t("thNetProd"),  v:g=>g.prod.toFixed(1)}, // the Date Trends name, with its unit — the reader can't hover
   {k:"vol",  l:()=>t("shColVol"),   v:g=>Math.round(g.vol).toLocaleString()},
   {k:"gross",l:()=>t("shColGross"), v:g=>Math.round(g.gross).toLocaleString()},
   {k:"aht",  l:()=>t("shColAht"),   v:g=>fmtSec(g.aht)},
@@ -11055,7 +11083,7 @@ const SHARE_METRICS=[
 function shareOpts(){
   const o=state.settings.shareOpts||{};
   const keys=SHARE_METRICS.map(x=>x.k), ord=(Array.isArray(o.order)?o.order:[]).filter(k=>keys.includes(k));
-  return {back:o.back||3,ahead:o.ahead!=null?o.ahead:2,m:Array.isArray(o.m)?o.m:["dm","occ","prod","vol"],ins:o.ins!==false,note:o.note||"",
+  return {back:o.back||3,ahead:o.ahead!=null?o.ahead:2,m:Array.isArray(o.m)?o.m:["dm","occ","prod","vol"],ins:o.ins!==false,note:o.note||"",open:!!o.open,
     order:ord.concat(keys.filter(k=>!ord.includes(k)))}; // new registry entries join at the end
 }
 /* the metrics the summary shows, in the user's order */
@@ -11070,73 +11098,102 @@ function shareMonths(o){
 }
 function shareInsights(M){
   const S=state.settings, tg=S.target/100, pv=g=>S.primaryMetric==="ar"?g.ar:g.tsf, P=primName(), out=[];
-  const act=M.filter(g=>g.tag==="act"), fut=M.filter(g=>g.tag!=="act");
+  const act=M.filter(g=>g.tag==="act"), fc=M.filter(g=>g.tag==="fc"); // a mixed month is neither: mostly measured, partly forecast
   if(act.length>=2){ const a=act[act.length-1], b=act[act.length-2], dd=(pv(a)-pv(b))*100;
     out.push(t("insMoM",{m:a.label,v:pct(pv(a)),d:(dd>=0?"+":"")+dd.toFixed(1),p:b.label,P})); }
   else if(act.length===1) out.push(t("insOne",{m:act[0].label,v:pct(pv(act[0])),P}));
-  if(act.length>1){ const best=act.slice().sort((x,y)=>y.met/y.n-x.met/x.n)[0]; out.push(t("insBest",{m:best.label,a:best.met,n:best.n})); }
-  if(fut.length){ const low=fut.find(g=>pv(g)<tg);
-    out.push(low?t("insRisk",{m:low.label,v:pct(pv(low)),t:S.target,P}):t("insOk",{n:fut.length,P})); }
-  // courses landing inside the forecast months are already IN the forecast (projected headcount)
-  if(fut.length){ const a0=fut[0].from, z=fut[fut.length-1].to;
-    (state.cohorts||[]).filter(c=>{ const fd=cohortFloorDate(c); return fd>=a0&&fd<=z; }).slice(0,2)
-      .forEach(c=>out.push(t("insCourse",{c:c.name,d:fmtDs(cohortFloorDate(c)),n:Math.round(cohortEffective(c))}))); }
+  // the strongest month — only when one month did reach the target on some days (0/26 is no "strong month")
+  if(act.length>1){ const best=act.slice().sort((x,y)=>y.met/y.n-x.met/x.n)[0]; if(best.met>0) out.push(t("insBest",{m:best.label,a:best.met,n:best.n})); }
+  // the forecast months — said about THEM (the future), as a range when they all miss
+  if(fc.length){ const low=fc.filter(g=>pv(g)<tg);
+    if(!low.length) out.push(t("insOk",{n:fc.length,P}));
+    else if(low.length===fc.length){ const vs=fc.map(pv), lo=Math.min(...vs), hi=Math.max(...vs);
+      out.push(t(fc.length>1?"insRiskAll":"insRisk",{m:fc[0].label,z:fc[fc.length-1].label,v:pct(lo),w:pct(hi),t:S.target,P})); }
+    else{ const w=low.slice().sort((x,y)=>pv(x)-pv(y))[0]; out.push(t("insRiskSome",{k:low.length,n:fc.length,m:w.label,v:pct(pv(w)),t:S.target})); } }
+  // the courses that join inside the months ahead are already IN the forecast (projected headcount) — one line, all of them
+  const ahead=M.filter(g=>g.tag!=="act");
+  if(ahead.length){ const a0=ahead[0].from, z=ahead[ahead.length-1].to;
+    const cs=(state.cohorts||[]).filter(c=>{ const fd=cohortFloorDate(c); return fd>=a0&&fd<=z; });
+    if(cs.length){ const n=Math.round(cs.reduce((s,c)=>s+cohortEffective(c),0)), last=cs.map(cohortFloorDate).sort().pop();
+      out.push(cs.length===1?t("insCourse1",{c:cs[0].name,d:fmtDs(last),n}):t("insCourses",{k:cs.length,d:fmtDs(last),n})); } }
   return out;
 }
+/* a canvas drops the bidi isolates (the dates came out "2026-נוב׳-06"): an LTR embedding keeps the day on the left */
+const cvDir=s=>String(s).replace(/⁦/g,"‪").replace(/⁩/g,"‬");
+/* the shared picture: how we did · where we're heading. No status words — the time zones are the rows' look (forecast lighter,
+   a line where it starts, "measured through …" in the sub-line) and the target is the app's bar (fill toward it, a tick at it) */
 function shareCanvas(M,ins,o){
   const rtl=lang==="he", S=state.settings, tg=S.target/100, pv=g=>S.primaryMetric==="ar"?g.ar:g.tsf;
   const W=920, pad=28, rowH=40, F='"Segoe UI",Arial,sans-serif';
-  const mets=shareMets(o);
-  const fixedW=180+100+120, mw=mets.length?Math.floor((W-2*pad-fixedW)/mets.length):0;
-  const cols=[{l:t("shColMonth"),w:180},{l:t("shColStatus"),w:100},{l:primName(),w:120},...mets.map(m=>({l:m.l(),w:mw,m}))];
+  const mets=shareMets(o), mixed=M.some(g=>g.tag==="mix");
+  const fixedW=190+210, mw=mets.length?Math.floor((W-2*pad-fixedW)/mets.length):0;
+  const cols=[{l:t("shColMonth"),w:190},{l:primName(),w:210},...mets.map(m=>({l:m.l(),w:mw,m}))];
   const c0=document.createElement("canvas").getContext("2d"); c0.font="14px "+F;
   const wrap=(txt,maxW)=>{ const words=txt.split(" "), lines=[]; let ln="";
     for(const w2 of words){ const tr=ln?ln+" "+w2:w2; if(c0.measureText(tr).width>maxW&&ln){ lines.push(ln); ln=w2; } else ln=tr; } if(ln) lines.push(ln); return lines; };
-  const insL=o.ins?ins.flatMap(x=>wrap("• "+x,W-2*pad)):[];
+  const insL=o.ins?ins.flatMap(x=>wrap("• "+cvDir(x),W-2*pad)):[];
   const noteL=o.note?wrap(o.note,W-2*pad):[];
   const top=noteL.length?92+noteL.length*20+8:92;
-  const H=top+34+M.length*rowH+(insL.length?24+insL.length*22:0)+44;
+  c0.font="bold 13px "+F; const hdr=cols.map(cl=>wrap(cl.l,cl.w-12)); c0.font="14px "+F; // a header that does not fit takes two lines
+  const hh=Math.max(...hdr.map(h=>h.length))>1?50:34;
+  const H=top+hh+M.length*rowH+(mixed?26:0)+(insL.length?24+insL.length*22:0)+44;
   const c=document.createElement("canvas"), k=2; c.width=W*k; c.height=H*k;
   const x=c.getContext("2d"); x.scale(k,k); x.direction=rtl?"rtl":"ltr";
   x.fillStyle="#fff"; x.fillRect(0,0,W,H); x.fillStyle="#0d2a4d"; x.fillRect(0,0,W,78);
   const edge=rtl?W-pad:pad; x.textAlign=rtl?"right":"left";
   x.fillStyle="#fff"; x.font="bold 22px "+F; x.fillText(t("shHead"),edge,36);
   x.font="13px "+F; x.fillStyle="#bcd9f2";
-  x.fillText(t("shSub",{m:primName(),t:S.target,a:M.length?M[0].label:"",b:M.length?M[M.length-1].label:""}),edge,60);
+  x.fillText(cvDir(t("shSub",{m:primName(),t:S.target,a:M.length?M[0].label:"",b:M.length?M[M.length-1].label:""})+(state.maxDate?" · "+t("shThrough",{d:fmtDs(state.maxDate)}):"")),edge,60);
   let y=92;
   if(noteL.length){ x.font="italic 15px "+F; x.fillStyle="#0d2a4d"; noteL.forEach(l=>{ x.fillText(l,edge,y+14); y+=20; }); y+=8; }
   let cx=rtl?W-pad:pad; cols.forEach(cl=>{ if(rtl){ cl.x=cx-cl.w; cx-=cl.w; } else { cl.x=cx; cx+=cl.w; } });
-  const t0=y; x.fillStyle="#eef3f8"; x.fillRect(pad,y,W-2*pad,34);
+  const t0=y; x.fillStyle="#eef3f8"; x.fillRect(pad,y,W-2*pad,hh);
   x.font="bold 13px "+F; x.fillStyle="#44546a"; x.textAlign="center";
-  cols.forEach(cl=>x.fillText(cl.l,cl.x+cl.w/2,y+22)); y+=34;
-  const TAG={act:["#e7f0fa","#2c5f8a"],fc:["#efe8fb","#6b46c1"],mix:["#fff3df","#8a5a00"]};
-  const TONE={g:["#d6f3e2","#0f6a3f"],a:["#fdf0cf","#8a5a00"],r:["#f8dcdc","#9b1c1c"]};
+  cols.forEach((cl,i)=>{ const L=hdr[i]; L.forEach((l,j)=>x.fillText(l,cl.x+cl.w/2,y+(hh-L.length*16)/2+12+j*16)); }); y+=hh;
+  const TONE={g:["#2f9e66","#0f6a3f"],a:["#d6a020","#8a5a00"],r:["#cf5a46","#9b1c1c"]};
+  let fcLine=null;
   M.forEach((g,i2)=>{
-    if(i2%2){ x.fillStyle="#f8fafc"; x.fillRect(pad,y,W-2*pad,rowH); }
-    const cell=(cl,txt,bg,fg,bold)=>{ if(bg){ x.fillStyle=bg; x.beginPath(); x.roundRect(cl.x+8,y+7,cl.w-16,rowH-14,8); x.fill(); }
-      x.fillStyle=fg||"#1d2b3a"; x.font=(bold?"bold ":"")+"14px "+F; x.textAlign="center"; x.fillText(txt,cl.x+cl.w/2,y+rowH/2+5); };
+    const fcast=g.tag==="fc";
+    if(fcast&&fcLine==null) fcLine=y; // the forecast starts here
+    if(fcast){ x.fillStyle="#f7f5fd"; x.fillRect(pad,y,W-2*pad,rowH); } else if(i2%2){ x.fillStyle="#f8fafc"; x.fillRect(pad,y,W-2*pad,rowH); }
+    const ink=fcast?"#5b6b80":"#1d2b3a";
+    const cell=(cl,txt,fg,bold)=>{ x.fillStyle=fg||ink; x.font=(bold?"bold ":"")+(fcast&&!bold?"italic ":"")+"14px "+F; x.textAlign="center"; x.fillText(txt,cl.x+cl.w/2,y+rowH/2+5); };
     const v=pv(g), tone=v>=tg?"g":v>=tg-0.05?"a":"r";
-    cell(cols[0],g.label,null,"#0d2a4d",true);
-    cell(cols[1],t("grpTag_"+g.tag),TAG[g.tag][0],TAG[g.tag][1]);
-    cell(cols[2],pct(v),TONE[tone][0],TONE[tone][1],true);
-    cols.slice(3).forEach(cl=>{ const tn=cl.m.tone?cl.m.tone(g):null; cell(cl,cl.m.v(g),null,tn?TONE[tn][1]:null,!!tn); });
+    cell(cols[0],g.label+(g.tag==="mix"?" *":""),fcast?"#4b3a8c":"#0d2a4d",true);
+    // the target bar: a track 0–100%, filled to the value, a navy tick at the target — then the value
+    { const cl=cols[1], bw=cl.w-92, bx=rtl?cl.x+cl.w-12-bw:cl.x+12, by=y+rowH/2-4, pos=p=>rtl?bx+bw-Math.max(0,Math.min(1,p))*bw:bx+Math.max(0,Math.min(1,p))*bw;
+      x.fillStyle="#e7edf4"; x.beginPath(); x.roundRect(bx,by,bw,8,4); x.fill();
+      x.globalAlpha=fcast?.55:1; x.fillStyle=TONE[tone][0]; x.beginPath(); const p0=pos(0), p1=pos(v); x.roundRect(Math.min(p0,p1),by,Math.abs(p1-p0),8,4); x.fill(); x.globalAlpha=1;
+      x.fillStyle="#0d2a4d"; x.fillRect(pos(tg)-1,by-3,2,14);
+      x.fillStyle=TONE[tone][1]; x.font="bold 14px "+F; x.textAlign=rtl?"left":"right"; x.fillText(pct(v),rtl?cl.x+10:cl.x+cl.w-10,y+rowH/2+5); }
+    cols.slice(2).forEach(cl=>{ const tn=cl.m.tone?cl.m.tone(g):null; cell(cl,cl.m.v(g),tn?TONE[tn][1]:null,!!tn); });
     y+=rowH; });
   x.strokeStyle="#d9e2ec"; x.strokeRect(pad,t0,W-2*pad,y-t0);
+  if(fcLine!=null&&fcLine>t0+hh){ // a dashed line where the forecast starts, its word at the row's start
+    x.save(); x.strokeStyle="#6b46c1"; x.setLineDash([5,4]); x.lineWidth=1.5; x.beginPath(); x.moveTo(pad,fcLine); x.lineTo(W-pad,fcLine); x.stroke(); x.restore();
+    x.font="bold 11px "+F; x.fillStyle="#6b46c1"; x.textAlign=rtl?"right":"left"; x.fillText(t("shFcStart"),rtl?W-pad-6:pad+6,fcLine-4); }
+  if(mixed){ y+=20; x.font="12px "+F; x.fillStyle="#6b7c90"; x.textAlign=rtl?"right":"left"; x.fillText(cvDir(t("shMixNote",{d:fmtDs(state.maxDate)})),edge,y); }
   if(insL.length){ y+=24; x.font="14px "+F; x.fillStyle="#1d2b3a"; x.textAlign=rtl?"right":"left"; insL.forEach(l=>{ x.fillText(l,edge,y); y+=22; }); }
-  x.font="11px "+F; x.fillStyle="#8a98a8"; x.textAlign=rtl?"right":"left"; x.fillText(t("shFoot",{d:fmtD(iso(new Date())).replace(/[\u200e\u2066-\u2069]/g,"")}),edge,H-14);
+  x.font="11px "+F; x.fillStyle="#8a98a8"; x.textAlign=rtl?"right":"left"; x.fillText(cvDir(t("shFoot",{d:fmtD(iso(new Date()))})),edge,H-14);
   return c;
 }
+/* the same summary as text (WhatsApp / email): a bold title, a colored dot per month (🟢 on target · 🟡 close · 🔴 below),
+   the forecast months under their own line */
 function shareText(M,ins,o){
-  const S=state.settings, pv=g=>S.primaryMetric==="ar"?g.ar:g.tsf, mets=shareMets(o);
-  return [t("shHead")+" — "+t("shSub",{m:primName(),t:S.target,a:M.length?M[0].label:"",b:M.length?M[M.length-1].label:""})]
-    .concat(o.note?[o.note]:[]).concat([""])
-    .concat(M.map(g=>g.label+" ("+t("grpTag_"+g.tag)+"): "+[primName()+" "+pct(pv(g)),...mets.map(m=>m.l()+" "+m.v(g))].join(" · ")))
-    .concat(o.ins&&ins.length?["",...ins.map(z=>"• "+z)]:[]).join("\n");
+  const S=state.settings, tg=S.target/100, pv=g=>S.primaryMetric==="ar"?g.ar:g.tsf, mets=shareMets(o), dot=v=>v>=tg?"🟢":v>=tg-0.05?"🟡":"🔴";
+  const sub=t("shSub",{m:primName(),t:S.target,a:M.length?M[0].label:"",b:M.length?M[M.length-1].label:""})+(state.maxDate?" · "+t("shThrough",{d:fmtDs(state.maxDate)}):"");
+  const out=["*"+t("shHead")+"*",sub].concat(o.note?[o.note]:[]).concat([""]); let fcOn=false;
+  M.forEach(g=>{ if(g.tag==="fc"&&!fcOn){ fcOn=true; out.push("— "+t("shFcStart")+" —"); }
+    out.push(dot(pv(g))+" "+g.label+(g.tag==="mix"?" *":"")+" — "+[pct(pv(g)),...mets.map(m=>m.l()+" "+m.v(g))].join(" · ")); });
+  if(M.some(g=>g.tag==="mix")) out.push("* "+t("shMixNote",{d:fmtDs(state.maxDate)}).replace(/^\*\s*/,""));
+  if(o.ins&&ins.length) out.push("",...ins.map(z=>"• "+z));
+  return cvDir(out.join("\n"));
 }
 const shPanel=document.getElementById("shPanel"), $sh=id=>shPanel.querySelector("#"+id);
 function drawShare(){
   const o=shareOpts(), M=shareMonths(o), ins=shareInsights(M), cv=shareCanvas(M,ins,o);
   state._share={cv,txt:shareText(M,ins,o)};
+  $sh("shOptsSum").textContent="⚙ "+t("shOptsSum",{b:o.back,a:o.ahead,n:shareMets(o).length+1}); // the fold says what it holds
   $sh("shImg").src=cv.toDataURL("image/png");
 }
 function setShareOpt(k,v){ state.settings.shareOpts={...shareOpts(),[k]:v}; saveState(); drawShare(); }
@@ -11155,7 +11212,8 @@ function openShare(){
   const box=$sh("shMetrics"); box.innerHTML="";
   renderShareChips();
   drawShare();
-  document.getElementById("mTitle").textContent=t("shTitle");
+  document.getElementById("mTitle").textContent=t("shWinT");
+  { const d=$sh("shOptsD"); d.open=!!shareOpts().open; d.ontoggle=()=>{ state.settings.shareOpts={...shareOpts(),open:d.open}; saveState(); }; }
   document.getElementById("mCore").textContent=t("shIntro");
   document.getElementById("mMsg").textContent="";
   const mL=document.getElementById("mList"); mL.innerHTML="";
@@ -11260,7 +11318,7 @@ function exportDemand(granularity,metric){
 }
 document.getElementById("expGo").addEventListener("click",()=>{
   exportDemand(document.getElementById("expRes").value,document.getElementById("expMetric").value);
-  document.getElementById("expWrap").classList.remove("open");
+  document.getElementById("mxMore").classList.remove("open");
 });
 /* every dropdown (.splitbtn) behaves the same: its button toggles it (a second click closes),
    one open at a time, a click outside or Esc closes; an ACTION button inside closes it,
@@ -11376,7 +11434,7 @@ function syncCu(page,dates){ const root=document.getElementById("page-"+page), b
   b.classList.toggle("on",on); b.setAttribute("aria-pressed",String(on));
   const RT=state.rtParam, auto=RT&&RT.guard&&RT.check&&RT.check.n?"\n"+t("cuBtnAutoAb",{a:RT.check.without.toFixed(1),b:RT.check.with.toFixed(1),n:RT.check.n}):"";
   const ln=cuLearnNote(), lnT=ln?t(on?"cuLearnOn":"cuLearnOff",ln):""; // what it does to the weeks ahead even when it adds little to them
-  b.title=(cu?(on?t(cu.ab?"cuBtnTipAb":"cuBtnTip",{d:cu.d,l:cu.list}):t("cuBtnTipOff",{d:cu.d}))+(lnT?"\n"+lnT:""):lnT||t(on?"cuBtnIdle":"cuBtnIdleOff"))+auto; }
+  b.title=t("cuBtnL")+" — "+(cu?(on?t(cu.ab?"cuBtnTipAb":"cuBtnTip",{d:cu.d,l:cu.list}):t("cuBtnTipOff",{d:cu.d}))+(lnT?"\n"+lnT:""):lnT||t(on?"cuBtnIdle":"cuBtnIdleOff"))+auto; }
 /* ↩ the newest comeback the learning takes out of the normal level (the day after an outage, the last 4 weeks) — the
    reason the days ahead read lower with ↩ on; the same number as that day's "↩ n" tag. {n,d,c} or null */
 function cuLearnNote(){ const A=state.cuAmt; if(!A||!A.size||!state.maxDate) return null; const from=addDays(state.maxDate,-28); let best=null;
