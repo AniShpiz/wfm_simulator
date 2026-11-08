@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### ⏱ Past · now · ahead on each matrix cell
+
+- In the week that holds today, every cell says where it stands in time without a word: the half hours already gone are
+  washed out (their numbers keep their color; hover = full), the current half hour carries a sky ring that closes today's
+  column frame + a line under it as long as the part of the half hour already gone (its row's time gets the same sky bar),
+  what is ahead stays as is. The daily row of a day gone is washed out too.
+- It moves by itself: every minute and on return to the tab, without a re-render; a new day re-renders (today's column moves).
+- Silence elsewhere: a week all past or all ahead has no marks (its day tags say it); the key ("now · already passed")
+  shows only with its marks.
+- Test: `tests/browser/matrix-time.js`.
+
 ### 📤 The monthly summary (Date Trends), polished
 
 - The window opened as "💲 Shadow price" (its title key `shTitle` was defined twice; the shadow price's won) — now its own

@@ -219,9 +219,19 @@ li.insight{border-inline-start:4px solid var(--sky);background:var(--sky-soft)}
 th.todayHd{box-shadow:inset 0 -3px 0 var(--sky)} td.todayCol{box-shadow:inset 2px 0 0 var(--sky),inset -2px 0 0 var(--sky)}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-bottom:12px}
 .page.isEmpty>*:not(.emptyState){display:none!important}
+/* ⏱ time on the cells (mxTimeMarks): passed = washed out, the numbers keep their color */
+#matrixTable td.cell.mxPast,#matrixTable tr.msum td.mxPast{background-image:linear-gradient(rgba(255,255,255,.6),rgba(255,255,255,.6))}
+#matrixTable td.cell.mxPast>*,#matrixTable tr.msum td.mxPast>*{opacity:.7}
+#matrixTable td.cell.mxPast.xh{background-image:linear-gradient(rgba(63,169,245,.14),rgba(63,169,245,.14)),linear-gradient(rgba(255,255,255,.6),rgba(255,255,255,.6))}
+#matrixTable td.cell.mxPast.xhc{background-image:none} #matrixTable td.cell.mxPast.xhc>*{opacity:1}
 #matrixTable td.xh{background-image:linear-gradient(rgba(63,169,245,.14),rgba(63,169,245,.14))}
 #matrixTable th.xh{background:var(--sky)!important;color:#fff!important}
 #matrixTable td.xhc{background-image:none;outline:2px solid var(--navy);outline-offset:-2px}
+/* ⏱ now = a sky ring (closes today's column frame) + a sky line under it, as long as the part of the half hour already gone */
+#matrixTable td.mxNow{box-shadow:inset 0 0 0 2px var(--sky);background-image:linear-gradient(var(--sky),var(--sky));background-repeat:no-repeat;background-size:var(--nowP,0%) 3px;background-position:left bottom}
+[dir=rtl] #matrixTable td.mxNow{background-position:right bottom}
+#matrixTable tbody th.nowHd{box-shadow:inset -3px 0 0 var(--sky)} [dir=rtl] #matrixTable tbody th.nowHd{box-shadow:inset 3px 0 0 var(--sky)}
+.legend i.lg-now{background:#fff;box-shadow:inset 0 0 0 2px var(--sky)} .legend i.lg-past{background:linear-gradient(rgba(255,255,255,.6),rgba(255,255,255,.6)),#f3c1c1;box-shadow:inset 0 0 0 1px #e3c9c9}
 /* 📅 ONE date picker app-wide (dpUpgrade): the field shows 05-Jul-2026, a click opens a month — the native input stays hidden and holds the value */
 input[type=date].dpOn{display:none!important}
 .dpBtn{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--border);border-radius:7px;padding:5px 10px;font:inherit;font-size:.84rem;color:var(--ink);cursor:pointer;white-space:nowrap;font-variant-numeric:tabular-nums}
@@ -953,6 +963,9 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <span><i style="background:#c22;border-radius:50%"></i><span data-i18n="legShort">understaffed — fewer scheduled than the target needs</span></span>
         <span><i style="background:transparent;border-radius:50%;box-shadow:inset 0 0 0 1.5px #c22"></i><span data-i18n="legShortSoft">fewer than the model sizes for — yet service is on target</span></span>
         <span><i style="background:#8a63d2"></i><span data-i18n="legOver">overstaffed — more than the target needs (answer rate won't be 100% — that's normal)</span></span>
+        <!-- ⏱ time on the cells — each only while its mark is on screen (the week that holds today) -->
+        <span id="mxNowLeg" style="display:none"><i class="lg-now"></i><span data-i18n="mxNowLeg">now</span></span>
+        <span id="mxPastLeg" style="display:none"><i class="lg-past"></i><span data-i18n="mxPastLeg">already passed</span></span>
         <span id="mxWhoLeg" style="display:none"><i class="lg-who">👥</i><span data-i18n="mxWhoLeg">click the reps number — who should be on</span></span>
         <!-- legDecay belongs to the hidden Policy Optimizer (see #polSection) -->
         <span style="display:none"><i style="background:var(--magenta)"></i><span data-i18n="legDecay">flex-policy dip applied</span></span>
@@ -1679,7 +1692,7 @@ en:{
   prodFcHowNo:"Forecast days: the hours the sidur / iron gives × availability, and the calls they answer at the forecast call length — at most {o}% busy.",
   whoTip:"Who should be on in this half hour", whoT:"Who should be on? {d} · ⁦{a}–{b}⁩", whoNoTeam:"No team",
   whoCoreSidur:"{n} reps by the sidur. Tick who isn't on the floor.", whoCoreIron:"{n} reps by the iron (no sidur for this day). Tick who isn't on the floor.", whoCoreNow:"{n} reps by this week's sidur (week {w}). Tick who isn't on the floor.",
-  whoNone:"No rep's shift covers this half hour.", whoGap:"Missing {m} of {n}", whoImpact:"{a}: {x} → {y}", mxWhoLeg:"click the reps number — who should be on",
+  whoNone:"No rep's shift covers this half hour.", whoGap:"Missing {m} of {n}", whoImpact:"{a}: {x} → {y}", mxWhoLeg:"click the reps number — who should be on", mxNowLeg:"now", mxPastLeg:"already passed",
   whoTlImpact:"Without your {m}, this half hour's {a} goes from {x} down to {y} (target {t}%).",
   whoCopy:"📋 Copy for the team managers", whoTlPurpose:"{d} {a}–{b} — on the sidur but not on the floor:", whoCopied:"Copied — one message per team",
   profAutoBtn:"🤖 Automatic", profTestT:"Which window places the calls right? Tested on {n} past days", profTestErr:"{e}% in the wrong half hour",
@@ -2246,7 +2259,7 @@ he:{
   prodFcHowNo:"ימי תחזית: השעות שהסידור / הברזל נותן × זמינות, והשיחות שהן עונות במשך השיחה החזוי — לכל היותר ‎{o}%‎ תעסוקה.",
   whoTip:"מי אמור/ה לעבוד בחצי השעה הזו", whoT:"מי אמור לעבוד? {d} · ⁦{a}–{b}⁩", whoNoTeam:"בלי צוות",
   whoCoreSidur:"{n} נציגים לפי הסידור. סמנו מי לא נמצא/ת בפועל.", whoCoreIron:"{n} נציגים לפי הברזל (אין סידור ליום הזה). סמנו מי לא נמצא/ת בפועל.", whoCoreNow:"{n} נציגים לפי סידור השבוע (שבוע {w}). סמנו מי לא נמצא/ת בפועל.",
-  whoNone:"אין נציג שהמשמרת שלו מכסה את חצי השעה הזו.", whoGap:"חסרים {m} מתוך {n}", whoImpact:"{a}: ⁦{x}⁩ ← ⁦{y}⁩", mxWhoLeg:"לחצו על מספר הנציגים — מי אמור לעבוד",
+  whoNone:"אין נציג שהמשמרת שלו מכסה את חצי השעה הזו.", whoGap:"חסרים {m} מתוך {n}", whoImpact:"{a}: ⁦{x}⁩ ← ⁦{y}⁩", mxWhoLeg:"לחצו על מספר הנציגים — מי אמור לעבוד", mxNowLeg:"עכשיו", mxPastLeg:"כבר עבר",
   whoTlImpact:"בלי ה־{m} מהצוות שלך, {a} בחצי השעה הזו יורד מ־{x} ל־{y} (יעד {t}%).",
   whoCopy:"📋 העתקה למנהלי הצוות", whoTlPurpose:"{d} {a}–{b} — בסידור אבל לא נמצאים בפועל:", whoCopied:"הועתק — הודעה לכל צוות",
   profAutoBtn:"🤖 אוטומטי", profTestT:"איזה חלון מפזר את השיחות נכון? נבדק על {n} ימים מהעבר", profTestErr:"‎{e}%‎ בחצי שעה הלא נכונה",
@@ -8718,7 +8731,7 @@ function renderMatrixBody(){
     const sth=document.createElement("th"); sth.textContent=t("mxSum"); sr.appendChild(sth);
     comp.forEach((c,di)=>{
       const td=document.createElement("td");
-      const ds=dates[di];
+      const ds=dates[di]; td.dataset.ds=ds; // ⏱ mxTimeMarks
       let vol=0,acc=0;
       if(c) for(const r of c.rows){
         if(!r.rec||r.exc||!(r.rec.volume>0)) continue;
@@ -8758,7 +8771,7 @@ function renderMatrixBody(){
     const tr=document.createElement("tr");
     const rh=document.createElement("th"); rh.textContent=tm; tr.appendChild(rh);
     dates.forEach((ds,di)=>{
-      const td=document.createElement("td");
+      const td=document.createElement("td"); td.dataset.ds=ds; td.dataset.tm=tm; // ⏱ mxTimeMarks
       const c=comp[di], row=c?c.rows[ri]:null;
       if(!c||!row||row.nodata){
         td.className="nodata"; td.textContent=t("noData");
@@ -8829,6 +8842,7 @@ function renderMatrixBody(){
   { const l=document.getElementById("mxWhoLeg"); if(l) l.style.display=tbl.querySelector(".whoLnk")?"":"none"; } // 👥 the key, only when the names exist // the ↩ key, only with its marks
   // frame today's column top-to-bottom (box-shadow, so tier colors stay intact)
   if(todayIdx>=0) tbody.querySelectorAll("tr").forEach(tr=>{ const c=tr.children[todayIdx+1]; if(c) c.classList.add("todayCol"); });
+  state._mxDay=todayDs; mxTimeMarks();
   // (the Recruitment "short today" KPI is renderRecruit's alone — from today, with the plan's math, never this browsed week)
   const b=document.getElementById("decayBanner");
   if(state.policy.enabled&&totDrops>0){ b.textContent=t("decaySaved",{n:totDrops,h:totSaved.toFixed(1)}); b.classList.add("show"); }
@@ -8842,6 +8856,24 @@ function renderMatrixBody(){
   const wx=document.getElementById("wiExport"); if(wx) wx.style.display=wiN?"":"none";
 }
 
+/* ⏱ past · now · ahead on each cell — only in the week that holds today (a whole past or future week says it in its day tags).
+   Passed = washed out (the numbers keep their color), now = a sky ring closing today's column + how much of the half hour is gone,
+   ahead = as is. Runs every minute and on return to the tab, without a re-render; a new day re-renders (today's column moves). */
+function mxTimeMarks(){
+  const tbl=document.getElementById("matrixTable"); if(!tbl||!tbl.tBodies.length) return;
+  const nowD=new Date(), today=iso(nowD), m=nowD.getHours()*60+nowD.getMinutes();
+  if(state._mxDay&&state._mxDay!==today){ renderMatrix(); return; }
+  const on=!!tbl.querySelector(`tbody td[data-ds="${today}"]`); let past=0, now=0;
+  tbl.querySelectorAll("tbody td[data-ds]").forEach(td=>{
+    const ds=td.dataset.ds, tm=td.dataset.tm, a=tm?toMinW(tm):0, isCell=!!tm||td.closest("tr.msum");
+    const p=on&&isCell&&(ds<today||(ds===today&&!!tm&&a+30<=m)), n=on&&ds===today&&!!tm&&a<=m&&m<a+30;
+    td.classList.toggle("mxPast",!!p); td.classList.toggle("mxNow",n);
+    if(n){ td.style.setProperty("--nowP",Math.round((m-a)/30*100)+"%"); now++; } else td.style.removeProperty("--nowP");
+    if(p&&(td.classList.contains("cell")||!tm)) past++; });
+  tbl.querySelectorAll("tbody th.nowHd").forEach(x=>x.classList.remove("nowHd"));
+  const nc=tbl.querySelector("td.mxNow"); if(nc) nc.parentElement.firstElementChild.classList.add("nowHd");
+  for(const [id,k] of [["mxNowLeg",now],["mxPastLeg",past]]){ const l=document.getElementById(id); if(l) l.style.display=k?"":"none"; } // the key, only with its mark
+}
 /* ✎ the edits of what is on screen — ONE chip (matrix + Date Trends): "✎ n", its hover = what was changed, its menu = the
    actions (↺ back to the original · ⬇ the what-if changes). Hidden while nothing was edited. */
 function edChip(id,n,show,tip){ const w=document.getElementById(id); if(!w) return; w.hidden=!show; if(!show){ w.classList.remove("open"); return; }
@@ -12784,6 +12816,7 @@ try{ setNowSidur(JSON.parse(localStorage.getItem(PERSIST_NOW)||"null")); }catch(
 if(loadData()){ recordFriHist(); if(state.iron&&(!state.iron.wk||!(state.settings.ironHist||[]).length)) recordIronHist(sidurWeek()); // a sidur / iron saved before their memories (or the week) existed joins them once
   if(state.days.size) afterForecastLoad(); else { applyDataWeek(); updatePortalStatus(); renderAll(); } }
 else renderAll();
+setInterval(mxTimeMarks,60000); document.addEventListener("visibilitychange",()=>{ if(!document.hidden) mxTimeMarks(); }); // ⏱ the matrix's now moves by itself
 document.getElementById("polEnable").checked=state.policy.enabled;
 document.getElementById("polFields").disabled=!state.policy.enabled;
 syncOptBtn();
