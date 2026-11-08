@@ -292,6 +292,9 @@ workforce filter lists legitimately show only "(all)" for this file.
   `whoOn(ds,tm)` = the day's sidur (`schedRows`), else the iron's weekday (Friday via `friW`, leave out), 🎧 skills like
   capacity. Tick who isn't on the floor (`state._whoMiss`, session only) → "missing m of n" + the half hour's rate
   without them (`evalInterval` delta on the shown value) + 📋 one `tlMsg` per team. Silent until someone is ticked.
+- ⏱ Matrix time marks: `mxTimeMarks()` (end of `renderMatrixBody`, every minute, on `visibilitychange`; a new day → `renderMatrix`):
+  cells carry `data-ds` / `data-tm`; only in the week that holds today — `.mxPast` (washed out, `td.cell` + the daily row), `.mxNow`
+  (sky ring + `--nowP` elapsed line; the row header `th.nowHd`); keys `#mxNowLeg` / `#mxPastLeg` only with their marks.
 - Matrix: hover = a crosshair (row + column + both headers, `.xh` / `.xhc`); a cell's tooltip = only what the cell doesn't show:
   the day so far up to its half hour (`mxCum`), a sentence only when the marks seem to contradict the %, trainees; the cumulative line ends at the interval's end (`addHalf`).
 - 📅 `planTo()` (settings.planTo, else `planToAuto()` = the forecast's end, 30 days … 6 months): the What-If curve,
