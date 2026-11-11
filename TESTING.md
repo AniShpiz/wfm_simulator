@@ -23,6 +23,8 @@ Headless-browser scripts (load the real page, drive it, report `ok`/`not ok`):
 node tests/browser/smoke.js
 node tests/browser/forecast-logic.js
 node tests/browser/recruit-page.js       # Recruitment: no NaN, opens fast, the plan computed once
+node tests/browser/report-format.js      # Executive report Gantt: dd/mm, three-line course cell + status, portrait A4
+node tests/browser/report-plan.js        # Report "are the courses enough?": the add table only when needed, the Gantt condition
 node tests/browser/this-week-sidur.js   # this week's kept sidur + iron/Friday memories under alternating uploads
 node tests/browser/matrix-time.js       # the matrix's past · now · ahead marks follow a moving clock
 ```
