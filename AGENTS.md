@@ -250,6 +250,10 @@ workforce filter lists legitimately show only "(all)" for this file.
 
 - Courses (`state.cohorts`, persisted with the workspace) live in ONE editable table
   (`renderCohortTable`); `addCourses` replaces a course with the same name + start.
+- A course = {name, site, count?, start, duration, yield, req?}: `count` = reps recruited (empty = not yet), `req` = the
+  recruiting target ("דרישת גיוס"; empty = `siteMax(site)`). Every number reads `crsReps(c)` (started → count; ahead →
+  max(count, req); neither → class size) — never `c.count` directly. The plan's apply raises `req`. `K.req` in
+  `parseCoursesGrid` is picked before the reps (its header also says "גיוס").
 - `parseCoursesGrid(grid, defaults)` returns the courses (any layout; carried-down hire rate /
   length; `courseDefaults()` = the remembered "hire % for new courses"). Files dropped anywhere on
   the page go to `ingestCourseFile`, which hands a forecast / sidur (by `findHeader` + `classifyGrid`, or iron /
@@ -265,7 +269,13 @@ workforce filter lists legitimately show only "(all)" for this file.
 - `hirePlan()` is memoized (`state._hpC`, keyed on courses + settings + `_crsVer`) → `hirePlanRaw`; `lensScale` per
   date (`state._lensC`). `cohortsChanged` bumps `state._crsVer`. Lanes: `settings.siteRules` ([[location…]…], chip rows) → `siteLane`;
   `courseOverlaps()` marks rows. 📄 `rcReportHtml` / `rcReport(fmt)`, sections `settings.repSec` (`REP_SECS`).
-  `rcReport` always builds with the "realistic" lens (attrition + courses), then restores the screen's lens. The Gantt
+  `rcReport` always builds with the "realistic" lens (attrition + courses), then restores the screen's lens.
+  On paper: `d5` = dd/mm (no year, no direction marks); portrait A4 36pt (`WordSection1`); the Gantt's course cell =
+  `.n1` name · `.n2` location · people · `.n2` range + `.sth` historical / `.stn` active now; the Gantt is last, on its
+  own page, followed by the course list (inline styles — Word drops most selectors). Word: every cell gets `dir="rtl"`
+  in Hebrew (Word reads cells LTR otherwise) and `wordMarks` turns isolates into RLM + LTR span + RLM. Verify a Word
+  change in Word itself (COM: Documents.Open → SaveAs2 PDF; Range.Information(5) = a character's x) — the browser lies
+  about it (test: `tests/browser/report-format.js`). The Gantt
   fills each week cell by days (start day → last day), a gradient in print, the whole cell in Word.
 - `hirePlan` / `renderHirePlan` ("are your courses enough?") implement `RECRUIT_PLAN_SPEC.md` —
   read it before touching them. Course calendar: `courseDayOK` + `cohortFloorDate` (working days,

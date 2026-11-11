@@ -4,6 +4,43 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### 📄 The executive report, as the managers' summary reads it
+
+- The order and the words of the reference summary: the numbers (2 columns) · month by month (the month the plan date
+  falls in says "(full month)") · are the courses enough? (short = the courses as loaded − needed; "yes … provided we keep
+  to the recruiting Gantt" while courses are still ahead — also once the Gantt already holds the additions) · "what to
+  add, by course" — only while the plan has something to add — with a closing row (the average addition, and each
+  location's latest started course that fell short of its class size) · reaching
+  the target (one column) · the work plan to improve the measures · how many reps · course limits · the course Gantt
+  on its own page, then the same courses as a list (start · days · recruiting target · reps in course · gap · a colored
+  time status · a total row). The decision lines are off unless ticked; the lens and the 🎧 left the scope line.
+- 🎯 A course's recruiting target (`c.req`, "דרישת גיוס"): a new optional column in the courses table (empty = the
+  location's class size, shown as its placeholder), read from course files ("דרישה" / "יעד" / "target" — never taken for
+  the reps, though its header also says "גיוס") and in the template. The report's gap and "fell short" read it.
+- A course ahead has no reps yet: "נציגים בקורס" is optional (empty = not recruited yet; the table shows what the plan
+  counts, faint). `crsReps(c)` = the one count every number reads (graduates, the plan, the What-If, the lens, the
+  report): a course that started = its reps; one ahead = its target, or its reps when more; neither = the class size.
+  The plan's ✓ apply raises the target (the reps come when recruited); a new course comes with a target, no reps.
+- The summary line under "what to add" = the message to recruiting: the average over the next courses' top-ups only,
+  new courses named apart ("ועוד 3 קורסים חדשים (26 נציגים)"), then why — each location's latest started course short of
+  its target. "דרישה מקורית" = the course's target before the addition.
+- "Now → after" reads left to right everywhere (the levers' steps, the What-If line): it showed reversed in Word.
+- Root cause of the scrambled numbers in Word: Word reads every table cell as a left-to-right paragraph unless the
+  cell says `dir="rtl"` — each cell now does, and an isolate becomes RLM + an LTR span + RLM (Word knows the RLM, not
+  isolates). Checked in Word itself (positions of each number on the page).
+- Every date in the report = dd/mm without the year (04/10): the week headers, the course's range and "on shifts".
+  A range reads 12/10–28/10, start on the left. No hidden direction marks around the dates (Word showed them).
+- The course cell is three lines: the name (bold, 7.5pt, dark blue) · location · people (ב"ש · 11) · the range — the
+  count on its own line never runs into a date ("28/1011"). Under them, centered: "Historical" (gray) once the later of
+  its last day / first day on shifts has passed, "Active now" (orange) once it started; future courses carry no label.
+- Portrait A4 with 36pt margins (also as a Word section); the Gantt spans the full 522pt between them, the name and
+  "on shifts" columns fixed, the weeks share the rest (their font fits the column). The header row repeats on the next
+  page, a course row never splits, and a 1pt last paragraph keeps Word from adding an empty page.
+- No hidden direction marks anywhere in the file (Word drew them as boxes): the header dates are dd/mm/yyyy, every
+  isolate left in a text becomes a span with its direction (`wordMarks`), and a course name drops them — saved names
+  on load (`normCourse`), and the plan's new courses are named with dd/mm.
+- Test: `tests/browser/report-format.js`.
+
 ### ⏱ Past · now · ahead on each matrix cell
 
 - In the week that holds today, every cell says where it stands in time without a word: the half hours already gone are

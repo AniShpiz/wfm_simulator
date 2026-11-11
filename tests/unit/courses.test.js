@@ -85,6 +85,39 @@ test("the app's own template header \"ימי עבודה\" keeps each course's le
   assert.deepStrictEqual(pick(r, "count"), [8, 6]);
 });
 
+test("a recruiting target column (\"דרישת גיוס\") is the target, never the reps — though its header also says גיוס", () => {
+  // the template's own order: reps, then the target
+  const r = P([["שם קורס", "פתיחת קורס", "ימי הקורס", "חניכים", "דרישת גיוס", "% הסמכה"],
+    ["קורס ב\"ש 1", "04/11/2026", 12, 8, 12, 90], ["קורס רחובות 1", "11/11/2026", 12, 7, "", 85]]);
+  assert.deepStrictEqual(pick(r, "count"), [8, 7]);
+  assert.deepStrictEqual(pick(r, "req"), [12, undefined]); // empty = no target (the class size stands in)
+  // the summary's own words, target before the reps; and the timeline Gantt
+  const r2 = P([["שם קורס", "פתיחת קורס", "ימי הקורס", "דרישת גיוס", "נציגים בפועל"], ["באר שבע 155", "09/11/2026", 12, 16, 4]]);
+  assert.deepStrictEqual([r2[0].count, r2[0].req], [4, 16]);
+  const r3 = P([["קורס", "דרישת גיוס", "מגויסים", "01/11/2026", "08/11/2026", "15/11/2026"], ["קורס נובמבר", 16, 11, "x", "x", ""]]);
+  assert.deepStrictEqual([r3[0].count, r3[0].req], [11, 16]);
+  // no target column: nothing changes
+  assert.strictEqual(P([["קורס", "תאריך התחלה", "כמות"], ["א", "01/11/2026", 20]])[0].req, undefined);
+});
+
+test("a course ahead with no reps yet: the file keeps it empty; a file with neither reps nor target = the form's default as the target", () => {
+  const r = P([["שם קורס", "פתיחת קורס", "ימי הקורס", "חניכים", "דרישת גיוס"], ["קורס ב\"ש 9", "06/12/2026", 12, "", 16]]);
+  assert.deepStrictEqual([r[0].count, r[0].req], [undefined, 16]);
+  const r2 = P([["קורס", "תאריך התחלה"], ["א", "01/11/2026"]]);
+  assert.deepStrictEqual([r2[0].count, r2[0].req], [undefined, 10]);
+});
+
+test("crsReps: a course that started counts its reps; one ahead counts its target (or its reps when more); neither = the class size", () => {
+  const d = n => new Date(Date.now() + n * 864e5).toISOString().slice(0, 10);
+  const C = sandbox(["crsReps", "siteMax", "courseSite", "iso", "pad"], ["SITES", "SITE_MAX"], { state: { settings: {} } });
+  assert.strictEqual(C.crsReps({ site: "ב\"ש", start: d(-20), count: 8, req: 16 }), 8);   // started: what recruiting brought
+  assert.strictEqual(C.crsReps({ site: "ב\"ש", start: d(20), req: 16 }), 16);             // ahead, not recruited yet: the target
+  assert.strictEqual(C.crsReps({ site: "ב\"ש", start: d(20), count: 6, req: 16 }), 16);   // ahead, partly recruited: still the target
+  assert.strictEqual(C.crsReps({ site: "ב\"ש", start: d(20), count: 18, req: 16 }), 18);  // more than asked: the reps
+  assert.strictEqual(C.crsReps({ site: "ב\"ש", start: d(20), count: 6 }), 6);             // no target typed: the reps, as before
+  assert.strictEqual(C.crsReps({ site: "רחובות", start: d(20) }), 7);                     // neither: the class size
+});
+
 test("the template's new header \"ימי הקורס\" (course days) keeps each course's length", () => {
   const r = P([["שם קורס", "פתיחת קורס", "ימי הקורס", "חניכים", "% הסמכה"], ["קורס ב\"ש 1", "04/11/2026", 12, 8, 90], ["קורס בית 1", "11/11/2026", 16, 6, ""]]);
   assert.deepStrictEqual(pick(r, "duration"), [12, 16]);
