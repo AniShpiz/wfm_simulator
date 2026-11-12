@@ -24,6 +24,8 @@ Recruitment / WFM manager planning the coming months of courses:
 | Fill order | **The earliest course first.** |
 | Not enough | **Suggest an extra course** at the earliest free slot of a location; one click adds it. |
 | Wording | No "מצבה" — reps / "נציגים". |
+| Reps vs target (2026-11-12) | "נציגים בקורס" = who **came on the course's first day**; "דרישת גיוס" = how many were asked for. A course that hasn't opened has no reps (a number there becomes the target). More than the target can come — the gap is then negative. |
+| More than enough (2026-11-12) | When the plan (or a What-If scenario) holds every month with room to spare, it says what recruiting can **let go**: the **latest** course first, never below the reps a course already has, and only a course that graduates inside the plan's months. |
 
 ## Model (as built — `hirePlan` in index.html)
 
@@ -39,6 +41,9 @@ Per month in the forecast (from this month, up to 6):
   class size; still short → an extra course at the location whose next slot graduates first
   (length = the location's usual course length, default 12 working days); if none graduates in time,
   the month is reported with the date the earliest extra course can graduate.
+- Room to spare → `cut` (Map course → reps that can be let go), `cutTotal`: courses from the latest, a course with an
+  addition skipped, each cut = the smallest month slack ÷ one trainee's share in that month, at most the course's
+  target − its reps. Separate from `add` / `total`; the report's course list shows it as "שינוי בדרישה −n".
 
 ## Screen
 
