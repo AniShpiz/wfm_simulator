@@ -4,6 +4,37 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### 📄 The report says what its numbers stand on — and "without → with the improvement"
+
+- The scope box answers the meeting's question once: "the numbers by the courses as entered now (n reps in the courses
+  ahead) — without the +x recommended" (the plan's additions count only once applied, or loaded already enlarged).
+- Reaching the target compares, at every date, the courses as entered without improving → with the measures improved
+  (the What-If sliders): "53.1% → 59.8%" + the gain in points, and the target line says both ("without — not reached ·
+  with — reached 27/01"). An arrow there means only without → with; the date column says when. No slider moved = one
+  column, no arrows.
+- One colored Gantt, then the course list twice when a What-If slider is set: "without improving the center" and "with
+  the measures improved". Numbers only: target as entered · the plan's addition in its own column · reps (0 = not
+  recruited yet, "?" = unknown) · gap = target + addition − reps (each row adds up) · the plan's new courses as
+  "recommended" rows. One total row, each column summed (no sentence under it). No slider set = one list; no addition
+  = no addition column.
+- More than enough: the plan says what recruiting can let go (`hirePlan().cut`) — the latest course first, never below
+  the reps a course has, only a course graduating inside the plan's months; the list's column is "change in target"
+  (+n added · −n can be let go). With the cuts applied the plan needs nothing added (tested).
+- "נציגים בקורס" = who came on the course's first day: a course that hasn't opened has none — its cell is locked until
+  it opens, and a number there (a file's "actual" column, an older apply) becomes the target when none is typed.
+- The improvement in plain numbers wherever it's named (the list, reaching the target, the scenario box): "handle time
+  5:00 → 4:39 (−7%) · monthly attrition 4% → 2.2% (−45%) …" (`levHtml`).
+- The What-If sliders are kept across a reload (`settings.wiSliders`, saved when a slider is let go; ↺ clears them), so
+  the report keeps the last scenario.
+- "What to add, by course (on top of what's entered)" — the meeting's question answered where the number stands.
+- The work plan's table answers its own questions: "one step" · "the step adds: now / by …" (in points, "+0.4 נק׳") ·
+  "enough alone, instead of recruiting?" → "yes, with a 25% improvement" / "no, not even at the most".
+- Word: the header's "without → with" lies over its cells — an LTR embedding with an LRM on each side of the arrow (an
+  arrow between two Hebrew words turns right-to-left with them). Every signed number / pair (`sg`) goes through the
+  isolate → RLM + LTR span + RLM path: a bare span kept the order but sent a sign to the wrong side ("39+") outside
+  tables. Checked in Word.
+- Test: `tests/browser/report-plan.js`.
+
 ### 📄 The executive report, as the managers' summary reads it
 
 - The order and the words of the reference summary: the numbers (2 columns) · month by month (the month the plan date
