@@ -299,6 +299,29 @@ workforce filter lists legitimately show only "(all)" for this file.
 - 💲 `WI_LEVERS` = the four What-If sliders (ahtCut, attrCut, shrinkCut, absCut) — the shadow price lists exactly them;
   a lever at 0% in Settings reads "nothing to improve". `#wiReset` shows only while `wiScenario()` (a slider moved).
 
+## 🧮 "How are the numbers calculated?" (Settings — the play window)
+
+- `openLogic(tab)` (`#revealLogic`; `#lgFcBtn` beside 🧪 opens the forecast tab) → the `.mpanel` `#lgPanel`, two tabs
+  (`settings.lgTab`), all session state in `LG`. Built to PLAY: every picture answers a slider, a drag or a chip.
+- erl: `lgMine(peak|quiet)` = the user's half hour of `wiSun()` (reps = effective, `lgEff`) → `lgErlUpd` (equation chips,
+  `lgErlChart` — click / drag = reps, `lgDots` = 100 callers from `lgProb` (`erlangA` pWait / pAb), `lgRace` = patience
+  vs the next free rep, `lgSimBuild` / `lgSimPlay` = one seeded half hour) + `lgInvest` (rep hours the first forecast
+  week needs per lever step; a lever at 0% in Settings has no row). The playground is raw Erlang (no slot anchor).
+- fc: `lgFcSet` (volume = the weekday's daily totals like `backtestDaily`; AHT / MPT = its busiest half hour with the
+  real ctx; < 5 weeks → an example series) → `lgFcChart` (drag a point = `LG.arr`, scale frozen while dragging) +
+  `lgCards` (order, error and lean = `rankModels`, cached per open in `LG.rk`).
+- A new model = one line in `Models[kind]` → it is a card by itself. Add its three sentences `lgM_<id>_h` / `_g` / `_b`
+  (EN + HE; without them the card just has no text) and, if you like, a picture in `lgGlyph`.
+- 🛠 "My model": `Models[kind].custom` = `myModel(series,h,myP(kind))`, `settings.myModel[kind]` = {a, tr} (level
+  reaction · trend share). `rankModels` counts it only once set; the card is always there (`lgTune`, `lgMySet`,
+  `lgMyChanged` → re-rank + `autoPickModels` + rebuild the forecast; 🎯 = a grid search on `backtestModel`'s error).
+- 📊 Interval shape: `PROF_MODES` = adaptive · w12 · **smart** (`profSmart(di,before)`: recency-weighted day SHARES
+  from `profDayShares()`, shrunk toward the Sun–Thu shape by B = noise ÷ squared distance; Friday never borrows; < 3
+  days → the plain window). `profBacktest` scores all three (`profileShares(di,mode,cut,before)`); smart wins only
+  when lower at one decimal. `profLab(m)` = a mode's name.
+- Test: `tests/browser/learn-logic.js` (`LG_SHOTS=<folder>` = screenshots; `LG_SAMPLE=<forecast file>` prints the
+  interval-shape test on that file).
+
 ## Dates and pickers (app-wide)
 
 - Display: `fmtD(ds)` = 05-Jul-2026 / 05-יולי-2026 (LRI…PDI isolate + an LRM after the month), `fmtDs` = 05-Jul.
