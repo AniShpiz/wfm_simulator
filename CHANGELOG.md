@@ -4,6 +4,33 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### 🧮 "How are the numbers calculated?" — a place to play (Settings)
+
+- The old "Reveal Analytical Logic" window (six paragraphs of method) is replaced by a window you play with; the same
+  button, and "📈 How is the forecast built?" beside the 🧪 check in Forecasting Models, open it.
+- **How many reps does a half hour need?** The formula as chips (calls × call length ÷ 30:00 = load + 🎲 buffer for
+  randomness = reps for the target); four sliders that start from your own peak / quiet half hour; the answer-rate and
+  occupancy curve (click or drag on it = the reps; "one more rep: +x%"); "out of 100 callers" — answered at once ·
+  waited · gave up; "how long are callers willing to wait?" (the patience race); one simulated half hour (▶ / 🎲); and
+  "where is it worth investing?" — the rep hours a 5 / 10 / 20% step of each lever saves in your first forecast week.
+- **How is the forecast built?** The steps of a forecast day as chips (a part switched off in Settings is dimmed); your
+  own series with points you can drag and three scenarios (an odd week · a lasting jump · a steady rise); every model
+  of the registry as a card — a picture of its logic, its error and lean (the 🧪 window's numbers), its forecast for
+  next week (follows the drag) and, for the selected one, how it works · ✓ good when · ✗ weaker when. A model added to
+  `Models` later appears by itself. No file loaded → example numbers, still playable.
+- Every chip of the formula explains itself on hover; the needed reps are marked on the curve ("needed: 18") and the
+  chip says why ("17 reps give 88%, 18 give 92%"); the simulated half hour names its rows (rep 1 … rep n, the waiting
+  line) and says it runs on the sliders above; the patience line says where yours comes from (file / Settings) and how
+  to find it; values are labelled on the charts.
+- **🛠 My model** — a card with two knobs (react to the last week · continue the trend), live on your series, and
+  "🎯 Fit to my history" (the pair that was closest on weeks it had not seen). Once set it is a model like any other:
+  in the Settings lists, in the 🧪 check, and chosen automatically only if it wins the test.
+- **📊 Blended shape** — a third way to spread a day's calls over its half hours, beside the 8- and 12-week windows:
+  every day counts by its own split, recent weeks weigh more (half-life 6 weeks), and a noisy weekday leans on the
+  shape of the other weekdays exactly as far as its own difference is within its noise. Tested with the two windows on
+  the file's own past; used only when its error is clearly lower (at the precision shown).
+- Test: `tests/browser/learn-logic.js`.
+
 ### 📄 The report says what its numbers stand on — and "without → with the improvement"
 
 - The scope box answers the meeting's question once: "the numbers by the courses as entered now (n reps in the courses

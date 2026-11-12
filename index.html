@@ -187,6 +187,33 @@ td .short.soft{background:transparent;box-shadow:inset 0 0 0 1.5px #c22}
 #modalBg.show{display:flex}
 #modal{background:#fff;border-radius:11px;max-width:580px;width:92%;max-height:76vh;overflow:auto;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
 #modal:has(#shPanel:not([hidden])){max-width:960px;max-height:90vh} /* the summary image is read at full size */
+/* 🧮 "How are the numbers calculated?" — the play window (openLogic) */
+#modal:has(#lgPanel:not([hidden])){max-width:940px;max-height:92vh} #lgPanel [hidden]{display:none!important}
+.lgRow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 0 6px} .lgH{font-size:.86rem;font-weight:700;color:var(--navy)}
+.lgEq{display:flex;align-items:stretch;justify-content:center;gap:6px;flex-wrap:wrap;direction:ltr;margin:8px 0}
+.lgEq>i{font-style:normal;align-self:center;color:var(--muted);font-weight:700}
+.lgChip{display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:9px;padding:4px 10px;background:#fff;min-width:54px;max-width:150px;text-align:center}
+.lgChip b{font-size:1.05rem;color:var(--navy);font-variant-numeric:tabular-nums} .lgChip small{font-size:.66rem;color:var(--muted);unicode-bidi:plaintext;line-height:1.25}
+.lgChip.ld{background:var(--sky-soft)} .lgChip.bf{background:#fdf1e3;border-color:#f0cfa6} .lgChip.nd{background:var(--navy);border-color:var(--navy)} .lgChip.nd b,.lgChip.nd small{color:#fff}
+.lgSl{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:4px 18px;margin:6px 0}
+.lgSl label{display:grid;grid-template-columns:1fr auto;align-items:center;font-size:.78rem;color:var(--muted)} .lgSl input{grid-column:1/3;width:100%;margin:2px 0} .lgSl b{color:var(--navy);font-variant-numeric:tabular-nums;direction:ltr}
+.lgTwo{display:grid;grid-template-columns:minmax(0,1fr) 200px;gap:14px;align-items:start} @media(max-width:720px){.lgTwo{grid-template-columns:1fr}}
+.lgSvg{direction:ltr} .lgSvg svg{display:block;width:100%;height:auto;touch-action:none;user-select:none} #lgChart svg{cursor:ew-resize} #lgFcChart [data-i]{cursor:ns-resize}
+#lgRead{text-align:center;margin:2px 0 4px;min-height:1.2em;color:var(--navy)}
+.lgDots{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;direction:ltr;margin:6px 0} .lgDots.row{grid-template-columns:repeat(50,1fr);gap:3px}
+.lgDots i{aspect-ratio:1;border-radius:50%;background:#3fa9f5;transition:background .15s} .lgDots i.w{background:#d9822b} .lgDots i.a{background:#b3271e} .lgDots i.k{background:var(--navy)}
+.lgDL{margin-top:2px;gap:4px 12px} .lgDL i{border-radius:50%!important} .lgDL b{color:var(--ink)}
+.lgBar{display:grid;grid-template-columns:minmax(130px,30%) 1fr auto;gap:10px;align-items:center;font-size:.8rem;margin:4px 0}
+.lgBar>span:nth-child(2){height:12px;background:var(--sky-soft);border-radius:6px;overflow:hidden} .lgBar i{display:block;height:100%;background:var(--sky);border-radius:6px} .lgBar.top i{background:var(--navy)} .lgBar.top>span:first-child{font-weight:700}
+.lgBar b{font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:600}
+.lgPipe{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin:4px 0 8px;font-size:.76rem} .lgPipe>i{font-style:normal;color:var(--muted)}
+.lgStepC{border:1px solid var(--border);border-radius:999px;padding:2px 9px;background:#fff;cursor:help;white-space:nowrap} .lgStepC.off{opacity:.45;text-decoration:line-through}
+#lgCards{display:grid;gap:5px;margin-top:8px}
+.lgCard{display:grid;grid-template-columns:48px minmax(120px,1.1fr) 2fr 70px;gap:3px 10px;align-items:center;text-align:start;border:1px solid var(--border);border-radius:9px;background:#fff;padding:5px 9px;font:inherit;font-size:.8rem;cursor:pointer;color:var(--ink)}
+.lgCard:hover{border-color:#9cc8ee} .lgCard.on{border-color:#d9822b;box-shadow:inset 3px 0 0 #d9822b} [dir=rtl] .lgCard.on{box-shadow:inset -3px 0 0 #d9822b}
+.lgErr{display:flex;align-items:center;gap:6px;color:var(--muted)} .lgErrT{flex:0 0 40%;height:8px;background:var(--sky-soft);border-radius:4px;overflow:hidden} .lgErrT i{display:block;height:100%;background:#9fb3c8;border-radius:4px}
+.lgNx{font-variant-numeric:tabular-nums;color:#b96a14;font-weight:700;white-space:nowrap;text-align:end;direction:ltr}
+.lgWhy{grid-column:1/-1;display:grid;gap:2px;font-size:.78rem;padding:3px 0 2px} .lgWhy .g{color:var(--emerald)} .lgWhy .b{color:var(--muted)}
 #modal h3{color:var(--navy);font-size:1rem;margin-bottom:5px}
 #modal .mini{margin-bottom:8px}
 #modal .acts{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
@@ -1465,8 +1492,8 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <div class="frow"><label data-i18n="fmVol">Call volume model</label><select id="setModelVol" style="width:210px"></select></div>
         <div class="frow"><label data-i18n="fmAht">AHT model</label><select id="setModelAht" style="width:210px"></select></div>
         <div class="frow" id="mptModelRow"><label data-i18n="fmMpt">MPT model</label><select id="setModelMpt" style="width:210px"></select></div>
-        <div class="frow"><label><span data-i18n="fmProfile">Interval profile window</span> <button class="linklike" id="profBtn" type="button" data-i18n-title="profBtnTip" title="See and edit the intraday call weights">📊</button></label><select id="setProfile" style="width:210px"><option value="auto">🤖</option><option value="adaptive" data-i18n="fmProfAdapt">Adaptive (8w, fallback all)</option><option value="w12" data-i18n="fmProf12">12 weeks</option></select></div>
-        <div class="frow" style="border:none;gap:8px;flex-wrap:wrap"><button class="btn ghost" id="backtestBtn" data-i18n="backtestBtn">🧪 Backtest models</button><button class="btn ghost" id="reviewExclBtn" data-i18n="reviewExclBtn">📅 Review excluded days</button></div>
+        <div class="frow"><label><span data-i18n="fmProfile">Interval profile window</span> <button class="linklike" id="profBtn" type="button" data-i18n-title="profBtnTip" title="See and edit the intraday call weights">📊</button></label><select id="setProfile" style="width:210px"><option value="auto">🤖</option><option value="adaptive" data-i18n="fmProfAdapt">Adaptive (8w, fallback all)</option><option value="w12" data-i18n="fmProf12">12 weeks</option><option value="smart" data-i18n="fmProfSmart">Blended shape</option></select></div>
+        <div class="frow" style="border:none;gap:8px;flex-wrap:wrap"><button class="btn ghost" id="backtestBtn" data-i18n="backtestBtn">🧪 Backtest models</button><button class="btn ghost" id="lgFcBtn" data-i18n="lgTabFc">📈 How is the forecast built?</button><button class="btn ghost" id="reviewExclBtn" data-i18n="reviewExclBtn">📅 Review excluded days</button></div>
         </details>
         <!-- planned one-off surges the history can't know (vendor change, campaign): sized once,
              added to the forecast, and kept OUT of learning once the days become history.
@@ -1475,13 +1502,57 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
              shared modal — switch window, see what changes, pin a share -->
         <div id="profPanel" class="mpanel" data-tkey="profTitle" hidden>
           <div class="toolbar" style="margin:0 0 6px;gap:8px">
-            <div class="seg" id="profWin"><button type="button" data-mode="auto" data-i18n="profAutoBtn">🤖 Automatic</button><button type="button" data-mode="adaptive" data-i18n="fmProfAdapt">Adaptive (8w, fallback all)</button><button type="button" data-mode="w12" data-i18n="fmProf12">12 weeks</button></div>
+            <div class="seg" id="profWin"><button type="button" data-mode="auto" data-i18n="profAutoBtn">🤖 Automatic</button><button type="button" data-mode="adaptive" data-i18n="fmProfAdapt">Adaptive (8w, fallback all)</button><button type="button" data-mode="w12" data-i18n="fmProf12">12 weeks</button><button type="button" data-mode="smart" data-i18n="fmProfSmart" data-i18n-title="profSmartTip">Blended shape</button></div>
             <div class="seg" id="profView"><button type="button" data-view="share" class="active" data-i18n="profViewShare">Weights</button><button type="button" data-view="diff" data-i18n="profViewDiff">Change vs other window</button></div>
           </div>
           <div class="profTest" id="profTest" hidden></div>
           <p class="mini" id="profInsight"></p>
           <div class="tablewrap" style="max-height:52vh;overflow:auto"><table id="profTable"></table></div>
           <p class="mini" id="profFoot"></p>
+        </div>
+        <!-- 🧮 "How are the numbers calculated?" — a place to play (openLogic): one half hour (Erlang) · the forecast models -->
+        <div id="lgPanel" class="mpanel" data-tkey="lgTitle" hidden>
+          <div class="seg" id="lgTabs"><button type="button" data-tab="erl" data-i18n="lgTabErl">👥 How many reps does a half hour need?</button><button type="button" data-tab="fc" data-i18n="lgTabFc">📈 How is the forecast built?</button></div>
+          <div id="lgErl">
+            <div class="lgRow"><div class="seg" id="lgPre"><button type="button" data-p="peak" data-i18n="lgPeak" data-i18n-title="lgPeakT">Your peak half hour</button><button type="button" data-p="quiet" data-i18n="lgQuiet" data-i18n-title="lgQuietT">A quiet half hour</button></div><span class="mini" id="lgSrc"></span><button class="linklike" id="lgReset" type="button" data-i18n="lgMine" hidden>↺ My numbers</button></div>
+            <div class="lgEq" id="lgEq"></div>
+            <div class="lgSl">
+              <label><span data-i18n="lgSlV">Calls in the half hour</span><b id="lgVv"></b><input type="range" id="lgV"></label>
+              <label><span data-i18n="lgSlA">Call length</span><b id="lgAv"></b><input type="range" id="lgA"></label>
+              <label id="lgMrow"><span data-i18n="lgSlM">Customer patience</span><b id="lgMv"></b><input type="range" id="lgM"></label>
+              <label><span data-i18n="lgSlN">Reps answering</span><b id="lgNv"></b><input type="range" id="lgN"></label>
+            </div>
+            <div class="lgTwo">
+              <div><div class="legend rdyLeg top" id="lgLeg"></div><div id="lgChart" class="lgSvg"></div><p class="mini" id="lgRead"></p></div>
+              <div><div class="lgH" data-i18n="lgOf100">Out of 100 callers</div><div class="lgDots" id="lgDots"></div><div class="legend lgDL" id="lgDotsLeg"></div></div>
+            </div>
+            <details class="hpLim" id="lgRaceD" open><summary data-i18n="lgRaceQ">How long are callers willing to wait?</summary>
+              <div class="lgSl"><label><span data-i18n="lgSlW">Waiting time</span><b id="lgWv"></b><input type="range" id="lgW" min="0" max="300" step="5"></label></div>
+              <div class="lgDots row" id="lgRaceDots"></div>
+              <div class="legend lgDL"><span><i style="background:#0d2a4d"></i><span data-i18n="lgRaceStay">Still on the line</span></span><span><i style="background:#b3271e"></i><span data-i18n="lgLgAb">Gave up</span></span></div>
+              <p class="mini" id="lgRaceRes"></p><p class="mini" id="lgMptSrc" style="cursor:help"></p>
+            </details>
+            <details class="hpLim" open><summary data-i18n="lgSimQ">Why more reps than the load? Calls don't arrive evenly</summary>
+              <div class="lgRow"><button class="btn ghost" id="lgPlay" type="button" data-i18n="lgPlay">▶ Play the half hour</button><button class="btn ghost" id="lgDice" type="button" data-i18n="lgDice">🎲 Another half hour</button><span class="mini" id="lgSimRes"></span></div>
+              <div class="legend lgDL"><span><i style="background:#3fa9f5"></i><span data-i18n="lgLgTalk">On a call</span></span><span><i style="background:#d9822b"></i><span data-i18n="lgLgWait">Waiting</span></span><span><i style="background:#b3271e"></i><span data-i18n="lgLgAb">Gave up</span></span></div>
+              <p class="mini" id="lgSimCap"></p>
+              <div id="lgSim" class="lgSvg"></div>
+            </details>
+            <div id="lgInv">
+              <div class="lgRow"><span class="lgH" data-i18n="lgInvQ">Where is it worth investing?</span><span class="mini" data-i18n="lgInvStep">An improvement of</span><div class="seg" id="lgStep"><button type="button" data-s="5">5%</button><button type="button" data-s="10">10%</button><button type="button" data-s="20">20%</button></div><span class="mini" id="lgInvWk"></span></div>
+              <div id="lgBars"></div>
+            </div>
+          </div>
+          <div id="lgFc" hidden>
+            <div class="lgPipe" id="lgPipe"></div>
+            <div class="lgRow"><div class="seg" id="lgKind"></div><div class="seg" id="lgDay"></div><span class="mini" id="lgFcSrc"></span></div>
+            <div class="lgRow" id="lgSc"><span class="mini" data-i18n="lgTry">Drag a point, or try:</span><button class="hpChip" type="button" data-sc="spike" data-i18n="lgScSpike">⚡ One odd week</button><button class="hpChip" type="button" data-sc="step" data-i18n="lgScStep">🪜 A lasting jump</button><button class="hpChip" type="button" data-sc="trend" data-i18n="lgScTrend">📈 A steady rise</button><button class="linklike" id="lgFcReset" type="button" data-i18n="lgMine" hidden>↺ My numbers</button></div>
+            <div class="legend rdyLeg top" id="lgFcLeg"></div>
+            <div id="lgFcChart" class="lgSvg"></div>
+            <div id="lgTune" hidden><div class="lgSl"><label><span data-i18n="lgTuA">React to the last week</span><b id="lgTaV"></b><input type="range" id="lgTa" min="0.05" max="1" step="0.05"></label><label><span data-i18n="lgTuT">Continue the trend</span><b id="lgTtV"></b><input type="range" id="lgTt" min="0" max="1" step="0.05"></label></div>
+              <div class="lgRow"><button class="btn ghost" id="lgFit" type="button" data-i18n="lgTuFit">🎯 Fit to my history</button><span class="mini" id="lgTuRes"></span></div></div>
+            <div id="lgCards"></div>
+          </div>
         </div>
         <!-- ⚡ fast lane: what the last 10 working days say vs the model, and its two knobs (fastState) -->
         <div id="faPanel" class="mpanel" data-tkey="faTitle" hidden>
@@ -1677,8 +1748,6 @@ en:{
   optNeedPolicy:"Check 'Enable Operational Policy Optimizer' first — the optimizer runs on the rules you define there.",
   rosterSortSched:"Sorted lowest → highest scheduled. 'Possible' = a full week inside the shift-hours window from Settings ({h}h).",
   rosterSortDef:"Sorted by extension gap, largest first. 'Possible' = a full week inside the shift-hours window from Settings ({h}h).",
-  logicEns:"5-Method Ensemble (volume default) — per weekday+interval: EMA (α tuned per series by MSE search), MA(3), cumulative average, linear trend and exponential trend each produce their own horizon-aware forecast (trend methods use a damped horizon), and are blended with weights inversely proportional to their one-step in-sample error — so week+8 genuinely differs from week+1 and the best-fitting methods dominate each series.",
-  logicClean:"Ingestion guard — daily volumes are first normalized by a billing-calendar uplift factor (median day-of-month effect vs a clean weekday baseline, per the Billing peaks methodology), then each weekday+interval series is winsorized at median ± 3 robust deviations. Billing-day peaks are modeled and kept; war weeks, one-off holidays and outage lows are clipped before they can teach the model. Days you paint as exceptions are excluded from learning entirely.",
   backtestBtn:"🧪 Backtest models",
   backtestTitle:"How accurate is the forecast?",
   backtestMsg:"Each model is tested on your last 6 weeks as if it hadn't seen them; the most accurate one is used, automatically.",
@@ -1730,13 +1799,44 @@ en:{
   primAr:"Answer Rate", primTsf:"TSF {s}",
   shiftTitle:"Shift Hours Window", setDayStart:"Day starts (hour)", setDayEnd:"Day ends (hour)",
   shiftNote:"Applies to the weekly matrix, candidate profiles and predictive calculations.",
-  revealLogic:"🧮 Reveal Analytical Logic",
-  logicTitle:"Analytical Logic",
-  logicIntro:"The models running behind every number on the dashboards:",
-  logicVol:"Call Volume Forecast — Double Exponential Smoothing (Holt's method, α=0.4, β=0.2, damped φ=0.95), fitted separately per weekday + interval across your uploaded weeks.",
-  logicAht:"AHT Prediction — per weekday + interval, from the model chosen in Settings. Beyond the simple averages: calls-weighted smoothing (busy weeks count more, old weeks fade), day level × intraday shape (the day's AHT from all its calls, each interval's own factor shrunk toward the day when it has few calls, smoothed with its neighbours), and a blend of the two. The backtest scores AHT weighted by calls.",
-  logicErlang:"Service Level & Answer Rate — one unified Erlang A (Palm) core for abandonment queues: Answer Rate and every TSF window share the same patience-adjusted physics (SL(t) = AR − (pW − pAb)·e^(−rt), exact Erlang C in the zero-abandonment limit); classic Erlang C for emergency/hotline queues.",
-  logicStaff:"Required staffing — iterative search starting at ⌊load⌋+1, incrementing until the Primary Target Metric meets your attainment target. Unavailable time is deducted from scheduled capacity beforehand.",
+  revealLogic:"🧮 How are the numbers calculated?", lgTitle:"How are the numbers calculated?",
+  lgTabErl:"👥 How many reps does a half hour need?", lgTabFc:"📈 How is the forecast built?",
+  lgPeak:"Your peak half hour", lgQuiet:"A quiet half hour", lgFcW:"forecast", lgDemo:"Example numbers",
+  lgCalls:"calls", lgAht:"call length", lgHalf:"half hour", lgLoad:"load = reps busy non-stop", lgBuf:"buffer for randomness (+{p}%)", lgNeed:"reps for {m} {t}%", lgSched:"= {n} in the sidur",
+  lgSlV:"Calls in the half hour", lgSlA:"Call length", lgSlM:"Customer patience", lgSlN:"Reps answering",
+  lgLgTgt:"Target {t}%", lgLgBelow:"Fewer reps than the load", lgRead:"{n} reps: {m} {a}% · busy {o}% of the time", lgReadD:" · one more rep: +{d}%",
+  lgSimQ:"Why more reps than the load? Calls don't arrive evenly", lgPlay:"▶ Play the half hour", lgDice:"🎲 Another half hour",
+  lgSimRes:"This half hour: answered {a} · gave up {b} · {p}%", lgSimAvg:"on average (the formula): {p}%", lgLgTalk:"On a call", lgLgWait:"Waiting", lgLgAb:"Gave up", lgMin:"min",
+  lgInvQ:"Where is it worth investing?", lgInvWk:"Week of {d} · {h} of reps needed", lgInvStep:"An improvement of",
+  lgInv_aht:"Calls {p}% shorter", lgInv_vol:"{p}% fewer calls", lgInv_mpt:"Customers wait {p}% longer", lgInv_shr:"{p}% less unavailable time", lgInv_abs:"{p}% fewer no-shows",
+  lgP1:"Exceptional days out", lgP1T:"Holidays, outages and war weeks don't teach the model.", lgP2:"Each weekday alone", lgP2T:"Sundays learn from Sundays, and every half hour has its own history.",
+  lgP3:"The model continues the series", lgP3T:"The model that was most accurate on your history is picked automatically.", lgP4:"Sudden change", lgP4T:"When the last days run above or below the model, the next days follow.",
+  lgP5:"Returning calls", lgP5T:"Calls lost on a bad day come back on the days after it.", lgP6:"Spread over the half hours", lgP6T:"The day's total is split by each half hour's usual share.", lgPOff:"(off in Settings)",
+  lgKVol:"Calls", lgKAht:"Call length", lgKMpt:"Patience", lgDayTot:"{d}s · the whole day", lgDaySlot:"{d}s · {t}", lgTry:"Drag a point, or try:",
+  lgScSpike:"⚡ One odd week", lgScStep:"🪜 A lasting jump", lgScTrend:"📈 A steady rise", lgMine:"↺ My numbers",
+  lgLgAct:"What happened", lgLgPred:"What the model would have forecast — from the weeks before only", lgLgOth:"The other models", lgNext:"next week", lgLast:"last week", lgBack:"{n} weeks ago", lgNxT:"Its forecast for next week",
+  lgM_ensemble5_h:"Five simple methods forecast together; the ones that were more accurate get more weight.", lgM_ensemble5_g:"Most of the time — no single method can sink it", lgM_ensemble5_b:"A sharp sudden change — the averages slow it down",
+  lgM_holt_h:"Follows the level and the direction (up / down) and continues the line, carefully.", lgM_holt_g:"Demand that rises or falls steadily", lgM_holt_b:"Weeks that jump with no direction — it chases noise",
+  lgM_wavg4_h:"The average of the last 4 weeks; the latest counts most (40%).", lgM_wavg4_g:"Stable weeks with small moves", lgM_wavg4_b:"A trend — always one step behind",
+  lgM_lastweek_h:"Copies last week.", lgM_lastweek_g:"Right after a lasting change of level", lgM_lastweek_b:"An odd last week — the oddity is copied",
+  lgM_prophet_h:"Two trend lines — the older and the newer; it continues mostly the newer.", lgM_prophet_g:"A trend that changed midway", lgM_prophet_b:"Few weeks — the line leans on too few points",
+  lgM_ma4_h:"The plain average of the last 4 weeks.", lgM_ma4_g:"Stable weeks", lgM_ma4_b:"A half hour with few calls — one long call moves it",
+  lgM_ewmavw_h:"A week with many calls counts more; old weeks fade.", lgM_ewmavw_g:"The number of calls changes from week to week", lgM_ewmavw_b:"After a sharp change — it reacts only gradually",
+  lgM_hier_h:"First the whole day's call length, then each half hour's shape against the day.", lgM_hier_g:"Thin half hours — they lean on the whole day", lgM_hier_b:"A half hour that truly differs from its day — the difference is softened",
+  lgM_blend_h:"The average of the two methods before it.", lgM_blend_g:"Neither of them clearly leads", lgM_blend_b:"One of them is far off — it drags the other along",
+  lgTipCalls:"Calls that arrive in this half hour.", lgTipAht:"The average time a rep spends on one call, wrap-up included.", lgTipHalf:"The length of the interval.",
+  lgTipLoad:"If calls came one right after another, this many reps would be busy the whole time — with nobody free for the next call.",
+  lgTipBuf:"Calls come in waves, so some reps must be free when a wave arrives. The smaller the half hour, the bigger this share.",
+  lgTipNeed:"The fewest reps that reach the target: {a} reps give {pa}%, {b} give {pb}%.",
+  lgTipOcc:"The share of their time reps are on calls = the answered work ÷ the reps. A result, not a setting: more reps for the same calls → each one is less busy.",
+  lgNeedMk:"needed: {n}", lgRep:"Rep {n}", lgSimCap:"{n} reps · {v} calls · {a} per call — from the sliders above",
+  lgPeakT:"The half hour with the most calls in the first forecast week", lgQuietT:"The half hour with the fewest calls in that week",
+  lgMptSrc:"Yours: {s} · {w}", lgSrcFile:"from your file", lgSrcSet:"from Settings",
+  mMine:"My model", lgM_custom_h:"Your own model, two knobs: how fast it reacts to the last week, and how far it continues the trend.", lgM_custom_g:"You know something about this center the ready models don't", lgM_custom_b:"Reacting too fast = chasing noise",
+  fmProfSmart:"Blended shape", profSmartTip:"Every day counts by its own split, recent weeks weigh more, and a noisy weekday leans on the shape of the other weekdays. Used only when the test on your file shows it is more accurate.",
+  lgTuA:"React to the last week", lgTuT:"Continue the trend", lgTuFit:"🎯 Fit to my history", lgTuSeen:"measured only on weeks the model had not seen",
+  lgOf100:"Out of 100 callers", lgDNow:"Answered at once", lgDWait:"Waited and answered", lgRaceQ:"How long are callers willing to wait?", lgSlW:"Waiting time",
+  lgRaceRes:"After {s} of waiting, {n} of 100 have hung up", lgRaceFree:"when everyone is busy, a rep frees up every {s} sec", lgRaceStay:"Still on the line",
   resetZone:"Workspace reset (danger zone)",
   resetConfirm:"Are you sure you want to reset all active settings and clear loaded forecast arrays?",
   confirmYes:"Yes, reset everything", confirmNo:"Cancel",
@@ -2244,8 +2344,6 @@ he:{
   optNeedPolicy:"סמנו תחילה את 'הפעלת מייעל המדיניות התפעולית' — המייעל פועל לפי הכללים שתגדירו שם.",
   rosterSortSched:"ממוין משובצות מהנמוך לגבוה. 'אפשרי' = שבוע מלא בחלון שעות המשמרת שבהגדרות ({h} שעות).",
   rosterSortDef:"ממוין לפי פער להרחבה, מהגדול לקטן. 'אפשרי' = שבוע מלא בחלון שעות המשמרת שבהגדרות ({h} שעות).",
-  logicEns:"אנסמבל 5 שיטות (ברירת המחדל לנפח) — לכל יום+אינטרוול: EMA (‏α מכויל לכל סדרה), ממוצע נע 3, ממוצע מצטבר, מגמה לינארית ומגמה מעריכית מפיקים כל אחד תחזית התלויה באופק (שיטות המגמה עם אופק מרוסן), ומשוקללים ביחס הפוך לשגיאת החיזוי שלהם בעבר — כך ששבוע +8 באמת שונה משבוע +1 והשיטות המדויקות ביותר שולטות בכל סדרה.",
-  logicClean:"מנגנון ניקוי בקליטה — נפחי היום מנורמלים תחילה במקדם עונתיות של לוח החיוב (אפקט יום-בחודש חציוני מול Baseline נקי לכל יום בשבוע, לפי מתודולוגיית ניתוח שיאי החיוב), ואז כל סדרת יום+אינטרוול עוברת קיטום ב-median ± 3 סטיות רובסטיות. שיאי ימי חיוב ממודלים ונשמרים; שבועות מלחמה, חגים חד-פעמיים ותקלות נחתכים לפני שהם מלמדים את המודל. ימים שסומנו כחריגים ידנית מוחרגים מהלמידה לחלוטין.",
   backtestBtn:"🧪 בדיקת דיוק מודלים",
   backtestTitle:"כמה התחזית מדויקת?",
   backtestMsg:"כל מודל נבדק על 6 השבועות האחרונים שלכם כאילו לא ראה אותם; המדויק ביותר בשימוש, אוטומטית.",
@@ -2297,13 +2395,44 @@ he:{
   primAr:"אחוז מענה", primTsf:"TSF {s}",
   shiftTitle:"חלון שעות משמרת", setDayStart:"תחילת יום (שעה)", setDayEnd:"סוף יום (שעה)",
   shiftNote:"חל על המטריצה השבועית, פרופילי מועמדים וחישובי חיזוי.",
-  revealLogic:"🧮 חשיפת לוגיקה",
-  logicTitle:"לוגיקה אנליטית",
-  logicIntro:"המודלים שפועלים מאחורי כל מספר בלוחות:",
-  logicVol:"חיזוי נפח שיחות — החלקה מעריכית כפולה (שיטת Holt, ‏α=0.4, β=0.2, ריסון φ=0.95), מכוילת בנפרד לכל יום שבוע + אינטרוול על פני השבועות שהועלו.",
-  logicAht:"חיזוי AHT — לכל יום שבוע + אינטרוול, לפי המודל שנבחר בהגדרות. מעבר לממוצעים הפשוטים: החלקה משוקללת בשיחות (שבועות עמוסים שוקלים יותר, ישנים דועכים), רמה יומית × צורה תוך-יומית (משך השיחה של היום מכל שיחותיו, ולכל אינטרוול מקדם משלו שמתכווץ לכיוון היום כשיש בו מעט שיחות, מוחלק עם השכנים), ושילוב של השניים. הבדיקה לאחור מעריכה AHT בשקלול שיחות.",
-  logicErlang:"רמת שירות ואחוז מענה — ליבת Erlang A (פאלם) מאוחדת לתורי נטישה: אחוז המענה וכל חלונות ה־TSF חולקים את אותה פיזיקת סבלנות (במגבלת אפס-נטישה — Erlang C מדויק); Erlang C קלאסי לתורי חירום.",
-  logicStaff:"איוש נדרש — חיפוש איטרטיבי שמתחיל ב־⌊עומס⌋+1 ועולה עד שהמדד המוביל עומד ביעד. הזמן הלא זמין מנוכה מהקיבולת המשובצת מראש.",
+  revealLogic:"🧮 איך המספרים מחושבים?", lgTitle:"איך המספרים מחושבים?",
+  lgTabErl:"👥 כמה נציגים צריך לאינטרוול?", lgTabFc:"📈 איך נבנית התחזית?",
+  lgPeak:"אינטרוול השיא שלך", lgQuiet:"אינטרוול שקט", lgFcW:"תחזית", lgDemo:"מספרים לדוגמה",
+  lgCalls:"שיחות", lgAht:"משך שיחה", lgHalf:"חצי שעה", lgLoad:"עומס = נציגים עסוקים בלי הפסקה", lgBuf:"מרווח לאקראיות (‎+{p}%‎)", lgNeed:"נציגים ל{m} {t}%", lgSched:"= {n} בסידור",
+  lgSlV:"שיחות באינטרוול", lgSlA:"משך שיחה", lgSlM:"סבלנות הלקוח", lgSlN:"נציגים עונים",
+  lgLgTgt:"יעד {t}%", lgLgBelow:"פחות נציגים מהעומס", lgRead:"{n} נציגים: {m} {a}% · עסוקים {o}% מהזמן", lgReadD:" · נציג נוסף: ‎+{d}%‎",
+  lgSimQ:"למה צריך יותר נציגים מהעומס? השיחות לא מגיעות בקצב אחיד", lgPlay:"▶ הפעלת חצי השעה", lgDice:"🎲 חצי שעה אחרת",
+  lgSimRes:"בחצי השעה הזו: נענו {a} · נטשו {b} · {p}%", lgSimAvg:"בממוצע (הנוסחה): {p}%", lgLgTalk:"בשיחה", lgLgWait:"ממתין", lgLgAb:"נטש", lgMin:"דק׳",
+  lgInvQ:"איפה כדאי להשקיע?", lgInvWk:"שבוע {d} · נדרשות {h} נציג", lgInvStep:"שיפור של",
+  lgInv_aht:"שיחות קצרות ב־{p}%", lgInv_vol:"{p}% פחות שיחות", lgInv_mpt:"לקוחות ממתינים {p}% יותר", lgInv_shr:"{p}% פחות זמן לא זמין", lgInv_abs:"{p}% פחות חוסרים",
+  lgP1:"ימים חריגים בחוץ", lgP1T:"חגים, תקלות ושבועות מלחמה לא מלמדים את המודל.", lgP2:"כל יום בשבוע לחוד", lgP2T:"ימי ראשון לומדים מימי ראשון, ולכל אינטרוול היסטוריה משלו.",
+  lgP3:"המודל ממשיך את הסדרה", lgP3T:"המודל שדייק הכי הרבה על ההיסטוריה שלך נבחר אוטומטית.", lgP4:"שינוי פתאומי", lgP4T:"כשהימים האחרונים מעל או מתחת למודל, הימים הבאים מתיישרים איתם.",
+  lgP5:"שיחות חוזרות", lgP5T:"שיחות שאבדו ביום קשה חוזרות בימים שאחריו.", lgP6:"פיזור לאינטרוולים", lgP6T:"סך היום מתחלק לפי החלק הרגיל של כל אינטרוול.", lgPOff:"(כבוי בהגדרות)",
+  lgKVol:"שיחות", lgKAht:"משך שיחה", lgKMpt:"סבלנות", lgDayTot:"ימי {d} · כל היום", lgDaySlot:"ימי {d} · {t}", lgTry:"גררו נקודה, או נסו:",
+  lgScSpike:"⚡ שבוע חריג אחד", lgScStep:"🪜 קפיצה שנשארת", lgScTrend:"📈 עלייה מתמדת", lgMine:"↺ המספרים שלי",
+  lgLgAct:"מה שקרה", lgLgPred:"מה שהמודל היה חוזה — רק מהשבועות שלפני", lgLgOth:"שאר המודלים", lgNext:"שבוע הבא", lgLast:"שבוע שעבר", lgBack:"לפני {n} שבועות", lgNxT:"התחזית שלו לשבוע הבא",
+  lgM_ensemble5_h:"חמש שיטות פשוטות חוזות יחד; מי שדייקה יותר מקבלת משקל גדול יותר.", lgM_ensemble5_g:"רוב הזמן — אף שיטה אחת לא מפילה אותו", lgM_ensemble5_b:"שינוי חד ופתאומי — הממוצעים מאטים אותו",
+  lgM_holt_h:"עוקב אחרי הרמה ואחרי הכיוון (עולה / יורד) וממשיך את הקו, בזהירות.", lgM_holt_g:"ביקוש שעולה או יורד בהתמדה", lgM_holt_b:"שבועות שקופצים בלי כיוון — הוא רודף אחרי רעש",
+  lgM_wavg4_h:"ממוצע 4 השבועות האחרונים; האחרון שוקל הכי הרבה (40%).", lgM_wavg4_g:"שבועות יציבים עם תזוזות קטנות", lgM_wavg4_b:"מגמה — תמיד צעד אחד מאחור",
+  lgM_lastweek_h:"מעתיק את השבוע שעבר.", lgM_lastweek_g:"מיד אחרי שינוי רמה שנשאר", lgM_lastweek_b:"שבוע אחרון חריג — החריגה מועתקת",
+  lgM_prophet_h:"שני קווי מגמה — הישן והחדש; ממשיך בעיקר את החדש.", lgM_prophet_g:"מגמה שהשתנתה באמצע התקופה", lgM_prophet_b:"מעט שבועות — הקו נשען על מעט מדי נקודות",
+  lgM_ma4_h:"ממוצע פשוט של 4 השבועות האחרונים.", lgM_ma4_g:"שבועות יציבים", lgM_ma4_b:"אינטרוול עם מעט שיחות — שיחה ארוכה אחת מזיזה אותו",
+  lgM_ewmavw_h:"שבוע עם הרבה שיחות שוקל יותר; שבועות ישנים דועכים.", lgM_ewmavw_g:"מספר השיחות משתנה משבוע לשבוע", lgM_ewmavw_b:"אחרי שינוי חד — מגיב רק בהדרגה",
+  lgM_hier_h:"קודם משך השיחה של היום כולו, ואז הצורה של כל אינטרוול ביחס ליום.", lgM_hier_g:"אינטרוולים דלילים — נשענים על היום כולו", lgM_hier_b:"אינטרוול שבאמת שונה מהיום שלו — ההבדל מתרכך",
+  lgM_blend_h:"ממוצע של שתי השיטות שלפניו.", lgM_blend_g:"אף אחת מהן לא מובילה בבירור", lgM_blend_b:"אחת מהן טועה בהרבה — היא מושכת את השנייה",
+  lgTipCalls:"השיחות שמגיעות באינטרוול הזה.", lgTipAht:"הזמן הממוצע שנציג מקדיש לשיחה אחת, כולל הסיכום שאחריה.", lgTipHalf:"אורך האינטרוול.",
+  lgTipLoad:"אם השיחות היו מגיעות אחת אחרי השנייה, זה מספר הנציגים שהיו עסוקים כל הזמן — בלי אף אחד פנוי לשיחה הבאה.",
+  lgTipBuf:"השיחות מגיעות בגלים, אז חייבים נציגים פנויים כשגל מגיע. ככל שהאינטרוול קטן יותר, החלק הזה גדול יותר.",
+  lgTipNeed:"המספר הקטן ביותר שמגיע ליעד: {a} נציגים נותנים {pa}%, ו־{b} נותנים {pb}%.",
+  lgTipOcc:"החלק מהזמן שהנציגים בשיחה = העבודה שנענתה ÷ הנציגים. זו תוצאה, לא הגדרה: יותר נציגים לאותן שיחות — כל אחד עסוק פחות.",
+  lgNeedMk:"נדרשים: {n}", lgRep:"נציג {n}", lgSimCap:"{n} נציגים · {v} שיחות · {a} לשיחה — מהסליידרים למעלה",
+  lgPeakT:"האינטרוול עם הכי הרבה שיחות בשבוע החזוי הראשון", lgQuietT:"האינטרוול עם הכי מעט שיחות באותו שבוע",
+  lgMptSrc:"אצלך: {s} · {w}", lgSrcFile:"מהקובץ שלך", lgSrcSet:"מההגדרות",
+  mMine:"המודל שלי", lgM_custom_h:"מודל משלך, שני כפתורים: כמה מהר הוא מגיב לשבוע האחרון, וכמה הוא ממשיך את המגמה.", lgM_custom_g:"אתה יודע על המוקד משהו שהמודלים המוכנים לא יודעים", lgM_custom_b:"תגובה מהירה מדי = רדיפה אחרי רעש",
+  fmProfSmart:"צורה משולבת", profSmartTip:"כל יום נספר לפי החלוקה שלו, שבועות אחרונים שוקלים יותר, ויום בשבוע רועש נעזר בצורה של שאר הימים. בשימוש רק כשהבדיקה על הקובץ שלך מראה שהיא מדויקת יותר.",
+  lgTuA:"תגובה לשבוע האחרון", lgTuT:"המשך המגמה", lgTuFit:"🎯 התאמה להיסטוריה שלי", lgTuSeen:"נמדד רק על שבועות שהמודל לא ראה",
+  lgOf100:"מתוך 100 מתקשרים", lgDNow:"נענו מיד", lgDWait:"המתינו ונענו", lgRaceQ:"כמה זמן לקוחות מוכנים לחכות?", lgSlW:"זמן המתנה",
+  lgRaceRes:"אחרי {s} המתנה, {n} מתוך 100 כבר ניתקו", lgRaceFree:"כשכולם עסוקים, נציג מתפנה כל {s} שנ׳", lgRaceStay:"עדיין על הקו",
   resetZone:"איפוס סביבת עבודה (אזור רגיש)",
   resetConfirm:"האם אתם בטוחים שברצונכם לאפס את כל ההגדרות הפעילות ולמחוק את מערכי התחזית שנטענו?",
   confirmYes:"כן, לאפס הכול", confirmNo:"ביטול",
@@ -3093,6 +3222,15 @@ Models.aht.ewmavw={label:"mAhtEwma",fn:(s,h,ctx)=>ahtEwmaVW(s,ahtVols(s,ctx))};
 Models.aht.hier  ={label:"mAhtHier",fn:(s,h,ctx)=>ahtHier(s,h,ctx)};
 Models.aht.blend ={label:"mAhtBlend",fn:(s,h,ctx)=>{ const a=ahtHier(s,h,ctx), b=ahtEwmaVW(s,ahtVols(s,ctx)); return a>0&&b>0?(a+b)/2:(a||b); }};
 Models.aht.holt  ={label:"mHolt",fn:(s,h)=>holtForecast(s.filter(v=>v>0),h)};
+/* 🛠 "My model" — two knobs the user turns in the play window (Settings › How are the numbers calculated?):
+   a = how fast the level follows the last week (1 = copy it), tr = how much of the trend continues (0 = none).
+   Lives in the registry like any model; rankModels counts it only once the user set it (settings.myModel[kind]). */
+const myP=kind=>(state.settings.myModel||{})[kind]||{a:0.4,tr:0.5};
+function myModel(series,h,p){ const y=series.filter(v=>v>0); if(!y.length) return 0; if(y.length<3) return y[y.length-1];
+  let L=y[0], T=0; for(let i=1;i<y.length;i++){ const prev=L; L=p.a*y[i]+(1-p.a)*(L+p.tr*T); T=0.3*(L-prev)+0.7*T; }
+  let d=0, pw=0.9; for(let k=1;k<=Math.max(1,h||1);k++){ d+=pw; pw*=0.9; }
+  return Math.max(0,L+p.tr*d*T); }
+for(const k of ["volume","aht","mpt"]) Models[k].custom={label:"mMine",fn:(s,h)=>myModel(s,h,myP(k))};
 const ForecastEngines={
   volume:(series,horizonWeeks,ctx)=>(Models.volume[state.settings.modelVolume]||Models.volume.ensemble5).fn(series,horizonWeeks,ctx),
   aht:(series,horizonWeeks,ctx)=>(Models.aht[state.settings.modelAht]||Models.aht.ma4).fn(series,horizonWeeks,ctx),
@@ -7769,9 +7907,40 @@ function updatePortalStatus(){
    total by it. Learned from the last W clean weeks per interval (adaptive: a thin slot
    widens to all history); W = 8 (adaptive) or 12. */
 /* the window in use: chosen by the test below unless the user picked one */
-const profMode=()=>{ const m=state.settings.profileMode; return m==="w12"||m==="adaptive"?m:(profBacktest()||{}).best||"adaptive"; };
-function profileShares(di,mode,cut){ // cut: {tm:n} = only the first n weeks of each slot (the test below)
+const PROF_MODES=["adaptive","w12","smart"], profLab=m=>t(m==="w12"?"fmProf12":m==="smart"?"fmProfSmart":"fmProfAdapt");
+const profMode=()=>{ const m=state.settings.profileMode; return PROF_MODES.includes(m)?m:(profBacktest()||{}).best||"adaptive"; };
+/* 📊 "Blended shape" (mode "smart") — a third way to learn a weekday's intraday shape, used only when the test below
+   finds it more accurate on the loaded file. Why it can beat a plain 8 / 12-week average:
+   1. it averages each day's SHARES (every day normalised by its own total), so one heavy day can't bend the shape;
+   2. recent weeks weigh more and old weeks fade (half-life 6 weeks) instead of a hard cut at 8 or 12 — it follows a
+      drifting shape without throwing history away;
+   3. a weekday borrows from the shape of the other weekdays (Sun–Thu) exactly as much as its own difference from them
+      is within its noise: B = noise in its mean ÷ its squared distance from the common shape (James–Stein style
+      shrinkage, no tuning knob). A weekday that truly differs keeps its own shape; a noisy one is steadied.
+   Friday (a short day) never borrows. `before` = only days before that date (the test never peeks). */
+function profDayShares(){ if(state._dsh&&state._dsh.v===state._serVer) return state._dsh.m; const m={};
+  for(let di=0;di<6;di++){ const L=(state.learnDates||{})[di]||[], S=(state.series||{})[di]||{}; m[di]=[];
+    for(const ds of L){ const d=state.days.get(ds); if(!d) continue; const o={}; let tot=0;
+      for(const [tm,r] of d) if(S[tm]&&!state.exceptions.has(ds+"|"+tm)){ o[tm]=r.volume||0; tot+=o[tm]; }
+      if(tot>0){ for(const tm in o) o[tm]/=tot; m[di].push({ds,o}); } } }
+  state._dsh={v:state._serVer,m}; return m; }
+function profSmart(di,before){
+  const A=profDayShares(), s=state.series&&state.series[di]; if(!s) return null; const slots=Object.keys(s), dec=Math.pow(0.5,1/6);
+  const own=d=>{ const rows=(A[d]||[]).filter(x=>!before||x.ds<before); if(rows.length<3) return null; const m={}, w=rows.map((_,i)=>Math.pow(dec,rows.length-1-i)); let W=0,W2=0,V=0;
+    rows.forEach((x,i)=>{ W+=w[i]; W2+=w[i]*w[i]; for(const tm of slots) m[tm]=(m[tm]||0)+w[i]*(x.o[tm]||0); });
+    for(const tm of slots) m[tm]/=W;
+    rows.forEach((x,i)=>{ for(const tm of slots) V+=w[i]*((x.o[tm]||0)-m[tm])**2; });
+    return {m,V:V/W/Math.max(1,W*W/W2-1)}; }; // V = the noise left in the weighted mean (variance ÷ effective days)
+  const me=own(di); if(!me) return null; let out=me.m;
+  if(di<5){ const pool={}; let n=0,ps=0;
+    for(let d=0;d<5;d++){ if(d===di) continue; const o=own(d); if(!o) continue; n++; for(const tm of slots) pool[tm]=(pool[tm]||0)+o.m[tm]; }
+    for(const tm of slots) ps+=pool[tm]||0;
+    if(n&&ps>0){ let D=0; for(const tm of slots){ pool[tm]/=ps; D+=(me.m[tm]-pool[tm])**2; }
+      const B=D>0?Math.min(1,me.V/D):1; out={}; for(const tm of slots) out[tm]=me.m[tm]+B*(pool[tm]-me.m[tm]); } }
+  let sum=0; for(const tm of slots) sum+=out[tm]; const r={}; for(const tm of slots) r[tm]=sum>0?out[tm]/sum:0; return r; }
+function profileShares(di,mode,cut,before){ // cut: {tm:n} = only the first n weeks of each slot; before = only days before that date (the test below)
   const s=state.series&&state.series[di]; if(!s) return null;
+  if(mode==="smart"){ const r=profSmart(di,before); if(r) return r; } // too little history → the plain window
   const W=mode==="w12"?12:8, raw={}; let sum=0;
   for(const tm of Object.keys(s)){
     const arr=(cut?s[tm].vols.slice(0,cut[tm]||0):s[tm].vols).filter(v=>v!=null&&isFinite(v)), recent=arr.slice(-W);
@@ -7787,18 +7956,18 @@ function profileShares(di,mode,cut){ // cut: {tm:n} = only the first n weeks of 
 function profBacktest(){
   if(!state.series||!state.learnDates) return null;
   if(state._pbt&&state._pbt.v===state._serVer) return state._pbt.r;
-  const err={adaptive:0,w12:0}; let w=0,n=0;
+  const err={adaptive:0,w12:0,smart:0}; let w=0,n=0;
   for(let di=0;di<6;di++){ const L=state.learnDates[di]; if(!L||L.length<6) continue;
     const cnt={}, has=ds=>{ const m=state.days.get(ds), o={}; if(m) for(const [tm,r] of m) if(!state.exceptions.has(ds+"|"+tm)&&state.series[di][tm]) o[tm]=r.volume||0; return o; };
     for(let k=0;k<L.length;k++){ const a=has(L[k]);
       if(k>=Math.max(4,L.length-8)){ const tot=Object.values(a).reduce((x,y)=>x+y,0);
-        if(tot>0){ for(const mode in err){ const p=profileShares(di,mode,cnt)||{}; let e=0;
+        if(tot>0){ for(const mode in err){ const p=profileShares(di,mode,cnt,L[k])||{}; let e=0;
             for(const tm of new Set([...Object.keys(p),...Object.keys(a)])) e+=Math.abs((p[tm]||0)-(a[tm]||0)/tot);
             err[mode]+=e/2*tot; }
           w+=tot; n++; } }
       for(const tm in a) cnt[tm]=(cnt[tm]||0)+1; } }
-  const r=n>=6&&w>0?{adaptive:err.adaptive/w*100,w12:err.w12/w*100,n}:null;
-  if(r) r.best=r.w12<r.adaptive?"w12":"adaptive"; // the lower error, as the screen shows it
+  const r=n>=6&&w>0?{adaptive:err.adaptive/w*100,w12:err.w12/w*100,smart:err.smart/w*100,n}:null;
+  if(r){ r.best=r.w12<r.adaptive?"w12":"adaptive"; if(+r.smart.toFixed(1)<+r[r.best].toFixed(1)) r.best="smart"; } // the lower error, as the screen shows it; the blended shape only when it is clearly lower
   state._pbt={v:state._serVer,r}; return r;
 }
 /* user-pinned intervals keep their share; the rest of the day rebalances so it stays 100% */
@@ -11389,7 +11558,7 @@ document.addEventListener("keydown",e=>{ if(e.key==="Escape") document.querySele
    this file's own history (the same test and ranking as "🧪 Backtest models") and the most accurate one is used.
    A model you pick by hand stays yours; "🤖 Automatic" in the same list gives the choice back. */
 const MODEL_KINDS=[["volume","modelVolume","setModelVol"],["aht","modelAht","setModelAht"],["mpt","modelMpt","setModelMpt"]];
-function rankModels(kind){ return Object.keys(Models[kind]).map(mid=>({mid,r:backtestModel(kind,mid)})).filter(s=>s.r)
+function rankModels(kind){ return Object.keys(Models[kind]).filter(mid=>mid!=="custom"||(state.settings.myModel||{})[kind]).map(mid=>({mid,r:backtestModel(kind,mid)})).filter(s=>s.r)
   .sort(kind==="aht"?(a,b)=>a.r.mape-b.r.mape:(a,b)=>(Math.abs((a.r.pace??999)-100)-Math.abs((b.r.pace??999)-100))||(a.r.mape-b.r.mape)); }
 const mUser=key=>!!(state.settings.modelUser||{})[key]; // this list was picked by hand (each list on its own)
 function autoPickModels(){ const S=state.settings; if(!state.series) return; let ch=false; state._modelAuto={};
@@ -11428,9 +11597,9 @@ function syncCleanUI(){
   if(h) h.checked=state.settings.autoHolidays!==false;
   if(a) a.checked=state.settings.autoAnomaly!==false;
   if(p){ const ao=p.querySelector('option[value="auto"]'), PB=profBacktest();
-    if(ao) ao.textContent=t("modelAuto",{m:t(profMode()==="w12"?"fmProf12":"fmProfAdapt")});
+    if(ao) ao.textContent=t("modelAuto",{m:profLab(profMode())});
     p.value=state.settings.profUserSet?state.settings.profileMode:"auto";
-    p.title=PB?t("profTestTip",{a:PB.adaptive.toFixed(1),b:PB.w12.toFixed(1),n:PB.n}):""; }
+    p.title=PB?t("profTestTip",{a:PB.adaptive.toFixed(1),b:PB.w12.toFixed(1),n:PB.n})+" · "+profLab("smart")+" "+PB.smart.toFixed(1)+"%":""; }
   { const fsw=document.getElementById("setFastAdapt"); if(fsw) fsw.checked=state.settings.fastAdapt!==false; }
   { // ↩ the same setting as the switch on the matrix / Date Trends; its hover says what it does and what the test found
     const c=document.getElementById("setCuOn"), on=state.settings.cuOn!==false, RT=state.rtParam;
@@ -11669,8 +11838,8 @@ function renderProfile(){
   const view=(profPanel.querySelector("#profView .active")||{dataset:{view:"share"}}).dataset.view;
   profPanel.querySelectorAll("#profWin button").forEach(b=>b.classList.toggle("active",b.dataset.mode==="auto"?auto:!auto&&b.dataset.mode===mode));
   { const PB=profBacktest(), el=$pf("profTest"), esc=v=>String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;"); // 🧪 the formal check: both windows on your own past, the winner in use
-    if(el){ el.hidden=!PB; if(PB){ const L=m=>t(m==="w12"?"fmProf12":"fmProfAdapt");
-      el.innerHTML=`<b>🧪 ${esc(t("profTestT",{n:PB.n}))}</b>`+["adaptive","w12"].map(m=>`<span class="pbRow${m===PB.best?" win":""}"><span>${esc(L(m))}</span><b>${esc(t("profTestErr",{e:PB[m].toFixed(1)}))}</b>${m===PB.best?" ✓":""}</span>`).join("")
+    if(el){ el.hidden=!PB; if(PB){ const L=profLab;
+      el.innerHTML=`<b>🧪 ${esc(t("profTestT",{n:PB.n}))}</b>`+PROF_MODES.map(m=>`<span class="pbRow${m===PB.best?" win":""}"${m==="smart"?` title="${esc(t("profSmartTip"))}"`:""}><span>${esc(L(m))}</span><b>${esc(t("profTestErr",{e:PB[m].toFixed(1)}))}</b>${m===PB.best?" ✓":""}</span>`).join("")
         +`<span class="mini">${esc(t(auto?"profTestAuto":"profTestHand",{m:L(PB.best)}))}</span>`; } } }
   const dn=t("days"), ds=t("daysShort"), edits=S.profileEdits||{};
   const cur={},alt={},tms=new Set();
@@ -11686,7 +11855,7 @@ function renderProfile(){
       if(Math.abs(c-a)>Math.abs(mx.d)) mx={d:c-a,di,tm}; if(!pk||c>cur[di][pk]) pk=tm; }
     if(pk) peakCnt[pk]=(peakCnt[pk]||0)+1; }
   const peak=Object.entries(peakCnt).sort((a,b)=>b[1]-a[1])[0][0];
-  const otherL=t(other==="w12"?"fmProf12":"fmProfAdapt");
+  const otherL=profLab(other);
   $pf("profInsight").textContent="💡 "+(Math.abs(mx.d)<0.003
     ?t("profInsSame",{o:otherL})
     :t("profInsDiff",{o:otherL,p:(mx.d>0?"+":"−")+Math.abs(mx.d*100).toFixed(1),day:dn[mx.di],tm:mx.tm}))
@@ -11909,9 +12078,9 @@ document.getElementById("backtestBtn").addEventListener("click",()=>{
     if(rest.length){ const d=document.createElement("details"); d.className="btMore"; d.innerHTML=`<summary class="mini">${t("btOthers",{n:rest.length})}</summary>`+rest.map(x=>`<div class="mini">${line(x)}</div>`).join(""); li.appendChild(d); }
   }
   // 📊 the interval profile: which window places the calls in the right half hour (profBacktest)
-  { const PB=profBacktest(); if(PB){ any=true; const L=m=>esc(t(m==="w12"?"fmProf12":"fmProfAdapt")), cur=profMode(), oth=cur==="w12"?"adaptive":"w12";
+  { const PB=profBacktest(); if(PB){ any=true; const L=m=>esc(profLab(m)), cur=profMode(), oth=PROF_MODES.filter(m=>m!==cur);
     add(`<span><b>${t("btProfL")}</b>: ${L(cur)} — ${t("profTestErr",{e:PB[cur].toFixed(1)})} · <b>${t("btInUse")}</b>${cur!==PB.best?" · "+t("btBetter",{m:L(PB.best)}):state.settings.profUserSet?"":" · 🤖"}`
-      +` <span class="mini">(${L(oth)}: ${PB[oth].toFixed(1)}% · ${t("btDays",{n:PB.n})})</span></span>`,cur===PB.best); } }
+      +` <span class="mini">(${oth.map(o=>L(o)+": "+PB[o].toFixed(1)+"%").join(" · ")} · ${t("btDays",{n:PB.n})})</span></span>`,cur===PB.best); } }
   // ↩ the two parts of returning calls, as results (what the test on your history found)
   { const ck=state.cuCheck||{n:0}, P=state.cuParam;
     add(`<span><b>${t("cuBtT")}</b>: ${ck.guard?t("cuBtGuard",{n:ck.n,a:ck.without.toFixed(1),b:ck.with.toFixed(1)}):ck.n?t(ck.n===1?"cuBtRes1":"cuBtRes",{n:ck.n,a:ck.without.toFixed(1),b:ck.with.toFixed(1)}):t("cuBtNone")}`
@@ -11922,18 +12091,240 @@ document.getElementById("backtestBtn").addEventListener("click",()=>{
   document.getElementById("modalBg").classList.add("show");
 });
 
-/* item 12: Reveal Analytical Logic drawer */
-document.getElementById("revealLogic").addEventListener("click",()=>{
-  document.getElementById("mTitle").textContent=t("logicTitle");
-  document.getElementById("mCore").textContent=t("logicIntro");
-  document.getElementById("mMsg").textContent="";
-  document.getElementById("mExport").style.display="none";
+/* 🧮 "How are the numbers calculated?" (Settings) — a place to PLAY, not to read. Two tabs (settings.lgTab):
+   erl = one half hour: the equation strip, 4 sliders seeded from the user's own peak / quiet half hour (lgMine), the
+   metric + occupancy curve (click / drag on it = the reps), one simulated half hour (lgSimBuild, ▶ / 🎲) and "where to
+   invest" (lgInvest: rep hours the first forecast week needs, per lever step);
+   fc = the forecast: the pipeline chips, the user's own series with draggable points + scenarios, and the model cards
+   (the error = rankModels, the 🧪 window's number; each card's next-week forecast follows the drag). Session only. */
+const lgPanel=document.getElementById("lgPanel"), $lg=id=>lgPanel.querySelector("#"+id);
+const LG={e:null,e0:null,p:null,seed:7,step:10,hov:null,kind:"volume",di:0,mid:null,arr:null,base:null,drag:-1,rk:{}};
+const lgNoAb=()=>state.settings.mode==="clinic"||!(+state.settings.mpt>0);
+const lgS=e=>({...state.settings,mpt:e.mpt,mptOverride:true});
+const lgEval=(e,m)=>evalInterval(e.v,e.aht,m,lgS(e));
+const lgReq=e=>requiredAgents(e.v,e.aht,state.settings.target,lgS(e));
+const lgEff=S=>Math.max(0.05,availShare(S)*(state.calib||1));
+function lgMine(which){ // the user's own half hour: the busiest / a quiet one of the first forecast week (wiSun)
+  const S=state.settings; let b=null; if(!state.maxDate) return null;
+  wiRows((ds,di,tm,rec,bodies,fc)=>{ if(!(rec.volume>=5)||!(rec.aht>0)) return;
+    if(!b||(which==="quiet"?rec.volume<b.rec.volume:rec.volume>b.rec.volume)) b={ds,di,tm,rec,bodies,fc}; });
+  if(!b) return null;
+  const o={v:Math.round(b.rec.volume),aht:Math.round(b.rec.aht),mpt:lgNoAb()?0:Math.round((!S.mptOverride&&b.rec.mpt>0)?b.rec.mpt:S.mpt),ds:b.ds,di:b.di,tm:b.tm,fc:b.fc};
+  o.n=Math.round(b.bodies*lgEff(S))||lgReq(o); return o; }
+function lgErlSet(p){
+  const m=lgMine(p); LG.p=m?p:null; LG.e0=m||{v:120,aht:300,mpt:lgNoAb()?0:180}; if(!LG.e0.n) LG.e0.n=lgReq(LG.e0); LG.e={...LG.e0}; LG.hov=null;
+  const rg=(id,min,max,step)=>{ const el=$lg(id); el.min=min; el.max=max; el.step=step; };
+  rg("lgV",1,Math.max(300,Math.round(LG.e0.v*2.5)),1); rg("lgA",30,Math.max(900,LG.e0.aht*2),5); rg("lgM",10,Math.max(600,LG.e0.mpt*2),5); rg("lgN",1,Math.max(40,Math.ceil(LG.e0.n*2.2)),1);
+  lgErlUpd(); }
+function lgErlUpd(){
+  const e=LG.e, e0=LG.e0, S=state.settings, load=e.v*e.aht/1800, req=lgReq(e), eff=lgEff(S);
+  if(e.n>+$lg("lgN").max) $lg("lgN").max=e.n;
+  $lg("lgV").value=e.v; $lg("lgA").value=e.aht; $lg("lgM").value=e.mpt; $lg("lgN").value=e.n;
+  $lg("lgVv").textContent=e.v.toLocaleString(); $lg("lgAv").textContent=fmtSec(e.aht); $lg("lgMv").textContent=fmtSec(e.mpt); $lg("lgNv").textContent=e.n;
+  $lg("lgMrow").hidden=lgNoAb(); $lg("lgPre").hidden=!LG.p;
+  lgPanel.querySelectorAll("#lgPre button").forEach(b=>b.classList.toggle("active",b.dataset.p===LG.p));
+  $lg("lgReset").hidden=["v","aht","mpt","n"].every(k=>e[k]===e0[k]);
+  $lg("lgSrc").textContent=LG.p?t("days")[e0.di]+" "+fmtD(e0.ds)+" · "+e0.tm+"–"+addHalf(e0.tm)+(e0.fc?" · "+t("lgFcW"):""):t("lgDemo");
+  const chip=(big,small,cls,tip)=>`<span class="lgChip ${cls||""}" title="${tip||""}"><b>${big}</b><small>${small}</small></span>`, op=s=>`<i>${s}</i>`;
+  $lg("lgEq").innerHTML=chip(e.v.toLocaleString(),t("lgCalls"),"",t("lgTipCalls"))+op("×")+chip(fmtSec(e.aht),t("lgAht"),"",t("lgTipAht"))+op("÷")+chip("30:00",t("lgHalf"),"",t("lgTipHalf"))+op("=")
+    +chip(load.toFixed(1),t("lgLoad"),"ld",t("lgTipLoad"))+op("+")+chip("🎲 "+Math.max(0,req-load).toFixed(1),t("lgBuf",{p:load>0?Math.round((req/load-1)*100):0}),"bf",t("lgTipBuf"))+op("=")
+    +chip(req,t("lgNeed",{m:primName(),t:S.target})+(eff<0.995?`<br>${t("lgSched",{n:Math.round(req/eff)})}`:""),"nd",t("lgTipNeed",{a:Math.max(1,req-1),pa:Math.round(primVal(lgEval(e,Math.max(1,req-1)))*100),b:req,pb:Math.round(primVal(lgEval(e,req))*100)}));
+  $lg("lgLeg").innerHTML=`<span><i style="background:#0d2a4d"></i>${primName()}</span><span title="${t("lgTipOcc")}" style="cursor:help"><i style="background:#9fb3c8"></i>${t("shColOcc")}</span>`
+    +`<span><i style="background:repeating-linear-gradient(90deg,#0d2a4d 0 4px,transparent 4px 7px);height:2px;width:16px;vertical-align:3px"></i>${t("lgLgTgt",{t:S.target})}</span><span><i style="background:#fadbdb"></i>${t("lgLgBelow")}</span>`;
+  lgErlChart(); lgDots(); lgRace(); lgSimBuild(); }
+function lgErlChart(){
+  const e=LG.e, S=state.settings, load=e.v*e.aht/1800, req=lgReq(e), W=600, H=214, L=36, R=12, T=24, B=24;
+  const n0=Math.max(1,Math.floor(load*0.6)), n1=Math.max(Math.ceil(req*1.3)+1,e.n+1,n0+6); LG.cx={n0,n1,L,R,W};
+  const X=m=>L+(m-n0)/(n1-n0)*(W-L-R), Y=p=>T+(1-p)*(H-T-B), f=v=>v.toFixed(1); let a="", o="";
+  for(let m=n0;m<=n1;m++){ const r=lgEval(e,m); a+=f(X(m))+","+f(Y(primVal(r)))+" "; o+=f(X(m))+","+f(Y(r.occ))+" "; }
+  const cur=lgEval(e,e.n), pv=primVal(cur), col=pv*100>=S.target?"#0f6a3f":"#b3271e", tg=S.target/100, hv=LG.hov, xn=f(X(Math.max(n0,e.n)));
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img">`;
+  for(const p of [0,.5,1]) s+=`<line x1="${L}" x2="${W-R}" y1="${Y(p)}" y2="${Y(p)}" stroke="#e3eaf2"/><text x="${L-5}" y="${Y(p)+3.5}" text-anchor="end" font-size="10" fill="#6b7c90">${p*100}%</text>`;
+  if(load>n0) s+=`<rect x="${L}" y="${T}" width="${f(Math.min(X(load),W-R)-L)}" height="${H-T-B}" fill="#fadbdb" opacity=".55"/>`;
+  const stp=Math.max(1,Math.ceil((n1-n0)/10)); for(let m=n0;m<=n1;m+=stp) s+=`<text x="${f(X(m))}" y="${H-8}" text-anchor="middle" font-size="10" fill="#6b7c90">${m}</text>`;
+  s+=`<line x1="${L}" x2="${W-R}" y1="${f(Y(tg))}" y2="${f(Y(tg))}" stroke="#0d2a4d" stroke-dasharray="5 4" stroke-width="1.2"/>`
+    +`<polyline points="${o}" fill="none" stroke="#9fb3c8" stroke-width="2"/><polyline points="${a}" fill="none" stroke="#0d2a4d" stroke-width="2.6" stroke-linejoin="round"/>`;
+  s+=`<line x1="${f(X(req))}" x2="${f(X(req))}" y1="${f(Y(tg))}" y2="${H-B}" stroke="#0d2a4d" stroke-dasharray="2 3"/><text x="${f(X(req)+4)}" y="${H-B-5}" font-size="10" fill="#0d2a4d">${t("lgNeedMk",{n:req})}</text>`; // the equation's answer, on the curve
+  if(hv!=null&&hv!==e.n) s+=`<line x1="${f(X(hv))}" x2="${f(X(hv))}" y1="${T}" y2="${H-B}" stroke="#3fa9f5" stroke-dasharray="3 3"/>`;
+  s+=`<line x1="${xn}" x2="${xn}" y1="${f(Y(pv))}" y2="${H-B}" stroke="${col}"/><circle cx="${xn}" cy="${f(Y(pv))}" r="6.5" fill="${col}" stroke="#fff" stroke-width="2"/>`
+    +`<text x="${xn}" y="${f(Y(pv)-11)}" text-anchor="middle" font-size="12" font-weight="700" fill="${col}">${Math.round(pv*100)}%</text><text x="${f(+xn+9)}" y="${f(Y(cur.occ)+4)}" font-size="10" fill="#6b7c90">${Math.round(cur.occ*100)}%</text></svg>`;
+  $lg("lgChart").innerHTML=s;
+  const m=hv??e.n, r=lgEval(e,m), d=(primVal(lgEval(e,m+1))-primVal(r))*100;
+  $lg("lgRead").textContent=t("lgRead",{n:m,m:primName(),a:Math.round(primVal(r)*100),o:Math.round(r.occ*100)})+(d>=0.05?t("lgReadD",{d:d.toFixed(1)}):""); }
+/* the probabilities inside the formula as people: of 100 callers, who is answered at once, who waits, who gives up */
+function lgProb(e){ const lam=e.v/1800, mu=1/e.aht, a=lam/mu;
+  if(!lgNoAb()&&e.mpt>0){ const c=erlangA(lam,mu,1/e.mpt,e.n); return {now:1-c.pWait,ab:c.pAb}; }
+  if(e.n<=a) return {now:0,ab:0}; const B=erlangB(e.n,a), rho=a/e.n; return {now:1-B/(1-rho*(1-B)),ab:0}; }
+function lgDots(){ const p=lgProb(LG.e), ab=Math.round(p.ab*100), now=Math.max(0,Math.min(100-ab,Math.round(p.now*100))), w=100-ab-now;
+  $lg("lgDots").innerHTML=Array.from({length:100},(_,i)=>`<i class="${i<now?"n":i<now+w?"w":"a"}"></i>`).join("");
+  $lg("lgDotsLeg").innerHTML=`<span><i style="background:#3fa9f5"></i>${t("lgDNow")} <b>${now}</b></span><span><i style="background:#d9822b"></i>${t("lgDWait")} <b>${w}</b></span>`+(lgNoAb()?"":`<span><i style="background:#b3271e"></i>${t("lgLgAb")} <b>${ab}</b></span>`); }
+/* the race: a waiting caller's patience against the next rep to free up (patience ~ exponential, like the formula assumes) */
+function lgRace(){ const e=LG.e, off=lgNoAb()||!(e.mpt>0); $lg("lgRaceD").hidden=off; if(off) return;
+  const sl=$lg("lgW"); sl.max=Math.max(300,Math.round(e.mpt*3)); if(LG.w==null||LG.w>+sl.max) LG.w=e.mpt; sl.value=LG.w; $lg("lgWv").textContent=fmtSec(LG.w);
+  const gone=100-Math.round(100*Math.exp(-LG.w/e.mpt));
+  $lg("lgRaceDots").innerHTML=Array.from({length:100},(_,i)=>`<i class="${i<100-gone?"k":"a"}"></i>`).join("");
+  { const ms=$lg("lgMptSrc"); ms.textContent=t("lgMptSrc",{s:fmtSec(LG.e0.mpt),w:t(LG.p&&state._hasMpt&&!state.settings.mptOverride?"lgSrcFile":"lgSrcSet")}); ms.title=t("setMptHint"); } // where the patience comes from, and how to find yours
+  $lg("lgRaceRes").textContent=t("lgRaceRes",{s:fmtSec(LG.w),n:gone})+" · "+t("lgRaceFree",{s:Math.max(1,Math.round(e.aht/e.n))}); }
+/* one half hour, call by call: random arrivals, random lengths, random patience (a seeded draw; 15 minutes of warm-up) */
+function lgSimCalls(){
+  const e=LG.e, noAb=lgNoAb()||!(e.mpt>0);
+  const rnd=(a=>()=>{ a|=0; a=a+0x6D2B79F5|0; let x=Math.imul(a^a>>>15,1|a); x=x+Math.imul(x^x>>>7,61|x)^x; return ((x^x>>>14)>>>0)/4294967296; })(LG.seed*7919);
+  const ex=m=>-Math.log(1-rnd())*m, free=new Array(e.n).fill(-900), out=[]; let tt=-900;
+  for(;;){ tt+=ex(1800/e.v); if(tt>=1800||out.length>20000) break; const svc=ex(e.aht), pat=noAb?Infinity:ex(e.mpt);
+    let k=0; for(let i=1;i<free.length;i++) if(free[i]<free[k]) k=i;
+    const st=Math.max(tt,free[k]);
+    if(st-tt>pat){ out.push({a:tt,w:pat,ab:1}); continue; }
+    free[k]=st+svc; out.push({a:tt,w:st-tt,k,s:st,e:st+svc}); }
+  return out; }
+function lgSimBuild(){
+  if(LG.raf){ cancelAnimationFrame(LG.raf); LG.raf=0; }
+  const e=LG.e, C=LG.sim=lgSimCalls(), rh=Math.max(2,Math.min(7,130/e.n)), lh=e.n*rh, H=Math.round(lh+48), X=v=>(v/3).toFixed(1);
+  let s=`<svg viewBox="-58 0 658 ${H}" role="img"><defs><clipPath id="lgClip"><rect id="lgClipR" x="0" y="0" width="600" height="${H}"/></clipPath></defs><rect x="0" y="0" width="600" height="${lh.toFixed(1)}" fill="#f4f7fb"/><g clip-path="url(#lgClip)">`, q=0;
+  for(const c of C){
+    if(!c.ab){ const x0=Math.max(0,c.s), x1=Math.min(1800,c.e); if(x1>x0) s+=`<rect x="${X(x0)}" y="${(c.k*rh+.4).toFixed(1)}" width="${Math.max(.8,(x1-x0)/3).toFixed(1)}" height="${Math.max(1.2,rh-.8).toFixed(1)}" rx="1" fill="#3fa9f5"/>`; }
+    if(c.w>2){ const x0=Math.max(0,c.a), x1=Math.min(1800,c.a+c.w); if(x1>x0){ const y=(lh+7+(q++%5)*5).toFixed(1); s+=`<line x1="${X(x0)}" x2="${X(x1)}" y1="${y}" y2="${y}" stroke="${c.ab?"#b3271e":"#d9822b"}" stroke-width="3" stroke-linecap="round"/>`; } } }
+  s+=`</g><line id="lgCur" x1="600" x2="600" y1="0" y2="${(lh+30).toFixed(1)}" stroke="#0d2a4d" opacity="0"/>`;
+  const gl=(y,x)=>`<text x="-6" y="${y.toFixed(1)}" text-anchor="end" font-size="10" fill="#6b7c90">${x}</text>`; // every row = one rep; under them, the waiting line
+  s+=gl(Math.max(9,rh/2+3.5),t("lgRep",{n:1}))+(e.n>3?gl(lh-Math.max(1,rh/2-3.5),t("lgRep",{n:e.n})):"")+gl(lh+20,t("lgLgWait"));
+  for(const m of [0,10,20,30]) s+=`<text x="${m*20}" y="${H-4}" text-anchor="${m?m===30?"end":"middle":"start"}" font-size="10" fill="#6b7c90">${m} ${t("lgMin")}</text>`;
+  $lg("lgSim").innerHTML=s+`</svg>`; $lg("lgSimCap").textContent=t("lgSimCap",{n:e.n,v:e.v.toLocaleString(),a:fmtSec(e.aht)}); lgSimAt(1800); }
+function lgSimAt(T){
+  const cr=$lg("lgClipR"), cu=$lg("lgCur"); if(!cr) return;
+  cr.setAttribute("width",(T/3).toFixed(1)); cu.setAttribute("x1",(T/3).toFixed(1)); cu.setAttribute("x2",(T/3).toFixed(1)); cu.setAttribute("opacity",T<1800?"1":"0");
+  let a=0, b=0; for(const c of LG.sim){ if(c.a<0) continue; if(c.ab){ if(c.a+c.w<=T) b++; } else if(c.s<=T) a++; }
+  $lg("lgSimRes").textContent=t("lgSimRes",{a,b,p:a+b?Math.round(a/(a+b)*100):100})+" · "+t("lgSimAvg",{p:Math.round(lgEval(LG.e,LG.e.n).ar*100)}); }
+function lgSimPlay(){ if(LG.raf) cancelAnimationFrame(LG.raf); const t0=performance.now();
+  const step=now=>{ const T=Math.min(1800,(now-t0)/6000*1800); lgSimAt(T); LG.raf=T<1800?requestAnimationFrame(step):0; }; LG.raf=requestAnimationFrame(step); }
+/* where to invest: the rep hours the first forecast week needs (scheduled, like the matrix), and what one step of each lever saves */
+function lgInvest(){
+  const wrap=$lg("lgInv"), sun=wiSun(); wrap.hidden=!sun; if(!sun) return;
+  const S=state.settings, p=LG.step/100;
+  const tot=(fv,fa,fm,s)=>{ let h=0; const ef=lgEff(s), s2=fm===1?S:{...S,mpt:S.mpt*fm};
+    wiRows((ds,di,tm,rec)=>{ if(rec.volume>0&&rec.aht>0) h+=requiredAgentsMemo(rec.volume*fv,Math.max(1,rec.aht*fa),S.target,s2,rec.mpt>0?rec.mpt*fm:rec.mpt)/ef*0.5; }); return h; };
+  const base=tot(1,1,1,S); if(!(base>0)){ wrap.hidden=true; return; }
+  const rows=[["aht",tot(1,1-p,1,S)],["vol",tot(1-p,1,1,S)]];
+  if(!lgNoAb()) rows.push(["mpt",tot(1,1,1+p,S)]);
+  if(+S.shrinkage>0) rows.push(["shr",tot(1,1,1,{...S,shrinkage:S.shrinkage*(1-p)})]);
+  if(+S.absence>0) rows.push(["abs",tot(1,1,1,{...S,absence:S.absence*(1-p)})]);
+  const R=rows.map(([k,x])=>({k,d:Math.max(0,base-x)})).sort((a,b)=>b.d-a.d), mx=Math.max(1e-9,R[0].d);
+  lgPanel.querySelectorAll("#lgStep button").forEach(b=>b.classList.toggle("active",+b.dataset.s===LG.step));
+  $lg("lgInvWk").textContent=t("lgInvWk",{d:fmtD(sun),h:hU(base)})+(sun>state.maxDate?" · "+t("lgFcW"):"");
+  $lg("lgBars").innerHTML=R.map((r,i)=>`<div class="lgBar${i?"":" top"}"><span>${t("lgInv_"+r.k,{p:LG.step})}</span><span><i style="width:${(r.d/mx*100).toFixed(1)}%"></i></span><b>−${hU(r.d)} · −${(r.d/base*100).toFixed(1)}%</b></div>`).join(""); }
+/* ---- the forecast tab ---- */
+const lgFmt=v=>LG.kind==="volume"?Math.round(v).toLocaleString():fmtSec(v);
+const lgPred=(mid,i)=>{ const v=Models[LG.kind][mid].fn(LG.arr.slice(0,i),1,LG.ctx); return isFinite(v)?Math.max(0,v):0; };
+function lgGlyph(mid){ // a tiny picture of the model's logic
+  const P=[[4,15],[12,11],[20,13],[28,8],[36,10]], dot=(p,r,o)=>`<circle cx="${p[0]}" cy="${p[1]}" r="${r||1.6}" fill="#0d2a4d" opacity="${o||1}"/>`,
+    ln=(pts,o)=>`<polyline points="${pts}" fill="none" stroke="#d9822b" stroke-width="1.6" opacity="${o||1}"/>`, end=y=>`<circle cx="43" cy="${y}" r="2.2" fill="#d9822b"/>`, D=P.map(p=>dot(p)).join("");
+  const B={lastweek:D+ln("36,10 43,10")+end(10), ma4:D+ln("12,10.5 43,10.5")+end(10.5), wavg4:P.map((p,i)=>dot(p,.8+i*.5)).join("")+ln("12,10 43,10")+end(10),
+    holt:D+ln("4,15 43,6.5")+end(6.5), prophet:D+ln("4,14 20,13 43,5.5")+end(5.5), ensemble5:D+ln("36,10 43,5",.4)+ln("36,10 43,9",.4)+ln("36,10 43,13",.4)+end(9),
+    ewmavw:P.map((p,i)=>dot(p,[1,2.4,1.4,2.8,2][i],.35+i*.16)).join("")+ln("12,10 43,10")+end(10),
+    hier:`<path d="M3 18 Q22 -6 41 18" fill="none" stroke="#9fb3c8" stroke-width="1.4"/>`+dot([12,10])+dot([22,6])+dot([32,10])+end(13),
+    blend:ln("4,16 30,10",.5)+ln("4,5 30,10",.5)+ln("30,10 43,10")+end(10),
+    custom:D+ln("20,13 43,7")+end(7)+`<circle cx="31" cy="10" r="2.6" fill="#fff" stroke="#d9822b" stroke-width="1.4"/>`};
+  return `<svg viewBox="0 0 46 22" width="46" height="22" aria-hidden="true">${B[mid==="holt_damped"?"holt":mid]||D}</svg>`; }
+function lgFcSet(){
+  const k=LG.kind, has=di=>state.series&&state.series[di]&&Object.keys(state.series[di]).length;
+  const days=[0,1,2,3,4,5].filter(has); if(days.length&&!days.includes(LG.di)) LG.di=days[0];
+  const di=LG.di, ser=days.length?state.series[di]:null; let arr=null, tm=null;
+  if(ser){ const slots=Object.keys(ser);
+    if(k==="volume"){ const nW=Math.max(...slots.map(s=>ser[s].vols.length)); arr=[]; // the weekday's daily totals, as backtestDaily reads them
+      for(let w=0;w<nW;w++){ let tot=0,seen=false; for(const s of slots){ const v=ser[s].vols[w]; if(v!=null){ tot+=v; seen=true; } } if(seen) arr.push(tot); } }
+    else{ const sum=s=>ser[s].vols.reduce((a,b)=>a+(b||0),0); tm=slots.reduce((a,b)=>sum(b)>sum(a)?b:a); arr=[...(ser[tm][k==="aht"?"ahts":"mpts"]||[])]; } } // the weekday's busiest half hour
+  LG.demo=!(arr&&arr.length>=5&&arr.filter(v=>v>0).length>=5);
+  if(LG.demo){ arr=[100,104,97,102,106,99,103,101,105,102].map(v=>k==="volume"?v*10:k==="aht"?v*3:v*1.5); tm=null; }
+  LG.base=arr; LG.arr=[...arr]; LG.tm=tm; LG.days=days; LG.ctx={weekday:di,interval:tm||"day",allSeries:LG.demo?null:state.series};
+  const key=MODEL_KINDS.find(x=>x[0]===k)[1]; if(!Models[k][LG.mid]) LG.mid=Models[k][state.settings[key]]?state.settings[key]:Object.keys(Models[k])[0];
+  lgFcDraw(); }
+function lgFcDraw(){
+  const S=state.settings, k=LG.kind, arw=lang==="he"?"←":"→";
+  $lg("lgPipe").innerHTML=[["🧹","lgP1",S.autoHolidays!==false||S.autoAnomaly!==false],["📅","lgP2",1],["🤖","lgP3",1],["📈","lgP4",S.fastAdapt!==false],["↩","lgP5",S.cuOn!==false],["📊","lgP6",1]]
+    .map(([ic,key,on])=>`<span class="lgStepC${on?"":" off"}" title="${t(key+"T")+(on?"":" "+t("lgPOff"))}">${ic} ${t(key)}</span>`).join(`<i>${arw}</i>`);
+  $lg("lgKind").innerHTML=[["volume","lgKVol"],["aht","lgKAht"]].concat(state._hasMpt?[["mpt","lgKMpt"]]:[]).map(([v,l])=>`<button type="button" data-k="${v}" class="${v===k?"active":""}">${t(l)}</button>`).join("");
+  $lg("lgDay").innerHTML=LG.days.map(d=>`<button type="button" data-d="${d}" class="${d===LG.di?"active":""}">${t("daysShort")[d]}</button>`).join(""); $lg("lgDay").hidden=!LG.days.length;
+  $lg("lgFcSrc").textContent=LG.demo?t("lgDemo"):LG.tm?t("lgDaySlot",{d:t("days")[LG.di],t:LG.tm+"–"+addHalf(LG.tm)}):t("lgDayTot",{d:t("days")[LG.di]});
+  $lg("lgFcReset").hidden=LG.arr.every((v,i)=>v===LG.base[i]);
+  $lg("lgFcLeg").innerHTML=`<span><i style="background:#0d2a4d;border-radius:50%"></i>${t("lgLgAct")}</span><span><i style="background:#d9822b;border-radius:50%"></i>${t("lgLgPred")}</span><span><i style="background:#9fb3c8;height:3px;width:14px;vertical-align:3px"></i>${t("lgLgOth")}</span>`;
+  lgFcChart(); lgCards(); lgTune(); }
+/* 🛠 "My model" (Models[kind].custom, settings.myModel[kind] = {a, tr}): the two knobs, live on the chart; on release it
+   is saved, re-ranked with the others (autoPickModels uses it only if it wins the test) and the forecast is rebuilt */
+function lgTune(){ const k=LG.kind, on=LG.mid==="custom"; $lg("lgTune").hidden=!on; if(!on) return; const p=myP(k);
+  $lg("lgTa").value=p.a; $lg("lgTt").value=p.tr; $lg("lgTaV").textContent=Math.round(p.a*100)+"%"; $lg("lgTtV").textContent=Math.round(p.tr*100)+"%";
+  $lg("lgFit").hidden=LG.demo; const r=LG.demo?null:backtestModel(k,"custom");
+  $lg("lgTuRes").textContent=r?t("btErr",{e:r.mape.toFixed(1)})+" — "+t("lgTuSeen"):""; }
+function lgMySet(a,tr){ (state.settings.myModel=state.settings.myModel||{})[LG.kind]={a,tr}; }
+function lgMyChanged(){ saveState(); LG.rk={}; state.fcCache.clear(); memo.clear(); autoPickModels(); renderAll(); lgFcDraw(); }
+function lgFcChart(){
+  const A=LG.arr, N=A.length, from=Math.max(0,N-12), cnt=N-from+1, W=600, H=220, L=10, R=10, T=22, B=26, X=i=>L+(i-from+.5)/cnt*(W-L-R), f=v=>v.toFixed(1);
+  const pr=[]; for(let i=Math.max(from,N-6,4);i<=N;i++) pr.push([i,lgPred(LG.mid,i)]);
+  const oth=Object.keys(Models[LG.kind]).filter(m=>m!==LG.mid).map(m=>[m,lgPred(m,N)]);
+  let fy=LG.drag>=0?LG.fy:null;
+  if(!fy){ const vs=A.slice(from).concat(pr.map(p=>p[1]),oth.map(o=>o[1])).filter(v=>v>0), lo=Math.min(...vs), hi=Math.max(...vs), pad=(hi-lo)*.3||hi*.1||1; fy=LG.fy={lo:Math.max(0,lo-pad),hi:hi+pad,T,B,H}; }
+  const Y=v=>T+(1-(Math.min(fy.hi,Math.max(fy.lo,v))-fy.lo)/(fy.hi-fy.lo))*(H-T-B), w=(W-L-R)/cnt, lab=(x,s,an)=>`<text x="${f(x)}" y="${H-8}" text-anchor="${an||"middle"}" font-size="10" fill="#6b7c90">${s}</text>`;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img"><rect x="${f(X(N)-w/2)}" y="${T-14}" width="${f(w)}" height="${H-T-B+18}" rx="6" fill="#e8f4fe"/>`+lab(X(N),t("lgNext"))+lab(X(N-1),t("lgLast"));
+  if(N-from>=4) s+=lab(L,t("lgBack",{n:N-from}),"start");
+  s+=`<polyline points="${A.map((v,i)=>i>=from&&v>0?f(X(i))+","+f(Y(v)):"").join(" ")}" fill="none" stroke="#0d2a4d" stroke-width="2"/>`;
+  for(const [i,p] of pr) if(i<N&&A[i]>0) s+=`<line x1="${f(X(i))}" x2="${f(X(i))}" y1="${f(Y(p))}" y2="${f(Y(A[i]))}" stroke="#d9822b" stroke-width="3" opacity=".4"/>`;
+  s+=`<polyline points="${pr.map(([i,p])=>f(X(i))+","+f(Y(p))).join(" ")}" fill="none" stroke="#d9822b" stroke-width="2" stroke-dasharray="5 4"/>`;
+  for(const [m,v] of oth) s+=`<line x1="${f(X(N)-9)}" x2="${f(X(N)+9)}" y1="${f(Y(v))}" y2="${f(Y(v))}" stroke="#9fb3c8" stroke-width="2"><title>${t(Models[LG.kind][m].label)}: ${lgFmt(v)}</title></line>`;
+  for(const [i,p] of pr) s+=i<N?`<circle cx="${f(X(i))}" cy="${f(Y(p))}" r="3" fill="#d9822b"/>`
+    :`<circle cx="${f(X(i))}" cy="${f(Y(p))}" r="6" fill="#d9822b" stroke="#fff" stroke-width="2"/><text x="${f(X(i))}" y="${f(Y(p)-10)}" text-anchor="middle" font-size="11" font-weight="700" fill="#b96a14">${lgFmt(p)}</text>`;
+  for(let i=from;i<N;i++) if(A[i]>0) s+=`<circle data-i="${i}" cx="${f(X(i))}" cy="${f(Y(A[i]))}" r="6" ${A[i]!==LG.base[i]?`fill="#fff" stroke="#0d2a4d" stroke-width="2.5"`:`fill="#0d2a4d" stroke="#fff" stroke-width="1.5"`}><title>${lgFmt(A[i])}</title></circle><text x="${f(X(i))}" y="${f(Y(A[i])-10)}" text-anchor="middle" font-size="9" fill="#6b7c90" pointer-events="none">${lgFmt(A[i])}</text>`;
+  $lg("lgFcChart").innerHTML=s+`</svg>`; }
+function lgCards(){
+  const k=LG.kind, key=MODEL_KINDS.find(x=>x[0]===k)[1], use=state.settings[key];
+  const rk=LG.demo?[]:(LG.rk[k]=LG.rk[k]||rankModels(k)), ids=rk.length?rk.map(x=>x.mid):Object.keys(Models[k]), mine=LG.demo||rk.some(x=>x.mid==="custom")?null:backtestModel(k,"custom"), mx=Math.max(1e-9,...rk.map(x=>x.r.mape),mine?mine.mape:0);
+  if(!ids.includes("custom")) ids.push("custom"); // 🛠 always there to play with; it joins the ranking once the user set it
+  $lg("lgCards").innerHTML=ids.map(mid=>{ const r=rk.find(x=>x.mid===mid)||(mid==="custom"&&mine?{r:mine}:null), sel=mid===LG.mid, a=mid==="holt_damped"?"holt":mid, nm=t(Models[k][mid].label).replace(/\s*[(—].*$/,"");
+    return `<button type="button" class="lgCard${sel?" on":""}" data-mid="${mid}"><span class="lgG">${lgGlyph(mid)}</span><span><b>${nm}</b>${mid===use&&!LG.demo?` <span class="pill">${mUser(key)?"":"🤖 "}${t("btInUse")}</span>`:""}</span>`
+      +`<span class="lgErr">${r?`<span class="lgErrT"><i style="width:${(r.r.mape/mx*100).toFixed(1)}%"></i></span><small>${t("btErr",{e:r.r.mape.toFixed(1)})}${k!=="aht"&&r.r.pace!=null?" · "+(Math.abs(r.r.pace-100)<=1?t("btNoBias"):t(r.r.pace>100?"btHigh":"btLow",{d:Math.abs(r.r.pace-100).toFixed(1)})):""}</small>`:""}</span>` // the 🧪 window's line: the error, and which way it leans (the ranking's first key)
+      +`<span class="lgNx" title="${t("lgNxT")}">${lgFmt(lgPred(mid,LG.arr.length))}</span>`
+      +(sel&&I18N.en["lgM_"+a+"_h"]?`<span class="lgWhy"><span>${t("lgM_"+a+"_h")}</span><span class="g">✓ ${t("lgM_"+a+"_g")}</span><span class="b">✗ ${t("lgM_"+a+"_b")}</span></span>`:"")+`</button>`; }).join(""); }
+function renderLg(){
+  const tab=state.settings.lgTab==="fc"?"fc":"erl";
+  lgPanel.querySelectorAll("#lgTabs button").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));
+  $lg("lgErl").hidden=tab!=="erl"; $lg("lgFc").hidden=tab!=="fc";
+  if(tab==="erl"){ lgErlUpd(); lgInvest(); } else if(!LG.arr) lgFcSet(); else lgFcDraw(); }
+function openLogic(tab){
+  if(tab){ state.settings.lgTab=tab; saveState(); }
+  document.getElementById("mTitle").textContent=t("lgTitle");
+  document.getElementById("mCore").textContent=""; document.getElementById("mMsg").textContent="";
   const mL=document.getElementById("mList"); mL.innerHTML="";
-  ["logicClean","logicEns","logicVol","logicAht","logicErlang","logicStaff"].forEach(k=>{
-    const li=document.createElement("li"); li.className="insight"; li.textContent=t(k); mL.appendChild(li);
-  });
+  mL.parentNode.insertBefore(lgPanel,mL); lgPanel.hidden=false;
+  document.getElementById("mExport").style.display="none";
   document.getElementById("modalBg").classList.add("show");
-});
+  LG.rk={}; LG.arr=null; LG.mid=null; LG.w=null; lgErlSet("peak"); renderLg(); }
+document.getElementById("revealLogic").addEventListener("click",()=>openLogic());
+document.getElementById("lgFcBtn").addEventListener("click",()=>openLogic("fc"));
+$lg("lgTabs").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return; state.settings.lgTab=b.dataset.tab; saveState(); renderLg(); });
+$lg("lgPre").addEventListener("click",e=>{ const b=e.target.closest("button"); if(b) lgErlSet(b.dataset.p); });
+$lg("lgReset").addEventListener("click",()=>{ LG.e={...LG.e0}; lgErlUpd(); });
+[["lgV","v"],["lgA","aht"],["lgM","mpt"],["lgN","n"]].forEach(([id,k])=>$lg(id).addEventListener("input",ev=>{ LG.e[k]=+ev.target.value; lgErlUpd(); }));
+{ const box=$lg("lgChart"), at=ev=>{ const c=LG.cx, r=box.querySelector("svg").getBoundingClientRect(), x=(ev.clientX-r.left)/r.width*c.W;
+    return Math.max(1,Math.min(c.n1,Math.round(c.n0+(x-c.L)/(c.W-c.L-c.R)*(c.n1-c.n0)))); };
+  box.addEventListener("pointerdown",ev=>{ box.setPointerCapture(ev.pointerId); LG.e.n=at(ev); LG.hov=null; lgErlUpd(); });
+  box.addEventListener("pointermove",ev=>{ if(!LG.cx) return; const m=at(ev); if(ev.buttons&1){ if(m!==LG.e.n){ LG.e.n=m; lgErlUpd(); } } else if(m!==LG.hov){ LG.hov=m; lgErlChart(); } });
+  box.addEventListener("pointerleave",()=>{ if(LG.hov!=null){ LG.hov=null; lgErlChart(); } }); }
+$lg("lgW").addEventListener("input",ev=>{ LG.w=+ev.target.value; lgRace(); });
+$lg("lgPlay").addEventListener("click",lgSimPlay);
+$lg("lgDice").addEventListener("click",()=>{ LG.seed++; lgSimBuild(); lgSimPlay(); });
+$lg("lgStep").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return; LG.step=+b.dataset.s; lgInvest(); });
+$lg("lgKind").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return; LG.kind=b.dataset.k; LG.mid=null; lgFcSet(); });
+$lg("lgDay").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return; LG.di=+b.dataset.d; lgFcSet(); });
+$lg("lgCards").addEventListener("click",e=>{ const b=e.target.closest(".lgCard"); if(!b) return; LG.mid=b.dataset.mid; lgFcDraw(); });
+$lg("lgFcReset").addEventListener("click",()=>{ LG.arr=[...LG.base]; lgFcDraw(); });
+["lgTa","lgTt"].forEach(id=>{ $lg(id).addEventListener("input",()=>{ lgMySet(+$lg("lgTa").value,+$lg("lgTt").value); lgFcChart(); lgCards(); lgTune(); }); $lg(id).addEventListener("change",lgMyChanged); });
+$lg("lgFit").addEventListener("click",()=>{ let best=null; // the pair that was closest on weeks it had not seen (each predicted from the weeks before it)
+  for(let a=0.1;a<=1.001;a+=0.1) for(const tr of [0,.25,.5,.75,1]){ lgMySet(+a.toFixed(2),tr); const r=backtestModel(LG.kind,"custom"); if(r&&(!best||r.mape<best.e)) best={a:+a.toFixed(2),tr,e:r.mape}; }
+  if(best) lgMySet(best.a,best.tr); lgMyChanged(); });
+$lg("lgSc").addEventListener("click",e=>{ const b=e.target.closest("button[data-sc]"); if(!b) return; const A=LG.arr=[...LG.base], N=A.length, sc=b.dataset.sc;
+  if(sc==="spike") A[N-1]*=1.5; else if(sc==="step"){ for(let i=N-3;i<N;i++) A[i]*=1.3; } else for(let j=0;j<6;j++) A[N-6+j]*=1+0.06*(j+1);
+  lgFcDraw(); });
+{ const box=$lg("lgFcChart");
+  box.addEventListener("pointerdown",ev=>{ const c=ev.target.closest("[data-i]"); if(!c) return; LG.drag=+c.dataset.i; box.setPointerCapture(ev.pointerId); ev.preventDefault(); });
+  box.addEventListener("pointermove",ev=>{ if(LG.drag<0) return; const y0=LG.fy, r=box.querySelector("svg").getBoundingClientRect(), y=(ev.clientY-r.top)/r.height*y0.H;
+    LG.arr[LG.drag]=Math.max(Math.max(1,y0.lo),Math.min(y0.hi,y0.lo+(1-(y-y0.T)/(y0.H-y0.T-y0.B))*(y0.hi-y0.lo))); lgFcChart(); lgCards(); });
+  const up=()=>{ if(LG.drag>=0){ LG.drag=-1; lgFcDraw(); } }; box.addEventListener("pointerup",up); box.addEventListener("pointercancel",up); }
 
 const bind=(id,key)=>{ const el=document.getElementById(id); el.value=state.settings[key];
   el.addEventListener("change",()=>{ state.settings[key]=parseFloat(el.value)||0; memo.clear();
