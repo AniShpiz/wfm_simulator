@@ -188,7 +188,9 @@ td .short.soft{background:transparent;box-shadow:inset 0 0 0 1.5px #c22}
 #modal{background:#fff;border-radius:11px;max-width:580px;width:92%;max-height:76vh;overflow:auto;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
 #modal:has(#shPanel:not([hidden])){max-width:960px;max-height:90vh} /* the summary image is read at full size */
 /* 🧮 "How are the numbers calculated?" — the play window (openLogic) */
-#modal:has(#lgPanel:not([hidden])){max-width:940px;max-height:92vh} #lgPanel [hidden]{display:none!important}
+#modal:has(#lgPanel:not([hidden])){max-width:940px;max-height:92vh} #modal:has(#profPanel:not([hidden])){max-width:760px} .profCopy{display:flex;align-items:center;justify-content:flex-end;gap:8px;font-size:.78rem;color:var(--navy);margin:0 0 6px} .profCopy[hidden]{display:none} #profBtn.pulse{animation:askPulse 1.2s ease-out 2}
+#profTChart svg{cursor:crosshair} #profZoomX{border-color:var(--navy);color:var(--navy);font-weight:600} #profPats{margin-top:8px} details.fmAdv>summary.pulse{animation:askPulse 1.2s ease-out 2;border-radius:6px} #fmAdvSum{color:var(--navy)}
+.profPt{display:grid;grid-template-columns:minmax(150px,30%) 90px 1fr;gap:10px;align-items:center;width:100%;text-align:start;border:1px solid var(--border);border-radius:8px;background:#fff;padding:4px 9px;margin:3px 0;font:inherit;font-size:.78rem;cursor:pointer;color:var(--ink)} .profPt:hover{border-color:#9cc8ee} .profPt.on{border-color:var(--navy);box-shadow:inset 3px 0 0 var(--navy)} [dir=rtl] .profPt.on{box-shadow:inset -3px 0 0 var(--navy)} .profPt small{color:var(--muted)} .profPt .lgErrT{flex:none;width:100%} .profPt .lgErrT i{background:var(--navy)} #profTRead{text-align:center;color:var(--navy);min-height:1.2em;margin:2px 0 6px} .legend i.lg-ev{background:var(--navy)!important;width:8px!important;height:8px!important;border-radius:1px!important;transform:rotate(45deg)} #profTime .rdyLeg{margin:0;justify-content:flex-start} #lgPanel [hidden]{display:none!important}
 .lgRow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 0 6px} .lgH{font-size:.86rem;font-weight:700;color:var(--navy)}
 .lgEq{display:flex;align-items:stretch;justify-content:center;gap:6px;flex-wrap:wrap;direction:ltr;margin:8px 0}
 .lgEq>i{font-style:normal;align-self:center;color:var(--muted);font-weight:700}
@@ -957,6 +959,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
           <div class="splitbtn moreBtn" id="mxMore"><button class="btn ghost" type="button" data-i18n-title="moreTipMx">⋯</button>
             <div class="menu pad">
               <button type="button" class="mnItem" id="excModeOn" data-i18n="excBtn">🗓 Holiday / Exception Control</button>
+              <button type="button" class="mnItem" id="mxProf" data-i18n="profBtnL" data-i18n-title="profBtnTip">📊 Calls over the day</button>
               <div class="mnSep"></div>
               <div class="mnH" data-i18n="exportDemand">⬇ Export Demand Profile</div>
               <div class="frow"><label data-i18n="expMetricL">Content</label>
@@ -1488,12 +1491,12 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <div class="frow fmSub" id="retryKnownRow"><label for="setRetryKnown"><span data-i18n="fmRetryK">Abandoners who call again (%)</span> <span class="optTag" data-i18n="optTag">optional</span> <span class="info" data-tipkey="tipRetryK" tabindex="0">i</span></label><input type="number" id="setRetryKnown" min="0" max="100" step="5" style="width:110px"></div>
         <div class="frow" style="border:none;gap:8px;flex-wrap:wrap"><button class="btn ghost" id="holTableBtn" data-i18n="holTableBtn">🕎 Holidays table</button><button class="btn ghost" id="evBtn"><span data-i18n="evTitle">📣 Planned demand events</span> <span class="pill" id="evCount" style="display:none"></span></button></div>
         <!-- the models are chosen automatically by testing them; picking one by hand is here, one click deep -->
-        <details class="hpLim fmAdv"><summary data-i18n="fmAdvT">⚙ Models &amp; checks</summary>
+        <details class="hpLim fmAdv"><summary><span data-i18n="fmAdvT">⚙ Models &amp; checks</span> <span class="foldSum" id="fmAdvSum"></span></summary>
         <div class="frow"><label data-i18n="fmVol">Call volume model</label><select id="setModelVol" style="width:210px"></select></div>
         <div class="frow"><label data-i18n="fmAht">AHT model</label><select id="setModelAht" style="width:210px"></select></div>
         <div class="frow" id="mptModelRow"><label data-i18n="fmMpt">MPT model</label><select id="setModelMpt" style="width:210px"></select></div>
-        <div class="frow"><label><span data-i18n="fmProfile">Interval profile window</span> <button class="linklike" id="profBtn" type="button" data-i18n-title="profBtnTip" title="See and edit the intraday call weights">📊</button></label><select id="setProfile" style="width:210px"><option value="auto">🤖</option><option value="adaptive" data-i18n="fmProfAdapt">Adaptive (8w, fallback all)</option><option value="w12" data-i18n="fmProf12">12 weeks</option><option value="smart" data-i18n="fmProfSmart">Blended shape</option></select></div>
-        <div class="frow" style="border:none;gap:8px;flex-wrap:wrap"><button class="btn ghost" id="backtestBtn" data-i18n="backtestBtn">🧪 Backtest models</button><button class="btn ghost" id="lgFcBtn" data-i18n="lgTabFc">📈 How is the forecast built?</button><button class="btn ghost" id="reviewExclBtn" data-i18n="reviewExclBtn">📅 Review excluded days</button></div>
+        <div class="frow"><label><span data-i18n="fmProfile">Calls over the day — learned from</span></label><select id="setProfile" style="width:210px"><option value="auto">🤖</option><option value="adaptive" data-i18n="fmProfAdapt">The last 8 weeks</option><option value="w12" data-i18n="fmProf12">The last 12 weeks</option><option value="smart" data-i18n="fmProfSmart">The whole file, recent weighs more</option></select></div>
+        <div class="frow" style="border:none;gap:8px;flex-wrap:wrap"><button class="btn ghost" id="backtestBtn" data-i18n="backtestBtn">🧪 Backtest models</button><button class="btn ghost" id="lgFcBtn" data-i18n="lgTabFc">📈 How is the forecast built?</button><button class="btn ghost" id="profBtn" type="button" data-i18n="profBtnL" data-i18n-title="profBtnTip" title="How the calls spread over the day — see and edit">📊 Calls over the day</button><button class="btn ghost" id="reviewExclBtn" data-i18n="reviewExclBtn">📅 Review excluded days</button></div>
         </details>
         <!-- planned one-off surges the history can't know (vendor change, campaign): sized once,
              added to the forecast, and kept OUT of learning once the days become history.
@@ -1502,12 +1505,24 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
              shared modal — switch window, see what changes, pin a share -->
         <div id="profPanel" class="mpanel" data-tkey="profTitle" hidden>
           <div class="toolbar" style="margin:0 0 6px;gap:8px">
-            <div class="seg" id="profWin"><button type="button" data-mode="auto" data-i18n="profAutoBtn">🤖 Automatic</button><button type="button" data-mode="adaptive" data-i18n="fmProfAdapt">Adaptive (8w, fallback all)</button><button type="button" data-mode="w12" data-i18n="fmProf12">12 weeks</button><button type="button" data-mode="smart" data-i18n="fmProfSmart" data-i18n-title="profSmartTip">Blended shape</button></div>
-            <div class="seg" id="profView"><button type="button" data-view="share" class="active" data-i18n="profViewShare">Weights</button><button type="button" data-view="diff" data-i18n="profViewDiff">Change vs other window</button></div>
+            <div class="seg" id="profWin"><button type="button" data-mode="auto" data-i18n="profAutoBtn">🤖 Automatic</button><button type="button" data-mode="adaptive" data-i18n="fmProfAdapt">The last 8 weeks</button><button type="button" data-mode="w12" data-i18n="fmProf12">The last 12 weeks</button><button type="button" data-mode="smart" data-i18n="fmProfSmart" data-i18n-title="profSmartTip">The whole file, recent weighs more</button></div>
+            <div class="seg" id="profView"><button type="button" data-view="share" class="active" data-i18n="profViewShare">The split</button><button type="button" data-view="time" data-i18n="profViewTime">Over time</button></div>
           </div>
           <div class="profTest" id="profTest" hidden></div>
           <p class="mini" id="profInsight"></p>
-          <div class="tablewrap" style="max-height:52vh;overflow:auto"><table id="profTable"></table></div>
+          <!-- 📋 the split, ready to paste into Excel: both choices in sight, one click each -->
+          <div class="profCopy" id="profCopy" hidden><span data-i18n="profCopyL">📋 Copy for Excel:</span><button class="hpChip" type="button" data-g="30" data-i18n="profCopy30" data-i18n-title="profCopy30T">Half-hourly</button><button class="hpChip" type="button" data-g="60" data-i18n="profCopy60" data-i18n-title="profCopy60T">Hourly</button><button class="hpChip" type="button" id="profCopyIns" data-i18n="profCopyIns" data-i18n-title="profCopyInsT" hidden>The insights, as text</button></div>
+          <div class="tablewrap" id="profTblW" style="max-height:52vh;overflow:auto"><table id="profTable"></table></div>
+          <!-- 🕰 over time: every history week / day against the file's usual day — where the calls moved, and what happened that day -->
+          <div id="profTime" hidden>
+            <div class="lgRow"><div class="seg" id="profGran"><button type="button" data-g="week" data-i18n="profGW">Weeks</button><button type="button" data-g="day" data-i18n="profGD">Days</button></div><button class="hpChip" type="button" id="profZoomX" data-i18n-title="profZoomXT" hidden></button><span class="mini" id="profZoomHint" data-i18n="profZoomHint">Drag across the chart to zoom in</span>
+              <div class="legend rdyLeg"><span><i style="background:#3fa9f5"></i><span data-i18n="profLgMore">More calls than usual</span></span><span><i style="background:#f06423"></i><span data-i18n="profLgLess">Fewer</span></span><span><i class="lg-ev"></i><span data-i18n="profLgEv">Holiday / exceptional day</span></span></div></div>
+            <div id="profTChart" class="lgSvg"></div>
+            <p class="mini" id="profTRead"></p>
+            <div class="legend rdyLeg"><span><i style="background:#9fb3c8"></i><span data-i18n="profLgUsual">A usual day</span></span><span><i style="background:#0d2a4d"></i><span id="profTSel"></span></span></div>
+            <div id="profTDet" class="lgSvg"></div>
+            <div id="profPats"></div>
+          </div>
           <p class="mini" id="profFoot"></p>
         </div>
         <!-- 🧮 "How are the numbers calculated?" — a place to play (openLogic): one half hour (Erlang) · the forecast models -->
@@ -1753,7 +1768,7 @@ en:{
   backtestMsg:"Each model is tested on your last 6 weeks as if it hadn't seen them; the most accurate one is used, automatically.",
   paceWord:"pace",
   fmAutoHol:"Auto Israeli-holiday calendar", fmAutoAnom:"Auto war/outage detection",
-  fmProfile:"Interval profile window", fmProfAdapt:"Adaptive (8w, fallback all)", fmProf12:"12 weeks",
+  fmProfile:"Calls over the day — learned from", fmProfAdapt:"The last 8 weeks", fmProf12:"The last 12 weeks",
   cuPillIn:"↩ {n} of them", cuPillInTip:"A measured day: about {n} of its calls were returning ones — the day's count already holds them and stays as measured",
   scChip:"📅 Sidur week {w}", scNow:"this week", scNext:"next week", scLast:"last week", scAgo:"{n} weeks ago", scAhead:"in {n} weeks",
   scIronOnly:"⛓ Iron only — no sidur loaded", scIronNewer:"From week {w} on, forecast days use week {w}'s newer iron — an older file never rolls the future back.", scKeepTip:"This week's sidur (week {w}, uploaded {at}) still shows in the matrix for its days — until the week ends. Upload it again to update it. Click it → this week in the matrix.", scTip:"The sidur loaded now — its iron sets the forecasts and calculations on every page. Click to load another.",
@@ -1764,9 +1779,9 @@ en:{
   whoNone:"No rep's shift covers this half hour.", whoGap:"Missing {m} of {n}", whoImpact:"{a}: {x} → {y}", mxWhoLeg:"click the reps number — who should be on", mxNowLeg:"now", mxPastLeg:"already passed",
   whoTlImpact:"Without your {m}, this half hour's {a} goes from {x} down to {y} (target {t}%).",
   whoCopy:"📋 Copy for the team managers", whoTlPurpose:"{d} {a}–{b} — on the sidur but not on the floor:", whoCopied:"Copied — one message per team",
-  profAutoBtn:"🤖 Automatic", profTestT:"Which window places the calls right? Tested on {n} past days", profTestErr:"{e}% in the wrong half hour",
-  profTestAuto:"In use: {m} — the lower error. Each day is predicted only from the days before it.", profTestHand:"You picked the window by hand; the test prefers {m}.",
-  profTestTip:"Tested on {n} past days: 8 weeks puts {a}% of the calls in the wrong half hour, 12 weeks {b}%.",
+  profAutoBtn:"🤖 Automatic", profTestT:"What is best to learn from? Tested on {n} past days", profTestErr:"{e}% of the calls in the wrong half hour",
+  profTestAuto:"In use: {m} — the most accurate on your past.", profTestHand:"You chose by hand. The test prefers: {m}.",
+  profTestTip:"Tested on {n} past days: the last 8 weeks put {a}% of the calls in the wrong half hour, the last 12 weeks {b}%.",
   btProfL:"Spread over the day",
   reviewExclBtn:"📅 Review excluded days", reviewExclTitle:"Excluded days — holidays & anomalies",
   reviewExclMsg:"Days the model leaves out of learning: holidays, and unusually low days (war, outage). Bring any day back to learning with one click.",
@@ -1833,7 +1848,12 @@ en:{
   lgPeakT:"The half hour with the most calls in the first forecast week", lgQuietT:"The half hour with the fewest calls in that week",
   lgMptSrc:"Yours: {s} · {w}", lgSrcFile:"from your file", lgSrcSet:"from Settings",
   mMine:"My model", lgM_custom_h:"Your own model, two knobs: how fast it reacts to the last week, and how far it continues the trend.", lgM_custom_g:"You know something about this center the ready models don't", lgM_custom_b:"Reacting too fast = chasing noise",
-  fmProfSmart:"Blended shape", profSmartTip:"Every day counts by its own split, recent weeks weigh more, and a noisy weekday leans on the shape of the other weekdays. Used only when the test on your file shows it is more accurate.",
+  btH1:"Next week", btH2:"The coming month", btH3:"Months ahead",
+  mTheta:"Theta (level + half the trend)", mSqrt:"Stabilised smoothing (√ scale)", mComb:"Median of five simple methods",
+  lgM_theta_h:"The recent level plus half of the long-run slope.", lgM_theta_g:"A mild, steady trend — it follows without overshooting", lgM_theta_b:"A sharp turn — half a slope is too slow",
+  lgM_sqrtses_h:"Smooths the weeks on a square-root scale, where a busy week and a quiet one are equally noisy.", lgM_sqrtses_g:"Weeks with an occasional big peak — a peak pulls it less", lgM_sqrtses_b:"A real trend — it has none",
+  lgM_comb_h:"Five simple methods forecast; the middle one is used.", lgM_comb_g:"No method wins reliably — the middle is rarely far off", lgM_comb_b:"One method is clearly right — the middle holds it back",
+  fmProfSmart:"The whole file, recent weighs more", profSmartTip:"Learns from the whole file: recent weeks weigh more, and a weekday with little data leans on the other weekdays.",
   lgTuA:"React to the last week", lgTuT:"Continue the trend", lgTuFit:"🎯 Fit to my history", lgTuSeen:"measured only on weeks the model had not seen",
   lgOf100:"Out of 100 callers", lgDNow:"Answered at once", lgDWait:"Waited and answered", lgRaceQ:"How long are callers willing to wait?", lgSlW:"Waiting time",
   lgRaceRes:"After {s} of waiting, {n} of 100 have hung up", lgRaceFree:"when everyone is busy, a rep frees up every {s} sec", lgRaceStay:"Still on the line",
@@ -2202,14 +2222,27 @@ en:{
   wiCsvTm:"Interval", wiCsvSid:"Sidur", wiCsvWi:"What-if", wiCsvBefore:"before", wiCsvAfter:"after",
   ceHintAgFile:"Baseline from your file (no sidur for this day) — try a what-if here.",
   ceHintDay:"Total calls for the day — spread across its half-hours by the day's usual profile.",
-  profTitle:"📊 Intraday call weights", profBtnTip:"See and edit the intraday call weights",
-  profIntro:"Each weekday's share of calls per half hour — forecast days spread their total by it. History never changes.",
-  profViewShare:"Weights", profViewDiff:"Change vs other window", profNone:"Load a forecast file with history to see the weights.",
-  profInsSame:"Switching to {o} would barely change anything (under 0.3 points anywhere)",
-  profInsDiff:"Switching to {o} would move {day} {tm} by {p} points — the biggest change",
-  profPeak:"most days peak at {tm}", profPinnedTip:"Pinned by you — click to change; clear the box to unpin",
-  profEditNote:"Click a weight to pin a different share — the rest of that day rebalances to 100%.",
-  profDiffNote:"Points of the day's calls this window adds (+) or removes (−) vs {o}.", profReset:"↺ Unpin all ({n})",
+  profTitle:"📊 How do the calls spread over the day?", profBtnTip:"How the calls spread over the day — see and edit",
+  profToAm:"to the morning", profToPm:"to the afternoon", profMoreAm:"More in the morning", profMorePm:"More in the afternoon", profPt:"pts", profShareL:"of the day's calls",
+  profWkOf:"Week {w} · {d}", profWkN:"W{w}", profEvPlan:"Planned event", profSame:"{d}: like a usual day", profMovedL:"{d}: {p} points of the calls moved {dir}",
+  profNextUp:"Toward week {w}: about {n} more calls a day between {a} and {b} than on a usual day", profNextUpP:"Toward week {w}: {p} points more of the day's calls between {a} and {b} than on a usual day", profNextRep:"(about {k} more reps there)",
+  profNextDn:"about {n} fewer between {a} and {b}", profNextDnP:"{p} points fewer between {a} and {b}",
+  profNextEv:"Week {w}, {d} is {e}: on such days {p} points of the calls moved {dir}", profNextEv0:"Week {w}, {d} is {e}",
+  profDrift:"In the last 4 weeks {p} points of the calls moved {dir}", profEvTop:"The most unusual day: {d} ({e}) — {p}% of its calls came at other hours than usual",
+  profPatsT:"What repeats?", profPtN:"{n} days", profPtMove:"{p} points of the calls move {dir}", profPtTop:"most at {tm} ({v})", profPtAfter:"The day after a closed day", profPtBill:"Billing-peak days", profPtBusy:"Unusually busy days",
+  profZoomHint:"Drag across the chart to zoom in", profZoomXT:"Back to the whole file", profCopyIns:"The insights, as text", profCopyInsT:"Next week, the trend and what repeats — as text to send on", profInsCopied:"The insights were copied",
+  fmAdvSum:"next week's forecast: off by {e}% on average",
+  profBtnL:"📊 Calls over the day", profViewTime:"Over time", profGW:"Weeks", profGD:"Days", profLgMore:"More calls than usual", profLgLess:"Fewer", profLgEv:"Holiday / exceptional day", profLgUsual:"A usual day",
+  profEvExc:"A day marked as an exception",
+ 
+ 
+ 
+  profCopyL:"📋 Copy for Excel:", profCopy30:"Half-hourly", profCopy60:"Hourly", profCopy30T:"A row for every half hour, a column for every weekday", profCopy60T:"A row for every hour (its two half hours added), a column for every weekday", profCopied:"Copied {g} — paste it into Excel", profColI:"Half hour", profColH:"Hour",
+  profIntro:"The share of a day's calls that arrives in each half hour. The forecast splits every day by it.",
+  profViewShare:"The split", profNone:"Load a forecast file with history to see the split.",
+  profPeak:"Most days peak at {tm}", profPinnedTip:"Set by you — click to change; empty the box to go back to the learned share",
+  profEditNote:"Click a cell to set its share by hand — the rest of the day adjusts so the total stays 100%.",
+  profReset:"↺ Back to the learned split ({n})",
   evTitle:"📣 Planned demand events", evIntro:"A known one-off surge your history can't predict (vendor change, campaign, price update). The calls are added to the forecast — and once those days happen, they're kept out of the model's learning.",
   evName:"Event", evNamePh:"e.g. Vendor change", evDefName:"Planned event", evStart:"First day", evDays:"Working days",
   evTotal:"Extra calls (total)",
@@ -2349,7 +2382,7 @@ he:{
   backtestMsg:"כל מודל נבדק על 6 השבועות האחרונים שלכם כאילו לא ראה אותם; המדויק ביותר בשימוש, אוטומטית.",
   paceWord:"היחס",
   fmAutoHol:"לוח חגים ישראלי אוטומטי", fmAutoAnom:"זיהוי מלחמות/תקלות אוטומטי",
-  fmProfile:"חלון פרופיל אינטרוולים", fmProfAdapt:"אדפטיבי (8 שב׳, גיבוי הכל)", fmProf12:"12 שבועות",
+  fmProfile:"פיזור השיחות ביום — נלמד מ", fmProfAdapt:"8 השבועות האחרונים", fmProf12:"12 השבועות האחרונים",
   cuPillIn:"↩ {n} מתוכן", cuPillInTip:"יום שנמדד: כ־{n} מהשיחות שלו היו שיחות חוזרות — הן כבר בתוך המספר של היום, והוא נשאר כפי שנמדד",
   scChip:"📅 סידור שבוע {w}", scNow:"השבוע", scNext:"שבוע הבא", scLast:"שבוע שעבר", scAgo:"לפני {n} שבועות", scAhead:"בעוד {n} שבועות",
   scIronOnly:"⛓ ברזל בלבד — לא טעון סידור", scIronNewer:"משבוע {w} והלאה ימי התחזית לפי הברזל החדש יותר של שבוע {w} — קובץ ישן לא מחזיר את העתיד לאחור.", scKeepTip:"סידור השבוע (שבוע {w}, הועלה {at}) ממשיך להופיע במטריצה בימים שלו — עד סוף השבוע. העלאה חוזרת שלו מעדכנת אותו. לחיצה עליו ← השבוע במטריצה.", scTip:"הסידור שטעון עכשיו — הברזל שלו קובע את החיזויים והחישובים בכל העמודים. לחיצה לטעינת סידור אחר.",
@@ -2360,9 +2393,9 @@ he:{
   whoNone:"אין נציג שהמשמרת שלו מכסה את חצי השעה הזו.", whoGap:"חסרים {m} מתוך {n}", whoImpact:"{a}: ⁦{x}⁩ ← ⁦{y}⁩", mxWhoLeg:"לחצו על מספר הנציגים — מי אמור לעבוד", mxNowLeg:"עכשיו", mxPastLeg:"כבר עבר",
   whoTlImpact:"בלי ה־{m} מהצוות שלך, {a} בחצי השעה הזו יורד מ־{x} ל־{y} (יעד {t}%).",
   whoCopy:"📋 העתקה למנהלי הצוות", whoTlPurpose:"{d} {a}–{b} — בסידור אבל לא נמצאים בפועל:", whoCopied:"הועתק — הודעה לכל צוות",
-  profAutoBtn:"🤖 אוטומטי", profTestT:"איזה חלון מפזר את השיחות נכון? נבדק על {n} ימים מהעבר", profTestErr:"‎{e}%‎ בחצי שעה הלא נכונה",
-  profTestAuto:"בשימוש: {m} — הטעות הנמוכה. כל יום נחזה רק מהימים שלפניו.", profTestHand:"בחרת חלון ידנית; הבדיקה מעדיפה את {m}.",
-  profTestTip:"נבדק על {n} ימים מהעבר: 8 שבועות — ‎{a}%‎ מהשיחות בחצי שעה הלא נכונה, 12 שבועות — ‎{b}%‎.",
+  profAutoBtn:"🤖 אוטומטי", profTestT:"ממה כדאי ללמוד? נבדק על {n} ימים מהעבר", profTestErr:"‎{e}%‎ מהשיחות באינטרוול הלא נכון",
+  profTestAuto:"בשימוש: {m} — הכי מדויק על העבר שלך.", profTestHand:"בחרת ידנית. הבדיקה מעדיפה: {m}.",
+  profTestTip:"נבדק על {n} ימים מהעבר: 8 השבועות האחרונים — ‎{a}%‎ מהשיחות באינטרוול הלא נכון, 12 השבועות האחרונים — ‎{b}%‎.",
   btProfL:"פיזור על פני היום",
   reviewExclBtn:"📅 סקירת ימים שהוחרגו", reviewExclTitle:"ימים שהוחרגו — חגים וחריגות",
   reviewExclMsg:"ימים שהמודל משאיר מחוץ ללמידה: חגים, וימים נמוכים באופן חריג (מלחמה, תקלה). כל יום אפשר להחזיר ללמידה בלחיצה.",
@@ -2429,7 +2462,12 @@ he:{
   lgPeakT:"האינטרוול עם הכי הרבה שיחות בשבוע החזוי הראשון", lgQuietT:"האינטרוול עם הכי מעט שיחות באותו שבוע",
   lgMptSrc:"אצלך: {s} · {w}", lgSrcFile:"מהקובץ שלך", lgSrcSet:"מההגדרות",
   mMine:"המודל שלי", lgM_custom_h:"מודל משלך, שני כפתורים: כמה מהר הוא מגיב לשבוע האחרון, וכמה הוא ממשיך את המגמה.", lgM_custom_g:"אתה יודע על המוקד משהו שהמודלים המוכנים לא יודעים", lgM_custom_b:"תגובה מהירה מדי = רדיפה אחרי רעש",
-  fmProfSmart:"צורה משולבת", profSmartTip:"כל יום נספר לפי החלוקה שלו, שבועות אחרונים שוקלים יותר, ויום בשבוע רועש נעזר בצורה של שאר הימים. בשימוש רק כשהבדיקה על הקובץ שלך מראה שהיא מדויקת יותר.",
+  btH1:"שבוע הבא", btH2:"החודש הקרוב", btH3:"חודשים קדימה",
+  mTheta:"Theta (רמה + חצי מהמגמה)", mSqrt:"החלקה מיוצבת (סקאלת שורש)", mComb:"חציון של חמש שיטות פשוטות",
+  lgM_theta_h:"הרמה האחרונה ועוד חצי מהשיפוע ארוך הטווח.", lgM_theta_g:"מגמה מתונה ויציבה — עוקב בלי להגזים", lgM_theta_b:"תפנית חדה — חצי שיפוע איטי מדי",
+  lgM_sqrtses_h:"מחליק את השבועות על סקאלת שורש, שבה שבוע עמוס ושבוע שקט רועשים באותה מידה.", lgM_sqrtses_g:"שבועות עם שיא מדי פעם — שיא מושך אותו פחות", lgM_sqrtses_b:"מגמה אמיתית — אין לו מגמה",
+  lgM_comb_h:"חמש שיטות פשוטות חוזות; נלקחת האמצעית.", lgM_comb_g:"אין שיטה שמנצחת בעקביות — האמצע כמעט אף פעם לא רחוק", lgM_comb_b:"שיטה אחת צודקת בבירור — האמצע מעכב אותה",
+  fmProfSmart:"כל הקובץ, החדש שוקל יותר", profSmartTip:"לומד מכל הקובץ: שבועות אחרונים שוקלים יותר, ויום בשבוע עם מעט נתונים נעזר בשאר הימים.",
   lgTuA:"תגובה לשבוע האחרון", lgTuT:"המשך המגמה", lgTuFit:"🎯 התאמה להיסטוריה שלי", lgTuSeen:"נמדד רק על שבועות שהמודל לא ראה",
   lgOf100:"מתוך 100 מתקשרים", lgDNow:"נענו מיד", lgDWait:"המתינו ונענו", lgRaceQ:"כמה זמן לקוחות מוכנים לחכות?", lgSlW:"זמן המתנה",
   lgRaceRes:"אחרי {s} המתנה, {n} מתוך 100 כבר ניתקו", lgRaceFree:"כשכולם עסוקים, נציג מתפנה כל {s} שנ׳", lgRaceStay:"עדיין על הקו",
@@ -2798,14 +2836,27 @@ he:{
   wiCsvTm:"אינטרוול", wiCsvSid:"סידור", wiCsvWi:"What-if", wiCsvBefore:"לפני", wiCsvAfter:"אחרי",
   ceHintAgFile:"בסיס מהקובץ (אין סידור ליום הזה) — אפשר לנסות כאן מה־אם.",
   ceHintDay:"סה״כ שיחות ליום — מתפזרות על חצאי השעה לפי הפרופיל הרגיל של היום.",
-  profTitle:"📊 חלוקת משקלי שיחות ביום", profBtnTip:"הצגה ועריכה של משקלי השיחות לאורך היום",
-  profIntro:"החלק של כל חצי שעה מהשיחות של כל יום בשבוע — ימי התחזית מתפזרים לפיו. ההיסטוריה לא משתנה.",
-  profViewShare:"משקלים", profViewDiff:"שינוי מול החלון השני", profNone:"טענו קובץ תחזית עם היסטוריה כדי לראות את המשקלים.",
-  profInsSame:"מעבר ל{o} כמעט לא ישנה דבר (פחות מ־0.3 נק׳ בכל אינטרוואל)",
-  profInsDiff:"מעבר ל{o} יזיז את {day} {tm} ב־{p} נק׳ — השינוי הגדול ביותר",
-  profPeak:"ברוב הימים השיא ב־{tm}", profPinnedTip:"נקבע ידנית — לחיצה לשינוי; ריקון התא מבטל",
-  profEditNote:"לחיצה על משקל קובעת ערך אחר — שאר היום מתאזן חזרה ל־100%.",
-  profDiffNote:"נקודות אחוז מהשיחות היומיות שהחלון הזה מוסיף (+) או מוריד (−) מול {o}.", profReset:"↺ ביטול כל הקביעות ({n})",
+  profTitle:"📊 איך השיחות מתפזרות על פני היום?", profBtnTip:"איך השיחות מתפזרות על פני היום — צפייה ועריכה",
+  profToAm:"לבוקר", profToPm:"לאחר הצהריים", profMoreAm:"יותר בבוקר", profMorePm:"יותר אחר הצהריים", profPt:"נק׳", profShareL:"מהשיחות של היום",
+  profWkOf:"שבוע {w} · {d}", profWkN:"ש׳ {w}", profEvPlan:"אירוע מתוכנן", profSame:"{d}: כמו יום רגיל", profMovedL:"{d}: ‎{p} נק׳‎ מהשיחות עברו {dir}",
+  profNextUp:"לקראת שבוע {w}: כ־{n} שיחות יותר ביום בין {a} ל־{b} מאשר ביום רגיל", profNextUpP:"לקראת שבוע {w}: ‎{p} נק׳‎ יותר מהשיחות של היום בין {a} ל־{b} מאשר ביום רגיל", profNextRep:"(כ־{k} נציגים יותר שם)",
+  profNextDn:"כ־{n} פחות בין {a} ל־{b}", profNextDnP:"‎{p} נק׳‎ פחות בין {a} ל־{b}",
+  profNextEv:"שבוע {w}, {d} הוא {e}: בימים כאלה ‎{p} נק׳‎ מהשיחות עברו {dir}", profNextEv0:"שבוע {w}, {d} הוא {e}",
+  profDrift:"ב־4 השבועות האחרונים ‎{p} נק׳‎ מהשיחות עברו {dir}", profEvTop:"היום שהכי חרג: {d} ({e}) — ‎{p}%‎ מהשיחות שלו הגיעו בשעות אחרות מהרגיל",
+  profPatsT:"מה חוזר על עצמו?", profPtN:"{n} ימים", profPtMove:"‎{p} נק׳‎ מהשיחות עוברות {dir}", profPtTop:"בעיקר ב־{tm} (‎{v}‎)", profPtAfter:"היום שאחרי יום סגור", profPtBill:"ימי שיא בחיוב", profPtBusy:"ימים עמוסים במיוחד",
+  profZoomHint:"גררו על הגרף כדי להתקרב לטווח", profZoomXT:"חזרה לכל הקובץ", profCopyIns:"התובנות, כטקסט", profCopyInsT:"השבוע הבא, המגמה ומה שחוזר על עצמו — כטקסט לשליחה", profInsCopied:"התובנות הועתקו",
+  fmAdvSum:"תחזית השבוע הבא: סוטה בממוצע ב־{e}%",
+  profBtnL:"📊 פיזור השיחות ביום", profViewTime:"לאורך הזמן", profGW:"שבועות", profGD:"ימים", profLgMore:"יותר שיחות מהרגיל", profLgLess:"פחות", profLgEv:"חג / יום חריג", profLgUsual:"יום רגיל",
+  profEvExc:"יום שסומן כחריג",
+ 
+ 
+ 
+  profCopyL:"📋 העתקה לאקסל:", profCopy30:"חצי שעתי", profCopy60:"שעתי", profCopy30T:"שורה לכל חצי שעה, עמודה לכל יום בשבוע", profCopy60T:"שורה לכל שעה (סכום שני חצאי השעה שלה), עמודה לכל יום בשבוע", profCopied:"הועתק {g} — אפשר להדביק באקסל", profColI:"אינטרוול", profColH:"שעה",
+  profIntro:"איזה חלק מהשיחות של היום מגיע בכל אינטרוול. לפי זה התחזית מחלקת כל יום.",
+  profViewShare:"החלוקה", profNone:"טענו קובץ תחזית עם היסטוריה כדי לראות את החלוקה.",
+  profPeak:"ברוב הימים השיא ב־{tm}", profPinnedTip:"נקבע ידנית — לחיצה לשינוי; ריקון התא מחזיר את החלק שנלמד",
+  profEditNote:"לחיצה על תא קובעת את החלק שלו ידנית; שאר היום מתעדכן כך שהסך נשאר 100%.",
+  profReset:"↺ חזרה לחלוקה שנלמדה ({n})",
   evTitle:"📣 אירועי ביקוש מתוכננים", evIntro:"גל חד־פעמי ידוע מראש שההיסטוריה לא יכולה לחזות (החלפת ספק, קמפיין, עדכון מחיר). השיחות מתווספות לתחזית — וכשהימים האלה יחלפו, הם יוחרגו מהלמידה של המודל.",
   evName:"אירוע", evNamePh:"לדוגמה: החלפת ספק", evDefName:"אירוע מתוכנן", evStart:"יום ראשון לאירוע", evDays:"ימי עבודה",
   evTotal:"שיחות נוספות (סה״כ)",
@@ -3222,6 +3273,59 @@ Models.aht.ewmavw={label:"mAhtEwma",fn:(s,h,ctx)=>ahtEwmaVW(s,ahtVols(s,ctx))};
 Models.aht.hier  ={label:"mAhtHier",fn:(s,h,ctx)=>ahtHier(s,h,ctx)};
 Models.aht.blend ={label:"mAhtBlend",fn:(s,h,ctx)=>{ const a=ahtHier(s,h,ctx), b=ahtEwmaVW(s,ahtVols(s,ctx)); return a>0&&b>0?(a+b)/2:(a||b); }};
 Models.aht.holt  ={label:"mHolt",fn:(s,h)=>holtForecast(s.filter(v=>v>0),h)};
+/* ============ THREE MORE VOLUME MODELS (added, nothing existing changed) ============
+   · theta   — the Theta method (Assimakopoulos & Nikolopoulos 2000; Hyndman & Billah 2003 showed it equals simple
+               exponential smoothing + HALF the slope of the linear trend). α is fitted per series; the drift is kept
+               inside 0.4–2.2 × the recent level so a 6-month horizon stays sane.
+   · sqrtses — smoothing on the √(calls + ¼) scale (Brown et al. 2005; Aldor-Noiman, Feigin & Mandelbaum 2009): call
+               counts are Poisson-like, so on that scale a busy and a quiet week are equally noisy and a peak pulls
+               less; back-transformed with its variance term so the level isn't biased low.
+   · comb    — the MEDIAN of five simple forecasts (theta, sqrtses, 4-week weighted, damped Holt, 8-week mean): the
+               forecast-combination literature (Stock & Watson 2004; Smith & Wallis 2009) finds a plain robust
+               combination hard to beat by estimated weights.
+   Each is used only where it wins the test (rankModels), per horizon. */
+function sesFit(y){ let bA=0.3,bE=Infinity;
+  for(let a=0.05;a<=0.951;a+=0.05){ let l=y[0],se=0; for(let i=1;i<y.length;i++){ se+=(y[i]-l)**2; l=a*y[i]+(1-a)*l; } if(se<bE){ bE=se; bA=a; } }
+  let l=y[0]; for(let i=1;i<y.length;i++) l=bA*y[i]+(1-bA)*l; return {a:bA,l,v:y.length>1?bE/(y.length-1):0}; }
+function thetaForecast(series,h){
+  const y=series.filter(v=>v>0), n=y.length; if(n<4) return n?movAvg4(y):0; h=Math.max(1,h||1);
+  const tb=(n+1)/2, yb=y.reduce((a,b)=>a+b,0)/n; let num=0,den=0; y.forEach((v,i)=>{ num+=(i+1-tb)*(v-yb); den+=(i+1-tb)**2; });
+  const b=den?num/den:0, f=sesFit(y), lvl=y.slice(-6).reduce((a,c)=>a+c,0)/Math.min(6,n);
+  return Math.min(2.2*lvl,Math.max(0.4*lvl,f.l+b/2*((1-Math.pow(1-f.a,n))/f.a+h-1)));
+}
+function sqrtForecast(series){
+  const y=series.filter(v=>v>0); if(y.length<4) return y.length?movAvg4(y):0;
+  const f=sesFit(y.map(v=>Math.sqrt(v+0.25))); return Math.max(0,f.l*f.l+f.v-0.25);
+}
+function combForecast(series,h){
+  const y=series.filter(v=>v>0); if(y.length<4) return y.length?movAvg4(y):0;
+  const c=[thetaForecast(y,h),sqrtForecast(y),weightedMA4(y),holtForecast(y,h),y.slice(-8).reduce((a,b)=>a+b,0)/Math.min(8,y.length)].filter(v=>isFinite(v)).sort((a,b)=>a-b);
+  return c[Math.floor(c.length/2)];
+}
+Models.volume.theta  ={label:"mTheta",fn:(s,h)=>thetaForecast(s,h)};
+Models.volume.sqrtses={label:"mSqrt", fn:(s)=>sqrtForecast(s)};
+Models.volume.comb   ={label:"mComb", fn:(s,h)=>combForecast(s,h)};
+/* ============ THE MODEL PER HORIZON ============
+   A model that is best for next week is not always best for the months ahead (Taylor 2008). So the test runs per
+   horizon — HZ[0] the week after the data, HZ[1] the coming month (2–4 weeks), HZ[2] the months ahead (6 / 9 / 13
+   weeks, as far as the history allows) — and every forecast day uses the winner of ITS horizon: hzOf(weeks from the
+   data's last week). A horizon the history is too short to test inherits the one before it. A hand-picked model
+   (settings.modelUser) is used for every horizon. No control: the matrix simply gets the near model, Date Trends and
+   the reports the far ones. rankModels(kind,b) = bucket b's ranking, by the weighted error (then the lean). */
+const HZ=[[1],[2,3,4],[6,9,13]], hzOf=h=>h<=1?0:h<=4?1:2, MKEY={volume:"modelVolume",aht:"modelAht",mpt:"modelMpt"};
+function rankModels(kind,b){ b=b||0;
+  const key=[state._serVer,JSON.stringify(state.settings.myModel||0),Object.keys(Models[kind]).join()].join("|");
+  const R=state._rkC=state._rkC||{}, C=R[kind]&&R[kind].k===key?R[kind]:(R[kind]={k:key,m:{}}); if(C.m[b]) return C.m[b]; // memo per kind (forecastDay asks volume, AHT and patience in turn)
+  const out=[]; if(state.series) for(const mid of Object.keys(Models[kind])){ if(mid==="custom"&&!(state.settings.myModel||{})[kind]) continue; // 🛠 only once the user set it
+    let e=0,p=0,n=0,pn=0; for(const h of HZ[b]){ const r=backtestModel(kind,mid,h); if(!r) continue; e+=r.mape*r.n; n+=r.n; if(r.pace!=null){ p+=r.pace*r.n; pn+=r.n; } }
+    if(n) out.push({mid,r:{mape:e/n,pace:pn?p/pn:null,n}}); }
+  out.sort((x,y)=>(x.r.mape-y.r.mape)||(Math.abs((x.r.pace??999)-100)-Math.abs((y.r.pace??999)-100)));
+  return C.m[b]=out; }
+const HZ_MIN=12; // a winner needs at least this many tested days / half hours behind it — fewer is luck, not evidence
+function hzBest(kind){ let last=null; const by=[0,1,2].map(b=>{ const r=rankModels(kind,b); if(r.length&&r[0].r.n>=HZ_MIN) last=r[0].mid; return last; }); return by[0]?by:null; }
+function modelFor(kind,h){ const key=MKEY[kind], S=state.settings;
+  if((S.modelUser||{})[key]&&Models[kind][S[key]]) return S[key]; // picked by hand → that model, every horizon
+  const by=hzBest(kind); return (by&&by[hzOf(h||1)])||(Models[kind][S[key]]?S[key]:Object.keys(Models[kind])[0]); }
 /* 🛠 "My model" — two knobs the user turns in the play window (Settings › How are the numbers calculated?):
    a = how fast the level follows the last week (1 = copy it), tr = how much of the trend continues (0 = none).
    Lives in the registry like any model; rankModels counts it only once the user set it (settings.myModel[kind]). */
@@ -3232,32 +3336,38 @@ function myModel(series,h,p){ const y=series.filter(v=>v>0); if(!y.length) retur
   return Math.max(0,L+p.tr*d*T); }
 for(const k of ["volume","aht","mpt"]) Models[k].custom={label:"mMine",fn:(s,h)=>myModel(s,h,myP(k))};
 const ForecastEngines={
-  volume:(series,horizonWeeks,ctx)=>(Models.volume[state.settings.modelVolume]||Models.volume.ensemble5).fn(series,horizonWeeks,ctx),
-  aht:(series,horizonWeeks,ctx)=>(Models.aht[state.settings.modelAht]||Models.aht.ma4).fn(series,horizonWeeks,ctx),
-  mpt:(series,horizonWeeks,ctx)=>series&&series.length?(Models.mpt[state.settings.modelMpt]||Models.mpt.ma4).fn(series,horizonWeeks,ctx):0
+  volume:(series,horizonWeeks,ctx)=>(Models.volume[modelFor("volume",horizonWeeks)]||Models.volume.ensemble5).fn(series,horizonWeeks,ctx),
+  aht:(series,horizonWeeks,ctx)=>(Models.aht[modelFor("aht",horizonWeeks)]||Models.aht.ma4).fn(series,horizonWeeks,ctx),
+  mpt:(series,horizonWeeks,ctx)=>series&&series.length?(Models.mpt[modelFor("mpt",horizonWeeks)]||Models.mpt.ma4).fn(series,horizonWeeks,ctx):0
 };
-/* rolling-origin backtest: hide each of the LAST 6 WEEKS in turn, predict it
-   one step ahead from the history before it. Returns both pooled MAPE and
-   PACE = Σforecast / Σactual [%] (100% = perfect; >100 over-, <100 under-forecast) —
-   pace is the operational read the user watches, MAPE the tiebreaker on spread. */
-function backtestModel(kind,modelId){
-  if(!state.series) return null;
-  const field=kind==="volume"?"vols":(kind==="aht"?"ahts":"mpts");
-  const K=6; // rolling holdout depth (weeks)
+/* rolling-origin backtest: each of the LAST 6 WEEKS is hidden in turn and predicted h weeks ahead from the history
+   that was known then (h = 1: the week after the data; larger h = the month / the months ahead). Every miss counts by
+   its calls:
+   · volume = the forecast's own quantity — each weekday's DAILY TOTAL (forecastDay spreads it over the half hours):
+     error = Σ|forecast − actual| ÷ Σactual (a busy day weighs more than a quiet one);
+   · AHT / patience = per half hour, each weighted by its calls (a 3-call slot can't outweigh a 300-call one).
+   PACE = Σforecast ÷ Σactual [%] (100 = no lean). Null when the history is too short for that horizon. */
+function backtestModel(kind,modelId,h){
+  const M=Models[kind]&&Models[kind][modelId]; if(!state.series||!M) return null;
+  h=Math.max(1,Math.round(h||1)); const K=6; // rolling holdout depth (weeks)
   let err=0,n=0,sumF=0,sumA=0,wSum=0;
+  if(kind==="volume"){
+    for(const di in state.series){ const s=dayTotalsDi(+di);
+      for(let k=1;k<=K;k++){ const i=s.length-k, tr=i-h+1; if(tr<4) break; // keep ≥4 training points per origin
+        const actual=s[i]; if(!(actual>0)) continue;
+        const pred=M.fn(s.slice(0,tr),h,{weekday:+di,interval:"day",allSeries:state.series}); if(!isFinite(pred)) continue;
+        err+=Math.abs(pred-actual); wSum+=actual; sumF+=pred; sumA+=actual; n++; } }
+    return n?{mape:err/wSum*100,pace:sumA>0?sumF/sumA*100:null,n}:null;
+  }
+  const field=kind==="aht"?"ahts":"mpts";
   for(const di in state.series)
     for(const tm in state.series[di]){
       const s=state.series[di][tm][field], vols=state.series[di][tm].vols;
       if(!s||s.length<5) continue;
-      const maxK=Math.min(K,s.length-4); // keep ≥4 training points per origin
-      for(let k=1;k<=maxK;k++){
-        const actual=s[s.length-k];
-        if(!(actual>0)) continue;
-        const pred=Models[kind][modelId].fn(s.slice(0,s.length-k),1,{weekday:+di,interval:tm,allSeries:state.series});
-        // AHT: an interval's miss counts by its calls (a 3-call slot can't outweigh a 300-call one)
-        const w=kind==="aht"?(vols[s.length-k]>0?vols[s.length-k]:0):1; if(!w) continue;
-        err+=w*Math.abs(pred-actual)/actual; wSum+=w; n++;
-        sumF+=w*pred; sumA+=w*actual;
+      for(let k=1;k<=K;k++){ const i=s.length-k, tr=i-h+1; if(tr<4) break;
+        const actual=s[i], w=vols[i]>0?vols[i]:0; if(!(actual>0)||!w) continue;
+        const pred=M.fn(s.slice(0,tr),h,{weekday:+di,interval:tm,allSeries:state.series}); if(!isFinite(pred)) continue;
+        err+=w*Math.abs(pred-actual)/actual; wSum+=w; n++; sumF+=w*pred; sumA+=w*actual;
       }
     }
   return n?{mape:err/wSum*100,pace:sumA>0?sumF/sumA*100:null,n}:null;
@@ -8168,7 +8278,7 @@ function preDaily(di,from,ds){
 function fastState(){
   const S=state.settings;
   if(S.fastAdapt===false||!state.series||!state.maxDate) return null;
-  const key=[state._serVer,state.maxDate,S.fastHalf,state.rtParam?state.rtParam.p+","+state.rtParam.q:"",S.volCal,S.modelVolume,S.cuOn,JSON.stringify(S.demandEvents||[])].join("|");
+  const key=[state._serVer,state.maxDate,S.fastHalf,state.rtParam?state.rtParam.p+","+state.rtParam.q:"",S.volCal,S.modelVolume,(hzBest("volume")||[]).join(),S.cuOn,JSON.stringify(S.demandEvents||[])].join("|");
   if(state._fastKey===key) return state._fast;
   state._fastKey=key; state._fast=null;
   const domOf=d=>((state.domFactorPre||state.domFactor)||[])[+d.slice(8,10)]||1; // billing calendar from before the window
@@ -11558,15 +11668,17 @@ document.addEventListener("keydown",e=>{ if(e.key==="Escape") document.querySele
    this file's own history (the same test and ranking as "🧪 Backtest models") and the most accurate one is used.
    A model you pick by hand stays yours; "🤖 Automatic" in the same list gives the choice back. */
 const MODEL_KINDS=[["volume","modelVolume","setModelVol"],["aht","modelAht","setModelAht"],["mpt","modelMpt","setModelMpt"]];
-function rankModels(kind){ return Object.keys(Models[kind]).filter(mid=>mid!=="custom"||(state.settings.myModel||{})[kind]).map(mid=>({mid,r:backtestModel(kind,mid)})).filter(s=>s.r)
-  .sort(kind==="aht"?(a,b)=>a.r.mape-b.r.mape:(a,b)=>(Math.abs((a.r.pace??999)-100)-Math.abs((b.r.pace??999)-100))||(a.r.mape-b.r.mape)); }
 const mUser=key=>!!(state.settings.modelUser||{})[key]; // this list was picked by hand (each list on its own)
 function autoPickModels(){ const S=state.settings; if(!state.series) return; let ch=false; state._modelAuto={};
   for(const [kind,key] of MODEL_KINDS){ const sc=rankModels(kind); if(!sc.length) continue;
-    state._modelAuto[kind]={mid:sc[0].mid,r:sc[0].r,n:sc.length}; if(!mUser(key)&&S[key]!==sc[0].mid){ S[key]=sc[0].mid; ch=true; } }
+    const by=hzBest(kind), top=by?sc.find(x=>x.mid===by[0]):null; // by = the winner per horizon; null = too little history to choose by → the model stays
+    state._modelAuto[kind]={mid:top?top.mid:S[key],r:top?top.r:null,n:sc.length,by}; if(top&&!mUser(key)&&S[key]!==top.mid){ S[key]=top.mid; ch=true; } }
   if(ch){ state.fcCache.clear(); memo.clear(); saveState(); }
   if(typeof populateModelSelects==="function"&&document.getElementById("setModelVol")) populateModelSelects(); }
 /* Forecasting Models: registry-driven selectors + holdout backtest */
+/* the "⚙ Models & checks" fold shows its value while folded: how far off next week's forecast was in the test */
+function fmAdvSumUpd(){ const el=document.getElementById("fmAdvSum"); if(!el) return;
+  const r=state.series?rankModels("volume",0).find(x=>x.mid===modelFor("volume",1)):null; el.textContent=r&&r.r.n>=HZ_MIN?"· "+t("fmAdvSum",{e:r.r.mape.toFixed(1)}):""; }
 function populateModelSelects(){
   [["setModelVol","volume","modelVolume"],["setModelAht","aht","modelAht"],["setModelMpt","mpt","modelMpt"]].forEach(([id,kind,key])=>{
     const sel=document.getElementById(id);
@@ -11582,6 +11694,7 @@ function populateModelSelects(){
     sel.value=mUser(key)?state.settings[key]:"auto";
     { const m=Models[kind][state.settings[key]]; sel.title=m?t(m.label):""; }
   });
+  fmAdvSumUpd();
 }
 [["setModelVol","modelVolume"],["setModelAht","modelAht"],["setModelMpt","modelMpt"]].forEach(([id,key])=>{
   document.getElementById(id).addEventListener("change",e=>{
@@ -11836,6 +11949,8 @@ function renderProfile(){
   if(profPanel.hidden) return;
   const S=state.settings, mode=profMode(), other=mode==="w12"?"adaptive":"w12", auto=!S.profUserSet;
   const view=(profPanel.querySelector("#profView .active")||{dataset:{view:"share"}}).dataset.view;
+  { const tv=view==="time"; $pf("profTime").hidden=!tv; $pf("profTblW").style.display=tv?"none":""; $pf("profCopyIns").hidden=!tv; $pf("profWin").style.display=$pf("profTest").style.display=tv?"none":""; // the time view is about what HAPPENED — the learning choice steps aside
+    if(tv){ $pf("profFoot").textContent=""; renderProfTime(); return; } }
   profPanel.querySelectorAll("#profWin button").forEach(b=>b.classList.toggle("active",b.dataset.mode==="auto"?auto:!auto&&b.dataset.mode===mode));
   { const PB=profBacktest(), el=$pf("profTest"), esc=v=>String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;"); // 🧪 the formal check: both windows on your own past, the winner in use
     if(el){ el.hidden=!PB; if(PB){ const L=profLab;
@@ -11847,7 +11962,8 @@ function renderProfile(){
     if(cur[di]) Object.keys(cur[di]).forEach(x=>tms.add(x)); }
   const rows=[...tms].sort().filter(tm=>[0,1,2,3,4,5].some(di=>cur[di]&&cur[di][tm]>0.0005));
   const tbl=$pf("profTable"); tbl.innerHTML=""; tbl.classList.toggle("diff",view==="diff");
-  if(!rows.length){ $pf("profInsight").textContent=t("profNone"); $pf("profFoot").textContent=""; return; }
+  $pf("profCopy").hidden=!rows.length;
+  if(!rows.length){ $pf("profInsight").style.display=""; $pf("profInsight").textContent=t("profNone"); $pf("profFoot").textContent=""; return; }
   // ONE insight: does the window choice matter, and where is the day's peak?
   let mx={d:0}; const peakCnt={};
   for(let di=0;di<6;di++){ if(!cur[di]) continue;
@@ -11856,10 +11972,7 @@ function renderProfile(){
     if(pk) peakCnt[pk]=(peakCnt[pk]||0)+1; }
   const peak=Object.entries(peakCnt).sort((a,b)=>b[1]-a[1])[0][0];
   const otherL=profLab(other);
-  $pf("profInsight").textContent="💡 "+(Math.abs(mx.d)<0.003
-    ?t("profInsSame",{o:otherL})
-    :t("profInsDiff",{o:otherL,p:(mx.d>0?"+":"−")+Math.abs(mx.d*100).toFixed(1),day:dn[mx.di],tm:mx.tm}))
-    +" · "+t("profPeak",{tm:peak});
+  $pf("profInsight").style.display=""; $pf("profInsight").textContent="💡 "+t("profPeak",{tm:peak+"–"+addHalf(peak)}); // ONE plain fact; which way to learn is the test box's job
   const hr=document.createElement("tr"); hr.appendChild(th(t("thInterval")));
   for(let di=0;di<6;di++) hr.appendChild(th(ds[di]));
   const thead=document.createElement("thead"); thead.appendChild(hr); tbl.appendChild(thead);
@@ -11870,10 +11983,7 @@ function renderProfile(){
     for(let di=0;di<6;di++){
       const td=document.createElement("td"), v=(cur[di]||{})[tm];
       if(v==null){ td.textContent="—"; tr.appendChild(td); continue; }
-      if(view==="diff"){ const d=(v-((alt[di]||{})[tm]||0))*100;
-        td.textContent=Math.abs(d)<0.05?"·":(d>0?"+":"−")+Math.abs(d).toFixed(1);
-        td.style.background=d>0?`rgba(63,169,245,${Math.min(.55,Math.abs(d)/2)})`:`rgba(240,100,35,${Math.min(.45,Math.abs(d)/2)})`;
-      }else{
+      {
         td.textContent=pp(v); td.style.background=`rgba(63,169,245,${(colMax[di]?v/colMax[di]:0)*.55})`;
         const pinned=edits[di]&&edits[di][tm]!=null;
         if(pinned){ td.classList.add("pinned"); td.title=t("profPinnedTip"); }
@@ -11886,10 +11996,168 @@ function renderProfile(){
   tbl.appendChild(tb);
   // footer: what edits do + one-click reset of all pins
   const nPins=Object.values(edits).reduce((s,o)=>s+Object.keys(o||{}).length,0);
-  const f=$pf("profFoot"); f.textContent=view==="diff"?t("profDiffNote",{o:otherL}):t("profEditNote")+" ";
+  const f=$pf("profFoot"); f.textContent=t("profEditNote")+" ";
   if(nPins){ const r=document.createElement("button"); r.className="linklike"; r.textContent=t("profReset",{n:nPins});
     r.addEventListener("click",()=>{ S.profileEdits={}; profChanged(); }); f.appendChild(r); }
 }
+/* 🕰 HOW THE DAY'S SHAPE MOVED OVER TIME (the 📊 window's "over time" view) — for trends ahead and for looking back at an
+   event. profHist(): every history day's own split (share per half hour) against "a usual day" = the plain average
+   of that weekday's ordinary days in the whole file (not the forecast's recency-weighted split — a drift must show).
+   dev = share − usual; am = Σ dev before 12:00 (points of the day's calls that moved to the morning); odd = the share
+   of the day's calls that came at other hours than usual; ev = what the day was (holiday / auto-flagged / planned
+   event / marked by the user). Columns = weeks (ordinary days averaged) or days; ◆ = an event. */
+function profEvt(ds){ // what the day was: its name (the holiday's own name) and its kind (what such days share)
+  const lvl=state.holidayDates&&state.holidayDates.get(ds); if(lvl) return {n:holidayName(ds)||t("hol_"+lvl),ty:t("hol_"+lvl)};
+  if(state.anomalyDates&&state.anomalyDates.get(ds)) return {n:t("anomWord"),ty:t("anomWord")};
+  const ev=evMap().get(ds); if(ev) return {n:ev.names.join(" + "),ty:t("profEvPlan")};
+  return state.exceptions.has(ds)?{n:t("profEvExc"),ty:t("profEvExc")}:null; }
+function profHist(){
+  const key=[state._serVer,state.days.size,state._holVer||0,state.exceptions.size,lang].join("|"); if(state._phC&&state._phC.k===key) return state._phC.v;
+  const raw=[]; for(const ds of [...state.days.keys()].sort()){ const di=fromISO(ds).getDay(); if(di>5) continue; const sh={}; let tot=0;
+    for(const [tm,r] of state.days.get(ds)){ if(di===5&&tm>=friLimit()) continue; sh[tm]=r.volume||0; tot+=sh[tm]; }
+    if(tot>0){ for(const tm in sh) sh[tm]/=tot; const e=profEvt(ds); raw.push({ds,di,sh,tot,ev:e?e.n:"",ty:e?e.ty:""}); } }
+  const usual={}, tms=new Set(), wkU={};
+  for(let di=0;di<6;di++){ const rows=raw.filter(d=>d.di===di), use=rows.some(d=>!d.ev)?rows.filter(d=>!d.ev):rows, u={}; if(!use.length) continue;
+    for(const d of use) for(const tm in d.sh) u[tm]=(u[tm]||0)+d.sh[tm]/use.length;
+    for(const tm in u) if(u[tm]<0.0005) delete u[tm]; else tms.add(tm); usual[di]=u; }
+  for(const d of raw){ d.dev={}; d.am=0; d.odd=0; for(const tm in usual[d.di]){ const x=(d.sh[tm]||0)-usual[d.di][tm]; d.dev[tm]=x; d.odd+=Math.abs(x)/2; if(tm<"12:00") d.am+=x; } }
+  const T=[...tms].sort(); for(const tm of T){ let a=0,n=0; for(let di=0;di<5;di++) if(usual[di]&&usual[di][tm]!=null){ a+=usual[di][tm]; n++; } if(n) wkU[tm]=a/n; } // a usual Sun–Thu day
+  const v={days:raw,usual,tms:T,wkU}; state._phC={k:key,v}; return v; }
+const profWkLab=sun=>t("profWkOf",{w:isoWeek(sun),d:fmtDs(sun)});
+function profCols(){
+  const H=profHist(), Z=state._profZ, days=Z?H.days.filter(d=>d.ds>=Z.a&&d.ds<=Z.b):H.days;
+  if((state._profG||"week")==="day") return days.map(d=>({ds:d.ds,lab:t("days")[d.di]+" "+fmtD(d.ds),dev:d.dev,am:d.am,ev:d.ev,usual:H.usual[d.di]}));
+  const by=new Map(); for(const d of days){ const k=sundayOf(d.ds); if(!by.has(k)) by.set(k,[]); by.get(k).push(d); }
+  return [...by].map(([k,arr])=>{ const use=arr.some(d=>!d.ev)?arr.filter(d=>!d.ev):arr, dev={}; let am=0;
+    for(const tm of H.tms){ const xs=use.filter(d=>d.dev[tm]!=null&&d.di<5); if(xs.length) dev[tm]=xs.reduce((a,d)=>a+d.dev[tm],0)/xs.length; }
+    use.forEach(d=>am+=d.am/use.length);
+    return {ds:k,wk:1,lab:profWkLab(k),dev,am,ev:[...new Set(arr.map(d=>d.ev).filter(Boolean))].join(", "),usual:H.wkU}; }); }
+/* 🔁 what repeats: kinds of days whose shape differs from a usual day in the same direction — each holiday kind, the
+   day after a closed day, billing-peak days (domFactor ≥ 1.1), unusually busy days (≥ 15% over the weekday's median),
+   and each weekday against the average Sun–Thu day. Kept when ≥ 2 days agree and ≥ 1 point of the calls moved. */
+function profPatterns(){
+  const H=profHist(), G=new Map(), add=(k,lab,d)=>{ if(!G.has(k)) G.set(k,{k,lab,days:[]}); G.get(k).days.push(d); }, med={};
+  for(let di=0;di<5;di++){ const xs=H.days.filter(d=>d.di===di&&!d.ev).map(d=>d.tot).sort((a,b)=>a-b); med[di]=xs.length?xs[xs.length>>1]:0; }
+  H.days.forEach((d,i)=>{ if(d.di>4) return;
+    if(d.ev){ add("e:"+d.ty,d.ty,d); return; }
+    const p=H.days[i-1]; if(p){ let closed=Math.round((fromISO(d.ds)-fromISO(p.ds))/864e5)>3; for(let x=addDays(p.ds,1);x<d.ds&&!closed;x=addDays(x,1)) closed=state.holidayDates.get(x)==="closed"; if(closed) add("after",t("profPtAfter"),d); }
+    if(((state.domFactor||[])[+d.ds.slice(8)]||1)>=1.1) add("bill",t("profPtBill"),d);
+    if(med[d.di]>0&&d.tot>=1.15*med[d.di]) add("busy",t("profPtBusy"),d); });
+  const out=[]; for(const g of G.values()){ if(g.days.length<2) continue; const dev={}; let am=0;
+    for(const tm of H.tms){ const xs=g.days.filter(d=>d.dev[tm]!=null); if(xs.length) dev[tm]=xs.reduce((a,d)=>a+d.dev[tm],0)/xs.length; }
+    g.days.forEach(d=>am+=d.am/g.days.length); out.push({k:g.k,lab:g.lab,n:g.days.length,am,dev,usual:H.wkU,ev:""}); }
+  for(let di=0;di<5;di++){ const U=H.usual[di]; if(!U) continue; const dev={}; let am=0; for(const tm in U){ if(H.wkU[tm]==null) continue; dev[tm]=U[tm]-H.wkU[tm]; if(tm<"12:00") am+=dev[tm]; }
+    out.push({k:"w:"+di,lab:t("days")[di],n:H.days.filter(d=>d.di===di&&!d.ev).length,am,dev,usual:H.wkU,ev:""}); }
+  for(const p of out){ let b=null; for(const tm in p.dev) if(b==null||Math.abs(p.dev[tm])>Math.abs(p.dev[b])) b=tm; p.top=b; }
+  return out.filter(p=>Math.abs(p.am)>=0.01).sort((a,b)=>Math.abs(b.am)-Math.abs(a.am)).slice(0,6); }
+const profDir=(am,pre)=>t(pre+(am>0?"Am":"Pm")), profPts=v=>Math.abs(v*100).toFixed(1);
+/* 🎯 toward next week (this is a planning tool): where the forecast's split differs from a usual day — in calls a day and
+   reps — and what next week's holidays did to the day's shape the last times. */
+function profNext(){
+  const H=profHist(), sun=addDays(sundayOf(state.maxDate),7), out=[], diff={}, wd=[0,1,2,3,4].map(i=>addDays(sun,i));
+  for(const tm of H.tms){ let a=0,n=0; for(let di=0;di<5;di++){ const P=applyProfileEdits(di,profileShares(di,profMode())), U=H.usual[di]; if(P&&U&&P[tm]!=null&&U[tm]!=null){ a+=P[tm]-U[tm]; n++; } } diff[tm]=n?a/n:0; }
+  let tot=0,nd=0,aw=0,an=0; for(const ds of wd){ const m=forecastDay(ds); if(!m) continue; let v=0; for(const r of m.values()){ v+=r.volume; aw+=r.aht*r.volume; an+=r.volume; } if(v>0){ tot+=v; nd++; } }
+  const day=nd?tot/nd:0, aht=an?aw/an:300, T=H.tms, win=sign=>{ let b=null; for(let i=0;i+3<T.length;i++){ const s=diff[T[i]]+diff[T[i+1]]+diff[T[i+2]]+diff[T[i+3]]; if(b==null||s*sign>b.s*sign) b={s,a:T[i],b:addHalf(T[i+3])}; } return b; };
+  const up=win(1), dn=win(-1), W=isoWeek(sun);
+  if(up&&up.s>=0.005){ const n=Math.round(up.s*day), k=Math.round(n/4*aht/1800);
+    out.push(t(day?"profNextUp":"profNextUpP",{w:W,n,p:profPts(up.s),a:up.a,b:up.b})+(k>=1?" "+t("profNextRep",{k}):"")+(dn&&dn.s<=-0.005?" · "+t(day?"profNextDn":"profNextDnP",{n:Math.round(-dn.s*day),p:profPts(dn.s),a:dn.a,b:dn.b}):"")); }
+  const pats=profPatterns(); for(const ds of wd.concat(addDays(sun,5))){ const e=profEvt(ds); if(!e) continue; const p=pats.find(x=>x.k==="e:"+e.ty);
+    out.push(t(p?"profNextEv":"profNextEv0",{w:W,d:t("days")[fromISO(ds).getDay()]+" "+fmtDs(ds),e:e.n,p:p?profPts(p.am):"",dir:p?profDir(p.am,"profTo"):""})); }
+  return out; }
+function profFacts(){ // the plain facts, most useful first: next week · the recent drift · the day that broke the pattern
+  const H=profHist(), from=addDays(state.maxDate,-27), rec=H.days.filter(d=>!d.ev&&d.ds>=from), dr=rec.length>=8?rec.reduce((a,d)=>a+d.am,0)/rec.length:0;
+  const top=H.days.filter(d=>d.ev).sort((a,b)=>b.odd-a.odd)[0], parts=profNext();
+  if(Math.abs(dr)>=0.01) parts.push(t("profDrift",{p:profPts(dr),dir:profDir(dr,"profTo")}));
+  if(top&&top.odd>=0.03) parts.push(t("profEvTop",{d:fmtD(top.ds),e:top.ev,p:Math.round(top.odd*100)}));
+  return {parts,top}; }
+function profMoved(c){ const p=Math.abs(c.am*100); return (p<0.5?t("profSame",{d:c.lab}):t("profMovedL",{d:c.lab,p:p.toFixed(1),dir:profDir(c.am,"profTo")}))+(c.ev?" · ◆ "+c.ev:""); }
+function renderProfTime(){
+  const H=profHist(), C=profCols(), g=state._profG||"week", box=$pf("profTChart"), ins=$pf("profInsight"), Z=state._profZ, esc=v=>String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+  profPanel.querySelectorAll("#profGran button").forEach(b=>b.classList.toggle("active",b.dataset.g===g));
+  { const zx=$pf("profZoomX"); zx.hidden=!Z; if(Z) zx.textContent="✕ "+fmtDs(Z.a)+" – "+fmtDs(Z.b); $pf("profZoomHint").hidden=!!Z; }
+  $pf("profCopy").hidden=!C.length; if(!C.length){ box.innerHTML=""; $pf("profTDet").innerHTML=""; $pf("profPats").innerHTML=""; ins.style.display=""; ins.textContent=t("profNone"); return; }
+  const F=profFacts(), P=profPatterns();
+  ins.innerHTML=F.parts.map((x,i)=>(i?"":"💡 ")+esc(x)).join("<br>"); ins.style.display=F.parts.length?"":"none";
+  const selOk=k=>k!=null&&(String(k).startsWith("p:")?P.some(p=>"p:"+p.k===k):C.some(c=>c.ds===k));
+  if(!selOk(state._profSel)) state._profSel=g==="day"&&F.top&&C.some(c=>c.ds===F.top.ds)?F.top.ds:C[C.length-1].ds;
+  // ---- the strip: how far the day leaned to the morning / the afternoon, then every half hour against a usual day ----
+  const W=720, L=104, R=6, TA=30, HA=62, GAP=10, rh=Math.max(6,Math.min(12,230/H.tms.length)), HB=rh*H.tms.length, Hh=TA+HA+GAP+HB+18, cw=(W-L-R)/C.length, X=i=>L+i*cw, f=v=>v.toFixed(1);
+  const mxA=Math.max(0.02,...C.map(c=>Math.abs(c.am))), y0=TA+HA/2, cap=g==="day"?0.025:0.012, tx=(x,y,s,o)=>`<text x="${f(x)}" y="${f(y)}" font-size="${(o&&o.z)||9}" fill="${(o&&o.c)||"#6b7c90"}" text-anchor="${(o&&o.a)||"end"}"${o&&o.b?' font-weight="700"':""}>${esc(s)}</text>`;
+  state._profX={L,cw,n:C.length};
+  let s=`<svg viewBox="0 0 ${W} ${f(Hh)}" role="img"><rect x="${L}" y="${TA}" width="${W-L-R}" height="${HA/2}" fill="#eef6fd"/><rect x="${L}" y="${y0}" width="${W-L-R}" height="${HA/2}" fill="#f6f4f1"/>`
+    +tx(L-6,TA+12,t("profMoreAm"),{c:"#0d2a4d",z:10})+tx(L-6,TA+23,"+"+profPts(mxA)+" "+t("profPt"))+tx(L-6,TA+HA-13,t("profMorePm"),{c:"#0d2a4d",z:10})+tx(L-6,TA+HA-2,"+"+profPts(mxA)+" "+t("profPt"))
+    +`<line x1="${L}" x2="${W-R}" y1="${y0}" y2="${y0}" stroke="#9fb3c8"/>`;
+  let lastLab=-99;
+  C.forEach((c,i)=>{ const h=Math.abs(c.am)/mxA*(HA/2-3), x=X(i)+cw/2;
+    s+=`<rect x="${f(X(i)+cw*.14)}" y="${f(c.am>=0?y0-h:y0)}" width="${f(Math.max(.8,cw*.72))}" height="${f(Math.max(.5,h))}" fill="#0d2a4d"/>`;
+    if(c.ev){ s+=`<path d="M${f(x)} 16l4 4-4 4-4-4z" fill="#0d2a4d"/>`; // ◆ + its name, when there is room
+      if(x-lastLab>74){ const nm=c.ev.length>18?c.ev.slice(0,17)+"…":c.ev; s+=tx(Math.min(W-R-2,Math.max(L+2,x)),11,nm,{a:x>W-80?"end":x<L+40?"start":"middle",c:"#0d2a4d"}); lastLab=x; } }
+    H.tms.forEach((tm,j)=>{ const v=c.dev[tm]; if(v==null) return; const a=Math.min(.9,Math.abs(v)/cap); if(a<0.06) return;
+      s+=`<rect x="${f(X(i))}" y="${f(TA+HA+GAP+j*rh)}" width="${f(cw+.3)}" height="${f(rh+.3)}" fill="${v>0?"#3fa9f5":"#f06423"}" opacity="${a.toFixed(2)}"/>`; }); });
+  H.tms.forEach((tm,j)=>{ if(tm.endsWith(":00")&&+tm.slice(0,2)%2===0) s+=tx(L-6,TA+HA+GAP+j*rh+rh*.8,tm); });
+  s+=`<rect x="${L}" y="${TA+HA+GAP}" width="${W-L-R}" height="${f(HB)}" fill="none" stroke="#dbe4ee"/>`;
+  { const stp=Math.max(1,Math.ceil(C.length/(g==="day"?7:13))); for(let i=0;i<C.length;i+=stp) s+=tx(X(i)+cw/2,Hh-5,C[i].wk?t("profWkN",{w:isoWeek(C[i].ds)}):fmtDs(C[i].ds),{a:"middle"}); }
+  const si=C.findIndex(c=>c.ds===state._profSel), hv=state._profHov, dg=state._profDrag, band=(i,st)=>`<rect x="${f(X(i))}" y="${TA-2}" width="${f(cw)}" height="${f(HA+GAP+HB+4)}" fill="none" ${st}/>`;
+  if(dg&&dg.a!==dg.b){ const a=Math.min(dg.a,dg.b), b=Math.max(dg.a,dg.b); s+=`<rect x="${f(X(a))}" y="${TA-2}" width="${f((b-a+1)*cw)}" height="${f(HA+GAP+HB+4)}" fill="#3fa9f5" opacity=".18" stroke="#3fa9f5"/>`; }
+  else if(hv!=null&&hv!==si&&C[hv]) s+=band(hv,'stroke="#3fa9f5" stroke-dasharray="3 2"');
+  if(si>=0){ s+=band(si,'stroke="#0d2a4d" stroke-width="1.6"'); const c=C[si]; if(Math.abs(c.am)>=0.003) s+=tx(X(si)+cw/2,c.am>=0?y0-Math.abs(c.am)/mxA*(HA/2-3)-3:y0+Math.abs(c.am)/mxA*(HA/2-3)+9,profPts(c.am),{a:"middle",c:"#0d2a4d",b:1}); }
+  box.innerHTML=s+"</svg>"; $pf("profTRead").textContent=profMoved(C[hv!=null&&C[hv]?hv:Math.max(0,si)]||C[C.length-1]);
+  // ---- what repeats: rows to click ----
+  { const mx=Math.max(0.01,...P.map(p=>Math.abs(p.am)));
+    $pf("profPats").innerHTML=P.length?`<div class="lgH">${t("profPatsT")}</div>`+P.map(p=>`<button type="button" class="profPt${state._profSel==="p:"+p.k?" on":""}" data-k="${esc(p.k)}"><span><b>${esc(p.lab)}</b> <small>${t("profPtN",{n:p.n})}</small></span><span class="lgErrT"><i style="width:${(Math.abs(p.am)/mx*100).toFixed(0)}%"></i></span><span>${t("profPtMove",{p:profPts(p.am),dir:profDir(p.am,"profTo")})}${p.top?" · "+t("profPtTop",{tm:p.top+"–"+addHalf(p.top),v:(p.dev[p.top]>0?"+":"−")+profPts(p.dev[p.top])}):""}</span></button>`).join(""):""; }
+  // ---- the chosen week / day / kind of day against a usual day ----
+  const sel=String(state._profSel).startsWith("p:")?P.find(p=>"p:"+p.k===state._profSel):C[si]; if(!sel){ $pf("profTDet").innerHTML=""; return; }
+  const tms=H.tms.filter(tm=>sel.usual[tm]!=null), Wd=720, Hd=150, Ld=104, Td=14, Bd=20, mx=Math.max(0.01,...tms.map(tm=>Math.max(sel.usual[tm],sel.usual[tm]+(sel.dev[tm]||0)))),
+    Xd=j=>Ld+(j+.5)/tms.length*(Wd-Ld-R), Yd=v=>Td+(1-v/mx)*(Hd-Td-Bd), pts=fn=>tms.map((tm,j)=>f(Xd(j))+","+f(Yd(fn(tm)))).join(" ");
+  let d=`<svg viewBox="0 0 ${Wd} ${Hd}" role="img">`+tx(Ld-6,Yd(0)+3,"0%")+tx(Ld-6,Yd(mx)+3,(mx*100).toFixed(1)+"%")+tx(Ld-6,Yd(mx/2)+3,t("profShareL"));
+  tms.forEach((tm,j)=>{ const v=sel.dev[tm]||0; if(Math.abs(v)>=0.0005) d+=`<line x1="${f(Xd(j))}" x2="${f(Xd(j))}" y1="${f(Yd(sel.usual[tm]))}" y2="${f(Yd(sel.usual[tm]+v))}" stroke="${v>0?"#3fa9f5":"#f06423"}" stroke-width="${f(Math.max(2,(Wd-Ld-R)/tms.length*.5))}" opacity=".55"/>`;
+    if(tm.endsWith(":00")&&+tm.slice(0,2)%2===0) d+=tx(Xd(j),Hd-6,tm,{a:"middle"}); });
+  d+=`<polyline points="${pts(tm=>sel.usual[tm])}" fill="none" stroke="#9fb3c8" stroke-width="2"/><polyline points="${pts(tm=>sel.usual[tm]+(sel.dev[tm]||0))}" fill="none" stroke="#0d2a4d" stroke-width="2.2"/>`;
+  { let bj=0; tms.forEach((tm,j)=>{ if(Math.abs(sel.dev[tm]||0)>Math.abs(sel.dev[tms[bj]]||0)) bj=j; }); const bv=(sel.dev[tms[bj]]||0)*100; // one label: where it differs most
+    if(Math.abs(bv)>=0.2) d+=tx(Xd(bj),Math.max(10,Yd(sel.usual[tms[bj]]+Math.max(0,bv/100))-6),(bv>0?"+":"−")+Math.abs(bv).toFixed(1),{a:"middle",z:10,b:1,c:bv>0?"#1f7fc4":"#c2410c"}); }
+  $pf("profTDet").innerHTML=d+"</svg>"; $pf("profTSel").textContent=sel.lab+(sel.ev?" · ◆ "+sel.ev:"")+(sel.n?" · "+t("profPtN",{n:sel.n}):"");
+}
+function profInsText(){ const F=profFacts(), P=profPatterns(), H=profHist(), ds=H.days.map(d=>d.ds); // the facts as text — to send on, to teach others
+  return ["*"+t("profTitle").replace(/^📊\s*/,"")+"*"+(ds.length?" ("+fmtDx(ds[0])+"–"+fmtDx(ds[ds.length-1])+")":"")].concat(F.parts.map(x=>"• "+x),
+    P.length?["",t("profPatsT")].concat(P.map(p=>"• "+p.lab+" ("+t("profPtN",{n:p.n})+"): "+t("profPtMove",{p:profPts(p.am),dir:profDir(p.am,"profTo")})+(p.top?" · "+t("profPtTop",{tm:p.top+"–"+addHalf(p.top),v:(p.dev[p.top]>0?"+":"−")+profPts(p.dev[p.top])}):""))):[]).join("\n").replace(/[⁦-⁩‎‏]/g,""); }
+{ const box=$pf("profTChart"), at=ev=>{ const c=state._profX, svg=box.querySelector("svg"); if(!c||!svg) return null; const r=svg.getBoundingClientRect(), x=(ev.clientX-r.left)/r.width*720; return Math.max(0,Math.min(c.n-1,Math.floor((x-c.L)/c.cw))); };
+  // click = choose a week / day · drag across = zoom into those days (✕ gives the whole file back)
+  box.addEventListener("pointerdown",ev=>{ const i=at(ev); if(i==null) return; state._profDrag={a:i,b:i}; try{ box.setPointerCapture(ev.pointerId); }catch(_){} ev.preventDefault(); });
+  box.addEventListener("pointermove",ev=>{ const i=at(ev); if(i==null) return; const dg=state._profDrag;
+    if(dg){ if(i!==dg.b){ dg.b=i; renderProfTime(); } } else if(i!==state._profHov){ state._profHov=i; renderProfTime(); } });
+  box.addEventListener("pointerleave",()=>{ if(state._profHov!=null&&!state._profDrag){ state._profHov=null; renderProfTime(); } });
+  const up=()=>{ const dg=state._profDrag, C=profCols(); state._profDrag=null; state._profHov=null; if(!dg||!C[dg.a]) return;
+    if(dg.a===dg.b) state._profSel=C[dg.a].ds;
+    else{ const a=C[Math.min(dg.a,dg.b)], b=C[Math.max(dg.a,dg.b)]; state._profZ={a:a.ds,b:b.wk?addDays(b.ds,6):b.ds}; state._profG="day"; state._profSel=null; }
+    renderProfTime(); };
+  box.addEventListener("pointerup",up); box.addEventListener("pointercancel",up);
+  $pf("profZoomX").addEventListener("click",()=>{ state._profZ=null; state._profG="week"; state._profSel=null; renderProfTime(); });
+  $pf("profGran").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return; state._profG=b.dataset.g; state._profSel=null; state._profHov=null; renderProfTime(); });
+  $pf("profPats").addEventListener("click",e=>{ const b=e.target.closest(".profPt"); if(!b) return; state._profSel="p:"+b.dataset.k; renderProfTime(); $pf("profTDet").scrollIntoView({block:"nearest"}); }); }
+/* 📋 the split as Excel takes it: tab-separated, a row per half hour (g = 30) or per hour (g = 60 = its two half hours
+   added), a column per weekday, percents at two decimals ("4.12%" pastes as a real percent). Always the split in use
+   (with the cells set by hand), whatever the view shows. */
+function profTsv(g){
+  if((profPanel.querySelector("#profView .active")||{dataset:{}}).dataset.view==="time"){ const H=profHist(), C=profCols(), key=tm=>g===60?tm.slice(0,2)+":00":tm;
+    const out=[[g===60?t("profColH"):t("profColI")].concat(C.map(c=>fmtDx(c.ds))),[""].concat(C.map(c=>c.ev||""))];
+    for(const k of [...new Set(H.tms.map(key))]){ const r=[k]; for(const c of C){ let v=null; for(const tm of H.tms) if(key(tm)===k&&c.usual[tm]!=null) v=(v||0)+c.usual[tm]+(c.dev[tm]||0); r.push(v==null?"":(v*100).toFixed(2)+"%"); } out.push(r); }
+    return out.map(r=>r.join("\t")).join("\n"); }
+  const mode=profMode(), cur={}, tms=new Set(), dn=t("days");
+  for(let di=0;di<6;di++){ cur[di]=applyProfileEdits(di,profileShares(di,mode)); if(cur[di]) Object.keys(cur[di]).forEach(x=>tms.add(x)); }
+  const rows=[...tms].sort().filter(tm=>[0,1,2,3,4,5].some(di=>cur[di]&&cur[di][tm]>0.0005)), key=tm=>g===60?tm.slice(0,2)+":00":tm;
+  const out=[[g===60?t("profColH"):t("profColI")].concat([0,1,2,3,4,5].map(di=>dn[di]))];
+  for(const k of [...new Set(rows.map(key))]){ const r=[k];
+    for(let di=0;di<6;di++){ let v=null; for(const tm of rows) if(key(tm)===k&&cur[di]&&cur[di][tm]!=null) v=(v||0)+cur[di][tm]; r.push(v==null?"":(v*100).toFixed(2)+"%"); }
+    out.push(r); }
+  return out.map(r=>r.join("\t")).join("\n");
+}
+$pf("profCopy").addEventListener("click",async e=>{ const b=e.target.closest("button[data-g]"); if(!b) return; const txt=profTsv(+b.dataset.g);
+  try{ await navigator.clipboard.writeText(txt); }
+  catch(_){ const ta=document.createElement("textarea"); ta.value=txt; ta.style.cssText="position:fixed;opacity:0"; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); ta.remove(); } // a page opened from a file may have no clipboard API
+  showToast("📋 "+t("profCopied",{g:b.textContent}),true); });
+$pf("profCopyIns").addEventListener("click",async()=>{ const txt=profInsText();
+  try{ await navigator.clipboard.writeText(txt); }catch(_){ const ta=document.createElement("textarea"); ta.value=txt; ta.style.cssText="position:fixed;opacity:0"; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); ta.remove(); }
+  showToast("📋 "+t("profInsCopied"),true); });
 /* click a weight → type a new % → Enter pins it (empty = unpin); the rest of that day rebalances */
 function profEditCell(td,di,tm,v){
   if(td.querySelector("input")) return;
@@ -11911,12 +12179,20 @@ function openProfile(){
   document.getElementById("mCore").textContent=t("profIntro");
   document.getElementById("mMsg").textContent="";
   const mL=document.getElementById("mList"); mL.innerHTML="";
+  if(!state.settings.profSeen){ state.settings.profSeen=true; saveState(); }
   mL.parentNode.insertBefore(profPanel,mL); profPanel.hidden=false;
   document.getElementById("mExport").style.display="none";
   document.getElementById("modalBg").classList.add("show");
   renderProfile();
 }
 document.getElementById("profBtn").addEventListener("click",e=>{ e.preventDefault(); openProfile(); });
+document.getElementById("mxProf").addEventListener("click",()=>{ document.querySelectorAll(".splitbtn.open").forEach(w=>w.classList.remove("open")); openProfile(); }); // where the half hours are read: the matrix's ⋯
+{ // until it was opened once, the button pulses twice (askPulse — the app's one "look here") each time its fold opens; then never again
+  const d=document.querySelector("details.fmAdv"), b=document.getElementById("profBtn");
+  const sm=d&&d.querySelector("summary"), again=el=>{ el.classList.remove("pulse"); void el.offsetWidth; el.classList.add("pulse"); };
+  if(d) d.addEventListener("toggle",()=>{ if(!d.open) return; if(!state.settings.fmAdvSeen){ state.settings.fmAdvSeen=true; saveState(); } if(!state.settings.profSeen) again(b); });
+  // the fold itself: until it was opened once, its line (with the accuracy number) pulses twice when Settings is entered
+  document.getElementById("tab-settings").addEventListener("click",()=>{ if(sm&&!d.open&&!state.settings.fmAdvSeen&&document.getElementById("fmAdvSum").textContent) setTimeout(()=>again(sm),250); }); }
 profPanel.querySelector("#profWin").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return;
   state.settings.profileMode=b.dataset.mode; state.settings.profUserSet=b.dataset.mode!=="auto"; syncCleanUI(); profChanged(); });
 profPanel.querySelector("#profView").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return;
@@ -12066,14 +12342,14 @@ document.getElementById("backtestBtn").addEventListener("click",()=>{
   const bias=p=>p==null?"":Math.abs(p-100)<=1?t("btNoBias"):t(p>100?"btHigh":"btLow",{d:Math.abs(p-100).toFixed(1)});
   const add=(html,ok)=>{ const li=document.createElement("li"); li.className=ok?"ok":"insight"; li.innerHTML=html; mL.appendChild(li); return li; };
   // the real forecast: the daily totals
-  const bd=backtestDaily();
-  if(bd) add(`<span><b>${t("btDaily")}</b>: ${bias(bd.pace)} <span class="mini">(${t("btDays",{n:bd.n})})</span>${Math.abs(bd.pace-100)>1?" · "+t("btFastNote"):""}</span>`,Math.abs(bd.pace-100)<=1);
-  let any=!!bd;
+  let any=false;
   for(const [kind,key,,titleKey] of [["volume","modelVolume",0,"btVol"],["aht","modelAht",0,"btAht"],["mpt","modelMpt",0,"btMpt"]]){
     if(kind==="mpt"&&!state._hasMpt) continue; // no patience data in the file → nothing to test
     const sc=rankModels(kind); if(!sc.length) continue; any=true;
     const cur=sc.find(x=>x.mid===state.settings[key])||sc[0], best=sc[0], line=x=>`${esc(t(Models[kind][x.mid].label))} — ${t("btErr",{e:x.r.mape.toFixed(1)})}${x.r.pace!=null&&kind!=="aht"?" · "+bias(x.r.pace):""}`;
-    const li=add(`<span><b>${t(titleKey)}</b>: ${line(cur)} · <b>${t("btInUse")}</b>${cur.mid!==best.mid?" · "+t("btBetter",{m:esc(t(Models[kind][best.mid].label))}):mUser(key)?"":" · 🤖"}</span>`,cur.mid===best.mid);
+    const li=add(`<span><b>${t(titleKey)}</b> · ${t("btH1")}: ${line(cur)} · <b>${t("btInUse")}</b>${cur.mid!==best.mid&&best.r.n>=HZ_MIN?" · "+t("btBetter",{m:esc(t(Models[kind][best.mid].label))}):mUser(key)?"":" · 🤖"}</span>`,cur.mid===best.mid);
+    for(const b of [1,2]){ const rk=rankModels(kind,b), x=rk.find(y=>y.mid===modelFor(kind,HZ[b][0])); if(!x||x.r.n<HZ_MIN) continue; // the model each farther horizon uses, and how far off it was there
+      const d=document.createElement("div"); d.className="mini btHz"; d.innerHTML=`<b>${b===1?t("btH2"):t("btH3")}</b>: ${line(x)}`; li.appendChild(d); }
     const rest=sc.filter(x=>x.mid!==cur.mid);
     if(rest.length){ const d=document.createElement("details"); d.className="btMore"; d.innerHTML=`<summary class="mini">${t("btOthers",{n:rest.length})}</summary>`+rest.map(x=>`<div class="mini">${line(x)}</div>`).join(""); li.appendChild(d); }
   }
@@ -12221,6 +12497,7 @@ function lgGlyph(mid){ // a tiny picture of the model's logic
     ewmavw:P.map((p,i)=>dot(p,[1,2.4,1.4,2.8,2][i],.35+i*.16)).join("")+ln("12,10 43,10")+end(10),
     hier:`<path d="M3 18 Q22 -6 41 18" fill="none" stroke="#9fb3c8" stroke-width="1.4"/>`+dot([12,10])+dot([22,6])+dot([32,10])+end(13),
     blend:ln("4,16 30,10",.5)+ln("4,5 30,10",.5)+ln("30,10 43,10")+end(10),
+    theta:D+ln("12,11.5 43,8.5")+end(8.5), sqrtses:P.map((p,i)=>dot([p[0],11+(p[1]-11)*.5])).join("")+ln("12,11 43,11")+end(11), comb:D+ln("36,10 43,5",.3)+ln("36,10 43,7.5",.3)+ln("36,10 43,10")+ln("36,10 43,12",.3)+ln("36,10 43,14",.3)+end(10),
     custom:D+ln("20,13 43,7")+end(7)+`<circle cx="31" cy="10" r="2.6" fill="#fff" stroke="#d9822b" stroke-width="1.4"/>`};
   return `<svg viewBox="0 0 46 22" width="46" height="22" aria-hidden="true">${B[mid==="holt_damped"?"holt":mid]||D}</svg>`; }
 function lgFcSet(){

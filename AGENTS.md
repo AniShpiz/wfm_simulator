@@ -197,6 +197,27 @@ workforce filter lists legitimately show only "(all)" for this file.
   from the days before it): "carry" (last 4 same weekdays) vs "ratio" (scheduled hours × login÷scheduled of the 8 weeks
   before). The lower error wins and `trendDayStat` uses it on forecast days; the productivity / net-hours header hover
   says which and why. Net hours now show on forecast days too (projected). Test: `tests/unit/productivity.test.js`.
+- 🤖 The model per HORIZON: `HZ` = [[1],[2,3,4],[6,9,13]] weeks from the data's last week, `hzOf(h)`;
+  `rankModels(kind,b)` = bucket b's ranking by `backtestModel(kind,mid,h)` (volume = the weekday DAILY TOTALS,
+  Σ|F−A|÷ΣA; AHT / MPT per half hour weighted by calls; memo per kind in `state._rkC`), `hzBest(kind)` = the winner
+  per bucket (needs `HZ_MIN` = 12 tests, else inherits / null), `modelFor(kind,h)` = what `ForecastEngines` calls
+  (hand-picked → that model at every horizon). `settings.model*` holds the next-week winner (what Settings shows).
+  Never add a control for this. Added volume models: `theta`, `sqrtses`, `comb`. New models are ADDED to the
+  registry — never change an existing one. Test: `tests/browser/forecast-horizons.js`.
+- 📋 `profTsv(g)` (g = 30 | 60) = the split in use as Excel takes it; the two `#profCopy` chips above the 📊 table copy it.
+- 🕰 The 📊 window's "over time" view (`renderProfTime`): `profHist()` = every history day's split vs "a usual day" (the
+  plain average of that weekday's ordinary days — NOT the forecast's split, so a drift shows), with `dev` per half
+  hour, `am` (points moved before 12:00), `odd` (share of calls at other hours) and `ev` = `profEvt(ds)` (holiday /
+  auto-flagged / planned event / marked by the user); `profCols()` = weeks | days (`state._profG`); the chosen column
+  = `state._profSel`. Ways in: `#profBtn` (a real button; `.pulse` = askPulse until `settings.profSeen`) and `#mxProf`
+  in the matrix ⋯. `profNext()` = toward next week (the split in use vs a usual day → calls a day and reps in the 2-hour
+  block that gains / loses most; next week's holidays matched to their kind's past effect), `profPatterns()` = what
+  repeats (holiday kinds · after a closed day · billing peaks · busy days · weekdays; ≥ 2 days, ≥ 1 point),
+  `profFacts()` = the lead lines, `profInsText()` = the same as text. Drag = zoom (`state._profZ`, ✕ `#profZoomX`);
+  a selection is a date or "p:<pattern>". `fmAdvSumUpd()` = the fold's one-line value (`#fmAdvSum`).
+  Test: `tests/browser/intraday-history.js`.
+- 📏 Before claiming a forecast change is better, run `node tests/browser/forecast-bench.js` (this build vs git main,
+  or vs any html given as an argument): 12 generated centers × 3 cut dates, scored on the weeks AFTER the cut.
 - 🤖 `autoPickModels()` (after each forecast load): every volume / AHT / MPT model is ranked by `rankModels` (= the
   🧪 backtest window's ranking) and the best is used unless that list was picked by hand (`settings.modelUser[key]`,
   per list — `mUser(key)`; the old single `modelUserSet` only seeds it on load); the model lists start with
