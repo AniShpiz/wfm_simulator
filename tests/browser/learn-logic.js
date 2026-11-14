@@ -45,7 +45,7 @@ const fcCSV = (() => { // 8 weeks, Sun–Thu, 10-May … 02-Jul-2026, a slow ris
   ok(s.chips === 6 && s.need > 20 && s.dots === 100 && s.chart === 2 && s.sim > 20, `the equation, 100 callers, the curve and the simulated half hour are drawn (need ${s.need})`);
   await p.evaluate(() => document.querySelector('#lgTabs [data-tab="fc"]').click());
   s = await look();
-  ok(s.fc && s.cards.length === 6 && s.pts === 10 && s.pipe === 6 && s.cards.every(c => !c.err), "no file: the models play on an example series, without error numbers");
+  ok(s.fc && s.cards.length === 9 && s.pts === 10 && s.pipe === 6 && s.cards.every(c => !c.err), "no file: the models play on an example series, without error numbers");
   await p.evaluate(() => document.getElementById("mClose").click());
 
   // ---- with a forecast file ----

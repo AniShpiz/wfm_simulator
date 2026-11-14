@@ -4,6 +4,51 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### 🤖 A model per horizon, a call-weighted test, three more volume models
+
+- **The model per horizon.** The test now runs for three horizons counted from the data's last week — next week · the
+  coming month (2–4 weeks) · months ahead (6 / 9 / 13 weeks, as far as the history allows) — and every forecast day
+  uses the winner of its own horizon (volume, AHT and patience alike). No new control: the matrix simply gets the
+  near model, Date Trends / the monthly summary / the recruiting plan the far ones. A horizon the history is too
+  short to test inherits the one before it; a model picked by hand is used for every horizon.
+- **The test counts calls.** Volume models are scored on what the forecast really uses — each weekday's daily total —
+  as Σ|forecast − actual| ÷ Σactual; AHT and patience stay per half hour, each weighted by its calls. The winner is
+  the lowest error (the lean breaks ties). A winner needs at least 12 tested days / half hours behind it: a short
+  file no longer switches the model on one or two lucky weeks.
+- **Three models added** (nothing existing changed): Theta (level + half the trend), stabilised smoothing on the
+  √ scale, and the median of five simple methods. Each is used only where it wins.
+- 🧪 "How accurate is the forecast?" shows a line per horizon (the model and how far off it was there) instead of the
+  separate "daily totals" line — the volume test is the daily totals now.
+- Tested and NOT added: correcting a day by yesterday's / last week's deviation — on the sample file it did not lower
+  the error (2.05% → 2.06%, 2.00% → 2.01%).
+- 📊 The interval-spread window speaks plainly: its title is the question ("How do the calls spread over the day?"),
+  the three ways to learn are named by what they learn from (the last 8 weeks · the last 12 weeks · the whole file,
+  recent weighs more), "weights / window / adaptive" are gone, and the one insight line is the day's peak half hour.
+- 📋 The same window copies the split for Excel in one click — "Half-hourly" or "Hourly" (an hour = its two half
+  hours): tab-separated, a column per weekday, real percents. Both choices are in sight above the table.
+- 📊 **Over time** — a third view in the same window, for the analyst: every week (or day) of the file against a usual
+  day. A strip of half hours × time (blue = more calls than usual, orange = fewer), above it how many points of the
+  day's calls moved to the morning or the afternoon, ◆ on holidays / exceptional days, and the chosen week or day
+  drawn against a usual day. Two plain facts lead: where the calls moved in the last 4 weeks, and the day that broke
+  the pattern most. The copy chips give that table too (a column per week / day, the event named under its date).
+- The view leads with what to do: **toward next week** — where the forecast's split differs from a usual day, in calls
+  a day and reps ("about 35 more calls a day between 09:00 and 11:00 (about 1 more rep there)"), and what next week's
+  holiday did to the day's shape the last times; then the 4-week trend and the most unusual day.
+- **What repeats?** — kinds of days that bend the day the same way (each holiday kind, the day after a closed day,
+  billing-peak days, unusually busy days, each weekday): how many days, how far and where; a click draws it against a
+  usual day. "The insights, as text" copies all of it to send on.
+- On the chart: the two sides are written in words ("More in the morning" / "More in the afternoon") with their scale,
+  ◆ carries the holiday's or event's name, weeks carry their number. Drag across the chart to zoom into those days
+  (✕ gives the whole file back). The "difference from another way" view is gone.
+- The "⚙ Models & checks" fold shows its value while folded ("next week's forecast: off by 2.2% on average") and
+  pulses twice when Settings is entered, until it was opened once.
+- The window is easier to find: a real button "📊 Calls over the day" beside the other checks in Settings (it pulses
+  twice when its fold opens, until it was opened once) and an entry in the matrix's ⋯ menu.
+- Measured out of sample with the new `tests/browser/forecast-bench.js` (12 generated centers × 3 cut dates, the
+  weeks after the cut never seen): daily-total error next week 7.28% → 6.60%, the coming month 7.62% → 7.26%, months
+  ahead 9.12% → 8.39%; half hours next week 10.68% → 10.26%. Better in 27 of 36 center × horizon cases, worse in 5.
+- Test: `tests/browser/forecast-horizons.js`.
+
 ### 🧮 "How are the numbers calculated?" — a place to play (Settings)
 
 - The old "Reveal Analytical Logic" window (six paragraphs of method) is replaced by a window you play with; the same
