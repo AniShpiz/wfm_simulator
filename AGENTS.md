@@ -376,6 +376,13 @@ workforce filter lists legitimately show only "(all)" for this file.
   each pair goes where the marginal loss of answered calls is smallest (`cost` = `evalInterval` +
   `slotBias`, interpolated). Spare = catch-up places (`s.spare`): inside short shifts first, then late.
   `over.flat` = the same breaks spread evenly (the "no planning" comparison).
+- 🤖 The limit per slot is CHOSEN: `settings.brk.cap` empty / 0 → `brkAutoCap(ds,over)` builds the plan for every limit
+  1…`BRK_HARD` (10) and returns the smallest ≤ `BRK_SOFT` (9) that places everyone + all catch-up places and is within
+  `BRK_EPS` (0.1 pt) of the best ≤ 9; 10 only when it adds ≥ that; none fits → the smallest that does (≤ 40).
+  `bp.capAuto`, `bp.capWhy` {less, more} → the legend pill `.brkCapP`. A helper call that must not re-choose passes
+  `cap` (the flat comparison: `{flat:true,cap:bp.cap}`). Catch-up places ("spare" in code) need room under the limit —
+  a typed limit that cuts them shows "+k/n" and the `capAuto` tile. `s.vol` = calls during the slot → `.brkLd` bar.
+  Test: `tests/browser/breaks-optimal.js`.
 - Bounds: `brkCfg(di)` (`settings.brk`: start, end, friEnd = 12:00, step 20, cap 6, spare 10 %) and
   `brkOpen(di)` = Settings `dayStart` / `dayEnd` / `friEnd` — no slot outside opening hours.
 - `renderBreaks`: tiles, `brkAlts` (option tiles), `state._brkUndo` (the ↶ pill). The floor format:

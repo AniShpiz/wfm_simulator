@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### ☕ Breaks: the sheet opens on the best plan
+
+- **How many can be on a break at once is chosen, not typed.** The plan is built for every limit and the sheet shows
+  the smallest one, up to 9, that gives everyone their breaks and the catch-up places and keeps the day's answer rate
+  (within 0.1 point of the best a limit ≤ 9 gives). 10 is taken only when it adds at least that much; a center too big
+  for 10 gets the smallest limit that fits everyone. The sheet says it ("🤖 up to 9 on a break at once") and its hover
+  says why ("with 8: −0.13% · with 10: only +0.06%"). A limit typed in ⚙ is still yours ("optional" — empty = chosen).
+- **Fix: the spare followed nothing.** With the old fixed limit of 6 there was often room for only 2 spare places
+  whatever the % said. The chosen limit now leaves room for all of them; a typed limit that is too tight shows
+  "+2/12" and one click gives the chosen limit back.
+- One name: "spare" is now "catch-up places" everywhere (the tile, ⚙, the key), with a hover that says what they are.
+- Every slot shows its call load (the day's shape, quietest ↔ busiest) under its time — why breaks sit where they do.
+- Test: `tests/browser/breaks-optimal.js`.
+
 ### 🤖 A model per horizon, a call-weighted test, three more volume models
 
 - **The model per horizon.** The test now runs for three horizons counted from the data's last week — next week · the
