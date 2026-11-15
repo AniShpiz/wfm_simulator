@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### ✎ Today's real answer rate → tomorrow's returning calls (matrix)
+
+- On the days the file doesn't hold yet (its last day → today) the matrix header has one small field, "Actual answer %".
+  Type the day's real answer rate and the calls that will come back enter the forecast of the next two working days
+  (¾ + ¼, the learned return rate — or Settings' known rate, else 40%), marked like a measured day: ▲ on the typed day,
+  "↩ +n" on the days that receive them; the cells then show where reps are short. Its hover says how many come back.
+  Same ↩ switch; the day drops out once the file covers it. Test: `tests/browser/ar-note.js`.
+- "What repeats?" (📊 over time) gained "the day after heavy abandonment": where in the day the returning calls land.
+
+### 📄 The report's month table, without and with the improvement
+
+- With What-If sliders set, "Month by month" is drawn twice, like the course lists: all months as the center runs
+  today, then the forecast months with the measures improved — the change under each number, the levers named, one
+  line on why both, and the total hours it saves to schedule.
+
+### 📊 The interval window shows opening hours only
+
+- A file's stray calls after closing (e.g. after 18:00) no longer appear in the split table, the "over time" view,
+  its facts or the copy for Excel — the window shows the matrix's rows (Settings' day start / end, Friday's close); a
+  weekday's shown shares add to 100%.
+
 ### ☕ Breaks: the sheet opens on the best plan
 
 - **How many can be on a break at once is chosen, not typed.** The plan is built for every limit and the sheet shows

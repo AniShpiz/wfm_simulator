@@ -245,6 +245,7 @@ li.insight{border-inline-start:4px solid var(--sky);background:var(--sky-soft)}
 /* per-day source tag under each matrix day header (actual / forecast / today) */
 .dtag{display:block;font-size:.6rem;font-weight:600;letter-spacing:.2px;margin-top:1px;opacity:.9}
 .dtag.act{color:#a8e6c3}.dtag.fc{color:#d6c6ff}.dtag.today{color:#7cc8ff}
+.arNote{display:flex;align-items:center;justify-content:center;gap:4px;font-size:.66rem;font-weight:400;color:var(--muted);margin-top:3px;cursor:help} .arNote input{width:46px;padding:1px 3px;font:inherit;font-size:.72rem;border:1px solid var(--border);border-radius:5px;text-align:center;background:#fff;color:var(--ink)} .arNote input:focus{border-color:var(--sky);outline:none}
 th.todayHd{box-shadow:inset 0 -3px 0 var(--sky)} td.todayCol{box-shadow:inset 2px 0 0 var(--sky),inset -2px 0 0 var(--sky)}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-bottom:12px}
 .page.isEmpty>*:not(.emptyState){display:none!important}
@@ -589,6 +590,7 @@ td.cell:hover .whoLnk::before{content:"👥 ";font-size:.9em} .whoLnk:hover{back
 .crsUndo{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:.8rem;color:var(--emerald);background:#eef8f1;border-radius:8px;padding:5px 10px;margin:0 0 8px}
 .hpScen{display:inline-block;font-size:.78rem;font-weight:600;color:#7a4b00;background:#fff3cd;border:1px solid #f0d9a6;border-radius:999px;padding:2px 10px;margin:4px 0 0}
 .hpWas{font-size:.78rem;font-weight:500;color:var(--muted)} .hpProd{display:block;color:var(--muted);font-size:.74rem;margin-top:2px}
+.hpMode{margin:4px 0 6px} .hpMode button{font-size:.76rem;padding:3px 10px} .hpWay{color:var(--muted);font-size:.78rem;margin:2px 0 0}
 .hpBeyond{color:var(--crimson);font-size:.8rem;margin:2px 0 0} .hpWhy{font-size:.76rem;color:var(--muted);margin:1px 0 0}
 .cohT tr.hl td{background:#fff3cd!important;transition:background .15s} .cohT tr.ovl td:first-child{box-shadow:inset -4px 0 0 #e3a72f} .hpRow[data-ci]{cursor:pointer} .hpFor{font-size:.72rem;color:var(--muted);white-space:nowrap}
 /* ☕ breaks */
@@ -2225,6 +2227,11 @@ en:{
   ceHintAgFile:"Baseline from your file (no sidur for this day) — try a what-if here.",
   ceHintDay:"Total calls for the day — spread across its half-hours by the day's usual profile.",
   profTitle:"📊 How do the calls spread over the day?", profBtnTip:"How the calls spread over the day — see and edit",
+  arNoteNow:"Answer % so far", arNoteNowTip:"About {p}% of today's calls have come so far; the rate you type is taken for the whole day.",
+  hpModeDate:"By {d}", hpModeMonth:"Every month", hpModeTip:"By the plan date: enough to be on target in that month (months on the way may fall short). Every month: enough in each month.",
+  hpByDate:"to be on target in {m}", hpOkDate:"On target in {m}", hpWay:"On the way, below the target:", hpModeNote:"Checked for the plan date's month; months on the way may fall below the target.",
+  arNoteL:"Actual answer %", arNoteTip:"Type this day's real answer rate (the file doesn't hold it yet). The calls that will come back enter the forecast of the next two working days.", arNoteRes:"↩ about {n} calls will come back: {a} on the next working day, {b} on the one after", profPtRet:"The day after heavy abandonment",
+  repMonNo:"As the center runs today", repMonYes:"With the measures improved — the forecast months", repMonWhy:"The same months twice: as the center runs today, and with the measures improved — what happens to the answer rate and how many hours there are to schedule. Under each number that changed: by how much.", repMonSave:"In the forecast months: {h} fewer hours to schedule",
   brkSpareTip:"Extra places on the board for a break that was pushed (a long call). A share of the day's breaks, placed where they cost the fewest answered calls.",
   brkCapNow:"up to {c} on a break at once", brkCapWhy:"Chosen automatically: the fewest at once that keeps the day's answer rate.", brkCapLess:"With {c}: −{p}% in the day's answer rate.", brkCapLessFit:"With {c} there is no place for everyone.", brkCapMore:"With {c}: only +{p}%.",
   brkAltAuto:"Automatic limit", brkLegLd:"call load (quiet ↔ busy)",
@@ -2842,6 +2849,11 @@ he:{
   ceHintAgFile:"בסיס מהקובץ (אין סידור ליום הזה) — אפשר לנסות כאן מה־אם.",
   ceHintDay:"סה״כ שיחות ליום — מתפזרות על חצאי השעה לפי הפרופיל הרגיל של היום.",
   profTitle:"📊 איך השיחות מתפזרות על פני היום?", profBtnTip:"איך השיחות מתפזרות על פני היום — צפייה ועריכה",
+  arNoteNow:"מענה עד עכשיו %", arNoteNowTip:"עד עכשיו הגיעו כ־{p}% מהשיחות של היום; האחוז שתקלידו ייחשב לכל היום.",
+  hpModeDate:"עד {d}", hpModeMonth:"בכל חודש", hpModeTip:"עד תאריך התכנון: מספיק כדי לעמוד ביעד בחודש הזה (בדרך ייתכנו חודשים מתחת ליעד). בכל חודש: מספיק בכל חודש וחודש.",
+  hpByDate:"כדי לעמוד ביעד ב{m}", hpOkDate:"ביעד ב{m}", hpWay:"בדרך, מתחת ליעד:", hpModeNote:"נבדק לחודש של תאריך התכנון; בדרך ייתכנו חודשים מתחת ליעד.",
+  arNoteL:"מענה בפועל %", arNoteTip:"הקלידו את אחוז המענה האמיתי של היום הזה (הקובץ עוד לא מכיל אותו). השיחות שיחזרו ייכנסו לתחזית של שני ימי העבודה הבאים.", arNoteRes:"↩ כ־{n} שיחות יחזרו: {a} ביום העבודה הבא, {b} ביום שאחריו", profPtRet:"יום אחרי נטישה גבוהה",
+  repMonNo:"כמו שהמוקד עובד היום", repMonYes:"עם שיפור המדדים — חודשי התחזית", repMonWhy:"אותם חודשים פעמיים: כמו שהמוקד עובד היום, ועם שיפור המדדים — מה קורה למענה וכמה שעות יש לשבץ. מתחת לכל מספר שהשתנה: בכמה.", repMonSave:"בחודשי התחזית: {h} שעות פחות לשיבוץ",
   brkSpareTip:"מקומות נוספים על הלוח למי שההפסקה שלו נדחתה (שיחה ארוכה). אחוז מההפסקות של היום, במקומות שעולים הכי פחות שיחות.",
   brkCapNow:"עד {c} בהפסקה בו־זמנית", brkCapWhy:"נבחר אוטומטית: המספר הקטן ביותר ששומר על אחוז המענה של היום.", brkCapLess:"עם {c}: ‎−{p}%‎ במענה היומי.", brkCapLessFit:"עם {c} אין מקום לכולם.", brkCapMore:"עם {c}: רק ‎+{p}%‎.",
   brkAltAuto:"מקסימום אוטומטי", brkLegLd:"עומס שיחות (שקט ↔ עמוס)",
@@ -8026,6 +8038,10 @@ function updatePortalStatus(){
    widens to all history); W = 8 (adaptive) or 12. */
 /* the window in use: chosen by the test below unless the user picked one */
 const PROF_MODES=["adaptive","w12","smart"], profLab=m=>t(m==="w12"?"fmProf12":m==="smart"?"fmProfSmart":"fmProfAdapt");
+/* the 📊 window speaks about the center's OPENING HOURS only — the matrix's rows (TIMES; Friday to its own close). A file's
+   stray calls after closing are a handful, so their shares swing wildly: they are not shown, tested or copied there. */
+const profOpenTm=(di,tm)=>TIMES.includes(tm)&&!(di===5&&tm>=friLimit());
+const profOpenK=(cur,rows)=>[0,1,2,3,4,5].map(di=>{ let z=0; if(cur[di]) for(const tm of rows) z+=cur[di][tm]||0; return z>0?1/z:1; }); // a weekday's shown shares add to 100% (the hidden after-hours part is scaled out)
 const profMode=()=>{ const m=state.settings.profileMode; return PROF_MODES.includes(m)?m:(profBacktest()||{}).best||"adaptive"; };
 /* 📊 "Blended shape" (mode "smart") — a third way to learn a weekday's intraday shape, used only when the test below
    finds it more accurate on the loaded file. Why it can beat a plain 8 / 12-week average:
@@ -8326,10 +8342,30 @@ function fastState(){
 /* ↩ the calls of lost days coming back on ds — the history's lost days, and the forecast's own closed days */
 /* ↩ abandoned callers who call again, on ds: p × the EXTRA abandons of the working day before ((1−q)) and the one
    before it (q) — learned in rebuildLearningSeries (rtParam). History days get it too (the split volume bar). */
-function retryAt(ds,force){ const P=state.rtParam; if(!(force||state.settings.cuOn!==false)||!P||!(P.p>0)||!state.maxDate) return 0;
+/* ✎ A DAY THE FILE DOESN'T HOLD YET (after its last day, up to today): the manager types the day's real answer rate in
+   the matrix (settings.arNote {ds: %}) and its extra abandoned calls — over the usual rate r0, on that day's forecast
+   calls — come back on the next two working days like a measured day's do (same ↩ switch, same ▲ / "↩ +n" marks).
+   The return rate = the learned one; when the file can't teach it (no answered calls / the test rejected it) the known
+   rate from Settings, else 40% · ¾ + ¼. A typed day drops out by itself once the file covers it. */
+/* Which days get the field: only a day whose returning calls can still change a plan, while the file doesn't hold it —
+   · the working day before today (a finished day: its real rate is known) — always;
+   · today — once half of its forecast calls are behind (by the day's own curve): before that a rate says little and
+     there is nothing to act on; the field then reads "so far" (the rate is taken for the whole day).
+   Older days send nothing to tomorrow, so they have no field. mxTimeMarks redraws the header when today's field opens. */
+function arNoteShare(ds){ const m=forecastDay(ds); if(!m) return 0; const n=new Date(), cur=n.getHours()*60+n.getMinutes(); let v=0,a=0;
+  for(const [tm,r] of m){ const t0=+tm.slice(0,2)*60+ +tm.slice(3); v+=r.volume; a+=r.volume*Math.max(0,Math.min(1,(cur-t0)/30)); } return v?a/v:0; }
+function arNoteDays(){ const td=iso(new Date()), out=[]; if(!state.maxDate||state.settings.cuOn===false) return out;
+  let p=td; for(let g=0;g<14;g++){ p=addDays(p,-1); if(fromISO(p).getDay()<=5&&state.holidayDates.get(p)!=="closed"&&(p<=state.maxDate||forecastDay(p))) break; }
+  if(p>state.maxDate) out.push(p); if(td>state.maxDate&&arNoteShare(td)>=0.5) out.push(td); return out; }
+const arNoteP=()=>{ const P=state.rtParam, S=state.settings; return {p:P&&P.p>0?P.p:+S.retryKnown>0?S.retryKnown/100:0.4, q:P&&P.q!=null?P.q:0.25}; };
+function arNoteX(ds){ const N=state.settings.arNote, P=state.rtParam; if(!N||N[ds]==null||!state.maxDate||ds<=state.maxDate) return 0;
+  const r0=P&&P.r0!=null?P.r0:Math.max(0,1-state.settings.target/100), m=forecastDay(ds); let v=0; if(m) for(const r of m.values()) v+=r.volume;
+  return Math.max(0,(1-N[ds]/100)-r0)*v; }
+function retryAt(ds,force){ const P=state.rtParam; if(!(force||state.settings.cuOn!==false)||!state.maxDate) return 0;
   const prevWork=d=>{ for(let g=0;g<14;g++){ d=addDays(d,-1); if(fromISO(d).getDay()<=5&&state.holidayDates.get(d)!=="closed") return d; } return null; };
-  const d1=prevWork(ds), d2=d1&&prevWork(d1), x=d=>d&&d<=state.maxDate?(P.X.get(d)||0):0; // the forecast's own abandons: the next stage (the loop)
-  return P.p*((1-P.q)*x(d1)+P.q*x(d2)); }
+  const d1=prevWork(ds), d2=d1&&prevWork(d1), A=arNoteP(), N=state.settings.arNote;
+  const x=d=>!d?0:d<=state.maxDate?(P&&P.p>0?(P.X.get(d)||0)*P.p:0):N&&N[d]!=null?arNoteX(d)*A.p:0; // the forecast's own abandons: the next stage (the loop)
+  return (1-A.q)*x(d1)+A.q*x(d2); }
 function catchUpAt(ds,force){ // force: what it WOULD add (the chip offers it back when it is off)
   const P=state.cuParam; if(!(force||state.settings.cuOn!==false)||!P||!(P.c>0)) return 0;
   if(state.maxDate&&ds<=state.maxDate&&state.cuAmt) return state.cuAmt.get(ds)||0; // a past day: what the learning took out (never more than it rose) — one number with its tag
@@ -8992,6 +9028,18 @@ function renderMatrixBody(){
       const ev=evMap().get(ds); // 📣 planned event this day — name on hover
       if(ev){ tg.textContent+=" · 📣"; hth.title=ev.names.join(" + ")+(sdd.forecast?" · "+t("evPillTip",{n:Math.round(ev.extra).toLocaleString()}):""); }
       hth.appendChild(tg); }
+    // ✎ a day the file doesn't hold yet (its last day → today, the last few days): the real answer rate, typed → tomorrow's ↩
+    { const td0=iso(new Date()); if(sdd&&sdd.forecast&&!state.excMode&&arNoteDays().includes(ds)){
+        const N=state.settings.arNote||{}, lb=document.createElement("label"); lb.className="arNote";
+        const back=N[ds]!=null?arNoteX(ds)*arNoteP().p:0, q=arNoteP().q;
+        lb.title=t("arNoteTip")+(ds===td0?"\n"+t("arNoteNowTip",{p:Math.round(arNoteShare(ds)*100)}):"")+(back>=1?"\n"+t("arNoteRes",{n:Math.round(back).toLocaleString(),a:Math.round(back*(1-q)).toLocaleString(),b:Math.round(back*q).toLocaleString()}):"");
+        lb.innerHTML=`<span>${ds===td0?t("arNoteNow"):t("arNoteL")}</span><input type="number" min="0" max="100" step="1" value="${N[ds]??""}">`;
+        lb.addEventListener("click",e=>e.stopPropagation());
+        lb.querySelector("input").addEventListener("change",e=>{ const S=state.settings, o=S.arNote=S.arNote||{}, v=e.target.value;
+          if(v===""||!isFinite(+v)) delete o[ds]; else o[ds]=Math.max(0,Math.min(100,+v));
+          for(const k of Object.keys(o)) if(k<=state.maxDate||k<addDays(td0,-7)) delete o[k]; // the file caught up / too old to matter
+          state.fcCache.clear(); saveState(); renderAll(); });
+        hth.appendChild(lb); } }
     // optimized view: "↔" opens how this day's shifts moved
     if(state._optView&&state._schedOut&&state._schedOut.asg.some(a=>a.ds===ds&&a.src==="moved")){
       const lk=document.createElement("span"); lk.className="exLink"; lk.textContent="↔"; lk.title=t("exOpen");
@@ -9150,6 +9198,7 @@ function mxTimeMarks(){
   const tbl=document.getElementById("matrixTable"); if(!tbl||!tbl.tBodies.length) return;
   const nowD=new Date(), today=iso(nowD), m=nowD.getHours()*60+nowD.getMinutes();
   if(state._mxDay&&state._mxDay!==today){ renderMatrix(); return; }
+  { const k=arNoteDays().join(); if(state._arDays!=null&&state._arDays!==k){ state._arDays=k; renderMatrix(); return; } state._arDays=k; } // ✎ today's field opens mid-day
   const on=!!tbl.querySelector(`tbody td[data-ds="${today}"]`); let past=0, now=0;
   tbl.querySelectorAll("tbody td[data-ds]").forEach(td=>{
     const ds=td.dataset.ds, tm=td.dataset.tm, a=tm?toMinW(tm):0, isCell=!!tm||td.closest("tr.msum");
@@ -9439,7 +9488,8 @@ const mLab=m=>m.k==="tsf30"?t("metricTsfDyn",{s:state.settings.tsfT}):t(m.lk); /
 const TR_REL=[["vol","ar"],["netH","ar"],["aht","ar"],["occ","ar"],["vol","aht"]];
 /* ↩ the cause: how many calls day ds sends back to the next working days — a lost day (catch-up) + its extra abandons
    (callbacks). Only when it matters (≥3% of the day, or 20 calls); 0 when the ↩ switch is off. */
-function retCause(ds){ if(state.settings.cuOn===false||!state.maxDate||ds>state.maxDate) return 0;
+function retCause(ds){ if(state.settings.cuOn===false||!state.maxDate) return 0;
+  if(ds>state.maxDate){ const n=arNoteX(ds)*arNoteP().p; return n>=Math.max(20,0.03*dayVolOf(ds))?n:0; } // a typed day (settings.arNote)
   let n=0; const P=state.cuParam, R=state.rtParam;
   if(P&&P.c>0) for(const g of state.cuEvents||[]) if(g.ds===ds) n+=g.lost*P.c;
   if(R&&R.p>0) n+=(R.X.get(ds)||0)*R.p;
@@ -11994,7 +12044,7 @@ function renderProfile(){
   const cur={},alt={},tms=new Set();
   for(let di=0;di<6;di++){ cur[di]=applyProfileEdits(di,profileShares(di,mode)); alt[di]=applyProfileEdits(di,profileShares(di,other));
     if(cur[di]) Object.keys(cur[di]).forEach(x=>tms.add(x)); }
-  const rows=[...tms].sort().filter(tm=>[0,1,2,3,4,5].some(di=>cur[di]&&cur[di][tm]>0.0005));
+  const rows=[...tms].sort().filter(tm=>TIMES.includes(tm)&&[0,1,2,3,4,5].some(di=>cur[di]&&cur[di][tm]>0.0005));
   const tbl=$pf("profTable"); tbl.innerHTML=""; tbl.classList.toggle("diff",view==="diff");
   $pf("profCopy").hidden=!rows.length;
   if(!rows.length){ $pf("profInsight").style.display=""; $pf("profInsight").textContent=t("profNone"); $pf("profFoot").textContent=""; return; }
@@ -12010,7 +12060,7 @@ function renderProfile(){
   const hr=document.createElement("tr"); hr.appendChild(th(t("thInterval")));
   for(let di=0;di<6;di++) hr.appendChild(th(ds[di]));
   const thead=document.createElement("thead"); thead.appendChild(hr); tbl.appendChild(thead);
-  const colMax=[0,1,2,3,4,5].map(di=>Math.max(0,...rows.map(tm=>(cur[di]||{})[tm]||0)));
+  const colMax=[0,1,2,3,4,5].map(di=>Math.max(0,...rows.map(tm=>(cur[di]||{})[tm]||0))), kO=profOpenK(cur,rows);
   const tb=document.createElement("tbody");
   for(const tm of rows){
     const tr=document.createElement("tr"); const rh=document.createElement("th"); rh.textContent=tm; tr.appendChild(rh);
@@ -12018,10 +12068,10 @@ function renderProfile(){
       const td=document.createElement("td"), v=(cur[di]||{})[tm];
       if(v==null){ td.textContent="—"; tr.appendChild(td); continue; }
       {
-        td.textContent=pp(v); td.style.background=`rgba(63,169,245,${(colMax[di]?v/colMax[di]:0)*.55})`;
+        td.textContent=pp(v*kO[di]); td.style.background=`rgba(63,169,245,${(colMax[di]?v/colMax[di]:0)*.55})`;
         const pinned=edits[di]&&edits[di][tm]!=null;
         if(pinned){ td.classList.add("pinned"); td.title=t("profPinnedTip"); }
-        td.addEventListener("click",()=>profEditCell(td,di,tm,v));
+        td.addEventListener("click",()=>profEditCell(td,di,tm,v,kO[di]));
       }
       tr.appendChild(td);
     }
@@ -12046,9 +12096,9 @@ function profEvt(ds){ // what the day was: its name (the holiday's own name) and
   const ev=evMap().get(ds); if(ev) return {n:ev.names.join(" + "),ty:t("profEvPlan")};
   return state.exceptions.has(ds)?{n:t("profEvExc"),ty:t("profEvExc")}:null; }
 function profHist(){
-  const key=[state._serVer,state.days.size,state._holVer||0,state.exceptions.size,lang].join("|"); if(state._phC&&state._phC.k===key) return state._phC.v;
+  const key=[state._serVer,state.days.size,state._holVer||0,state.exceptions.size,lang,TIMES.join(),friLimit()].join("|"); if(state._phC&&state._phC.k===key) return state._phC.v;
   const raw=[]; for(const ds of [...state.days.keys()].sort()){ const di=fromISO(ds).getDay(); if(di>5) continue; const sh={}; let tot=0;
-    for(const [tm,r] of state.days.get(ds)){ if(di===5&&tm>=friLimit()) continue; sh[tm]=r.volume||0; tot+=sh[tm]; }
+    for(const [tm,r] of state.days.get(ds)){ if(!profOpenTm(di,tm)) continue; sh[tm]=r.volume||0; tot+=sh[tm]; } // opening hours only
     if(tot>0){ for(const tm in sh) sh[tm]/=tot; const e=profEvt(ds); raw.push({ds,di,sh,tot,ev:e?e.n:"",ty:e?e.ty:""}); } }
   const usual={}, tms=new Set(), wkU={};
   for(let di=0;di<6;di++){ const rows=raw.filter(d=>d.di===di), use=rows.some(d=>!d.ev)?rows.filter(d=>!d.ev):rows, u={}; if(!use.length) continue;
@@ -12075,6 +12125,7 @@ function profPatterns(){
   H.days.forEach((d,i)=>{ if(d.di>4) return;
     if(d.ev){ add("e:"+d.ty,d.ty,d); return; }
     const p=H.days[i-1]; if(p){ let closed=Math.round((fromISO(d.ds)-fromISO(p.ds))/864e5)>3; for(let x=addDays(p.ds,1);x<d.ds&&!closed;x=addDays(x,1)) closed=state.holidayDates.get(x)==="closed"; if(closed) add("after",t("profPtAfter"),d); }
+    if(p&&retCause(p.ds)>0) add("ret",t("profPtRet"),d); // the day that receives returning calls: where in the day they land
     if(((state.domFactor||[])[+d.ds.slice(8)]||1)>=1.1) add("bill",t("profPtBill"),d);
     if(med[d.di]>0&&d.tot>=1.15*med[d.di]) add("busy",t("profPtBusy"),d); });
   const out=[]; for(const g of G.values()){ if(g.days.length<2) continue; const dev={}; let am=0;
@@ -12089,7 +12140,8 @@ const profDir=(am,pre)=>t(pre+(am>0?"Am":"Pm")), profPts=v=>Math.abs(v*100).toFi
    reps — and what next week's holidays did to the day's shape the last times. */
 function profNext(){
   const H=profHist(), sun=addDays(sundayOf(state.maxDate),7), out=[], diff={}, wd=[0,1,2,3,4].map(i=>addDays(sun,i));
-  for(const tm of H.tms){ let a=0,n=0; for(let di=0;di<5;di++){ const P=applyProfileEdits(di,profileShares(di,profMode())), U=H.usual[di]; if(P&&U&&P[tm]!=null&&U[tm]!=null){ a+=P[tm]-U[tm]; n++; } } diff[tm]=n?a/n:0; }
+  const PN=[0,1,2,3,4].map(di=>{ const P=applyProfileEdits(di,profileShares(di,profMode())); if(!P) return null; let z=0; for(const tm of H.tms) z+=P[tm]||0; const o={}; for(const tm of H.tms) if(P[tm]!=null) o[tm]=z>0?P[tm]/z:0; return o; }); // the split in use, over the opening hours (like the usual day)
+  for(const tm of H.tms){ let a=0,n=0; for(let di=0;di<5;di++){ const P=PN[di], U=H.usual[di]; if(P&&U&&P[tm]!=null&&U[tm]!=null){ a+=P[tm]-U[tm]; n++; } } diff[tm]=n?a/n:0; }
   let tot=0,nd=0,aw=0,an=0; for(const ds of wd){ const m=forecastDay(ds); if(!m) continue; let v=0; for(const r of m.values()){ v+=r.volume; aw+=r.aht*r.volume; an+=r.volume; } if(v>0){ tot+=v; nd++; } }
   const day=nd?tot/nd:0, aht=an?aw/an:300, T=H.tms, win=sign=>{ let b=null; for(let i=0;i+3<T.length;i++){ const s=diff[T[i]]+diff[T[i+1]]+diff[T[i+2]]+diff[T[i+3]]; if(b==null||s*sign>b.s*sign) b={s,a:T[i],b:addHalf(T[i+3])}; } return b; };
   const up=win(1), dn=win(-1), W=isoWeek(sun);
@@ -12178,10 +12230,10 @@ function profTsv(g){
     return out.map(r=>r.join("\t")).join("\n"); }
   const mode=profMode(), cur={}, tms=new Set(), dn=t("days");
   for(let di=0;di<6;di++){ cur[di]=applyProfileEdits(di,profileShares(di,mode)); if(cur[di]) Object.keys(cur[di]).forEach(x=>tms.add(x)); }
-  const rows=[...tms].sort().filter(tm=>[0,1,2,3,4,5].some(di=>cur[di]&&cur[di][tm]>0.0005)), key=tm=>g===60?tm.slice(0,2)+":00":tm;
+  const rows=[...tms].sort().filter(tm=>TIMES.includes(tm)&&[0,1,2,3,4,5].some(di=>cur[di]&&cur[di][tm]>0.0005)), key=tm=>g===60?tm.slice(0,2)+":00":tm, kO=profOpenK(cur,rows);
   const out=[[g===60?t("profColH"):t("profColI")].concat([0,1,2,3,4,5].map(di=>dn[di]))];
   for(const k of [...new Set(rows.map(key))]){ const r=[k];
-    for(let di=0;di<6;di++){ let v=null; for(const tm of rows) if(key(tm)===k&&cur[di]&&cur[di][tm]!=null) v=(v||0)+cur[di][tm]; r.push(v==null?"":(v*100).toFixed(2)+"%"); }
+    for(let di=0;di<6;di++){ let v=null; for(const tm of rows) if(key(tm)===k&&cur[di]&&cur[di][tm]!=null) v=(v||0)+cur[di][tm]; r.push(v==null?"":(v*kO[di]*100).toFixed(2)+"%"); }
     out.push(r); }
   return out.map(r=>r.join("\t")).join("\n");
 }
@@ -12193,15 +12245,15 @@ $pf("profCopyIns").addEventListener("click",async()=>{ const txt=profInsText();
   try{ await navigator.clipboard.writeText(txt); }catch(_){ const ta=document.createElement("textarea"); ta.value=txt; ta.style.cssText="position:fixed;opacity:0"; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); ta.remove(); }
   showToast("📋 "+t("profInsCopied"),true); });
 /* click a weight → type a new % → Enter pins it (empty = unpin); the rest of that day rebalances */
-function profEditCell(td,di,tm,v){
+function profEditCell(td,di,tm,v,k){ k=k||1; // k = the shown scale (opening hours = 100%); the pin is stored on the split's own scale
   if(td.querySelector("input")) return;
   td.textContent=""; const inp=document.createElement("input"); inp.type="number"; inp.step="0.1"; inp.min="0"; inp.max="60";
-  inp.value=(v*100).toFixed(1); td.appendChild(inp); inp.focus(); inp.select();
+  inp.value=(v*k*100).toFixed(1); td.appendChild(inp); inp.focus(); inp.select();
   let done=false;
   const commit=save=>{ if(done) return; done=true;
     if(save){ const E=state.settings.profileEdits=state.settings.profileEdits||{};
       if(inp.value===""||!isFinite(+inp.value)){ if(E[di]){ delete E[di][tm]; if(!Object.keys(E[di]).length) delete E[di]; } }
-      else if(Math.abs(+inp.value-v*100)>=0.05){ (E[di]=E[di]||{})[tm]=Math.min(0.6,Math.max(0,+inp.value/100)); }
+      else if(Math.abs(+inp.value-v*k*100)>=0.05){ (E[di]=E[di]||{})[tm]=Math.min(0.6,Math.max(0,+inp.value/100/k)); }
       profChanged(); }
     else renderProfile(); };
   inp.addEventListener("keydown",e=>{ if(e.key==="Enter") commit(true); if(e.key==="Escape"){ e.stopPropagation(); commit(false); } });
@@ -12839,7 +12891,7 @@ function wiScenario(){ const v=id=>+(document.getElementById(id)||{}).value||0;
   const s={ahtCut:v("wiAht"),attrCut:v("wiAttr"),shrinkCut:v("wiShrink"),absCut:v("wiAbsence")};
   return s.ahtCut||s.attrCut||s.shrinkCut||s.absCut?s:null; }
 function hirePlan(sc){
-  const S=state.settings, kb=JSON.stringify([state._serVer,state._crsVer||0,state._holVer||0,state.cohorts,S.headcount,S.attrition,S.target,S.primaryMetric,S.defYield,
+  const S=state.settings, kb=JSON.stringify([state._serVer,state._crsVer||0,state._holVer||0,state.cohorts,S.headcount,S.attrition,S.target,S.hpMode,S.primaryMetric,S.defYield,
     S.siteMax,S.siteLen,siteRules(), // siteRules() — the rules made on first use (S.siteRules was still empty here: every first open computed the plan twice)S.capSkills,state.capSkills,S.recruitBasis,S.capLens,state.maxDate,state.horizonISO,iso(new Date()),state.iron?state.iron.emps.size:0,state.rosterCap.size,planTo(),S.siteAtOnce,
     state.iron&&state.iron.wk,(S.ironHist||[]).map(h=>h.wk+h.at).join(), // the iron in effect on future days (ironEmpsFor)
     S.shrinkage,S.absence,S.mode,S.mpt,S.tsfT,state.calib,state.agWhatIf.size,state.trainees]), k=JSON.stringify(sc||null)+kb;
@@ -12933,8 +12985,13 @@ function hirePlanRaw(sc,kb){
       if(crsPeak(all.filter(x=>x.s===site),s,e)<k) return s; }
     let s=cand[cand.length-1]; while(!courseDayOK(s)) s=addDays(s,1); return s; };
   const siteList=[...new Set(SITES.map(s=>s[0]).concat(courses.map(x=>x.site).filter(Boolean)))];
+  /* TWO QUESTIONS (settings.hpMode): "date" (default) = enough to be on target in the PLAN DATE's month — the question the
+     target curve answers, so the two always agree; only that month sizes the additions (the earliest course first, as
+     ever) and the months on the way are shown, not demanded. "month" = enough in every month. */
+  const byDate=(S0.hpMode||"date")==="date", goalMo=months[months.length-1];
   for(const mo of months){
     mo.E0=expected(mo,false);
+    if(byDate&&mo!==goalMo) continue;
     let G=mo.N-expected(mo,true);
     if(G<=0.05) continue;
     for(const x of courses.concat(sug)){ // the earliest course first, up to its class size
@@ -12964,10 +13021,10 @@ function hirePlanRaw(sc,kb){
   for(const x of courses.slice().sort((a,b)=>a.start>b.start?-1:1)){ if(add.get(x.i)) continue;
     const room=x.count-(+x.c.count>0?+x.c.count:0); if(room<=0) continue;
     const eff=months.map(mo=>per(x,mo)); if(!eff.some(v=>v>0.02)) continue;
-    let r=room; eff.forEach((v,j)=>{ if(v>0.02) r=Math.min(r,Math.floor((slack[j]-0.05)/v)); });
+    let r=room; eff.forEach((v,j)=>{ if(v>0.02&&(!byDate||j===months.length-1)) r=Math.min(r,Math.floor((slack[j]-0.05)/v)); });
     if(r>0){ cut.set(x.i,r); eff.forEach((v,j)=>{ slack[j]-=r*v; }); } }
   const cutTotal=[...cut.values()].reduce((a,b)=>a+b,0);
-  return {months,courses,add,addFor,sug,total,cut,cutTotal};
+  return {months,courses,add,addFor,sug,total,cut,cutTotal,byDate};
 }
 function renderHirePlan(){
   const box=document.getElementById("hirePlan"); if(!box) return;
@@ -12979,17 +13036,20 @@ function renderHirePlan(){
   const esc=v=>String(v??"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");
   const loc=lang==="he"?"he-IL":"en-GB", mLbl=(m,long)=>new Date(+m.slice(0,4),+m.slice(5,7)-1,1).toLocaleDateString(loc,{month:long?"long":"short",year:"numeric"}); // with the year: Dec 2026 vs Jan 2027 read at a glance
   const d5=ds=>fmtDs(ds), last=p.months[p.months.length-1];
-  const short=p.months.filter(mo=>mo.N-mo.E1>0.5); // still short WITH the additions = the courses can't reach them in time
-  let html=`<div class="hpTitle">🎯 ${t("hpQ")} <span class="info" data-tip="${esc(t("tipHp"))}" tabindex="0">i</span></div>`;
+  const short=p.months.filter(mo=>mo.N-mo.E1>0.5&&(!p.byDate||mo===last)); // still short WITH the additions = the courses can't reach them in time
+  const way=p.byDate?p.months.filter(mo=>mo!==last&&mo.N-mo.E1>0.5):[]; // by the plan date: months on the way below the target — shown, not demanded
+  let html=`<div class="hpTitle">🎯 ${t("hpQ")} <span class="info" data-tip="${esc(t("tipHp"))}" tabindex="0">i</span></div>`
+    +`<div class="seg hpMode" title="${esc(t("hpModeTip"))}"><button type="button" data-m="date" class="${p.byDate?"active":""}">${t("hpModeDate",{d:fmtDs(planTo())})}</button><button type="button" data-m="month" class="${p.byDate?"":"active"}">${t("hpModeMonth")}</button></div>`;
   // undo: the last update can be taken back, exactly
   // 🔧 a scenario is on: said once, with its levers — the numbers below are the scenario's
   if(sc){ const lv=[["wiAht",sc.ahtCut],["wiAttr",sc.attrCut],["wiShrink",sc.shrinkCut],["wiAbsence",sc.absCut]].filter(x=>x[1]>0).map(x=>t(x[0])+" "+x[1]+"%").join(" · ");
     html+=`<div class="hpScen">🔧 ${t("hpScen",{l:esc(lv)})}</div>`; }
   // the answer — "yes" only when EVERY month reaches the target
   html+=p.total>0
-    ?`<div class="hpHero"><span class="hpN">+${p.total}</span> <span>${t("hpRecruits")}${p.sug.length===1?t("hpMoreCourse1"):p.sug.length?t("hpMoreCourses",{k:p.sug.length}):""}</span>${pb&&pb.total!==p.total?` <span class="hpWas">${t("hpScenWas",{n:pb.total})}</span>`:""}</div>`
+    ?`<div class="hpHero"><span class="hpN">+${p.total}</span> <span>${t("hpRecruits")}${p.sug.length===1?t("hpMoreCourse1"):p.sug.length?t("hpMoreCourses",{k:p.sug.length}):""}${p.byDate?" "+t("hpByDate",{m:mLbl(last.m)}):""}</span>${pb&&pb.total!==p.total?` <span class="hpWas">${t("hpScenWas",{n:pb.total})}</span>`:""}</div>`
     :short.length?`<div class="hpHero warn">${t("hpShortN",{n:short.length})}</div>`
-    :`<div class="hpHero ok">✓ ${t("hpOkMonths",{m:mLbl(last.m)})}</div>`;
+    :`<div class="hpHero ok">✓ ${t(p.byDate?"hpOkDate":"hpOkMonths",{m:mLbl(last.m)})}</div>`;
+  if(way.length) html+=`<p class="hpWay">${t("hpWay")} ${way.map(x=>`<bdi>${mLbl(x.m)}</bdi> <bdi dir="ltr">−${Math.ceil(x.N-x.E1)}</bdi>`).join(" · ")}</p>`;
   if(short.length){ const late=short.map(x=>x.late).filter(Boolean).sort()[0];
     const lastOf=m=>iso(new Date(+m.slice(0,4),+m.slice(5,7),0)), full=short.some(mo=>p.courses.some(x=>x.floor<=lastOf(mo.m))); // courses that graduate in time exist → they are full
     html+=`<p class="hpBeyond"><b>${t("hpStillShort")}</b> ${short.map(x=>`<bdi>${mLbl(x.m)}</bdi>: <bdi dir="ltr"><b>−${Math.ceil(x.N-x.E1)}</b></bdi>`).join(" · ")}</p>`
@@ -12998,7 +13058,7 @@ function renderHirePlan(){
   // one picture: per month, needed (tick) vs expected — with the additions when there are any. A month opens its numbers.
   const anyAdd=p.total>0, pick=state._hpMonth;
   const cols=p.months.map(mo=>{ const gap=Math.ceil(mo.N-mo.E1-0.05);
-    return {key:mo.m,label:mLbl(mo.m),iron:anyAdd?mo.E0:0,sched:mo.E1,need:mo.N,foot:gap>0?"−"+gap:"✓",cls:gap>0?"bad":"good",pick:pick===mo.m,
+    return {key:mo.m,label:mLbl(mo.m),iron:anyAdd?mo.E0:0,sched:mo.E1,need:mo.N,foot:gap>0?"−"+gap:"✓",cls:gap>0?(p.byDate&&mo!==last?"":"bad"):"good",pick:pick===mo.m,
       tip:t("hpTipMo",{n:mo.N,a:Math.round(mo.E0),b:anyAdd?" → "+Math.round(mo.E1):""})}; });
   const leg=(anyAdd?[["ir",t("hpLgPlan")],["sd",t("hpLgWith")]]:[["sd",t("hpLgPlan")]]).concat([["nd",t("hpLgNeed")]]);
   html+=`<div class="hpChart">${ironBars(cols,70)}</div><div class="legend rdyLeg">${leg.map(([k,l])=>`<span><i class="lg-${k}"></i>${l}</span>`).join("")}</div>`;
@@ -13023,6 +13083,7 @@ function renderHirePlan(){
       +(siteRules().length?`<button type="button" class="xbtn" data-rx="${ri}" title="${esc(t("remove"))}">✕</button>`:"")+`</div>`).join("")
     +`<button type="button" class="linklike hpRuleAdd">${t("hpRuleAdd")}</button><p class="mini hpLink">${t("hpPairsHint")}</p></div></details>`;
   box.innerHTML=html;
+  box.querySelector(".hpMode").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b||b.classList.contains("active")) return; S.hpMode=b.dataset.m; saveState(); renderAll(); });
   box.querySelector(".ouWrap").querySelectorAll(".rdyCol").forEach(b=>b.addEventListener("click",()=>{ state._hpMonth=state._hpMonth===b.dataset.k?null:b.dataset.k; renderHirePlan(); }));
   const ap=box.querySelector("#hpApply");
   if(ap){ const sync=()=>{ ap.disabled=!box.querySelector(".hpList input:checked"); };
@@ -13101,21 +13162,49 @@ function rcReportHtml(){
   if(on.has("traj")){ const li=[...document.querySelectorAll("#trajList > li")].filter(x=>!x.querySelector("details,summary")).map(x=>x.innerText.trim()).filter(Boolean).slice(0,3);
     if(li.length) b+=sec(t("repTraj"),`<ul>${li.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`,"repHowTraj"); }
   if(on.has("mon")&&state.maxDate){ // = Date Trends grouped by month: the same day rows, summed / call-weighted
-    const end=state.horizonISO||state.maxDate, m0=addDays(state.maxDate,-92).slice(0,7)+"-01", M=new Map();
+    const end=state.horizonISO||state.maxDate, m0=addDays(state.maxDate,-92).slice(0,7)+"-01", M=new Map(), M2=new Map();
+    /* 🔧 the same months WITH the What-If measures improved (drawn as a second table, like the two course lists): a
+       forecast day is recomputed with the handle time cut, the unavailable time / no-shows cut (more of each scheduled
+       rep answers; fewer gross hours to schedule) and the reps the lower attrition keeps (hcR = the What-If curve's own
+       headcount path, with ÷ without). Measured days are what they were. */
+    const sc=wiScenario(), SHm=scopeHc(), hc0=Math.max(1,SHm.hc||1), S2=sc?{...S,shrinkage:S.shrinkage*(1-sc.shrinkCut/100),absence:S.absence*(1-sc.absCut/100)}:S, eff2=Math.max(0.05,availShare(S2)*(state.calib||1));
+    const hcR=ds=>{ if(!sc||!sc.attrCut||ds<=today) return 1; const d=Math.round((fromISO(ds)-fromISO(today))/864e5),
+        gr=state.cohorts.filter(c=>c.start&&cohortFloorDate(c)>today&&cohortFloorDate(c)<=ds&&cohortMatchesSkill(c,SHm.skillF)).reduce((a,c)=>a+cohortEffective(c),0),
+        h0=hc0*(1-S.attrition/100*(d/30))+gr, h1=hc0*(1-S.attrition*(1-sc.attrCut/100)/100*(d/30))+gr; return h0>0?h1/h0:1; };
+    const dayScen=ds=>{ const sd=sourceDay(ds), di=fromISO(ds).getDay(), kR=hcR(ds), o={v:0,a:0,h:0,g:0}, c01=v=>Math.min(1,Math.max(0,v));
+      for(const [tm,rec] of sd.src){ if(state.exceptions.has(ds+"|"+tm)||!(rec.volume>0)) continue;
+        const aht=Math.max(1,rec.aht*(1-sc.ahtCut/100)), sched=(capacityFor(ds,di,tm,rec)+injectionAgents(di,tm)+traineeAt(ds,di,tm))*kR;
+        const p=evalInterval(rec.volume,aht,Math.max(0,Math.round(sched*eff2)),S2,rec.mpt), bi=state.slotBias&&state.slotBias[di+"|"+tm];
+        const pv=S.primaryMetric==="tsf"?c01(p.tsf+(bi&&S.tsfT===30?bi.t30:0)):c01(p.ar+(bi?bi.ar:0));
+        o.v+=rec.volume; o.a+=pv*rec.volume; o.h+=aht*rec.volume; o.g+=Math.round(requiredAgentsMemo(rec.volume,aht,S.target,S2,rec.mpt)/eff2)*0.5; }
+      return o; };
     for(let ds=m0;ds<=end;ds=addDays(ds,1)){ const r=trendDayStat(ds); if(!r||!(r.vol>0)) continue; const k=ds.slice(0,7);
       const o=M.get(k)||{v:0,a:0,h:0,g:0,met:0,n:0,act:0,fc:0}; const pv=S.primaryMetric==="tsf"?r.tsf:r.ar;
-      o.v+=r.vol; o.a+=(pv||0)*r.vol; o.h+=(r.aht||0)*r.vol; o.g+=r.grossH||0; o.n++; if(r.met) o.met++; if(r.forecast) o.fc++; else o.act++; M.set(k,o); }
+      o.v+=r.vol; o.a+=(pv||0)*r.vol; o.h+=(r.aht||0)*r.vol; o.g+=r.grossH||0; o.n++; if(r.met) o.met++; if(r.forecast) o.fc++; else o.act++; M.set(k,o);
+      if(sc){ const o2=M2.get(k)||{v:0,a:0,h:0,g:0,met:0,n:0,act:0,fc:0}; o2.n++;
+        if(r.forecast){ const q=dayScen(ds); o2.v+=q.v; o2.a+=q.a; o2.h+=q.h; o2.g+=q.g; o2.fc++; if(q.v&&q.a/q.v>=S.target/100) o2.met++; }
+        else{ o2.v+=r.vol; o2.a+=(pv||0)*r.vol; o2.h+=(r.aht||0)*r.vol; o2.g+=r.grossH||0; o2.act++; if(r.met) o2.met++; }
+        M2.set(k,o2); } }
     // the month the plan date falls inside is still shown whole — it says so
     const full=k=>pt.slice(0,7)===k&&addDays(pt,1).slice(0,7)===k;
-    const rows=[...M].map(([k,o])=>[esc(mL(k))+(full(k)?" "+esc(t("repFullMo")):"")+`<br><span class="sub">${esc(t(o.fc&&o.act?"repMix":o.fc?"repFc":"repAct"))}</span>`,Math.round(o.v).toLocaleString(),
-      (o.a/o.v*100).toFixed(1)+"%",fmtSec(o.h/o.v),Math.round(o.g).toLocaleString(),o.met+"/"+o.n]);
-    if(rows.length) b+=sec(t("repMon"),tbl([t("repMonth"),t("thVol"),primName(),t("thAht"),t("repGross"),t("repMet",{t:S.target})],rows)); }
+    // ref = the same month as the center runs today → the "with" table says what changed under each number
+    const dl=x=>`<br><span class="sub">${x}</span>`, rowOf=(k,o,ref)=>{ const ar=o.a/o.v*100, dA=ref?ar-ref.a/ref.v*100:0, dG=ref?Math.round(o.g)-Math.round(ref.g):0;
+      return [esc(mL(k))+(full(k)?" "+esc(t("repFullMo")):"")+dl(esc(t(o.fc&&o.act?"repMix":o.fc?"repFc":"repAct"))),Math.round(o.v).toLocaleString(),
+        ar.toFixed(1)+"%"+(ref&&Math.abs(dA)>=0.05?dl(sg((dA>0?"+":"−")+Math.abs(dA).toFixed(1))):""),fmtSec(o.h/o.v),
+        Math.round(o.g).toLocaleString()+(ref&&dG?dl(sg((dG>0?"+":"−")+Math.abs(dG).toLocaleString())):""),o.met+"/"+o.n]; };
+    const hd=[t("repMonth"),t("thVol"),primName(),t("thAht"),t("repGross"),t("repMet",{t:S.target})], rows=[...M].map(([k,o])=>rowOf(k,o));
+    const fcM=sc?[...M2].filter(([,o])=>o.fc>0&&o.v>0):[];
+    if(rows.length&&fcM.length){ let g0=0,g1=0; fcM.forEach(([k,o])=>{ g0+=M.get(k).g; g1+=o.g; }); const sv=Math.round(g0-g1);
+      b+=sec(t("repMon"),`<p class="sub">${esc(t("repMonWhy"))}</p><p class="lead">${esc(t("repMonNo"))}</p>`+tbl(hd,rows)
+        +`<p class="lead">${esc(t("repMonYes"))}</p><p class="sub">${esc(t("repLevers"))} ${levHtml(sc)}</p>`
+        +tbl(hd,fcM.map(([k,o])=>rowOf(k,o,M.get(k))),0,sv>0?esc(t("repMonSave",{h:sv.toLocaleString()}))+" ("+sg("−"+(sv/g0*100).toFixed(1)+"%")+")":"")); }
+    else if(rows.length) b+=sec(t("repMon"),tbl(hd,rows)); }
   const p=hirePlan();
   if(on.has("plan")&&p&&p.months&&p.months.length){
     // short = the courses as loaded against the need; "provided we keep to the recruiting Gantt" while courses are still ahead (they must fill for the months to hold)
-    const short=mo=>Math.ceil(mo.N-mo.E0-0.05), still=p.months.some(mo=>Math.ceil(mo.N-mo.E1-0.05)>0), lastM=mL(p.months[p.months.length-1].m);
-    const rows=p.months.map(mo=>{ const g=short(mo); return [esc(mL(mo.m)),mo.N,Math.round(mo.E0),g>0?`<b class="bad">${sg("−"+g)}</b>`:"✓"]; });
-    let body=`<p class="lead">${still?sg("+"+p.total)+" "+esc(t("hpRecruits")):esc(t(p.total>0||state.cohorts.some(c=>c.start>today)?"repOkIfGantt":"hpOkMonths",{m:lastM}))}</p>`
+    const short=mo=>Math.ceil(mo.N-mo.E0-0.05), goal=p.months[p.months.length-1], still=(p.byDate?[goal]:p.months).some(mo=>Math.ceil(mo.N-mo.E1-0.05)>0), lastM=mL(goal.m);
+    const rows=p.months.map(mo=>{ const g=short(mo); return [esc(mL(mo.m)),mo.N,Math.round(mo.E0),g>0?(p.byDate&&mo!==goal?sg("−"+g):`<b class="bad">${sg("−"+g)}</b>`):"✓"]; });
+    let body=`<p class="lead">${still?sg("+"+p.total)+" "+esc(t("hpRecruits")):esc(t(p.total>0||state.cohorts.some(c=>c.start>today)?"repOkIfGantt":p.byDate?"hpOkDate":"hpOkMonths",{m:lastM}))}</p>`+(p.byDate?`<p class="sub">${esc(t("hpModeNote"))}</p>`:"")
       +tbl([t("repMonth"),t("hpLgNeed"),t("hpLgPlan"),t("repGap")],rows,1);
     const adds=p.courses.filter(x=>p.add.get(x.i)).map(x=>[esc(x.c.name),esc(x.site||"—"),d5(x.floor),x.count,sg("+"+p.add.get(x.i)),esc(mL(p.addFor.get(x.i)))])
       .concat(p.sug.map(s=>["➕ "+esc(t("hpNew")),esc(s.site),d5(s.floor),"—",sg("+"+s.count),esc(mL(s.for))]));
