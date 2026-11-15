@@ -229,6 +229,12 @@ workforce filter lists legitimately show only "(all)" for this file.
   `catchUpAt`; the fast lane takes it out before measuring its level and no longer adds callbacks itself (the
   manual `retryShare` slider is gone). Trends: `trRet` → the volume bar's hatched "returning" layer + its key + hover.
   Next stage (not built): the loop — forecast abandonment → returns on the following forecast days.
+- ✎ A day the file doesn't hold yet: `settings.arNote` {ds: answer %} typed in the matrix header (`.arNote`, only maxDate <
+  ds ≤ today, last 3 days, ↩ on). `arNoteX(ds)` = its extra abandons (over `rtParam.r0`, else 1 − target) on that day's
+  forecast calls; `retryAt` adds them to the next two working days at `arNoteP()` (learned p / q, else Settings' known
+  rate, else 40% · ¾ + ¼); `retCause` marks the typed day. Test: `tests/browser/ar-note.js`.
+- 📊 The 📊 window = opening hours only (`profOpenTm`, `TIMES`); shown shares scale to 100% (`profOpenK`); pins are stored
+  on the split's own scale. 📄 The report's month table is drawn again with the What-If scenario (`dayScen`, `hcR`).
 - ↩ the CAUSE: `retCause(ds)` = what a past day sends back (a lost day's `g.lost×c` + its extra abandons `X×p`, ≥3% of the
   day). Marked with a blue ▲ (`.retCauseMk` in the Trends volume + answer-rate charts, `.retCauseTag` in the Trends date
   cell and the matrix daily row); the effect = hatched blue: the charts' layer (`trRet`) and ONE tag `retPill(ds,n)`

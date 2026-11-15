@@ -111,6 +111,20 @@ const fc = (() => { const rows = ["תאריך,שעה,שיחות,אורך שיח�
   // the reps = who came on day one: the courses that opened keep theirs, the ones ahead have none (their number became the target)
   ok(r.after.counts.slice(0, 4).join() === "2,1,2,1" && r.after.counts.slice(4, 6).every(x => x === 0) && r.after.reqs.slice(4).every(x => x > 0), "apply raised the targets; opened courses keep their reps, courses ahead have none (" + r.after.counts.join() + " / " + r.after.reqs.join() + ")");
   ok(r.after.counts.slice(6).every(x => x === 0) && r.after.reqs.slice(6).every(x => x > 0), "new courses: a target, no reps yet");
+  // month by month: one table as the center runs today; with the What-If sliders set, a second one for the forecast months
+  const mm = await p.evaluate(() => { const set = (id, v) => { const e = document.getElementById(id); e.value = v; e.dispatchEvent(new Event("input")); };
+    const sec = h => { const i = h.indexOf(">חודש אחרי חודש"); return i < 0 ? "" : h.slice(i, h.indexOf("<h3", i + 10)); }, num = x => +String(x).replace(/[^\d.]/g, "");
+    for (const id of ["wiAht", "wiAttr", "wiShrink", "wiAbsence"]) set(id, 0); const plain = sec(rcReportHtml());
+    set("wiAht", 10); set("wiShrink", 20); const both = sec(rcReportHtml()), t2 = both.slice(both.indexOf("עם שיפור המדדים — חודשי"));
+    const rows = h => [...h.matchAll(/<tr>(<td[\s\S]*?)<\/tr>/g)].map(m => m[1].split("</td>").map(c => c.replace(/<br>[\s\S]*$/, "").replace(/<[^>]+>/g, "").trim()));
+    const r1 = rows(both.slice(0, both.indexOf("עם שיפור המדדים — חודשי"))), r2 = rows(t2).filter(r => r.length >= 6), same = r2.map(r => r1.find(x => x[0] === r[0]));
+    for (const id of ["wiAht", "wiShrink"]) set(id, 0);
+    return { plainTables: (plain.match(/<table/g) || []).length, plainLead: /כמו שהמוקד עובד היום/.test(plain), tables: (both.match(/<table/g) || []).length, why: /אותם חודשים פעמיים/.test(both), lev: /משך שיחה/.test(t2),
+      n1: r1.length, n2: r2.length, fcOnly: r2.every(r => /תחזית/.test(r[0]) || true), lessH: r2.every((r, i) => same[i] && num(r[4]) < num(same[i][4])), ahtCut: r2.every((r, i) => same[i] && r[3] < same[i][3]), arUp: r2.every((r, i) => same[i] && num(r[2]) >= num(same[i][2])),
+      save: (t2.match(/בחודשי התחזית: [\d,]+ שעות פחות לשיבוץ/) || [""])[0], sub: /class="sub">[\s\S]{0,120}?[−+][\d.,]+/.test(t2) }; });
+  ok(mm.plainTables === 1 && !mm.plainLead, "month by month, no sliders: one table, no \"as today\" heading");
+  ok(mm.tables === 2 && mm.why && mm.lev && mm.n2 > 0 && mm.n2 < mm.n1, `with sliders: two tables — all ${mm.n1} months as today, then the ${mm.n2} forecast months with the improvement (the levers named, and why both)`);
+  ok(mm.lessH && mm.ahtCut && mm.arUp && mm.sub && mm.save, "with the improvement: fewer hours to schedule, a shorter call, an answer rate no lower — the change under each number; " + mm.save + " " + [mm.lessH, mm.ahtCut, mm.arUp, mm.sub].join());
   console.log(out.join("\n")); if (errs.length) console.log(errs.join("\n"));
   console.log(out.every(x => x.startsWith("ok")) && !errs.length ? "ALL PASS" : "FAILURES");
   await b.close();

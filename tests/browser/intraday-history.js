@@ -1,6 +1,6 @@
 // 📊 "How do the calls spread over the day?" — the ways in (Settings button + its pulse, the matrix ⋯) and the
 // "over time" view: every history week / day against a usual day, the events, the recent drift, the copy for Excel.
-// The file: 16 weeks Sun–Thu ending 02-Jul-2026; in the last 4 weeks the calls move to the morning; Tue 12-May-2026 is
+// The file: 16 weeks Sun–Thu ending 02-Jul-2026; in the last 6 weeks the calls move to the morning; Tue 12-May-2026 is
 // an odd day (afternoon-heavy) and Tue 19-May-2026 a milder one — the user marks both as exceptions.
 // Optional: set LG_SHOTS=<folder> for a screenshot.
 const puppeteer = require("puppeteer-core");
@@ -12,9 +12,10 @@ const cl = x => x.replace(/[⁦-⁩‎‏]/g, ""); // dates on screen carry dire
 
 const fcCSV = (() => { const rows = ["תאריך,שעה,שיחות,אורך שיחה ממוצע"], W = 16, d0 = new Date(2026, 5, 28 - (W - 1) * 7);
   for (let w = 0; w < W; w++) for (let d = 0; d < 5; d++) { const dt = new Date(d0.getTime() + (w * 7 + d) * 864e5), ds = String(dt.getDate()).padStart(2, "0") + "/" + String(dt.getMonth() + 1).padStart(2, "0") + "/2026";
-    const odd = dt.getMonth() === 4 && dt.getDate() === 12, odd2 = dt.getMonth() === 4 && dt.getDate() === 19, late = w >= W - 4;
+    const odd = dt.getMonth() === 4 && dt.getDate() === 12, odd2 = dt.getMonth() === 4 && dt.getDate() === 19, late = w >= W - 6;
     for (let h = 8; h < 18; h++) for (const m of ["00", "30"]) { const am = h < 12, base = 60 + (h % 5) * 8 + ((w + h + d) % 3);
-      rows.push(`${ds},${h}:${m},${Math.round(base * (odd ? (am ? 0.6 : 1.5) : odd2 ? (am ? 0.75 : 1.3) : late ? (am ? 1.12 : 0.9) : 1))},300`); } }
+      rows.push(`${ds},${h}:${m},${Math.round(base * (odd ? (am ? 0.6 : 1.5) : odd2 ? (am ? 0.75 : 1.3) : late ? (am ? 1.12 : 0.9) : 1))},300`); }
+    for (const tm of ["18:00", "18:30", "19:00"]) rows.push(`${ds},${tm},${(w + d) % 4 ? 1 : 6},300`); } // a few stray calls after closing (18:00)
   return rows.join("\n");
 })();
 
@@ -87,7 +88,11 @@ const fcCSV = (() => { const rows = ["תאריך,שעה,שיחות,אורך שי
   ok(s.n === 15 && s.g === "day" && s.chip && s.hint && s.back === 16 && s.z2 === null, `dragging over 3 weeks zooms into their ${s.n} days (${s.z.a} … ${s.z.b}); ✕ returns to the 16 weeks`);
   // back to the split: the table, the learning choice and the peak line return
   s = await p.evaluate(() => { document.querySelector('#profView [data-view="share"]').click(); const q = x => document.querySelector(x);
-    return { time: !q("#profTime").hidden, tbl: q("#profTblW").style.display, win: q("#profWin").style.display, ins: q("#profInsight").textContent, shown: q("#profInsight").style.display !== "none", rows: q("#profTable").rows.length }; });
+    return { time: !q("#profTime").hidden, tbl: q("#profTblW").style.display, win: q("#profWin").style.display, ins: q("#profInsight").textContent, shown: q("#profInsight").style.display !== "none", rows: q("#profTable").rows.length,
+      last: [...q("#profTable").rows].pop().cells[0].textContent, histLast: profHist().tms.slice(-1)[0], copyLast: profTsv(30).split("\n").pop().split("\t")[0],
+      sums: [1, 3, 5].map(c => [...q("#profTable").rows].slice(1).reduce((a, r) => a + (parseFloat(r.cells[c].textContent) || 0), 0)), copySum: profTsv(30).split("\n").slice(1).reduce((a, r) => a + (parseFloat(r.split("\t")[2]) || 0), 0), raw: Object.entries(profileShares(1, profMode())).filter(([tm]) => tm < "18:00").reduce((a, [, v]) => a + v, 0) }; });
+  ok(s.last === "17:30" && s.histLast === "17:30" && s.copyLast === "17:30", "only the opening hours: the file's stray calls after 18:00 are not in the table, the over-time view or the copy");
+  ok(s.sums.slice(0, 2).every(v => Math.abs(v - 100) < 0.6) && Math.abs(s.copySum - 100) < 0.05 && s.raw < 0.999, `the shown shares of a weekday add to 100% (table ${s.sums.map(v => v.toFixed(1)).join(" / ")}, copy ${s.copySum.toFixed(2)}) though the after-hours part holds ${((1 - s.raw) * 100).toFixed(2)}%`);
   ok(!s.time && s.tbl === "" && s.win === "" && s.shown && /peak/.test(s.ins) && s.rows > 10, "back to the split: the table and its one line return — " + s.ins);
 
   console.log(out.join("\n")); if (errs.length) console.log(errs.join("\n"));
