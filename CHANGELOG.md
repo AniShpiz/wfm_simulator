@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### 📣 Planned demand events that learn · the round hour in the matrix hover
+
+- An event is a name + its dates (pick them, or paste a whole list). The dates that already passed teach how many
+  calls it brings and for how many days; the dates ahead get it in the forecast — nothing to calculate. A new event
+  with no past date: "how big?" (small · medium · large) and "how long?" (1 · 3 · 5 days). The exact number of calls
+  is still there, folded.
+- 📣? on a day in the file with far more calls than usual that nothing explains (matrix + Date Trends): one click
+  says what it was — that event learns from it — or "nothing special" (never asked again).
+- Saved with the settings; what an event learned stays even when a newer file no longer holds its dates. Event days
+  stay out of the normal learning, and the fast lane no longer reads a planned day as a change in level.
+- Matrix: hovering the second half hour also shows the round hour's calls ("Hour 10:00–11:00: 503 calls").
+
 ### 🖨 Break sheets: one click to print, any printer, readable in black and white
 
 - One button prints the everyday sheet ("🖨 Print the sheet" = the blank board + entitlement + queue); the rest is under ⋯:
