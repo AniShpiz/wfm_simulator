@@ -363,6 +363,12 @@ tr.sumrow td,tr.sumrow th{font-weight:700;background:var(--sky-soft);border-bott
 /* 📣 planned demand events: panel in the shared modal + purple badges */
 .evrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:.78rem;padding:5px 8px;margin:6px 0;border:1px solid #d9ccf5;background:#f7f3fe;border-radius:8px}
 .evrow b{color:#6b46c1}.evrow .grow{flex:1}
+.evAskH{font-weight:700;color:var(--navy);font-size:.82rem;margin:2px 0 4px} .evAskR{background:#fff8e6;border-color:#f0d58a} .evAskR.hl{box-shadow:0 0 0 2px var(--sky)}
+.evUp{font-weight:800;color:#6b46c1} .evUp,.evD small{unicode-bidi:isolate;direction:ltr} /* "+32%" reads the same in Hebrew */ .evFx{display:inline-flex;align-items:flex-end;gap:2px;height:18px} .evFx i{width:7px;height:var(--h);background:#8b6fd6;border-radius:2px 2px 0 0}
+.evDs{flex-basis:100%;display:flex;flex-wrap:wrap;gap:5px;align-items:center} .evPick{display:flex;flex-wrap:wrap;gap:5px;align-items:center} #evChips{display:contents}
+.evD{display:inline-flex;align-items:center;gap:3px;padding:1px 3px 1px 8px;border:1px solid #d9ccf5;border-radius:999px;background:#fff;font-size:.74rem} .evD.past{background:#f1f1f4;color:#555} .evD small{color:#6b46c1;font-weight:700} .evD .xbtn{font-size:.75rem;padding:0 3px;color:#9aa5b1} .evD .xbtn:hover{color:var(--crimson)}
+.evForm{border-top:1px solid var(--border);margin-top:8px;padding-top:4px} #evExact summary{cursor:pointer;margin:4px 0}
+.evAsk{display:inline-block;margin-inline-start:4px;padding:0 5px;border-radius:999px;background:#fff1c7;border:1px solid #f0c24a;font-size:.68rem;font-weight:700;cursor:pointer;color:#7a5a00;white-space:nowrap}
 .evPill{background:#6b46c118;color:#6b46c1;border:1px solid #6b46c155;border-radius:9px;padding:0 7px;font-size:.66rem;font-weight:700;white-space:nowrap;margin-inline-start:6px;vertical-align:1px;unicode-bidi:isolate}
 #trHint{margin:0 0 6px}
 .trHelp{width:20px;height:20px;border-radius:50%;border:1px solid var(--border);font-size:.75rem;font-weight:700;color:var(--muted);text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
@@ -1586,15 +1592,25 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
           </details>
         </div>
         <div id="evPanel" class="mpanel" data-tkey="evTitle" hidden>
+          <div id="evAsk"></div>
           <div id="evList"></div>
-          <div class="frow"><label data-i18n="evName">Event</label><input type="text" id="evName" style="width:190px" data-i18n-ph="evNamePh" placeholder="e.g. Vendor change"></div>
-          <div class="frow"><label data-i18n="evStart">First day</label><input type="date" id="evStart" style="width:150px"></div>
-          <div class="frow"><label data-i18n="evDays">Working days</label><input type="number" id="evDays" min="1" max="30" value="5" style="width:70px"></div>
-          <div class="frow"><label><span data-i18n="evTotal">Extra calls (total)</span></label><input type="number" id="evTotal" min="0" step="100" style="width:110px"></div>
-          <div class="frow"><label><span data-i18n="evShape">Spread</span> <span class="info" data-tipkey="tipEv" tabindex="0">i</span></label>
-            <div class="seg" id="evShape"><button type="button" data-shape="front" class="active" data-i18n="evFront">Front-loaded</button><button type="button" data-shape="even" data-i18n="evEven">Even</button></div></div>
+          <div class="evForm">
+          <div class="frow"><label data-i18n="evName">Event</label><input type="text" id="evName" list="evKindsDl" autocomplete="off" style="width:210px" data-i18n-ph="evNamePh" placeholder="e.g. Email mailing"><datalist id="evKindsDl"></datalist></div>
+          <div class="frow"><label data-i18n="evDates">Dates</label><div class="evPick"><span id="evChips"></span><input type="date" id="evStart" style="width:150px"></div></div>
+          <div class="frow"><label data-i18n="evPaste">…or paste a list</label><input type="text" id="evPaste" style="width:240px" placeholder="05/07/2026, 12/07/2026"></div>
+          <div id="evGuess">
+            <div class="frow"><label data-i18n="evSize">How big?</label><div class="seg" id="evSize"><button type="button" data-v="s" data-i18n="evSzS">Small +10%</button><button type="button" data-v="m" data-i18n="evSzM">Medium +25%</button><button type="button" data-v="l" data-i18n="evSzL">Large +50%</button></div></div>
+            <div class="frow"><label data-i18n="evLen">How long?</label><div class="seg" id="evLen"><button type="button" data-v="1" data-i18n="evL1">1 day</button><button type="button" data-v="3" data-i18n="evL3">3 days</button><button type="button" data-v="5" data-i18n="evL5">5 days</button></div></div>
+          </div>
+          <details id="evExact"><summary class="mini" data-i18n="evExactS">⚙ I know the number of calls</summary>
+            <div class="frow"><label data-i18n="evDays">Working days</label><input type="number" id="evDays" min="1" max="30" value="5" style="width:70px"></div>
+            <div class="frow"><label><span data-i18n="evTotal">Extra calls (total)</span></label><input type="number" id="evTotal" min="0" step="100" style="width:110px"></div>
+            <div class="frow"><label><span data-i18n="evShape">Spread</span> <span class="info" data-tipkey="tipEv" tabindex="0">i</span></label>
+              <div class="seg" id="evShape"><button type="button" data-shape="front" class="active" data-i18n="evFront">Front-loaded</button><button type="button" data-shape="even" data-i18n="evEven">Even</button></div></div>
+          </details>
           <p class="mini" id="evPreview"></p>
           <div class="frow" style="border:none"><button class="btn navy" id="evAdd" type="button" data-i18n="evAdd">+ Add event</button></div>
+          </div>
         </div>
       </div>
       <!-- QA / feedback in its own card — nothing is sent automatically -->
@@ -2217,7 +2233,7 @@ en:{
   setMptHint:"Don't know it? Take the average wait of abandoned calls from your phone system's report.",
   ceTitle:"Edit {day} {time}", ceCancel:"Cancel", ceApply:"Apply",
   ceFutL:"Apply to this and all future weeks (same weekday & interval)",
-  mxCum:"Day so far ({a}–{b}): {v} · {n} calls", ceCum:"Day so far {a}–{b}:",
+  mxCum:"Day so far ({a}–{b}): {v} · {n} calls", mxHour:"Hour {a}–{b}: {n} calls · {v}", ceCum:"Day so far {a}–{b}:",
   ceSched:"scheduled", ceNeed:"needed", ceAfter:"after the change", ceDayTotal:"· daily total",
   ceHintVolFc:"Model forecast for this half-hour — change it if you know something the model doesn't.",
   ceHintVolAct:"Measured in your file — edit only to correct bad data.",
@@ -2256,8 +2272,8 @@ en:{
   profPeak:"Most days peak at {tm}", profPinnedTip:"Set by you — click to change; empty the box to go back to the learned share",
   profEditNote:"Click a cell to set its share by hand — the rest of the day adjusts so the total stays 100%.",
   profReset:"↺ Back to the learned split ({n})",
-  evTitle:"📣 Planned demand events", evIntro:"A known one-off surge your history can't predict (vendor change, campaign, price update). The calls are added to the forecast — and once those days happen, they're kept out of the model's learning.",
-  evName:"Event", evNamePh:"e.g. Vendor change", evDefName:"Planned event", evStart:"First day", evDays:"Working days",
+  evTitle:"📣 Planned demand events", evIntro:"A mailing, a campaign, a price update — give it a name and its dates. From the dates that already passed the app learns how many calls it brings, and adds them to the dates ahead.",
+  evName:"Event", evNamePh:"e.g. Email mailing", evDates:"Dates", evPaste:"…or paste a list", evSize:"How big?", evSzS:"Small +10%", evSzM:"Medium +25%", evSzL:"Large +50%", evLen:"How long?", evL1:"1 day", evL3:"3 days", evL5:"5 days", evExactS:"⚙ I know the number of calls", evNeedD:"Pick at least one date — or paste a list.", evPrevK:"{p} calls on the day · lasts {d} days", evPrevK1:"{p} calls, on the day only", evLearned:"learned from {n} times before", evGuessL:"an estimate — not in your file yet", evNoFx:"brought no extra calls the times before", evDayN:"day {i}: +{p}%", evDelKind:"Remove this event and its dates", evDelDate:"Remove this date", evMeas:"that day: {p} vs a usual day", evFut:"ahead — in the forecast", evMore:"+ dates", evAskH:"Unusual days in your file — what were they?", evAskRow:"{n} calls more than a usual {d}", evAskNew:"+ New event", evAskNo:"✕ Nothing special", evAskNoTip:"Don't ask about this day again", evAskTip:"{p} calls over a usual day — what was it? Click to say", evAskDone:"Marked as {n} — the forecast learns from it", evPillTipP:"about +{n} calls this day", evDefName:"Planned event", evStart:"First day", evDays:"Working days",
   evTotal:"Extra calls (total)",
   evShape:"Spread", evFront:"Front-loaded", evEven:"Even", evAdd:"+ Add event",
   evPrev:"{d}: +{n}", evNeed:"Set a first day and the extra calls to see the daily spread.",
@@ -2839,7 +2855,7 @@ he:{
   setMptHint:"לא יודעים? קחו את זמן ההמתנה הממוצע של שיחות נטושות מדוח מערכת הטלפוניה.",
   ceTitle:"עריכת {day} {time}", ceCancel:"ביטול", ceApply:"החלה",
   ceFutL:"החל על שורה זו ועל כל השבועות הבאים (אותו יום ואותו אינטרוול)",
-  mxCum:"מצטבר יומי ({a}–{b}): {v} · {n} שיחות", ceCum:"מצטבר יומי {a}–{b}:",
+  mxCum:"מצטבר יומי ({a}–{b}): {v} · {n} שיחות", mxHour:"שעה {a}–{b}: {n} שיחות · {v}", ceCum:"מצטבר יומי {a}–{b}:",
   ceSched:"משובצים", ceNeed:"נדרשים", ceAfter:"אחרי השינוי", ceDayTotal:"· סה״כ יומי",
   ceHintVolFc:"תחזית המודל לחצי השעה הזו — שנו אם אתם יודעים משהו שהמודל לא יודע.",
   ceHintVolAct:"נמדד בקובץ שלכם — ערכו רק כדי לתקן נתון שגוי.",
@@ -2878,12 +2894,12 @@ he:{
   profPeak:"ברוב הימים השיא ב־{tm}", profPinnedTip:"נקבע ידנית — לחיצה לשינוי; ריקון התא מחזיר את החלק שנלמד",
   profEditNote:"לחיצה על תא קובעת את החלק שלו ידנית; שאר היום מתעדכן כך שהסך נשאר 100%.",
   profReset:"↺ חזרה לחלוקה שנלמדה ({n})",
-  evTitle:"📣 אירועי ביקוש מתוכננים", evIntro:"גל חד־פעמי ידוע מראש שההיסטוריה לא יכולה לחזות (החלפת ספק, קמפיין, עדכון מחיר). השיחות מתווספות לתחזית — וכשהימים האלה יחלפו, הם יוחרגו מהלמידה של המודל.",
-  evName:"אירוע", evNamePh:"לדוגמה: החלפת ספק", evDefName:"אירוע מתוכנן", evStart:"יום ראשון לאירוע", evDays:"ימי עבודה",
+  evTitle:"📣 אירועי ביקוש מתוכננים", evIntro:"דיוור, קמפיין, עדכון מחיר — נותנים שם ותאריכים. מהתאריכים שכבר עברו האפליקציה לומדת כמה שיחות זה מביא, ומוסיפה אותן לתאריכים הבאים.",
+  evName:"אירוע", evNamePh:"לדוגמה: דיוור במייל", evDates:"תאריכים", evPaste:"…או הדבקת רשימה", evSize:"כמה גדול?", evSzS:"קטן ‎+10%", evSzM:"בינוני ‎+25%", evSzL:"גדול ‎+50%", evLen:"כמה זמן?", evL1:"יום", evL3:"3 ימים", evL5:"5 ימים", evExactS:"⚙ אני יודע כמה שיחות", evNeedD:"בחרו לפחות תאריך אחד — או הדביקו רשימה.", evPrevK:"{p} שיחות ביום עצמו · נמשך {d} ימים", evPrevK1:"{p} שיחות, רק ביום עצמו", evLearned:"נלמד מ־{n} פעמים קודמות", evGuessL:"הערכה — עוד לא קרה בקובץ", evNoFx:"לא הביא שיחות נוספות בפעמים הקודמות", evDayN:"יום {i}: +{p}%", evDelKind:"הסרת האירוע והתאריכים שלו", evDelDate:"הסרת התאריך", evMeas:"באותו יום: {p} מול יום רגיל", evFut:"קדימה — בתחזית", evMore:"+ תאריכים", evAskH:"ימים חריגים בקובץ — מה היה שם?", evAskRow:"{n} שיחות יותר מיום {d} רגיל", evAskNew:"+ אירוע חדש", evAskNo:"✕ סתם יום", evAskNoTip:"לא לשאול שוב על היום הזה", evAskTip:"{p} שיחות מעל יום רגיל — מה היה? לחיצה כדי לסמן", evAskDone:"סומן כ{n} — התחזית לומדת ממנו", evPillTipP:"בערך +{n} שיחות ביום הזה", evDefName:"אירוע מתוכנן", evStart:"יום ראשון לאירוע", evDays:"ימי עבודה",
   evTotal:"שיחות נוספות (סה״כ)",
   evShape:"פיזור", evFront:"מרוכז בהתחלה", evEven:"אחיד", evAdd:"+ הוספת אירוע",
   evPrev:"{d}: +{n}", evNeed:"הזינו יום ראשון ומספר שיחות נוספות כדי לראות את הפיזור היומי.",
-  evRowCalls:"+{n} שיחות · {d} ימי עבודה", evPeak:"יום ראשון +{p}% מהרגיל", evPast:"התרחש — מוחרג מהלמידה",
+  evRowCalls:"+{n} שיחות · {d} ימי עבודה", evPeak:"יום ראשון ‎+{p}% מהרגיל", evPast:"התרחש — מוחרג מהלמידה",
   evDel:"הסרת האירוע", evAdded:"נוסף אירוע מתוכנן: {n}", evPillTip:"+{n} שיחות נוספות מתוכננות ביום הזה",
   exclEvNote:"אירוע מתוכנן — מוחרג מהלמידה", trHintLink:"📣 תכנון אירוע ידוע",
   trHelpTip:"איך מתקנים את התחזית", thNetH:"שעות נטו", prodBtRatio:"בימי תחזית: שעות משובצות × {r}% שהגיעו ללוגין — נבחר כי השגיאה שלו על {n} הימים האחרונים שלכם היא {a}% מול {b}% לממוצע 4 השבועות.", prodBtCarry:"בימי תחזית: ממוצע 4 ימי השבוע הקודמים — נבחר כי השגיאה שלו על {n} הימים האחרונים שלכם היא {a}% מול {b}% לשעות משובצות × {r}%.", fTipNetH:"שעות הלוגין מהקובץ; בימי תחזית — לפי התחזית (למטה). השוו לשעות לשיבוץ.", trGDay:"ימים", trGWeek:"שבועות", trGMonth:"חודשים",
@@ -3430,7 +3446,8 @@ const state={
             holOverride:{},volCal:1,recruitBasis:"all",recruitSkills:[],skillReqs:[],
             schedMode:"optimizeCurrent", // scheduler page: optimizeCurrent | generateIron
             schGenWeek:null, // Mode 2 only: the week (Sunday ISO) to build from iron; null = sidur week
-            demandEvents:[], // planned one-off demand surges: {id,name,start,days,total,shape}
+            demandEvents:[], // planned demand: {id,kind,start} (a date of an event kind) · {id,name,start,days,total,shape} (exact calls)
+            evKinds:[], evDismiss:[], // 📣 event kinds (their learned wave) · unusual days the user said were nothing
             profileEdits:{}, // user-pinned intraday shares: {weekday:{"HH:MM":share}}
             friEvery:2,      // Friday rotation: 2 = each rep works every other Friday, 1 = every Friday
             friHist:{},      // Friday memory across sidurim: {Friday ISO: [names who worked]} — last 12
@@ -8131,16 +8148,71 @@ function eventDays(ev){
   out.forEach(x=>{ x.extra=(+ev.total||0)*x.w/sum; });
   return out;
 }
-/* date → {extra calls, event names}; memoized on the events + holiday calendar */
-function evMap(){
-  const evs=state.settings.demandEvents||[];
-  const key=JSON.stringify(evs)+"|"+(state.holidayDates?state.holidayDates.size:0);
+/* 📣 A KIND of event (a mailing, an SMS campaign…) LEARNS its wave from the dates it already happened in the file: each
+   past date → that day and the next working days vs a usual day (`evUsual`) → the kind's wave = the median rise per day
+   after the date (it stops where the rise falls under 3%). A new date of the kind needs nothing else. No past date in
+   the file → what was learned before (`k.learned`, kept with the kind), else the user's guess (small · medium · large ×
+   1 · 3 · 5 days, fading 60% a day). The wave is a SHARE of the day's forecast (`pct`), so it follows the level.
+   settings.evKinds [{id,name,size,len,learned}] · demandEvents: {id,kind,start} (a date of a kind) or the exact form
+   {id,name,start,days,total,shape} (calls) · evDismiss [ds] = "nothing special", never asked again. */
+const EV_SIZE={s:0.1,m:0.25,l:0.5}, EV_LEN=[1,3,5];
+function evWorkDays(start,n){ const out=[]; let d=start,g=0; // working days from start: no Saturday, no closed holiday
+  while(out.length<n&&g++<120){ if(fromISO(d).getDay()!==6&&!(state.holidayDates&&state.holidayDates.get(d)==="closed")) out.push(d); d=addDays(d,1); } return out; }
+function evDayTot(){ const k=state._serVer+"|"+state.days.size+"|"+state.maxDate; if(state._edt&&state._edt.k===k) return state._edt.m;
+  const m=new Map(); for(const [ds,d] of state.days){ let v=0; for(const r of d.values()) v+=r.volume||0; if(v>0) m.set(ds,v); } state._edt={k,m}; return m; }
+function evSkip(){ const s=new Set(); for(const ev of state.settings.demandEvents||[]){ if(!ev.start) continue; // every planned day — never "usual"
+  if(ev.kind!=null) evWorkDays(ev.start,5).forEach(d=>s.add(d)); else eventDays(ev).forEach(x=>s.add(x.ds)); } return s; }
+/* a usual day for ds: the median of the same weekday ±5 weeks (no holiday, no event, not painted out), on ds's billing day */
+function evUsual(ds,skip){ const T=evDayTot(), dom=d=>(state.domFactor||[])[+d.slice(8,10)]||1, v=[];
+  for(let w=-5;w<=5;w++){ if(!w) continue; const d=addDays(ds,7*w), x=T.get(d); if(!x||state.holidayDates.get(d)||state.exceptions.has(d)||skip.has(d)) continue; v.push(x/dom(d)); }
+  if(v.length<3) return null; v.sort((a,b)=>a-b); return v[v.length>>1]*dom(ds); }
+/* the kind's wave: fx[i] = the rise on the i-th working day from a date · n = past dates it was measured on · src learn |
+   saved | guess · meas = each past date's own rise that day */
+function evKindFx(k){
+  const skip=evSkip(), T=evDayTot(), R=[], meas={};
+  for(const e of (state.settings.demandEvents||[]).filter(e=>e.kind===k.id&&e.start<=state.maxDate)){
+    const r=evWorkDays(e.start,8).map(d=>{ const x=d<=state.maxDate&&T.get(d), u=x?evUsual(d,skip):null; return u?x/u-1:null; });
+    if(r[0]!=null){ R.push(r); meas[e.start]=r[0]; } }
+  if(R.length){ const fx=[]; for(let i=0;i<8;i++){ const v=R.map(r=>r[i]).filter(x=>x!=null).sort((a,b)=>a-b); if(!v.length) break; const m=v[v.length>>1]; if(m<0.03) break; fx.push(m); }
+    const f=fx.length?fx.map(x=>Math.round(x*1000)/1000):[0]; k.learned={fx:f,n:R.length}; return {fx:f,n:R.length,src:"learn",meas}; }
+  if(k.learned&&k.learned.n) return {fx:k.learned.fx,n:k.learned.n,src:"saved",meas}; // the file no longer holds those dates: what they taught
+  return {fx:evGuess(k.size,k.len),n:0,src:"guess",meas}; }
+function evGuess(size,len){ const p=EV_SIZE[size]||EV_SIZE.m, L=+len||3; return Array.from({length:L},(_,i)=>Math.round(p*Math.pow(0.6,i)*1000)/1000); } // fading 60% a day
+/* date → {extra calls (exact form), pct (share of the day, kinds), names}; memoized on the events, the calendar and the file */
+function evMap(){ const S=state.settings, evs=S.demandEvents||[];
+  const key=JSON.stringify([evs,(S.evKinds||[]).map(k=>[k.id,k.name,k.size,k.len])])+"|"+(state.holidayDates?state.holidayDates.size:0)+"|"+state._serVer+"|"+state.days.size;
   if(state._evKey===key&&state._evMap) return state._evMap;
-  const m=new Map();
+  const m=new Map(), K=new Map((S.evKinds||[]).map(k=>[k.id,k])), fx=new Map();
+  const add=(ds,o,n)=>{ const x=m.get(ds)||{extra:0,pct:0,names:[]}; x.extra+=o.extra||0; x.pct+=o.pct||0; if(!x.names.includes(n)) x.names.push(n); m.set(ds,x); };
   for(const ev of evs){ if(!ev.start) continue;
-    for(const x of eventDays(ev)){ const o=m.get(x.ds)||{extra:0,names:[]}; o.extra+=x.extra; o.names.push(ev.name||"📣"); m.set(x.ds,o); } }
-  state._evKey=key; state._evMap=m; return m;
-}
+    if(ev.kind!=null){ const k=K.get(ev.kind); if(!k) continue; let f=fx.get(k.id); if(!f) fx.set(k.id,f=evKindFx(k));
+      evWorkDays(ev.start,Math.max(1,f.fx.length)).forEach((d,i)=>add(d,{pct:f.fx[i]||0},k.name)); }
+    else for(const x of eventDays(ev)) add(x.ds,{extra:x.extra},ev.name||"📣"); }
+  state._evKey=key; state._evMap=m; state._evFx=fx; return m; }
+function evFxOf(k){ evMap(); return (state._evFx&&state._evFx.get(k.id))||evKindFx(k); }
+/* 📣? the first day of a wave in the file (last 4 months) far above a usual day that nothing explains — no holiday, no
+   event, no returning calls, not "nothing special". Far = 15% and 4 typical wobbles of this file. The user says what it
+   was in one click (the kind learns it) — silent when there is none */
+function evPrevWork(ds){ let p=addDays(ds,-1); if(fromISO(p).getDay()===6) p=addDays(p,-1); return p; }
+function evSurges(){ const S=state.settings; if(!state.maxDate||!state.days.size) return [];
+  const key=[state._serVer,state.days.size,state.maxDate,evMap()&&state._evKey,(S.evDismiss||[]).join(),S.cuOn].join("|");
+  if(state._evsC&&state._evsC.k===key) return state._evsC.v;
+  const T=evDayTot(), E=evMap(), skip=evSkip(), no=new Set(S.evDismiss||[]), from=addDays(state.maxDate,-120), all=[];
+  for(const [ds,x] of T){ if(ds<from||fromISO(ds).getDay()>5||state.holidayDates.get(ds)||state.exceptions.has(ds)||skip.has(ds)) continue;
+    const u=evUsual(ds,skip); if(u) all.push({ds,r:x/u-1,x,u}); }
+  const med=a=>a.length?a.slice().sort((p,q)=>p-q)[a.length>>1]:0, rs=all.map(a=>a.r), m0=med(rs), gate=Math.max(0.15,m0+4*1.4826*med(rs.map(r=>Math.abs(r-m0))));
+  const hit=new Set(all.filter(a=>a.r>=gate).map(a=>a.ds));
+  const v=all.filter(a=>hit.has(a.ds)&&!hit.has(evPrevWork(a.ds))&&!E.has(a.ds)&&!no.has(a.ds)&&!(state.cuDays&&state.cuDays.has(a.ds))&&!retShown(a.ds,a.x))
+    .sort((p,q)=>p.ds<q.ds?1:-1).slice(0,6);
+  state._evsC={k:key,v}; return v; }
+function evAskOf(ds){ return evSurges().find(x=>x.ds===ds)||null; }
+function evAskTag(x){ const s=document.createElement("span"); s.className="evAsk"; s.textContent="📣?";
+  s.title=t("evAskTip",{p:"+"+Math.round(x.x-x.u).toLocaleString()});
+  s.addEventListener("click",e=>{ e.stopPropagation(); openEvents(x.ds); }); return s; }
+/* a day's planned extra calls in words (the matrix header, the Trends badge) */
+function evTip(ds,ev){ if(ds<=state.maxDate) return ev.names.join(" + ")+" · "+t("exclEvNote"); // a forecast day: its share of the day's calls
+  const vol=dayVolOf(ds)||0, n=Math.round(ev.extra+(ev.pct>0?vol*ev.pct/(1+ev.pct):0));
+  return ev.names.join(" + ")+" · "+t(ev.pct>0?"evPillTipP":"evPillTip",{n:n.toLocaleString(),p:Math.round(ev.pct*100)}); }
 function forecastDay(ds){
   if(state.fcCache.has(ds)) return state.fcCache.get(ds);
   const di=fromISO(ds).getDay();
@@ -8199,12 +8271,13 @@ function forecastDay(ds){
   const hf=(tgtLvl==="closed")?0:((tgtLvl&&state.holidayFactor&&state.holidayFactor[tgtLvl])||1);
   // volCal: day-level pace calibration measured by the daily backtest (100±1% goal)
   // 📣 planned event: this day's share of the known extra calls (never on a closed day)
-  const evX=hf>0?((evMap().get(ds)||{}).extra||0):0;
+  const evo=hf>0?(evMap().get(ds)||{}):{}; // the exact form = calls · a kind = its wave, a share of the day
   const baseDay=Math.max(0,dailyNorm*cf*hf*(state.settings.volCal||1));
   // ⚡ fast lane: a sudden shift in the last days + callbacks of yesterday's extra abandons (fastFor)
   const fx=hf>0?fastFor(ds,di,((state.domFactorPre||state.domFactor||[])[+ds.slice(8,10)]||1)*hf*(state.settings.volCal||1),baseDay):null;
   const cuX=hf>0?catchUpAt(ds)+retryAt(ds):0; // ↩ calls coming back: of a lost day + of yesterday's extra abandons (one switch)
-  const dayForecast=(fx?fx.day:baseDay)+evX+cuX;
+  const lvl=fx?fx.day:baseDay, evX=(evo.extra||0)+(evo.pct||0)*lvl;
+  const dayForecast=lvl+evX+cuX;
 
   /* HOLIDAY-EVE = FRIDAY: a holiday eve is a short, morning-heavy day just like a
      Friday. So for eve targets we borrow FRIDAY's interval-share profile (and its
@@ -8303,7 +8376,7 @@ function preDaily(di,from,ds){
 function fastState(){
   const S=state.settings;
   if(S.fastAdapt===false||!state.series||!state.maxDate) return null;
-  const key=[state._serVer,state.maxDate,S.fastHalf,state.rtParam?state.rtParam.p+","+state.rtParam.q:"",S.volCal,S.modelVolume,(hzBest("volume")||[]).join(),S.cuOn,JSON.stringify(S.demandEvents||[])].join("|");
+  const key=[state._serVer,state.maxDate,S.fastHalf,state.rtParam?state.rtParam.p+","+state.rtParam.q:"",S.volCal,S.modelVolume,(hzBest("volume")||[]).join(),S.cuOn,evMap()&&state._evKey].join("|"); // the events and their kinds
   if(state._fastKey===key) return state._fast;
   state._fastKey=key; state._fast=null;
   const domOf=d=>((state.domFactorPre||state.domFactor)||[])[+d.slice(8,10)]||1; // billing calendar from before the window
@@ -8324,8 +8397,8 @@ function fastState(){
   const days=win.map((x,i)=>{ const p1=all[base+i-1], p2=all[base+i-2];
     const back=rho*((1-rq)*((p1&&p1.X)||0)+rq*((p2&&p2.X)||0))+catchUpAt(x.ds), fresh=Math.max(0,x.vol-back); // + ↩ comeback calls
     const hf=x.lvl&&state.holidayFactor?(state.holidayFactor[x.lvl]||1):1, pd=preDaily(x.di,from,x.ds);
-    const ev=(evMap().get(x.ds)||{}).extra||0;
-    const exp=pd==null?null:pd*domOf(x.ds)*hf*(S.volCal||1)+ev;
+    const ev=evMap().get(x.ds)||{}; // a planned day was expected high: not a shift in the level
+    const exp=pd==null?null:pd*domOf(x.ds)*hf*(S.volCal||1)*(1+(ev.pct||0))+(ev.extra||0);
     return {ds:x.ds,di:x.di,act:x.vol,back,fresh,exp,ratio:exp>0?fresh/exp:null,X:x.X}; });
   days.forEach((d,i)=>{ if(d.exp>0){ const w=Math.pow(0.85,W-1-i); num+=w*d.fresh; den+=w*d.exp; } });
   let L=den>0?num/den:1; const last3=days.filter(d=>d.ratio!=null).slice(-3).map(d=>d.ratio);
@@ -9027,8 +9100,9 @@ function renderMatrixBody(){
       tg.className="dtag "+(i===todayIdx?"today":sdd.forecast?"fc":"act");
       tg.textContent=i===todayIdx?"● "+t("dTagToday")+" · "+t(sdd.forecast?"dTagFc":"dTagAct"):t(sdd.forecast?"dTagFc":"dTagAct");
       const ev=evMap().get(ds); // 📣 planned event this day — name on hover
-      if(ev){ tg.textContent+=" · 📣"; hth.title=ev.names.join(" + ")+(sdd.forecast?" · "+t("evPillTip",{n:Math.round(ev.extra).toLocaleString()}):""); }
-      hth.appendChild(tg); }
+      if(ev){ tg.textContent+=" · 📣"; hth.title=evTip(ds,ev); }
+      hth.appendChild(tg);
+      const ask=!sdd.forecast&&!state.excMode&&evAskOf(ds); if(ask) hth.appendChild(evAskTag(ask)); } // 📣? a surge nothing explains: say what it was
     // ✎ a day the file doesn't hold yet (its last day → today, the last few days): the real answer rate, typed → tomorrow's ↩
     { const td0=iso(new Date()); if(sdd&&sdd.forecast&&!state.excMode&&arNoteDays().includes(ds)){
         const N=state.settings.arNote||{}, lb=document.createElement("label"); lb.className="arNote";
@@ -9164,8 +9238,12 @@ function renderMatrixBody(){
         // "needed" is sized for the PRIMARY metric — say so when the toggle shows the other one
         const offPrim=(state.metric==="tsf")!==(state.settings.primaryMetric==="tsf");
         const cu=cum[di]; if(row.rec.volume>0){ cu.vol+=row.rec.volume; cu.acc+=v*row.rec.volume; if(!cu.from) cu.from=tm; }
+        // the second half hour closes a round hour: its calls (both halves) — the floor counts in hours
+        const h0=cu.last&&tm.endsWith(":30")&&addHalf(cu.last.tm)===tm?cu.last:null, hV=h0?h0.vol+row.rec.volume:0;
+        cu.last={tm,vol:row.rec.volume,acc:v*row.rec.volume};
         const trn=traineeAt(ds,di,tm), trO=(state.trainees||{})[sundayOf(ds)];
-        td.title=[cu.vol>0?t("mxCum",{a:cu.from,b:addHalf(tm),v:pct(cu.acc/cu.vol),n:Math.round(cu.vol).toLocaleString()}):"", verd,
+        td.title=[cu.vol>0?t("mxCum",{a:cu.from,b:addHalf(tm),v:pct(cu.acc/cu.vol),n:Math.round(cu.vol).toLocaleString()}):"",
+          hV>0?t("mxHour",{a:h0.tm,b:addHalf(tm),n:Math.round(hV).toLocaleString(),v:pct((h0.acc+v*row.rec.volume)/hV)}):"", verd,
           trn>0?"🎓 "+t("trnCell",{t:trn,n:traineeN(ds,di),p:trO.pct}):"", offPrim&&(short||over)?t("mxVerdMetric",{p:primName()}):""].filter(Boolean).join("\n");
         td.addEventListener("click",e=>{ if(e.target.closest(".whoLnk")){ e.stopPropagation(); openWho(ds,tm); return; } openEditor(e,ds,tm,di); }); // 👥 the reps number = who
       }
@@ -9703,10 +9781,11 @@ function renderTrends(){
   // 📣 planned-event badge: names the event, tooltip says how many extra calls land that day
   const evPill=ds=>{ const ev=evMap().get(ds); if(!ev) return null;
     const s=document.createElement("span"); s.className="evPill"; s.textContent="📣 "+ev.names.join(" + ");
-    s.title=state.days.has(ds)?t("exclEvNote"):t("evPillTip",{n:Math.round(ev.extra).toLocaleString()}); return s; };
+    s.title=evTip(ds,ev); return s; };
   // date as an LTR-isolated span; the cell itself follows page direction (start-aligned)
   const dateCell=(dth,ds,suffix)=>{ const sp=document.createElement("span"); sp.className="trDate"; sp.dataset.ds=ds; sp.textContent=fmtD(ds);
-    dth.appendChild(sp); if(suffix) dth.appendChild(document.createTextNode(suffix)); };
+    dth.appendChild(sp); if(suffix) dth.appendChild(document.createTextNode(suffix));
+    const ask=state.days.has(ds)&&evAskOf(ds); if(ask) dth.appendChild(evAskTag(ask)); }; // 📣? a surge nothing explains
   const buildRow=d=>{
     const {ds,dayIdx}=d;
     if(d.zero){
@@ -11107,6 +11186,7 @@ function loadState(){
       state.settings.recruitSkills=state.settings.recruitSkill?[state.settings.recruitSkill]:[];
     if(!Array.isArray(state.settings.skillReqs)) state.settings.skillReqs=[];
     if(!Array.isArray(state.settings.demandEvents)) state.settings.demandEvents=[];
+    if(!Array.isArray(state.settings.evKinds)) state.settings.evKinds=[]; if(!Array.isArray(state.settings.evDismiss)) state.settings.evDismiss=[];
     if(!state.settings.profileEdits||typeof state.settings.profileEdits!=="object") state.settings.profileEdits={};
     if(!state.settings.profUserSet) state.settings.profileMode="auto"; // the window is chosen by its test until picked by hand
     if(!state.settings.friHist||typeof state.settings.friHist!=="object") state.settings.friHist={};
@@ -11923,22 +12003,41 @@ document.getElementById("faBtn").addEventListener("click",e=>{ e.preventDefault(
 document.getElementById("setFastAdapt").addEventListener("change",e=>{ state.settings.fastAdapt=e.target.checked; fastChanged(); });
 $fa("faOn").addEventListener("change",e=>{ state.settings.fastAdapt=e.target.checked; fastChanged(); });
 faPanel.querySelector("#faHalf").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return; state.settings.fastHalf=+b.dataset.h; fastChanged(); });
-/* ---- 📣 Planned demand events: list, live preview, add/remove ---- */
+/* ---- 📣 Planned demand events: ① unusual days to name · ② the events (their wave, their dates) · ③ add: a name + dates ---- */
 const evPanel=document.getElementById("evPanel"), $ev=id=>evPanel.querySelector("#"+id); // panel moves into the shared modal
-function evFormVals(){
-  return {name:$ev("evName").value.trim(),start:$ev("evStart").value,
-    days:Math.max(1,Math.min(30,+$ev("evDays").value||1)),
-    total:Math.max(0,Math.round(+$ev("evTotal").value||0)),
-    shape:(evPanel.querySelector("#evShape button.active")||{dataset:{shape:"front"}}).dataset.shape};
-}
-function evPreview(){
-  const v=evFormVals(), el=$ev("evPreview");
-  if(!v.start||!v.total){ el.textContent=t("evNeed"); return; }
-  const dn=t("days");
-  el.textContent=eventDays(v).slice(0,4).map((x,k)=>t("evPrev",{d:dn[fromISO(x.ds).getDay()]+" "+fmtDs(x.ds),n:Math.round(x.extra).toLocaleString()})).join(" · ")
-    +(v.days>4?" …":"");
-}
-/* peak-day uplift vs the normal forecast for that date (what the manager actually feels) */
+const EV={dates:new Set(),size:"m",len:3}; // the add form, this session
+const evEsc=v=>String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;"), evPct=x=>(x<0?"−":"+")+Math.abs(Math.round(x*100))+"%";
+function evKinds(){ const S=state.settings; if(!Array.isArray(S.evKinds)) S.evKinds=[]; return S.evKinds; }
+function evNewId(){ return Math.max(Date.now(),...evKinds().concat(state.settings.demandEvents||[]).map(x=>+x.id||0))+1; } // unique even within one millisecond
+function evKindByName(n){ n=String(n||"").trim().toLowerCase(); return n?evKinds().find(k=>k.name.trim().toLowerCase()===n):null; }
+/* the wave as small bars, one per working day from the date (the numbers on hover) */
+function evBars(fx){ const mx=Math.max(0.05,...fx); return `<span class="evFx" title="${evEsc(fx.map((x,i)=>t("evDayN",{i:i+1,p:Math.round(x*100)})).join(" · "))}">${fx.map(x=>`<i style="--h:${Math.max(8,Math.round(x/mx*100))}%"></i>`).join("")}</span>`; }
+/* typed / pasted dates: dd/mm/yyyy · dd.mm.yy · yyyy-mm-dd · an Excel serial · dd/mm (the file's year); never a Saturday */
+function evParseDates(str){ const y=(state.maxDate||iso(new Date())).slice(0,4), out=[];
+  for(const w of String(str||"").split(/[\s,;|]+/)){ if(!w) continue; let d=normDateAny(w); const m=!d&&w.match(/^(\d{1,2})[./-](\d{1,2})$/); if(m) d=normDateAny(m[1]+"/"+m[2]+"/"+y);
+    if(d&&fromISO(d).getDay()!==6) out.push(d); } return out; }
+function evFormVals(){ const name=$ev("evName").value.trim();
+  return {name,k:evKindByName(name),dates:[...EV.dates].sort(),exact:$ev("evExact").open&&+$ev("evTotal").value>0,
+    days:Math.max(1,Math.min(30,+$ev("evDays").value||1)),total:Math.max(0,Math.round(+$ev("evTotal").value||0)),
+    shape:(evPanel.querySelector("#evShape button.active")||{dataset:{shape:"front"}}).dataset.shape}; }
+function evFormUpd(){ const v=evFormVals(), fx=v.k?evFxOf(v.k):null, known=fx&&fx.src!=="guess";
+  $ev("evChips").innerHTML=v.dates.map(d=>`<span class="evD${d<=state.maxDate?" past":""}" data-d="${d}">${fmtDs(d)}<button type="button" class="xbtn" title="${evEsc(t("evDelDate"))}">✕</button></span>`).join("");
+  $ev("evGuess").hidden=known||v.exact; // an event that already learned its wave needs only dates
+  evPanel.querySelectorAll("#evSize button").forEach(b=>b.classList.toggle("active",b.dataset.v===(v.k&&!known?v.k.size:EV.size)));
+  evPanel.querySelectorAll("#evLen button").forEach(b=>b.classList.toggle("active",+b.dataset.v===(v.k&&!known?+v.k.len:EV.len)));
+  const el=$ev("evPreview");
+  if(v.exact){ const ed=v.dates[0]?eventDays({...v,start:v.dates[0]}):[];
+    el.textContent=ed.length?ed.slice(0,4).map(x=>t("evPrev",{d:t("days")[fromISO(x.ds).getDay()]+" "+fmtDs(x.ds),n:Math.round(x.extra).toLocaleString()})).join(" · ")+(v.days>4?" …":""):t("evNeedD"); }
+  else{ const f=known?fx.fx:evGuess(v.k?v.k.size:EV.size,v.k?v.k.len:EV.len);
+    el.innerHTML=v.dates.length?evBars(f)+" "+evEsc(t(f.length>1?"evPrevK":"evPrevK1",{p:evPct(f[0]||0),d:f.length}))+(known?" · "+evEsc(t("evLearned",{n:fx.n})):""):evEsc(t("evNeedD")); }
+  $ev("evAdd").disabled=!v.dates.length||(!v.name&&!v.exact); }
+function evAddNow(){ const v=evFormVals(), S=state.settings, E=S.demandEvents=S.demandEvents||[]; if(!v.dates.length) return; let id=evNewId();
+  if(v.exact){ const nm=v.name||t("evDefName"); v.dates.forEach(d=>E.push({id:id++,name:nm,start:d,days:v.days,total:v.total,shape:v.shape})); }
+  else{ let k=v.k; if(!k){ k={id:id++,name:v.name,size:EV.size,len:EV.len}; evKinds().push(k); }
+    v.dates.forEach(d=>{ if(!E.some(e=>e.kind===k.id&&e.start===d)) E.push({id:id++,kind:k.id,start:d}); }); }
+  showToast("📣 "+t("evAdded",{n:v.name||t("evDefName")}),true);
+  EV.dates.clear(); ["evName","evPaste","evTotal"].forEach(x=>$ev(x).value=""); evChanged(); }
+/* peak-day uplift vs the normal forecast for that date (the exact form) */
 function evPeakPct(ev){
   const ds=eventDays(ev)[0]; if(!ds) return null;
   if(state.days.has(ds.ds)) return "past";
@@ -11947,42 +12046,55 @@ function evPeakPct(ev){
   const base=tot-ds.extra; return base>0?Math.round(ds.extra/base*100):null;
 }
 function renderEvents(){
-  const evs=state.settings.demandEvents||[], list=$ev("evList"); if(!list) return;
-  const cnt=document.getElementById("evCount");
-  cnt.style.display=evs.length?"":"none"; cnt.textContent=evs.length;
-  list.innerHTML="";
-  evs.forEach(ev=>{
-    const ed=eventDays(ev), last=ed.length?ed[ed.length-1].ds:ev.start;
-    const row=document.createElement("div"); row.className="evrow";
-    const pk=evPeakPct(ev);
-    row.innerHTML=`<b>📣 ${(ev.name||"").replace(/</g,"&lt;")}</b><span>${fmtDs(ev.start)}–${fmtDs(last)}</span>`
-      +`<span>${t("evRowCalls",{n:(+ev.total).toLocaleString(),d:ed.length})}</span>`
-      +(pk==="past"?`<span class="mini">${t("evPast")}</span>`:pk!=null?`<span class="mini">${t("evPeak",{p:pk})}</span>`:"")
-      +`<span class="grow"></span>`;
-    const x=document.createElement("button"); x.className="xbtn"; x.textContent="✕"; x.title=t("evDel");
-    x.addEventListener("click",()=>{ state.settings.demandEvents=evs.filter(e=>e!==ev); evChanged(); });
-    row.appendChild(x); list.appendChild(row);
-  });
-  evPreview();
+  const S=state.settings, evs=S.demandEvents||[], list=$ev("evList"); if(!list) return;
+  const cnt=document.getElementById("evCount"), nK=evKinds().length+evs.filter(e=>e.kind==null).length; cnt.style.display=nK?"":"none"; cnt.textContent=nK;
+  // ① the file's unusual days nothing explains — one click says what it was (silent when there is none)
+  const sv=evSurges(), dn=t("days");
+  $ev("evAsk").innerHTML=!sv.length?"":`<div class="evAskH">${evEsc(t("evAskH"))}</div>`+sv.map(x=>`<div class="evrow evAskR" data-d="${x.ds}"><b>${dn[fromISO(x.ds).getDay()]} ${fmtDs(x.ds)}</b><span class="evUp">${evPct(x.r)}</span>`
+    +`<span class="mini">${evEsc(t("evAskRow",{n:Math.round(x.x-x.u).toLocaleString(),d:dn[fromISO(x.ds).getDay()]}))}</span><span class="grow"></span>`
+    +evKinds().map(k=>`<button type="button" class="hpChip" data-k="${k.id}">📣 ${evEsc(k.name)}</button>`).join("")
+    +`<button type="button" class="hpChip" data-new="1">${evEsc(t("evAskNew"))}</button><button type="button" class="hpChip" data-no="1" title="${evEsc(t("evAskNoTip"))}">${evEsc(t("evAskNo"))}</button></div>`).join("");
+  // ② each event: its wave (bars + the first day), where the wave comes from, its dates (a past date = its own rise)
+  list.innerHTML=evKinds().map(k=>{ const f=evFxOf(k), ds=evs.filter(e=>e.kind===k.id).map(e=>e.start).sort(), none=f.src!=="guess"&&!f.fx[0];
+    const src=f.src==="guess"?t("evGuessL"):none?t("evNoFx",{n:f.n}):t("evLearned",{n:f.n});
+    return `<div class="evrow evK"><b>📣 ${evEsc(k.name)}</b>${none?"":evBars(f.fx)+`<span class="evUp">${evPct(f.fx[0])}</span>`}<span class="mini">${evEsc(src)}</span><span class="grow"></span>`
+      +`<button type="button" class="xbtn" data-delk="${k.id}" title="${evEsc(t("evDelKind"))}">✕</button><div class="evDs">`
+      +ds.map(d=>{ const m=f.meas[d]; return `<span class="evD${d<=state.maxDate?" past":""}" title="${evEsc(m!=null?t("evMeas",{p:evPct(m)}):d>state.maxDate?t("evFut"):"")}">${fmtDs(d)}${m!=null?` <small>${evPct(m)}</small>`:""}<button type="button" class="xbtn" data-deld="${k.id}|${d}" title="${evEsc(t("evDelDate"))}">✕</button></span>`; }).join("")
+      +`<button type="button" class="hpChip" data-more="${evEsc(k.name)}">${evEsc(t("evMore"))}</button></div></div>`; }).join("")
+    +evs.filter(e=>e.kind==null).map(ev=>{ const ed=eventDays(ev), last=ed.length?ed[ed.length-1].ds:ev.start, pk=evPeakPct(ev); // the exact form (calls)
+      return `<div class="evrow"><b>📣 ${evEsc(ev.name)}</b><span>${fmtDs(ev.start)}–${fmtDs(last)}</span><span>${t("evRowCalls",{n:(+ev.total).toLocaleString(),d:ed.length})}</span>`
+        +(pk==="past"?`<span class="mini">${t("evPast")}</span>`:pk!=null?`<span class="mini">${t("evPeak",{p:pk})}</span>`:"")
+        +`<span class="grow"></span><button type="button" class="xbtn" data-delev="${ev.id}" title="${evEsc(t("evDel"))}">✕</button></div>`; }).join("");
+  $ev("evKindsDl").innerHTML=evKinds().map(k=>`<option value="${evEsc(k.name)}">`).join("");
+  evFormUpd();
 }
 function evChanged(){
   state.fcCache.clear(); saveState();
   rebuildLearningSeries(); // event days in history must leave (or rejoin) learning
   renderEvents(); renderAll();
 }
-["evStart","evDays","evTotal"].forEach(id=>document.getElementById(id).addEventListener("input",evPreview));
-$ev("evShape").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return;
-  evPanel.querySelectorAll("#evShape button").forEach(x=>x.classList.toggle("active",x===b)); evPreview(); });
-$ev("evAdd").addEventListener("click",()=>{
-  const v=evFormVals();
-  if(!v.start||!v.total){ showToast("⚠ "+t("evNeed"),false); return; }
-  if(!v.name) v.name=t("evDefName");
-  state.settings.demandEvents=(state.settings.demandEvents||[]).concat([{id:Date.now(),...v}]);
-  ["evName","evTotal"].forEach(id=>document.getElementById(id).value="");
-  evChanged(); showToast("📣 "+t("evAdded",{n:v.name}),true);
-});
-/* opens in the shared modal (same pattern as the holidays table) — the card never grows */
-function openEvents(){
+evPanel.addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return; const S=state.settings, ask=b.closest(".evAskR");
+  if(ask){ const ds=ask.dataset.d;
+    if(b.dataset.no){ (S.evDismiss=S.evDismiss||[]).push(ds); saveState(); renderEvents(); renderAll(); return; } // "nothing special": never asked again
+    if(b.dataset.new){ EV.dates.clear(); EV.dates.add(ds); $ev("evName").value=""; evFormUpd(); $ev("evName").focus(); return; }
+    if(b.dataset.k){ const k=evKinds().find(x=>String(x.id)===b.dataset.k); if(!k) return; S.demandEvents.push({id:evNewId(),kind:k.id,start:ds});
+      showToast("📣 "+t("evAskDone",{n:k.name}),true); evChanged(); return; } }
+  if(b.dataset.delk){ const id=+b.dataset.delk; S.evKinds=evKinds().filter(k=>k.id!==id); S.demandEvents=S.demandEvents.filter(x=>x.kind!==id); evChanged(); return; }
+  if(b.dataset.deld){ const [id,d]=b.dataset.deld.split("|"); S.demandEvents=S.demandEvents.filter(x=>!(x.kind===+id&&x.start===d)); evChanged(); return; }
+  if(b.dataset.delev){ S.demandEvents=S.demandEvents.filter(x=>x.id!==+b.dataset.delev); evChanged(); return; }
+  if(b.dataset.more){ $ev("evName").value=b.dataset.more; EV.dates.clear(); evFormUpd(); $ev("evPaste").focus(); return; }
+  if(b.closest("#evChips")){ EV.dates.delete(b.closest("[data-d]").dataset.d); evFormUpd(); return; }
+  if(b.closest("#evSize")){ EV.size=b.dataset.v; const k=evFormVals().k; if(k) k.size=EV.size; evFormUpd(); return; }
+  if(b.closest("#evLen")){ EV.len=+b.dataset.v; const k=evFormVals().k; if(k) k.len=EV.len; evFormUpd(); return; }
+  if(b.closest("#evShape")){ evPanel.querySelectorAll("#evShape button").forEach(x=>x.classList.toggle("active",x===b)); evFormUpd(); return; }
+  if(b.id==="evAdd") evAddNow(); });
+$ev("evStart").addEventListener("change",e=>{ const d=e.target.value; if(d&&fromISO(d).getDay()!==6) EV.dates.add(d); evFormUpd(); }); // each pick = one more date
+{ const take=()=>{ const el=$ev("evPaste"), ds=evParseDates(el.value); ds.forEach(d=>EV.dates.add(d)); if(ds.length) el.value=""; evFormUpd(); };
+  $ev("evPaste").addEventListener("change",take); $ev("evPaste").addEventListener("paste",()=>setTimeout(take,0)); }
+["evName","evDays","evTotal"].forEach(id=>$ev(id).addEventListener("input",evFormUpd));
+$ev("evExact").addEventListener("toggle",evFormUpd);
+/* opens in the shared modal (same pattern as the holidays table) — the card never grows; ds = the unusual day to name */
+function openEvents(ds){
   document.getElementById("mTitle").textContent=t("evTitle");
   document.getElementById("mCore").textContent=t("evIntro");
   document.getElementById("mMsg").textContent="";
@@ -11990,9 +12102,10 @@ function openEvents(){
   mL.parentNode.insertBefore(evPanel,mL); evPanel.hidden=false;
   document.getElementById("mExport").style.display="none";
   document.getElementById("modalBg").classList.add("show");
-  renderEvents(); $ev("evName").focus();
+  renderEvents(); const r=ds&&evPanel.querySelector(`.evAskR[data-d="${ds}"]`);
+  if(r){ r.classList.add("hl"); r.scrollIntoView({block:"nearest"}); } else $ev("evName").focus();
 }
-document.getElementById("evBtn").addEventListener("click",openEvents);
+document.getElementById("evBtn").addEventListener("click",()=>openEvents());
 /* ---- 👥 Who should be on in a half hour (matrix: the reps number in a cell) — to compare with the floor ----
    The sidur of that day, else the iron's weekday (Friday by the rotation, leave out); the 🎧 answering skills, like
    the matrix's capacity. Tick who isn't there → the gap, what it costs the half hour, one message per team. */

@@ -181,6 +181,16 @@ workforce filter lists legitimately show only "(all)" for this file.
   `fastFor` inside `forecastDay`; `preDaily` = the daily model on history before the window;
   `domFactorPre` = billing calendar learned before the window. UI: only during a real shift —
   `.wkFast` inside the matrix week pill, `#trFast` in Date Trends; panel `openFast` (⚙ folded).
+- 📣 Planned demand events LEARN (`openEvents(ds)`, Settings `#evBtn`): an event KIND (`settings.evKinds` {id,name,size,len,
+  learned}) + its dates (`demandEvents` {id,kind,start}; the old exact form {name,start,days,total,shape} = calls, kept).
+  `evKindFx(k)` = the wave: each past date + the next working days vs `evUsual` (same weekday ±5 weeks, median, billing
+  day) → median rise per day, stops < 3%; no past date → `k.learned` (survives a new file), else `evGuess(size,len)`.
+  `evMap()` → {extra, pct, names}; `forecastDay` adds extra + pct × the day's level; the fast lane expects it too.
+  `evSurges()` = 📣? the first day of an unexplained rise (last 4 months, ≥ 15% and 4 typical wobbles; no holiday /
+  event / ↩ / `settings.evDismiss`) → `evAskTag` in the matrix header + Trends date cell, rows on top of the window
+  (one click = a kind / new / "nothing special"). Words stay plain ("+n calls on the day · lasts d days") — no math
+  in the UI. Ids via `evNewId()`. Test: `tests/browser/demand-events.js`.
+- ⏱ Matrix hover on a :30 cell = also the round hour's calls (`mxHour`, both halves; `cu.last`).
 - Your own holidays: `settings.customHol` → `applyCustomHol` (wins over the Hebrew calendar,
   works with it off) and `customHolOn` (names); edited in the holidays table (`renderCustomHol`).
 - Date Trends charts: `renderTrendDash` + `trRelTile`, fed by the same rows as the table.
