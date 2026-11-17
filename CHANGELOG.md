@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### 🖨 Break sheets: one click to print, any printer, readable in black and white
+
+- One button prints the everyday sheet ("🖨 Print the sheet" = the blank board + entitlement + queue); the rest is under ⋯:
+  with names (now says what it does: every rep from the sidur already placed inside their shift, where it costs the fewest
+  calls), blank in Word / Excel, the delayed-break procedure.
+- Printing no longer freezes the app: the print window opens from inside the app (no pop-up tab to close first), for the
+  break sheets and the executive report alike.
+- The board fits one landscape page on A4 and Letter, on any printer's margins (up to 10 mm). Full names (two lines when
+  needed, no "…"). More than 12 places across → the board on two pages (22 → 11 + 11).
+- Blocked places: one bold "Blocked" cell for the rest of the slot; catch-up places say "Catch-up" — both read on a
+  black-and-white printer (white alone looked like a free place). Same in Excel.
+- A catch-up place never comes before the first regular break place: it is for a break that was pushed, so there must
+  be an earlier place to push it from.
+- Word: no more boxes around the date (hidden direction marks — the date is now 07/07/2026); the entitlement and the
+  queue each start a new page; every cell reads right to left.
+
 ### ✎ Today's real answer rate → tomorrow's returning calls (matrix)
 
 - On the days the file doesn't hold yet (its last day → today) the matrix header has one small field, "Actual answer %".

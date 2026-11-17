@@ -381,7 +381,8 @@ workforce filter lists legitimately show only "(all)" for this file.
   own slot ≥ 90 min apart (60 / one slot when needed), inside the shift (`fits`). Tightest shifts first;
   each pair goes where the marginal loss of answered calls is smallest (`cost` = `evalInterval` +
   `slotBias`, interpolated). Spare = catch-up places (`s.spare`): inside short shifts first, then late.
-  `over.flat` = the same breaks spread evenly (the "no planning" comparison).
+  `over.flat` = the same breaks spread evenly (the "no planning" comparison). A catch-up place only AFTER the first
+  slot with a regular place (`r0`) — it serves a break pushed from an earlier place; none placed → none.
 - 🤖 The limit per slot is CHOSEN: `settings.brk.cap` empty / 0 → `brkAutoCap(ds,over)` builds the plan for every limit
   1…`BRK_HARD` (10) and returns the smallest ≤ `BRK_SOFT` (9) that places everyone + all catch-up places and is within
   `BRK_EPS` (0.1 pt) of the best ≤ 9; 10 only when it adds ≥ that; none fits → the smallest that does (≤ 40).
@@ -396,8 +397,16 @@ workforce filter lists legitimately show only "(all)" for this file.
   `brkExport(fmt,mode)` → pdf | word | xlsx (`xlsxBytes` cells may be `{v,s}` named styles) | text.
 - Split: `brkParts(d)` = breaks of at most `brkMaxRun()` minutes in a row (settings.brk.maxRun, 20), even in
   5-minute steps (`brkSplit`): 7h → 20 + 15, 8h → 20 + 20, 10h → 20 + 15 + 15. `brkLS` = bold when they differ.
-- Print: `brkSheetHtml` fits the board on one landscape A4 (font by cap, row height by slots, `.bdw` zooms itself;
-  its inline script must write `<\/script>`); `xlsxBytes(rows,{print:{land,brk}})` = Excel page setup.
+- Print: `brkSheetHtml(bp,mode,fmt)` lays the board out at 259 × 184 mm (inside 10 mm margins on A4 AND Letter; `@page`
+  says `landscape` only — the paper is the printer's); > 12 places → one board page per ≤ 12 places (`parts`,
+  `brkPlacesAB`); each `.bdw` zooms itself to fit (its inline script must write `<\/script>`). Blocked places (always the
+  slot's last) = ONE bold "Blocked" cell; a catch-up place carries the word `brkCatch` (`.spL`) — never color alone.
+  `fmt` "word" = `wordMarks` + `dir="rtl"` cells + `<br>` page breaks (Word drops `div.pb`); dates on paper = `fmtDx`.
+  `xlsxBytes(rows,{print:{land,brk}})` = Excel page setup.
+- 🖨 `printDoc(html,wmm)` = every PDF / print (break sheets, the executive report): a hidden `#prFrame` inside the app,
+  NEVER a pop-up — a pop-up's `print()` froze the app until its tab was closed. The toolbar: `#brkPrint` = the blank
+  sheet (one click, 90% of uses); ⋯ `#brkExpWrap` = with names (`#brkExpN`, only with names) · blank · procedure.
+  Test: `tests/browser/breaks-print.js`.
 
 ## Persistence and reset behavior
 
