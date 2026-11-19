@@ -36,7 +36,12 @@ Primary mapped fields include date, interval/start/end, volume, aht, agents, mpt
 
 ## Classification Rules
 
-- forecast when volume + aht fields are present
+- committed hours (checked FIRST, any portal / page / the data folder): a sheet with a date, an hour and a total-hours
+  column ("סה״כ שעות" / "התחייבות" / total hours — or "שעות שיבוץ" + courses) and NO calls column → `ingestCommit`
+  (hours per date × clock hour; half-hour rows add up; a later file replaces only the hours it holds). It never touches
+  the forecast or the sidur.
+- forecast when volume + aht fields are present (several calls columns → the measured one, not a forecast column;
+  gross and net login both kept — net is the login, gross rides along as `loginG`)
 - roster when staffing/name + time + date/day fields are present
 - matrix roster fallback for pivot day x interval layouts
 

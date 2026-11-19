@@ -116,6 +116,42 @@ them is not done.
     out). A zone never breaks inside; on a narrow row the switches keep their place and icon and their name moves into the
     hover — the row never takes a second line before the content does. A list shows its time zones as group headings
     (בפועל · תחזית), not a suffix on every line.
+23. **Every number built on time says WHICH time — the hours ladder.** Next to the three time zones (rule 15: past ·
+    the gap to today · future) the app has one ladder of hours, and a feature is designed knowing which rung it stands on:
+
+    ```
+    committed hours (שעות התחייבות) = scheduled to reps (שעות שיבוץ) + courses that answer (קורסים במענה)
+      − no-shows (חוסרים)                 → paid hours (Mekano — courses not included)
+      − disconnections (ניתוקים)          → gross login (לוגין ברוטו — the rep's whole bar)
+      − feedback + briefing (משוב, תדריך) → net login (לוגין נטו)
+    ```
+
+    - **Productivity** is calls ÷ a time, so it always names that time ("calls per NET hour"); a rate of people who
+      don't come names its base the same way. The user must never have to guess which hours a number divides by.
+    - **Same base on both sides.** Hours that reach the phones = committed × (1 − no-shows X) and calls = those hours ×
+      productivity X, with the SAME X (net with net, gross with gross). Mixing them inflates or shrinks the supply.
+    - **Unavailable time** (זמן לא זמין: breaks, aux inside the shift) is its own number — never folded into no-shows
+      and never derived from login.
+    - **Sums, not averages of percents:** a day / week rate = Σ hours ÷ Σ hours.
+    - **Never divide by a number that already contains the answer.** A source's "scheduled" may be an expected arrival
+      (already net of a forecast of no-shows) — using it as the base of no-shows is circular. The base is the committed
+      hours.
+    - A new feature that touches hours, productivity, occupancy, no-shows or courses states its rung in the code
+      comment and, where the user reads it, in the label or its hover.
+    - **The time in use is always on screen, like the sidur week.** The header chip "⏱ net login / gross login" says on
+      EVERY page which login productivity, occupancy, no-shows and every forecast built on them are counted on — the
+      same way the 📅 chip says which sidur week is loaded. One click switches (when the file has both) and everything
+      moves together; a label that names the login follows it ("calls per net hour" → "per gross hour").
+24. **Data that comes back every week is READ, not loaded.** The user should not drag the same file again and again:
+    each recurring kind (the history file, the committed hours, the sidur, constraints, courses; the live floor next —
+    REALTIME_SPEC.md) is read from the folder where it is SAVED, chosen once per kind ("Where is your sidur saved?" —
+    never "which folder first?"), sub-folders included (a new dated folder every week needs nothing), and the newest
+    file loads by itself whenever it changes — no button, no reminder. Dropping a file always still works. Nothing
+    ever leaves the computer. What the user decided and typed survives a restart (the browser keeps it, like cookies).
+25. **No dead click.** Every way in opens something. A feature that needs data the user hasn't given yet is still
+    shown where it belongs; its window says in one plain line what is missing and offers the action right there (the
+    file picker, an example file, the folder) — never a button or a menu item that does nothing.
+
 ## Product Design Principles
 
 1. Keep one-screen clarity

@@ -4,6 +4,33 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### ⏱ No-shows by the hour · 📁 the data folder · the hours ladder
+
+- No-shows are measured per hour — net login ÷ the committed hours (scheduled + courses that answer) — instead of
+  one % for everything. Drop the committed-hours file anywhere (date · hour · total hours); the history file already
+  has the login. The days ahead continue the last 3 weeks (50/30/20) and the last days' change, so a sharp change shows
+  within days; the app checks both ways on your own past and uses the closer one.
+- The matrix, Date Trends and the breaks plan read it half hour by half hour. A measured day stands on the committed
+  hours (a file's own "scheduled" may already be net of a forecast absence). Unavailable time stays its own number.
+- "⏱ How many don't come, by hour?" (matrix ⋯, or the no-shows field in Settings): the week on a grid — measured,
+  forecast, yours. Click a number to set your own for that hour; ↺ goes back to the forecast.
+- No-shows are a forecasting model like calls and call length: Settings › Forecasting models has its list (🤖 the most
+  accurate on your past, or pick one), and "How are the numbers calculated?" has a No-shows tab to play with the models.
+- The way in is always there: without the committed hours the window says what is missing and offers the file, an
+  example file and the folder (the matrix ⋯ entry used to do nothing).
+- ⏱ The time in use, on every page: a header chip says whether productivity, occupancy and no-shows are counted on net
+  or gross login; one click switches when the file has both, and everything moves together.
+- 📁 Your files read by themselves (Home): "Where are your files saved?" — one line per kind (history, committed hours,
+  sidur, constraints, courses), one 📂 each; sub-folders are searched, so next week's sidur in a new dated folder loads
+  by itself.
+- What you typed survives a restart: the forecast cells you changed (never kept before), bulk changes, exceptions,
+  courses in answering per week and break adjustments now have their own save.
+- The answering skills start with line 1 + clinics (then your choice is kept).
+- History files: a bare "נכנסות" column is the calls (never the "חיזוי נכנסות" before it); gross and net login are
+  kept apart.
+- Design rules 23 (the hours ladder: every number built on time says which time) and 24 (recurring data is read,
+  not loaded).
+
 ### 📣 Planned demand events that learn · the round hour in the matrix hover
 
 - An event is a name + its dates (pick them, or paste a whole list). The dates that already passed teach how many

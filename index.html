@@ -363,6 +363,16 @@ tr.sumrow td,tr.sumrow th{font-weight:700;background:var(--sky-soft);border-bott
 /* 📣 planned demand events: panel in the shared modal + purple badges */
 .evrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:.78rem;padding:5px 8px;margin:6px 0;border:1px solid #d9ccf5;background:#f7f3fe;border-radius:8px}
 .evrow b{color:#6b46c1}.evrow .grow{flex:1}
+.absT{border-collapse:collapse;width:100%;font-size:.78rem;text-align:center} .absT th,.absT td{padding:4px 6px;border:1px solid #eef1f5;white-space:nowrap} .absT thead th{font-weight:700}
+.absT td[data-k]{cursor:pointer} .absT td[data-k]:hover{outline:2px solid var(--sky);outline-offset:-2px} .absT td.fc{color:#4a5a6e} .absT td.ed{font-weight:800;color:var(--navy);outline:2px solid var(--navy);outline-offset:-2px}
+.absT .absDayR th,.absT .absDayR td{font-weight:800;background:#f4f7fb;color:var(--navy)} .absT input{width:54px;text-align:center;font:inherit} .absT .dtag{display:block}
+.fdK{display:grid;grid-template-columns:minmax(150px,1fr) minmax(0,1.4fr) auto;gap:10px;align-items:center} .fdK label{display:flex;flex-direction:column;gap:1px} .fdK .fdHint{font-weight:400}
+.fdK .fdSel{display:flex;flex-direction:column;gap:1px;min-width:0} .fdK .fdAt{font-weight:600;color:var(--navy);font-size:.8rem} .fdK .fdSel .mini{overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .fdBtns{display:flex;gap:4px;align-items:center}
+.baseChip{background:#fff;border-color:#c9d6e4} .baseChip[disabled]{cursor:default;opacity:1}
+.fdRow{text-align:center;font-size:.8rem;color:var(--muted);margin:10px 0 0} .fdRow .xbtn{font-size:.75rem;color:#9aa5b1} .fdRow .xbtn:hover{color:var(--crimson)}
+.absOff{font-size:.86rem;line-height:1.5;margin:6px 0 12px} .absAct{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.absNav{display:flex;align-items:center;gap:8px;margin:4px 0 8px;flex-wrap:wrap} #absLeg{margin-inline-start:auto;display:inline-flex;gap:10px;align-items:center}
+.absKey{display:inline-block;width:12px;height:12px;border-radius:3px;background:rgba(217,119,6,.6);vertical-align:-1px} .absKey.fc{background:rgba(217,119,6,.28)}
 .evAskH{font-weight:700;color:var(--navy);font-size:.82rem;margin:2px 0 4px} .evAskR{background:#fff8e6;border-color:#f0d58a} .evAskR.hl{box-shadow:0 0 0 2px var(--sky)}
 .evUp{font-weight:800;color:#6b46c1} .evUp,.evD small{unicode-bidi:isolate;direction:ltr} /* "+32%" reads the same in Hebrew */ .evFx{display:inline-flex;align-items:flex-end;gap:2px;height:18px} .evFx i{width:7px;height:var(--h);background:#8b6fd6;border-radius:2px 2px 0 0}
 .evDs{flex-basis:100%;display:flex;flex-wrap:wrap;gap:5px;align-items:center} .evPick{display:flex;flex-wrap:wrap;gap:5px;align-items:center} #evChips{display:contents}
@@ -874,6 +884,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
   <div class="brand"><span class="dot"></span><span data-i18n="appTitle">WFM Simulator</span></div>
   <!-- 📅 the loaded sidur — the same chip, in the same place, on every page (it sets the iron behind every number) -->
   <button type="button" class="sidurChip" id="sidurChip" hidden></button>
+  <button type="button" class="sidurChip baseChip" id="baseChip" hidden></button>
   <nav>
     <button id="tab-home" class="active" data-i18n="tabHome">Home</button>
     <button id="tab-matrix" data-i18n="tabMatrix">Weekly Matrix</button>
@@ -915,6 +926,8 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <input type="file" id="roInput" accept=".csv,.tsv,.txt,.json,.xlsx,.xlsm,.xls" style="display:none">
       </div>
     </div>
+    <!-- 📁 the data folder: picked once on this computer, then read by itself (shown only where the browser can) -->
+    <p class="fdRow" id="fdRow" hidden><button type="button" class="linklike" id="fdPick"></button><button type="button" class="xbtn" id="fdOff" hidden>✕</button></p>
   </section>
 
   <!-- ============ MATRIX ============ -->
@@ -970,6 +983,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
             <div class="menu pad">
               <button type="button" class="mnItem" id="excModeOn" data-i18n="excBtn">🗓 Holiday / Exception Control</button>
               <button type="button" class="mnItem" id="mxProf" data-i18n="profBtnL" data-i18n-title="profBtnTip">📊 Calls over the day</button>
+              <button type="button" class="mnItem" id="mxAbs" data-i18n="absBtnL">⏱ No-shows by hour</button>
               <div class="mnSep"></div>
               <div class="mnH" data-i18n="exportDemand">⬇ Export Demand Profile</div>
               <div class="frow"><label data-i18n="expMetricL">Content</label>
@@ -1461,7 +1475,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
             <input type="number" id="setHc" min="0" max="2000" step="1">
             <button class="linklike" id="hcOvr" style="display:none"></button>
           </span></div>
-        <div class="frow"><label><span data-i18n="setAbsence">No-shows (%)</span> <span class="info" data-tipkey="tipAbsence" tabindex="0">i</span></label><input type="number" id="setAbsence" min="0" max="60" step="1"></div>
+        <div class="frow"><label><span data-i18n="setAbsence">No-shows (%)</span> <span class="info" data-tipkey="tipAbsence" tabindex="0">i</span></label><input type="number" id="setAbsence" min="0" max="60" step="1"><button type="button" class="btn ghost" id="setAbsBtn"></button></div>
         <div class="frow"><label><span data-i18n="setShrink">Unavailable time (%)</span> <span class="info" data-tipkey="tipShrink" tabindex="0">i</span></label><input type="number" id="setShrink" min="0" max="60" step="1"></div>
         <!-- the note sits under the two values it is about -->
         <p class="mini" data-i18n="shrinkNote">With measured answer rates in your file, the model calibrates to them — these two matter most without them.</p>
@@ -1506,6 +1520,7 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
         <div class="frow"><label data-i18n="fmVol">Call volume model</label><select id="setModelVol" style="width:210px"></select></div>
         <div class="frow"><label data-i18n="fmAht">AHT model</label><select id="setModelAht" style="width:210px"></select></div>
         <div class="frow" id="mptModelRow"><label data-i18n="fmMpt">MPT model</label><select id="setModelMpt" style="width:210px"></select></div>
+        <div class="frow" id="absModelRow" style="display:none"><label data-i18n="fmAbs">No-shows model</label><select id="setModelAbs" style="width:210px"></select></div>
         <div class="frow"><label><span data-i18n="fmProfile">Calls over the day — learned from</span></label><select id="setProfile" style="width:210px"><option value="auto">🤖</option><option value="adaptive" data-i18n="fmProfAdapt">The last 8 weeks</option><option value="w12" data-i18n="fmProf12">The last 12 weeks</option><option value="smart" data-i18n="fmProfSmart">The whole file, recent weighs more</option></select></div>
         <div class="frow" style="border:none;gap:8px;flex-wrap:wrap"><button class="btn ghost" id="backtestBtn" data-i18n="backtestBtn">🧪 Backtest models</button><button class="btn ghost" id="lgFcBtn" data-i18n="lgTabFc">📈 How is the forecast built?</button><button class="btn ghost" id="profBtn" type="button" data-i18n="profBtnL" data-i18n-title="profBtnTip" title="How the calls spread over the day — see and edit">📊 Calls over the day</button><button class="btn ghost" id="reviewExclBtn" data-i18n="reviewExclBtn">📅 Review excluded days</button></div>
         </details>
@@ -1590,6 +1605,15 @@ details.danger .inner{padding-top:8px;display:flex;align-items:center;gap:12px;f
             <div class="seg" id="faHalf"><button type="button" data-h="5" data-i18n="faH5">~1 week</button><button type="button" data-h="10" data-i18n="faH10">~2 weeks</button><button type="button" data-h="20" data-i18n="faH20">~4 weeks</button></div></div>
           <p class="mini" id="faFoot"></p>
           </details>
+        </div>
+        <div id="fdPanel" class="mpanel" data-tkey="fdTitle" hidden>
+          <div id="fdRows"></div>
+        </div>
+        <div id="absPanel" class="mpanel" data-tkey="absTitle" hidden>
+          <div class="absNav"><button class="btn ghost wknav" id="absPrev" type="button">‹</button><b id="absWkL"></b><button class="btn ghost wknav" id="absNext" type="button">›</button>
+            <span id="absLeg" class="mini"></span><button type="button" class="linklike" id="absClear" data-i18n="absClear" hidden>↺ back to the forecast</button></div>
+          <div id="absGrid"></div>
+          <input type="file" id="absFile" accept=".csv,.tsv,.txt,.xlsx,.xlsm,.xls" style="display:none">
         </div>
         <div id="evPanel" class="mpanel" data-tkey="evTitle" hidden>
           <div id="evAsk"></div>
@@ -2233,7 +2257,7 @@ en:{
   setMptHint:"Don't know it? Take the average wait of abandoned calls from your phone system's report.",
   ceTitle:"Edit {day} {time}", ceCancel:"Cancel", ceApply:"Apply",
   ceFutL:"Apply to this and all future weeks (same weekday & interval)",
-  mxCum:"Day so far ({a}–{b}): {v} · {n} calls", mxHour:"Hour {a}–{b}: {n} calls · {v}", ceCum:"Day so far {a}–{b}:",
+  mxCum:"Day so far ({a}–{b}): {v} · {n} calls", mxHour:"Hour {a}–{b}: {n} calls · {v}", mxAbs:"Don't come this hour: {p}%", mAbsMix:"3 weeks · 50/30/20", mAbsFast:"3 weeks + the last days' change", fmAbs:"No-shows model", lgKAbs:"No-shows", lgDayAbs:"{d}: the day's no-shows, week by week", lgM_mix3_h:"The last 3 same weekdays: half the weight on last week, then 30% and 20%.", lgM_mix3_g:"Steady — one odd week moves it only halfway.", lgM_mix3_b:"Slow — a real change takes 3 weeks to show in full.", lgM_fast_h:"The same 3 weeks, moved by what changed in the last 5 days, on any weekday.", lgM_fast_g:"A sharp change shows within days.", lgM_fast_b:"A few odd days can pull it too far.", absTest2:"Checked on your past ({n} days): {m} — off by {e}%. Click to see the models and play with them.", absBtnL:"⏱ No-shows by hour", absTitle:"⏱ How many don't come, by hour?", absIntro:"From your files: the hours that were planned against the hours that were logged in, hour by hour. The days ahead follow the model that was closest on your own past — click a number to set your own.", absDayL:"Day", absLegAct:"measured", absLegFc:"forecast", absLegEd:"yours", absClear:"↺ back to the forecast", absNone:"No committed hours for this week.", absTest:"Checked on your last {n} days: off by {a} points with the last days' change, {b} with the 3 weeks alone — the closer one is used.", absTestMix:"Checked on your last {n} days: the 3 weeks alone were closer (off by {b} points vs {a}) — they are used.", fdPick:"Read your files by themselves — choose where each kind is saved", fdOn:"Read by themselves: {k}", fdChange:"Click to change", fdTip:"Choose once where each kind of file is saved (history, committed hours, sidur, constraints, courses). From then on the newest file of each loads by itself. Nothing leaves the computer.", fdOff:"Stop reading every folder", fdTitle:"📁 Where are your files saved?", fdIntro:"For each kind of file, choose the folder it is saved in. Its sub-folders are searched too — a new folder every week is fine. From then on the newest file loads by itself.", fdK_fc:"History file (calls)", fdK_commit:"Committed hours", fdK_sidur:"Sidur", fdK_cons:"Constraints", fdK_courses:"Courses", fdH_fc:"the queue / 360 reports", fdH_commit:"the committed-hours store", fdH_sidur:"the sidur folder — weeks in sub-folders are fine", fdH_cons:"the managers' constraints files", fdH_courses:"the courses Gantt", fdChoose:"Choose folder", fdChange2:"Change", fdStop:"Stop reading this kind", fdNewest:"newest: {f} · {d}", fdNoneIn:"no such file in this folder yet", fdPerm:"click anywhere on the page to allow reading", fdLooking:"looking…", tbNet:"net login", tbGross:"gross login", tbTipNet:"Productivity, occupancy and no-shows are counted on NET login: gross minus feedback and briefing.", tbTipGross:"Productivity, occupancy and no-shows are counted on GROSS login: all the time the rep is logged in, feedback and briefing included.", tbSwitch:"Click: switch to {o}.", tbOnly:"Your file has only this one.", tbNow:"Now on {b}: productivity, occupancy and no-shows", absSetOff:"by hour…", absSetOffTip:"One % for every hour today — the app can measure it hour by hour. Click to see how", absOffA:"Today the app uses one % for every hour ({p}%). To measure it hour by hour it needs one more file — the committed hours: date · hour · total hours (scheduled + courses that answer).", absOffB:"The committed hours are loaded. The history file has no login hours yet — load one with a net (or gross) login hours column.", absOffC:"The committed hours ({a}–{b}) and the history file ({c}–{d}) don't share enough days yet (3 are needed).", absOffD:"First the history file (calls + login hours), on the Home page — then the committed hours.", absPick:"📂 Choose the file", absEx:"⬇ Example file", absFolder:"📁 Read it from a folder", absExFile:"committed hours - example", absSetBtn:"{p} · by hour", absSetTip:"From your files, hour by hour — click to see the week and change it", cmOk:"Committed hours loaded ({d} days) — no-shows are now by the hour", cmOkWait:"Committed hours loaded ({d} days) — no-shows by the hour start when the history file has login hours", fcX_commit:"committed hours", fcX_commit_d:"No-shows by the hour instead of one % — drop the committed-hours file (date · hour · total hours) anywhere on the page.", ceCum:"Day so far {a}–{b}:",
   ceSched:"scheduled", ceNeed:"needed", ceAfter:"after the change", ceDayTotal:"· daily total",
   ceHintVolFc:"Model forecast for this half-hour — change it if you know something the model doesn't.",
   ceHintVolAct:"Measured in your file — edit only to correct bad data.",
@@ -2855,7 +2879,7 @@ he:{
   setMptHint:"לא יודעים? קחו את זמן ההמתנה הממוצע של שיחות נטושות מדוח מערכת הטלפוניה.",
   ceTitle:"עריכת {day} {time}", ceCancel:"ביטול", ceApply:"החלה",
   ceFutL:"החל על שורה זו ועל כל השבועות הבאים (אותו יום ואותו אינטרוול)",
-  mxCum:"מצטבר יומי ({a}–{b}): {v} · {n} שיחות", mxHour:"שעה {a}–{b}: {n} שיחות · {v}", ceCum:"מצטבר יומי {a}–{b}:",
+  mxCum:"מצטבר יומי ({a}–{b}): {v} · {n} שיחות", mxHour:"שעה {a}–{b}: {n} שיחות · {v}", mxAbs:"לא מגיעים בשעה הזו: {p}%", mAbsMix:"3 שבועות · 50/30/20", mAbsFast:"3 שבועות + השינוי של הימים האחרונים", fmAbs:"מודל חוסרים", lgKAbs:"חוסרים", lgDayAbs:"יום {d}: החוסרים של היום, שבוע אחר שבוע", lgM_mix3_h:"3 הפעמים האחרונות של אותו יום בשבוע: חצי מהמשקל לשבוע האחרון, ואז 30% ו־20%.", lgM_mix3_g:"יציב — שבוע חריג אחד מזיז אותו רק חצי.", lgM_mix3_b:"איטי — שינוי אמיתי נכנס במלואו רק אחרי 3 שבועות.", lgM_fast_h:"אותם 3 שבועות, בתוספת מה שהשתנה ב־5 הימים האחרונים, בכל ימות השבוע.", lgM_fast_g:"שינוי חד נכנס תוך ימים.", lgM_fast_b:"כמה ימים חריגים יכולים למשוך אותו רחוק מדי.", absTest2:"נבדק על העבר שלך ({n} ימים): {m} — סטייה {e}%. לחיצה מציגה את המודלים ומאפשרת לשחק איתם.", absBtnL:"⏱ חוסרים לפי שעה", absTitle:"⏱ כמה לא מגיעים, לפי שעה?", absIntro:"מהקבצים שלך: השעות שתוכננו מול השעות שהיו בלוגין, שעה־שעה. הימים הבאים לפי המודל שהיה הכי קרוב על העבר שלך — לחיצה על מספר קובעת ערך משלך.", absDayL:"יומי", absLegAct:"נמדד", absLegFc:"תחזית", absLegEd:"שלך", absClear:"↺ חזרה לתחזית", absNone:"אין שעות התחייבות לשבוע הזה.", absTest:"נבדק על {n} הימים האחרונים שלך: סטייה של {a} נק׳ עם השינוי של הימים האחרונים, {b} עם 3 השבועות לבד — נבחר הקרוב יותר.", absTestMix:"נבדק על {n} הימים האחרונים שלך: 3 השבועות לבד היו קרובים יותר (סטייה של {b} נק׳ מול {a}) — הם בשימוש.", fdPick:"קריאת הקבצים לבד — בוחרים איפה כל סוג נשמר", fdOn:"נקראים לבד: {k}", fdChange:"לחיצה כדי לשנות", fdTip:"בוחרים פעם אחת איפה נשמר כל סוג קובץ (היסטוריה, שעות התחייבות, סידור, אילוצים, קורסים). מאז הקובץ הכי חדש מכל סוג נטען לבד. שום דבר לא יוצא מהמחשב.", fdOff:"הפסקת הקריאה מכל התיקיות", fdTitle:"📁 איפה הקבצים שלך נשמרים?", fdIntro:"לכל סוג קובץ בוחרים את התיקייה שבה הוא נשמר. גם תתי־התיקיות שלה נבדקות — תיקייה חדשה כל שבוע זה בסדר. מאז הקובץ הכי חדש נטען לבד.", fdK_fc:"קובץ היסטוריה (שיחות)", fdK_commit:"שעות התחייבות", fdK_sidur:"סידור עבודה", fdK_cons:"אילוצים", fdK_courses:"קורסים", fdH_fc:"דוחות התורים / 360", fdH_commit:"מאגר שעות ההתחייבות", fdH_sidur:"תיקיית הסידורים — שבועות בתתי־תיקיות זה בסדר", fdH_cons:"קובצי האילוצים של המנהלים", fdH_courses:"גאנט הקורסים", fdChoose:"בחירת תיקייה", fdChange2:"החלפה", fdStop:"הפסקת הקריאה של הסוג הזה", fdNewest:"הכי חדש: {f} · {d}", fdNoneIn:"עדיין אין בתיקייה הזו קובץ כזה", fdPerm:"לחיצה בכל מקום בעמוד כדי לאשר קריאה", fdLooking:"מחפשת…", tbNet:"לוגין נטו", tbGross:"לוגין ברוטו", tbTipNet:"פריון, תעסוקה וחוסרים נספרים על לוגין נטו: ברוטו פחות משוב ותדריך.", tbTipGross:"פריון, תעסוקה וחוסרים נספרים על לוגין ברוטו: כל הזמן שהנציג בלוגין, כולל משוב ותדריך.", tbSwitch:"לחיצה: מעבר ל{o}.", tbOnly:"בקובץ שלך יש רק את זה.", tbNow:"מעכשיו על {b}: פריון, תעסוקה וחוסרים", absSetOff:"לפי שעה…", absSetOffTip:"היום אחוז אחד לכל השעות — האפליקציה יכולה למדוד שעה־שעה. לחיצה מראה איך", absOffA:"היום האפליקציה משתמשת באחוז אחד לכל השעות ({p}%). כדי למדוד שעה־שעה חסר לה קובץ אחד — שעות ההתחייבות: תאריך · שעה · סה״כ שעות (שיבוץ + קורסים במענה).", absOffB:"שעות ההתחייבות נטענו. בקובץ ההיסטוריה עדיין אין שעות לוגין — טענו קובץ עם עמודת שעות לוגין נטו (או ברוטו).", absOffC:"שעות ההתחייבות ({a}–{b}) וקובץ ההיסטוריה ({c}–{d}) עוד לא חופפים במספיק ימים (צריך 3).", absOffD:"קודם קובץ ההיסטוריה (שיחות + שעות לוגין), בעמוד הבית — ואחריו שעות ההתחייבות.", absPick:"📂 בחירת הקובץ", absEx:"⬇ קובץ לדוגמה", absFolder:"📁 לקרוא מתיקייה", absExFile:"שעות התחייבות - דוגמה", absSetBtn:"{p} · לפי שעה", absSetTip:"מהקבצים שלך, שעה־שעה — לחיצה כדי לראות את השבוע ולשנות", cmOk:"שעות ההתחייבות נטענו ({d} ימים) — החוסרים מעכשיו לפי שעה", cmOkWait:"שעות ההתחייבות נטענו ({d} ימים) — חוסרים לפי שעה יתחילו כשבקובץ ההיסטוריה יהיו שעות לוגין", fcX_commit:"שעות התחייבות", fcX_commit_d:"חוסרים לפי שעה במקום אחוז אחד — גוררים את קובץ שעות ההתחייבות (תאריך · שעה · סה״כ שעות) לכל מקום בעמוד.", ceCum:"מצטבר יומי {a}–{b}:",
   ceSched:"משובצים", ceNeed:"נדרשים", ceAfter:"אחרי השינוי", ceDayTotal:"· סה״כ יומי",
   ceHintVolFc:"תחזית המודל לחצי השעה הזו — שנו אם אתם יודעים משהו שהמודל לא יודע.",
   ceHintVolAct:"נמדד בקובץ שלכם — ערכו רק כדי לתקן נתון שגוי.",
@@ -2956,8 +2980,11 @@ he:{
   relPts:"נק׳", relHrs:"ש׳", relFoot:"{n} תקופות בפועל · תקופות תחזית לא נכללות (אלה מספרי המודל עצמו) · קשר, לא הוכחה לסיבה"
 }};
 let lang="en";
+/* ⏱ a label that names the login says the base in use (DESGIN rule 23): written for net, read as gross while TB_GROSS */
+var TB_GROSS=false; const TB_KEYS=new Set(["thNetProd","fTipNetProd","fTipOcc","thNetH","fTipNetH","prodFcHow","prodBtRatio","prodBtCarry"]);
 const t=(k,vars)=>{ let s=I18N[lang][k] ?? I18N.en[k] ?? k;
   if(typeof s==="string"&&vars) for(const [kk,vv] of Object.entries(vars)) s=s.replaceAll("{"+kk+"}",vv);
+  if(TB_GROSS&&typeof s==="string"&&TB_KEYS.has(k)) s=s.replace(/נטו/g,"ברוטו").replace(/\bNet\b/g,"Gross").replace(/\bnet\b/g,"gross");
   return s; };
 
 function setLang(l){
@@ -3349,9 +3376,9 @@ Models.volume.comb   ={label:"mComb", fn:(s,h)=>combForecast(s,h)};
    data's last week). A horizon the history is too short to test inherits the one before it. A hand-picked model
    (settings.modelUser) is used for every horizon. No control: the matrix simply gets the near model, Date Trends and
    the reports the far ones. rankModels(kind,b) = bucket b's ranking, by the weighted error (then the lean). */
-const HZ=[[1],[2,3,4],[6,9,13]], hzOf=h=>h<=1?0:h<=4?1:2, MKEY={volume:"modelVolume",aht:"modelAht",mpt:"modelMpt"};
+const HZ=[[1],[2,3,4],[6,9,13]], hzOf=h=>h<=1?0:h<=4?1:2, MKEY={volume:"modelVolume",aht:"modelAht",mpt:"modelMpt",abs:"modelAbs"};
 function rankModels(kind,b){ b=b||0;
-  const key=[state._serVer,JSON.stringify(state.settings.myModel||0),Object.keys(Models[kind]).join()].join("|");
+  const key=[kind==="abs"?(absHist(),state._abH.k):state._serVer,JSON.stringify(state.settings.myModel||0),Object.keys(Models[kind]).join()].join("|"); // ⏱ no-shows follow their own data
   const R=state._rkC=state._rkC||{}, C=R[kind]&&R[kind].k===key?R[kind]:(R[kind]={k:key,m:{}}); if(C.m[b]) return C.m[b]; // memo per kind (forecastDay asks volume, AHT and patience in turn)
   const out=[]; if(state.series) for(const mid of Object.keys(Models[kind])){ if(mid==="custom"&&!(state.settings.myModel||{})[kind]) continue; // 🛠 only once the user set it
     let e=0,p=0,n=0,pn=0; for(const h of HZ[b]){ const r=backtestModel(kind,mid,h); if(!r) continue; e+=r.mape*r.n; n+=r.n; if(r.pace!=null){ p+=r.pace*r.n; pn+=r.n; } }
@@ -3371,7 +3398,19 @@ function myModel(series,h,p){ const y=series.filter(v=>v>0); if(!y.length) retur
   let L=y[0], T=0; for(let i=1;i<y.length;i++){ const prev=L; L=p.a*y[i]+(1-p.a)*(L+p.tr*T); T=0.3*(L-prev)+0.7*T; }
   let d=0, pw=0.9; for(let k=1;k<=Math.max(1,h||1);k++){ d+=pw; pw*=0.9; }
   return Math.max(0,L+p.tr*d*T); }
-for(const k of ["volume","aht","mpt"]) Models[k].custom={label:"mMine",fn:(s,h)=>myModel(s,h,myP(k))};
+/* ⏱ no-shows (kind "abs"): the series = ONE weekday's day-level no-shows in %, week by week (absSeries) — tested, picked
+   and played with like calls and call length. mix3 = the planner's own 50/30/20 of the last 3 weeks; fast = the same,
+   moved by the last days' change on any weekday (ctx.shift — a sharp change shows within days, halved each week ahead). */
+const absMix3=s=>{ const y=s.slice(-3).reverse(), w=[0.5,0.3,0.2]; let a=0,b=0; y.forEach((v,i)=>{ a+=w[i]*v; b+=w[i]; }); return b?a/b:0; };
+Models.abs={
+  mix3:       {label:"mAbsMix", fn:s=>absMix3(s)},
+  fast:       {label:"mAbsFast",fn:(s,h,c)=>absMix3(s)+(c&&c.shift?c.shift(s.length)*Math.pow(0.5,Math.max(1,h||1)-1):0)},
+  lastweek:   {label:"mLast",   fn:s=>s[s.length-1]??0},
+  ma4:        {label:"mMa4",    fn:s=>movAvg4(s)},
+  wavg4:      {label:"mWavg",   fn:s=>weightedMA4(s)},
+  holt_damped:{label:"mHolt",   fn:(s,h)=>holtForecast(s,h)}
+};
+for(const k of ["volume","aht","mpt","abs"]) Models[k].custom={label:"mMine",fn:(s,h)=>myModel(s,h,myP(k))};
 const ForecastEngines={
   volume:(series,horizonWeeks,ctx)=>(Models.volume[modelFor("volume",horizonWeeks)]||Models.volume.ensemble5).fn(series,horizonWeeks,ctx),
   aht:(series,horizonWeeks,ctx)=>(Models.aht[modelFor("aht",horizonWeeks)]||Models.aht.ma4).fn(series,horizonWeeks,ctx),
@@ -3388,6 +3427,12 @@ function backtestModel(kind,modelId,h){
   const M=Models[kind]&&Models[kind][modelId]; if(!state.series||!M) return null;
   h=Math.max(1,Math.round(h||1)); const K=6; // rolling holdout depth (weeks)
   let err=0,n=0,sumF=0,sumA=0,wSum=0;
+  if(kind==="abs"){ if(!absOn()) return null; // ⏱ each weekday's day-level no-shows, a miss weighted by that day's committed hours
+    for(let di=0;di<6;di++){ const S=absSeries(di), y=S.v, ctx=absCtx(di);
+      for(let k=1;k<=K;k++){ const i=y.length-k, tr=i-h+1; if(tr<3) break;
+        const pred=M.fn(y.slice(0,tr),h,ctx), w=S.C[i]; if(!isFinite(pred)||!(w>0)) continue;
+        err+=w*Math.abs(pred-y[i]); wSum+=w*y[i]; sumF+=w*pred; sumA+=w*y[i]; n++; } }
+    return n&&wSum>0?{mape:err/wSum*100,pace:sumF/sumA*100,n}:null; }
   if(kind==="volume"){
     for(const di in state.series){ const s=dayTotalsDi(+di);
       for(let k=1;k<=K;k++){ const i=s.length-k, tr=i-h+1; if(tr<4) break; // keep ≥4 training points per origin
@@ -3441,7 +3486,7 @@ const state={
   rosterNamed:false, roster:[],
   settings:{mode:"normal",target:90,tsfT:30,mpt:180,attrition:4,headcount:60,shrinkage:0,absence:0,
             primaryMetric:"ar",dayStart:8,dayEnd:18,friEnd:13,
-            modelVolume:"ensemble5",modelAht:"ma4",modelMpt:"ma4",mptOverride:false,hcOverride:false,modelUserSet:false,modelUser:{},
+            modelVolume:"ensemble5",modelAht:"ma4",modelMpt:"ma4",modelAbs:"mix3",mptOverride:false,hcOverride:false,modelUserSet:false,modelUser:{},
             autoHolidays:true,autoAnomaly:true,profileMode:"auto",
             holOverride:{},volCal:1,recruitBasis:"all",recruitSkills:[],skillReqs:[],
             schedMode:"optimizeCurrent", // scheduler page: optimizeCurrent | generateIron
@@ -3860,7 +3905,7 @@ const SYN={
   start:["start","start time","shift start","from","clock in","התחלה","משעה","שעת התחלה","תחילת משמרת","כניסה","שעת כניסה"],
   end:["end","end time","shift end","to","until","clock out","סיום","עד","עד שעה","שעת סיום","סוף משמרת","יציאה","שעת יציאה"],
   interval:["interval","time","half hour","period","slot","אינטרוול","שעה","חצי שעה","רבע שעה","זמן","מרווח","פרק זמן"],
-  volume:["volume","calls","incoming calls","calls offered","offered","nco","calls received","total calls","שיחות","שיחות נכנסות","נפח","כמות שיחות","סה כ שיחות","שיחות שהתקבלו"],
+  volume:["volume","calls","incoming calls","calls offered","offered","nco","calls received","total calls","שיחות","שיחות נכנסות","נכנסות","נפח","כמות שיחות","סה כ שיחות","שיחות שהתקבלו"],
   aht:["aht","aht sec","avg handle time","average handle time","average handling time","handle time","talk time","avg talk time","avg duration","average duration","call duration","אורך שיחה","אורך שיחה ממוצע","זמן טיפול","זמן טיפול ממוצע","זמן שיחה ממוצע","משך שיחה","ממוצע משך שיחה","משך שיחה ממוצע","ממוצע משך","משך טיפול","אחט"],
   agents:["agents","agent count","scheduled agents","reps","representatives","staff","staffing","scheduled","headcount","capacity","positions","fte","עמדות","נציגים","מצבה","משובצים","מאוישים","כמות נציגים","מספר נציגים","שעות שיבוץ","שיבוץ"],
   mpt:["mpt","patience","mean patience time","abandon time","avg abandon","avg abandon delay","abandon delay","זמן סבלנות","סבלנות","זמן נטישה","המתנה עד לנטישה","המתנה לנטישה","ממוצע המתנה עד לנטישה"],
@@ -3906,11 +3951,16 @@ function findHeader(grid){
       const tot=all.aht.find(x=>/כולל|total|incl/.test(x.h));
       if(tot) map.aht=tot.c;
     }
+    // several calls columns (a 360 export has "חיזוי נכנסות" before "שיחות נכנסות"): the measured one, not the forecast
+    if(all.volume&&all.volume.length>1){ const real=all.volume.find(x=>!/חיזוי|תחזית|צפי|forecast/.test(x.h)); if(real) map.volume=real.c; }
     // when several login-hours columns exist, prefer NET over gross
     if(all.login&&all.login.length>1){
       const net=all.login.find(x=>/נטו|net/.test(x.h));
       if(net) map.login=net.c;
     }
+    // the gross login rides along (login − feedback and briefing = net): kept for the gross base, never mixed with net
+    if(all.login){ const gr=all.login.find(x=>/ברוטו|gross/.test(x.h)); if(gr&&gr.c!==map.login) map.loginG=gr.c;
+      else if(gr){ map.loginG=gr.c; delete map.login; } } // the only login column is gross: it IS gross
     const score=Object.keys(map).length;
     if(score>=2&&(!best||score>best.score)){
       const cols=new Set(); for(const k in all) all[k].forEach(x=>cols.add(x.c));
@@ -4038,6 +4088,7 @@ function buildForecastGrid(grid,hd){
     if(isFinite(ag)&&ag>=0) acc.agents+=ag;
     if(map.mpt!=null){ const mp=toDurationSec(row[map.mpt]); if(isFinite(mp)&&mp>0){ acc.mptW+=mp*vol; acc.mptN+=vol; } }
     if(map.login!=null){ const lg=toNum(row[map.login]); if(isFinite(lg)&&lg>=0) acc.login+=lg; } // actual net login hours
+    if(map.loginG!=null){ const lg=toNum(row[map.loginG]); if(isFinite(lg)&&lg>=0) acc.loginG=(acc.loginG||0)+lg; } // gross, when the file has both
     if(map.answered!=null){ const an=toNum(row[map.answered]); if(isFinite(an)&&an>=0) acc.answered=(acc.answered||0)+an; }
     if(map.ans30!=null){ const a3=toNum(row[map.ans30]); if(isFinite(a3)&&a3>=0) acc.ans30=(acc.ans30||0)+a3; } // measured answered-within-30s count
     if(map.occup!=null){ const oc=toNum(row[map.occup])*occScale; // the column's own scale (0.79 or 79 → 79%)
@@ -4062,6 +4113,7 @@ function buildForecastGrid(grid,hd){
       const rec={volume:Math.round(a.vol),aht:Math.max(1,Math.round(a.ahtW/a.vol*ahtScale)),agents:Math.round(a.agents)};
       if(a.mptN>0) rec.mpt=Math.round(a.mptW/a.mptN);
       if(a.login>0) rec.login=Math.round(a.login*100)/100;
+      if(a.loginG>0) rec.loginG=Math.round(a.loginG*100)/100;
       if(a.answered>0) rec.answered=Math.round(a.answered);
       // physical invariant: answered-within-30s can never exceed answered
       if(a.ans30>0) rec.ans30=Math.min(Math.round(a.ans30),rec.answered||Math.round(a.ans30));
@@ -4071,7 +4123,7 @@ function buildForecastGrid(grid,hd){
       if(hasEx) rec.extras=ex;
       if(hourly){ // split the hour across two half-hour blocks — exact halves, no rounding leak
         const half={...rec,volume:a.vol/2};
-        if(rec.login) half.login=rec.login/2;
+        if(rec.login) half.login=rec.login/2; if(rec.loginG) half.loginG=rec.loginG/2;
         if(rec.answered) half.answered=rec.answered/2;
         if(rec.ans30) half.ans30=rec.ans30/2;
         if(rec.extras) half.extras={...rec.extras};
@@ -4080,7 +4132,7 @@ function buildForecastGrid(grid,hd){
     }
     out.set(ds,fin);
   }
-  state.days=out; state.simDays.clear(); state.fcCache.clear(); memo.clear();
+  state.days=out; if(typeof applyTimeBase==="function") applyTimeBase(); state.simDays.clear(); state.fcCache.clear(); memo.clear();
   state.edits.clear(); state.undoStack=[]; state.pristine.clear(); state.volAdj=[]; // demo/previous data fully overridden
   state.extraCols=extras.map(e=>e.name);
   state.extraFmt={}; extras.forEach(e=>state.extraFmt[e.name]=e.isPct?"pct":(e.isDur?"sec":"num"));
@@ -7259,6 +7311,26 @@ async function bytesToGrid(buf){
   if(/<table|<html|<tr[\s>]/i.test(text)) return {grid:htmlToGrid(text)};                // HTML disguised as .xls
   return {grid:csvToGrid(text)};
 }
+/* ⏱ COMMITTED HOURS — per date and clock hour, the hours the forecast file committed to (scheduled + courses that answer):
+   the denominator of the no-shows. No system holds it; it comes from the forecast files' store (or a forecast file's
+   "ייצוא התחייבות" sheet). Any sheet with a date, an hour and a total-hours column and NO calls column. Half-hour rows
+   add up to their hour; a later file replaces only the hours it holds. state.commit: "ds|HH:00" → hours. */
+function commitHeader(g){
+  for(let r=0;r<Math.min(15,g.length);r++){ const row=(g[r]||[]).map(normHeader), f=re=>row.findIndex(x=>re.test(x));
+    const d=f(/^(תאריך|date)$/), h=f(/^(שעה|hour|time|interval|אינטרוול)$/), sch=f(/שעות שיבוץ|scheduled hours/), crs=f(/קורס|course/);
+    let tot=f(/סה.{0,2}כ שעות|total hours|התחייבות|committed|commitment/); // סה"כ · סה״כ · סה כ if(row[tot]&&/שבוע|week/.test(row[tot])) tot=-1;
+    if(d>=0&&h>=0&&(tot>=0||sch>=0)&&f(/שיחות|נכנסות|calls|volume/)<0) return {r,d,h,tot,sch,crs}; }
+  return null; }
+function ingestCommit(grids){
+  const C=state.commit=state.commit||new Map(), days=new Set(); let rows=0;
+  for(const g of grids){ const H=commitHeader(g); if(!H) continue; const m=new Map();
+    for(let r=H.r+1;r<g.length;r++){ const row=g[r]||[], ds=normDateAny(row[H.d]), tm=normTimeAny(row[H.h]); if(!ds||!tm) continue;
+      const v=H.tot>=0?toNum(row[H.tot]):(toNum(row[H.sch])||0)+(H.crs>=0?toNum(row[H.crs])||0:0); if(!isFinite(v)||v<0||v>5000) continue;
+      const k=ds+"|"+tm.slice(0,2)+":00"; m.set(k,(m.get(k)||0)+v); }
+    for(const [k,v] of m){ C.set(k,Math.round(v*100)/100); days.add(k.slice(0,10)); rows++; } }
+  if(!rows) return null;
+  state._cmVer=(state._cmVer||0)+1; absChanged();
+  return {type:"commit",days:days.size,rows}; }
 function classifyGrid(map,hint){
   if(map.volume!=null&&map.aht!=null) return "forecast";
   if((map.name!=null||map.agents!=null)&&(map.interval!=null||(map.start!=null&&map.end!=null))
@@ -7284,6 +7356,7 @@ function ingestRows(res,hint){
       .map(s=>({name:String(s&&s.name||""),grid:((s&&s.grid)||s||[]).filter(r=>r&&r.length)}))
       .filter(s=>s.grid.length>=2);
     if(!sheets.length) throw {code:"noheader",headers:[]};
+    { const cm=sheets.filter(s=>commitHeader(s.grid)); if(cm.length){ const st=ingestCommit(cm.map(s=>s.grid)); if(st) return st; } } // ⏱ committed hours
     const tk=parseTikshuvWorkbook(sheets);
     if(tk) return tk;
     sheets.sort((a,b)=>((findHeader(b.grid)||{}).score||0)-((findHeader(a.grid)||{}).score||0));
@@ -7304,6 +7377,7 @@ function ingestRows(res,hint){
     updatePortalStatus(); saveData(); renderAll(); return mx;
   };
   const grid=(res.grid||[]).filter(r=>r&&r.length);
+  if(commitHeader(grid)){ const st=ingestCommit([grid]); if(st) return st; } // ⏱ committed hours (a CSV / one sheet)
   const hd=findHeader(grid);
   if(!hd){
     // no long-format header row → try the pivot/matrix sidur layout
@@ -7380,6 +7454,8 @@ function portalEls(kind){
     : {zone:document.getElementById("dzForecast"),err:document.getElementById("fcErr"),st:document.getElementById("fcStatus")};
 }
 function ingestSuccess(stats,hint){
+  if(stats.type==="commit"){ document.querySelectorAll(".dropzone.error").forEach(z=>z.classList.remove("error")); // its own kind: no portal changes
+    showToast("⏱ "+t(absOn()?"cmOk":"cmOkWait",{d:stats.days}),true); return; }
   const p=portalEls(stats.type==="forecast"?"forecast":"roster");
   const other=portalEls(stats.type==="forecast"?"roster":"forecast");
   p.zone.classList.remove("error"); p.err.style.display="none";
@@ -7497,7 +7573,7 @@ function auditForecast(){
     if(msgs.length) showToast("⚠ "+t("fcAuditWarn")+" "+msgs.join(" · "),false);
   }
 }
-function afterForecastLoad(){
+function afterForecastLoad(){ setTimeout(()=>inputsLoad(true),0); // ✎ a new history file: the inputs for the days it doesn't hold come back
   auditForecast();
   const keys=[...state.days.keys()].sort();
   state.minDate=keys[0]; state.maxDate=keys[keys.length-1];
@@ -7899,10 +7975,11 @@ function computeSlotBias(){
     if(state.exceptions.has(ds)) continue;
     const di=fromISO(ds).getDay(); if(di>5) continue;
     for(const [tm,r] of dm){
-      if(!(r.volume>0)||!(r.answered>0)||!(r.aht>0)||!(r.agents>0)) continue;
+      if(!(r.volume>0)||!(r.answered>0)||!(r.aht>0)) continue;
+      const e=histEff(ds,tm,r,S); if(!(e>0)) continue; // ⏱ same base as the matrix and the calibration
       const k=di+"|"+tm;
       const q=acc[k]=acc[k]||{v:[],a:[],g:[],m:[],ar:[],t30:[]};
-      q.v.push(r.volume); q.a.push(r.aht); q.g.push(r.agents);
+      q.v.push(r.volume); q.a.push(r.aht); q.g.push(e);
       if(r.mpt>0) q.m.push(r.mpt);
       q.ar.push(Math.min(1,r.answered/r.volume));
       if(r.ans30>0) q.t30.push(Math.min(1,r.ans30/r.volume));
@@ -7913,7 +7990,7 @@ function computeSlotBias(){
   for(const k in acc){
     const q=acc[k]; if(q.ar.length<4) continue;
     // integer agents only — lnFact(m) is an array lookup (see calibrateModel note)
-    const agents=Math.max(1,Math.round(med(q.g)*availShare(S)*kap));
+    const agents=Math.max(1,Math.round(med(q.g)*kap));
     const perf=evalInterval(med(q.v),med(q.a),agents,S,q.m.length?med(q.m):null);
     state.slotBias[k]={ar:med(q.ar)-perf.ar, t30:q.t30.length>=4?med(q.t30)-perf.tsf30:0};
   }
@@ -7929,16 +8006,17 @@ function computeSlotBias(){
    queue math runs. Recomputed on every data load. κ is clamped to a sane
    band so a thin/odd dataset can't produce a wild factor. */
 function calibrateModel(){
-  const S=state.settings;
+  const S=state.settings; absMirror(); // ⏱ Settings' no-shows % follows the hourly forecast's level
   // gather historical intervals that carry a measured answer rate
   const samples=[];
   for(const [ds,dm] of state.days){
     if(state.exceptions.has(ds)) continue;
     for(const [tm,r] of dm){
-      if(!(r.volume>0)||!(r.aht>0)||!(r.agents>0)||!(r.answered>0)) continue;
+      if(!(r.volume>0)||!(r.aht>0)||!(r.answered>0)) continue;
       const measuredAR=Math.min(1,r.answered/r.volume);
       if(measuredAR<=0.02||measuredAR>=0.999) continue; // saturated ends carry no signal
-      samples.push({vol:r.volume,aht:r.aht,ag:r.agents,mpt:r.mpt,ar:measuredAR});
+      const e=histEff(ds,tm,r,S); if(!(e>0)) continue; // ⏱ the reps who were really there, when the committed hours are loaded
+      samples.push({vol:r.volume,aht:r.aht,e,mpt:r.mpt,ar:measuredAR});
     }
   }
   if(samples.length<50){ state.calib=1; return; } // not enough signal → no calibration
@@ -7950,14 +8028,13 @@ function calibrateModel(){
     for(let i=0;i<samples.length;i+=stride) sub.push(samples[i]);
     samples.length=0; samples.push(...sub);
   }
-  const shr=availShare(S); // absence × shrinkage, same composition computeDay uses
   // pooled (volume-neutral) mean bias of modeled AR vs measured, at a given κ
   const meanBias=k=>{
     let s=0,n=0;
     for(const q of samples){
       // MUST be integer: erlangB ends with lnFact(m), an array lookup — a fractional
       // agent count returns undefined→NaN and silently corrupts the whole bisection
-      const m=Math.max(1,Math.round(q.ag*shr*k));
+      const m=Math.max(1,Math.round(q.e*k));
       const perf=evalInterval(q.vol,q.aht,m,S,q.mpt);
       s+=(perf.ar-q.ar); n++;
     }
@@ -7973,13 +8050,14 @@ function calibrateModel(){
 /* optional queue-file columns: what each one ADDS. A chip turns ✓ when the loaded file has it. */
 const FC_EXTRAS=[
   {k:"answered",has:r=>r.answered>0},{k:"login",has:r=>r.login>0},{k:"occup",has:r=>r.occup>0},
-  {k:"ans30",has:r=>r.ans30>0},{k:"mpt",has:r=>r.mpt>0},{k:"agents",has:r=>r.agents>0}];
+  {k:"ans30",has:r=>r.ans30>0},{k:"mpt",has:r=>r.mpt>0},{k:"agents",has:r=>r.agents>0},{k:"commit",has:()=>false}]; // commit = the committed-hours file (its own drop)
 function renderFcExtras(){
   const box=document.getElementById("fcExtras"); if(!box) return;
   const found=new Set();
   outer: for(const dm of state.days.values()){ for(const r of dm.values()){
     for(const x of FC_EXTRAS) if(!found.has(x.k)&&x.has(r)) found.add(x.k);
     if(found.size===FC_EXTRAS.length) break outer; } }
+  if(state.commit&&state.commit.size) found.add("commit");
   box.innerHTML=`<span>${t(state.days.size?"fcXHave":"fcXL")}</span>`+FC_EXTRAS.map(x=>{
     const on=found.has(x.k);
     return `<span class="xChip tipHost${on?" on":""}" data-tip="${t("fcX_"+x.k+"_d").replace(/"/g,"&quot;")}">${on?"✓ ":"+ "}${t("fcX_"+x.k)}</span>`; }).join("");
@@ -8633,7 +8711,7 @@ function applyDefaultCapSkills(){
   // remember every skill ever seen: the Settings list survives a week whose sidur lacks one
   S.knownSkills=[...new Set([...known,...sk])].sort((a,b)=>a.localeCompare(b,"he"));
   let on;
-  if(S.answerSkills===undefined){ const kav=sk.find(s=>/קו\s*1|kav\s*1|line\s*1/i.test(s)); on=kav?[kav]:null; }
+  if(S.answerSkills===undefined){ const kav=sk.filter(s=>/קו\s*1|קו ראשון|kav\s*1|line\s*1|מרפא|clinic/i.test(s)); on=kav.length?kav:null; } // the first time: line 1 + clinics (kept with the settings)
   else if(S.answerSkills===null) on=null;
   else{ on=S.answerSkills.filter(x=>sk.includes(x)); if(!on.length) on=null; }
   if(on&&on.length===sk.length) on=null;
@@ -8877,6 +8955,91 @@ function keepNowSidur(today){
   try{ if(o) localStorage.setItem(PERSIST_NOW,J({wk:o.wk,at:o.at,cap:o.cap,sk:o.sk,rows:o.rows})); else localStorage.removeItem(PERSIST_NOW); }catch(e){}
   memo.clear(); return true;
 }
+/* ============ ⏱ NO-SHOWS BY HOUR ============
+   no-shows = 1 − net login ÷ the committed hours (scheduled + courses that answer), per clock hour — always from SUMS of
+   hours, never a mean of percents. The login is in the history file; the committed hours come from the forecast files'
+   store (`ingestCommit`). With both loaded (`absOn`):
+   · a HISTORY half hour: the scheduled base = the committed hours (the file's own "scheduled" may already be net of a
+     forecast absence — circular) and its no-shows = what happened, so the effective reps = the net login, by definition
+     (`histEff`: the matrix, the calibration and the slot anchors read the same base);
+   · a FORECAST half hour: `absPredict` — "mix" = the last 3 same weekdays 50/30/20, or "fast" = the same moved by the
+     last days' change in level (a sharp change shows within days; it fades by half each week ahead). `absBacktest`
+     forecasts each of the last 30 days from what was known at the end of the week before and keeps the closer one
+     (DESGIN rule 20). A typed value wins: `settings.absEdit` {"ds|HH:00": %}.
+   `absAt(ds,tm)` → a share, or null = Settings' flat %. `effShareAt` = the ONE way no-shows reach the math.
+   Unavailable time (`settings.shrinkage`) is a separate number and is never touched here. An hour whose login is
+   above its committed hours has a broken denominator → no value (the flat % stands in), never a negative.
+   While on, `settings.absence` mirrors the forecast's level (`absLevel`) so the long-range pages (recruitment,
+   What-If) read the same number; the typed % is kept in `settings.absenceUser` and comes back if the data goes. */
+/* ⏱ THE TIME BASE (DESGIN rule 23) — which login the app counts on: net (gross − feedback and briefing) or gross (the
+   rep's whole logged-in bar). A record keeps both when the file has them (loginN / loginG); `rec.login` is always THE
+   login in use, set in ONE place (applyTimeBase) — so productivity, occupancy, the no-shows and every forecast built on
+   them move together, the same base on both sides. timeBase() = the user's choice (settings.timeBase) when the file has
+   it, else the one the file has, else null (no login at all). The header chip #baseChip says it on every page. */
+function loginHas(){ const k=state.days.size+"|"+state.minDate+"|"+state.maxDate+"|"+(state._tbVer||0); if(state._lh&&state._lh.k===k) return state._lh.v;
+  const v={n:false,g:false}; outer: for(const dm of state.days.values()) for(const r of dm.values()){ if(r.loginN>0||(r.loginN===undefined&&r.login>0)) v.n=true; if(r.loginG>0) v.g=true; if(v.n&&v.g) break outer; }
+  state._lh={k,v}; return v; }
+function timeBase(){ const h=loginHas(), w=state.settings.timeBase==="gross"?"gross":"net"; return w==="gross"?(h.g?"gross":h.n?"net":null):(h.n?"net":h.g?"gross":null); }
+function applyTimeBase(){ for(const dm of state.days.values()) for(const r of dm.values()) if(r.loginN===undefined&&r._tb===undefined){ r.loginN=r.login>0?r.login:0; r._tb=1; } // a record from before: its login was net
+  state._tbVer=(state._tbVer||0)+1; const b=timeBase(); TB_GROSS=b==="gross";
+  for(const dm of state.days.values()) for(const r of dm.values()){ const v=b==="gross"?r.loginG:r.loginN; if(v>0) r.login=v; else delete r.login; } }
+function setTimeBase(b){ state.settings.timeBase=b; applyTimeBase(); if(state.days.size) rebuildLearningSeries();
+  state._abH=state._abS=state._abD=null; if(state.series) autoPickModels(); if(state.days.size){ calibrateModel(); computeSlotBias(); }
+  state.fcCache.clear(); memo.clear(); saveData(); saveState(); setLang(lang); showToast("⏱ "+t("tbNow",{b:t(TB_GROSS?"tbGross":"tbNet")}),true); }
+function renderBaseChip(){ const el=document.getElementById("baseChip"); if(!el) return; const b=timeBase(), h=loginHas(); el.hidden=!b; if(!b) return;
+  const both=h.n&&h.g; el.textContent="⏱ "+t(b==="gross"?"tbGross":"tbNet"); el.disabled=!both;
+  el.title=t(b==="gross"?"tbTipGross":"tbTipNet")+"\n"+(both?t("tbSwitch",{o:t(b==="gross"?"tbNet":"tbGross")}):t("tbOnly")); }
+const PERSIST_CM="wfmSimCommit", ABS_W=[0.5,0.3,0.2];
+function saveCommit(){ try{ const C=state.commit; if(C&&C.size) localStorage.setItem(PERSIST_CM,JSON.stringify([...C])); else localStorage.removeItem(PERSIST_CM); }catch(e){} }
+try{ const a=JSON.parse(localStorage.getItem(PERSIST_CM)||"null"); if(Array.isArray(a)) state.commit=new Map(a); }catch(e){}
+function commitAt(ds,tm){ const C=state.commit; if(!C||!C.size) return null; const v=C.get(ds+"|"+tm.slice(0,2)+":00"); return v>0?v:null; }
+function absHist(){ const C=state.commit, key=[state._serVer,state.days.size,state.maxDate,state._cmVer||0,C?C.size:0,state.exceptions.size,state._tbVer||0].join("|");
+  if(state._abH&&state._abH.k===key) return state._abH.v; const v=new Map();
+  if(C&&C.size) for(const [ds,dm] of state.days){ if(state.maxDate&&ds>state.maxDate) continue; const h={}; let L=0,Cm=0;
+    for(const [tm,r] of dm){ const c=C.get(ds+"|"+tm.slice(0,2)+":00"); if(!(c>0)||!(r.login>0)) continue; const k=tm.slice(0,2)+":00"; (h[k]||(h[k]={L:0,C:c})).L+=r.login; }
+    for(const k in h){ if(h[k].L>h[k].C*1.02){ delete h[k]; continue; } L+=h[k].L; Cm+=h[k].C; } // login above the committed hours = a broken denominator
+    if(Cm>0) v.set(ds,{h,L,C:Cm,di:fromISO(ds).getDay(),odd:!!state.holidayDates.get(ds)||state.exceptions.has(ds)}); } // odd = not a day to learn from
+  state._abH={k:key,v}; return v; }
+function absOn(){ return !!(state.commit&&state.commit.size&&state.days.size&&absHist().size>=3); }
+/* one weekday's day-level no-shows, week by week: d = the dates, v = % (from that day's sums), C = its committed hours */
+function absSeries(di){ const H=absHist(), key=state._abH.k, M=state._abS&&state._abS.k===key?state._abS:(state._abS={k:key,m:{}}); if(M.m[di]) return M.m[di];
+  const d=[...H.keys()].filter(x=>H.get(x).di===di&&!H.get(x).odd).sort(); return M.m[di]={d,v:d.map(x=>(1-H.get(x).L/H.get(x).C)*100),C:d.map(x=>H.get(x).C)}; }
+/* the last days' change in level known at `cut`, in points: the last 5 days (the newest counts most) vs the 3 weeks before */
+function absShift(cut){ const H=absHist(), all=[...H.keys()].filter(d=>d<=cut&&!H.get(d).odd).sort(), last=all.slice(-5), w3=all.filter(d=>d>addDays(cut,-21));
+  if(last.length<3||w3.length<6) return 0; let lr=null; for(const d of last){ const x=H.get(d), a=1-x.L/x.C; lr=lr==null?a:0.5*a+0.5*lr; }
+  const t3=w3.reduce((o,d)=>{ o.L+=H.get(d).L; o.C+=H.get(d).C; return o; },{L:0,C:0}); return (lr-(1-t3.L/t3.C))*100; }
+/* what a no-shows model may know beyond its own weekday: the recent change, as known when the first n weeks had passed */
+function absCtx(di){ const S=absSeries(di); return {weekday:di,interval:"day",shift:n=>absShift(n<S.d.length?addDays(sundayOf(S.d[n]),-1):state.maxDate)}; }
+/* a forecast day: {"HH:00": share}. The LEVEL = the model in use for that horizon (modelFor: the test's winner, or the
+   hand-picked one) on the weekday's series; each hour's distance from its day = the last 3 same weekdays, 50/30/20 */
+function absDay(ds){ const H=absHist(), S0=state.settings, key=[state._abH.k,S0.modelAbs,!!(S0.modelUser||{}).modelAbs,JSON.stringify((S0.myModel||{}).abs||0),(hzBest("abs")||[]).join()].join("|");
+  if(!state._abD||state._abD.k!==key) state._abD={k:key,m:new Map()}; if(state._abD.m.has(ds)) return state._abD.m.get(ds);
+  const di=fromISO(ds).getDay(), S=absSeries(di); let out=null;
+  if(S.v.length){ const h=1+Math.max(0,Math.round((fromISO(sundayOf(ds))-fromISO(sundayOf(addDays(state.maxDate,1))))/(7*864e5)));
+    const M=Models.abs[modelFor("abs",h)]||Models.abs.mix3, lvl=Math.max(0,M.fn(S.v,h,absCtx(di)))/100, same=S.d.slice(-3).reverse(), hrs=new Set(); out={};
+    same.forEach(d=>Object.keys(H.get(d).h).forEach(k=>hrs.add(k)));
+    for(const k of hrs){ let a=0,w=0; same.forEach((d,i)=>{ const x=H.get(d), o=x.h[k]; if(o){ a+=ABS_W[i]*((1-o.L/o.C)-(1-x.L/x.C)); w+=ABS_W[i]; } }); if(w) out[k]=Math.max(0,Math.min(0.9,lvl+a/w)); } }
+  state._abD.m.set(ds,out); return out; }
+function absAt(ds,tm){ if(!absOn()) return null; const k=tm.slice(0,2)+":00";
+  if(state.maxDate&&ds<=state.maxDate){ const x=absHist().get(ds), o=x&&x.h[k]; return o?Math.max(0,1-o.L/o.C):null; } // history: what happened
+  const ed=(state.settings.absEdit||{})[ds+"|"+k]; if(ed!=null&&isFinite(+ed)) return Math.max(0,Math.min(0.9,+ed/100)); // typed
+  const p=absDay(ds); return p&&p[k]!=null?p[k]:null; }
+function effShareAt(ds,tm,S,kappa){ const a=absAt(ds,tm); return Math.max(0.05,(a==null?availShare(S):availShare({...S,absence:a*100}))*(kappa??(state.calib||1))); }
+/* a history half hour's reps into the queue math, before κ: the committed hours × who came × available — else the file's own */
+function histEff(ds,tm,r,S){ const a=absAt(ds,tm), c=a!=null?commitAt(ds,tm):null; return c!=null?c*availShare({...S,absence:a*100}):(r.agents||0)*availShare(S); }
+/* next week's level in one number — each weekday's forecast, weighted by its committed hours (what Settings shows) */
+function absLevel(){ if(!absOn()) return null; let a=0,w=0;
+  for(let di=0;di<6;di++){ const S=absSeries(di); if(!S.v.length) continue; const M=Models.abs[modelFor("abs",1)]||Models.abs.mix3, c=S.C[S.C.length-1]; a+=Math.max(0,M.fn(S.v,1,absCtx(di)))*c; w+=c; }
+  return w?Math.max(0,Math.min(0.9,a/w/100)):null; }
+/* the committed hours / the login / a typed value changed: one refit, one redraw */
+function absMirror(){ const S=state.settings, lv=absLevel();
+  if(lv!=null){ if(S.absenceUser==null) S.absenceUser=+S.absence||0; S.absence=Math.round(lv*1000)/10; }
+  else if(S.absenceUser!=null){ S.absence=S.absenceUser; delete S.absenceUser; } }
+function absChanged(){ saveCommit(); state._abH=state._abS=state._abD=null;
+  if(state.series) autoPickModels(); // ⏱ the no-shows model is picked by its test, like the others
+  if(state.days.size){ calibrateModel(); computeSlotBias(); } else absMirror();
+  state.fcCache.clear(); memo.clear(); if(state._hpC) state._hpC=null; state._crsVer=(state._crsVer||0)+1;
+  if(typeof absSyncUI==="function") absSyncUI(); saveState(); renderAll(); }
 /* the shifts on a day: the loaded sidur's, else this week's kept copy (who-on, breaks) */
 function sidurRowsOn(ds){ const r=state.schedRows.filter(x=>x.ds===ds&&x.h>0); if(r.length) return r;
   const ns=nowSidOn(ds); return ns?ns.rows.filter(x=>x.ds===ds):r; }
@@ -8903,11 +9066,13 @@ function computeDay(ds){
     }
     const rec=sd.src.get(tm);
     if(!rec){ rows.push({tm,nodata:true}); continue; }
-    const sched=capacityFor(ds,dayIdx,tm,rec)+injectionAgents(dayIdx,tm)+traineeAt(ds,dayIdx,tm); // 🎓 this week's trainees, at their share
-    // effective agents into the queue math = scheduled × (1−shrinkage) × κ
-    const agents=Math.max(0,Math.round(sched*effShare));
+    // ⏱ no-shows by the hour (absAt): what happened on a history day — on the committed hours — the forecast ahead
+    const aH=absAt(ds,tm), cmB=aH!=null&&!sd.forecast?commitAt(ds,tm):null, effRow=aH==null?effShare:Math.max(0.05,availShare({...S,absence:aH*100})*kappa);
+    const sched=cmB!=null?Math.round(cmB):capacityFor(ds,dayIdx,tm,rec)+injectionAgents(dayIdx,tm)+traineeAt(ds,dayIdx,tm); // 🎓 this week's trainees, at their share
+    // effective agents into the queue math = scheduled × (1−no-shows) × (1−unavailable) × κ
+    const agents=Math.max(0,Math.round(sched*effRow));
     // נדרשים displayed in SCHEDULED units so sched-vs-req compare like-for-like
-    const req=Math.round(requiredAgents(rec.volume,rec.aht,S.target,S,rec.mpt)/effShare);
+    const req=Math.round(requiredAgents(rec.volume,rec.aht,S.target,S,rec.mpt)/effRow);
     let perf=evalInterval(rec.volume,rec.aht,agents,S,rec.mpt);
     if(!sd.forecast){
       /* DATA INTEGRITY: historical cells show what actually happened — the file's
@@ -8927,7 +9092,7 @@ function computeDay(ds){
         if(S.tsfT===30) perf.tsf=c01(perf.tsf+b.t30);
       }
     }
-    rows.push({tm,rec,sched,agents,req,perf});
+    rows.push({tm,rec,sched,agents,req,perf,abs:aH,eff:effRow});
   }
   let saved=0,drops=0;
   if(P.enabled&&state.policyApplied){ // dips only after the optimizer engine has run (item 3)
@@ -8941,7 +9106,7 @@ function computeDay(ds){
       const prevDropped=(i-1>=0)&&rows[i-1].dropped;
       if(spike&&!prevDropped&&drops<P.maxDrops&&(i-lastDrop)>=gapIv){
         // same scheduled-units conversion as req — the dip comparison must be like-for-like
-        const reqLow=Math.round(requiredAgents(r.rec.volume,r.rec.aht,P.floor,state.settings,r.rec.mpt)/effShare);
+        const reqLow=Math.round(requiredAgents(r.rec.volume,r.rec.aht,P.floor,state.settings,r.rec.mpt)/(r.eff||effShare));
         if(reqLow<r.req){ r.dropped=true; r.reqEff=reqLow; saved+=(r.req-reqLow)*0.5; drops++; lastDrop=i; }
       }
       if(!r.dropped) r.reqEff=r.req;
@@ -9243,7 +9408,7 @@ function renderMatrixBody(){
         cu.last={tm,vol:row.rec.volume,acc:v*row.rec.volume};
         const trn=traineeAt(ds,di,tm), trO=(state.trainees||{})[sundayOf(ds)];
         td.title=[cu.vol>0?t("mxCum",{a:cu.from,b:addHalf(tm),v:pct(cu.acc/cu.vol),n:Math.round(cu.vol).toLocaleString()}):"",
-          hV>0?t("mxHour",{a:h0.tm,b:addHalf(tm),n:Math.round(hV).toLocaleString(),v:pct((h0.acc+v*row.rec.volume)/hV)}):"", verd,
+          hV>0?t("mxHour",{a:h0.tm,b:addHalf(tm),n:Math.round(hV).toLocaleString(),v:pct((h0.acc+v*row.rec.volume)/hV)}):"", row.abs!=null?t("mxAbs",{p:Math.round(row.abs*100)}):"", verd,
           trn>0?"🎓 "+t("trnCell",{t:trn,n:traineeN(ds,di),p:trO.pct}):"", offPrim&&(short||over)?t("mxVerdMetric",{p:primName()}):""].filter(Boolean).join("\n");
         td.addEventListener("click",e=>{ if(e.target.closest(".whoLnk")){ e.stopPropagation(); openWho(ds,tm); return; } openEditor(e,ds,tm,di); }); // 👥 the reps number = who
       }
@@ -9473,12 +9638,14 @@ function trendDayStat(ds){
      on the file's net basis = × login÷scheduled ρ) and the calls those hours answer at the forecast AHT (the matrix's
      answer rate), never above the busiest occupancy the file reached. (Carrying the old login average + the old
      answer rate made it jump on busy or thin days.) */
-  const fcB=fc?prodBacktest():null, fcRho=fcB?fcB.rho:null, fcOcc=fc?occMaxHist():0; let fcServed=0,fcWork=0;
+  const fcB=fc?prodBacktest():null, fcRho=fcB?fcB.rho:null, fcOcc=fc?occMaxHist():0; let fcServed=0,fcWork=0,fcNet=0,fcHas=false;
   for(const [tm,rec] of sd.src){
     if(state.exceptions.has(ds+"|"+tm)) continue;
-    const sched=capacityFor(ds,dayIdx,tm,rec)+injectionAgents(dayIdx,tm)+traineeAt(ds,dayIdx,tm); // 🎓 same as the matrix
+    // ⏱ no-shows by the hour + a history half hour on the committed hours — exactly as the matrix (computeDay)
+    const aH=absAt(ds,tm), cmB=aH!=null&&!fc?commitAt(ds,tm):null, effRow=aH==null?effShareG:Math.max(0.05,availShare({...S,absence:aH*100})*(state.calib||1));
+    const sched=cmB!=null?Math.round(cmB):capacityFor(ds,dayIdx,tm,rec)+injectionAgents(dayIdx,tm)+traineeAt(ds,dayIdx,tm); // 🎓 same as the matrix
     // same effective-agent basis as the matrix (availability × κ) — the two views must agree
-    const agents=Math.max(0,Math.round(sched*availShare(S)*(state.calib||1)));
+    const agents=Math.max(0,Math.round(sched*effRow));
     let perf=evalInterval(rec.volume,rec.aht,agents,S,rec.mpt);
     if(!fc){ // measured history beats the model (same rule as the matrix)
       const meas={};
@@ -9497,8 +9664,9 @@ function trendDayStat(ds){
     ahtW+=rec.aht*rec.volume;
     work+=rec.volume*rec.aht; cap+=agents*1800; schedHrs+=sched*0.5;
     // GROSS hours to schedule = the matrix's "needed" (target-sized, ÷ shrinkage & absence) × ½h
-    grossH+=Math.round(requiredAgentsMemo(rec.volume,rec.aht,S.target,S,rec.mpt)/effShareG)*0.5;
-    if(fc){ const netIv=sched*0.5*(fcRho??availShare(S)), sv=Math.min(rec.volume*perf.ar,netIv*3600*fcOcc/Math.max(1,rec.aht)); fcServed+=sv; fcWork+=sv*rec.aht; }
+    grossH+=Math.round(requiredAgentsMemo(rec.volume,rec.aht,S.target,S,rec.mpt)/effRow)*0.5;
+    // a forecast half hour's NET login hours: the scheduled hours × who comes (the hourly no-shows; else the file's login ÷ scheduled)
+    if(fc){ const netIv=sched*0.5*(aH!=null?1-aH:(fcRho??availShare(S))); fcNet+=netIv; if(aH!=null||fcRho!=null) fcHas=true; const sv=Math.min(rec.volume*perf.ar,netIv*3600*fcOcc/Math.max(1,rec.aht)); fcServed+=sv; fcWork+=sv*rec.aht; }
     if(rec.login>0){ loginHrs+=rec.login; volL+=rec.volume; workVL+=rec.volume*rec.aht; }
     if(rec.answered){
       // forecast rows carry the RECENT answer rate forward — anchored to measured
@@ -9517,7 +9685,7 @@ function trendDayStat(ds){
       if(rec.login>0){ occFileWL+=rec.occup*rec.login; occFileL+=rec.login; } }
   }
   if(fc&&schedHrs>0){ answered=fcServed; handledWork=fcWork; // the hours given × the forecast AHT (see above)
-    if(fcRho!=null){ loginHrs=schedHrs*fcRho; ansL=fcServed; volL=vol; workL=fcWork; workVL=work; } else loginHrs=0; }
+    if(fcHas){ loginHrs=fcNet; ansL=fcServed; volL=vol; workL=fcWork; workVL=work; } else loginHrs=0; }
   if(!vol){
     // show a zero-volume day when it's a user-edited forecast OR a holiday (so a
     // CLOSED holiday reads explicitly as 0 demand + a 🕎 badge, not a silent gap)
@@ -10853,8 +11021,8 @@ function breakPlan(ds,over){
   /* the day's answered calls with b reps on the phones in half-hour h — the matrix's math (Erlang + the slot's
      measured anchor), b fractional → interpolated between whole agents */
   const eff=Math.max(0.05,availShare(S)*(state.calib||1)), useAr=S.primaryMetric!=="tsf";
-  const H={}; for(const r of Object.values(rows)) H[r.tm]={r,B:r.sched*scale,R:0,m:new Map(),bias:((state.slotBias||{})[di+"|"+r.tm]||{})};
-  const val=(h,b)=>{ const e=Math.max(0,b*eff), a=Math.floor(e), f=e-a;
+  const H={}; for(const r of Object.values(rows)) H[r.tm]={r,B:r.sched*scale,R:0,m:new Map(),bias:((state.slotBias||{})[di+"|"+r.tm]||{}),eff:r.eff||eff}; // ⏱ the half hour's own no-shows
+  const val=(h,b)=>{ const e=Math.max(0,b*h.eff), a=Math.floor(e), f=e-a;
     const g=k=>{ let v=h.m.get(k); if(v==null){ const p=evalInterval(h.r.rec.volume,h.r.rec.aht,k,S,h.r.rec.mpt);
       const x=Math.min(1,Math.max(0,useAr?p.ar+(h.bias.ar||0):p.tsf+(S.tsfT===30?(h.bias.t30||0):0))); v=x*h.r.rec.volume; h.m.set(k,v); } return v; };
     return f?g(a)*(1-f)+g(a+1)*f:g(a); };
@@ -11153,7 +11321,7 @@ document.getElementById("sidurChip").addEventListener("click",e=>{ const k=e.tar
   if(k&&[...sel.options].some(o=>o.value===k)){ if(sel.value!==k){ sel.value=k; sel.dispatchEvent(new Event("change")); } document.getElementById("tab-matrix").click(); return; }
   document.getElementById("tab-home").click(); });
 function renderAll(){
-  keepNowSidur(); renderSetSkills(); renderSidurChip();
+  keepNowSidur(); renderSetSkills(); renderSidurChip(); renderBaseChip(); absSyncUI(); fdSync();
   dirtyPages.add("matrix"); dirtyPages.add("trends"); dirtyPages.add("recruit");
   dirtyPages.add("workforce"); dirtyPages.add("scheduler"); dirtyPages.add("breaks");
   renderDirty(); saveState(); warmPlan();
@@ -11166,6 +11334,21 @@ function warmPlan(){ if(typeof requestIdleCallback!=="function") return; if(_war
 
 /* ---------------- Workspace persistence (settings only — data files stay transient) ---------------- */
 const PERSIST="wfmSimWorkspace";
+/* ✎ THE USER'S INPUTS — their own small save (wfmSimInputs), next to the data's: the forecast cells changed (calls / call
+   length per half hour — never saved before), bulk changes, exceptions, courses in answering per week (trainees) and
+   break adjustments. Settings, courses, the Friday memory, the iron history, breaks rules… are in the workspace save.
+   Both live in this browser on this computer and survive a restart (like cookies). After a NEW history file only the
+   days it doesn't hold come back (its own days are the file's). */
+const PERSIST_IN="wfmSimInputs";
+function inputsSave(){ try{ localStorage.setItem(PERSIST_IN,JSON.stringify({exceptions:[...state.exceptions],volAdj:state.volAdj||[],trainees:state.trainees||{},brkAdj:state.brkAdj||{},
+  edits:[...state.edits],cellOrig:[...state.cellOrig],simDays:Object.fromEntries([...state.simDays].map(([d,m])=>[d,Object.fromEntries(m)]))})); }catch(e){} }
+function inputsLoad(onlyAhead){ let o=null; try{ o=JSON.parse(localStorage.getItem(PERSIST_IN)||"null"); }catch(e){} if(!o||!state.days.size) return;
+  const ok=d=>!onlyAhead||!state.maxDate||d>state.maxDate; let n=0;
+  if(!onlyAhead){ state.exceptions=new Set(o.exceptions||[]); if(Array.isArray(o.volAdj)) state.volAdj=o.volAdj; state.trainees=o.trainees||{}; state.brkAdj=o.brkAdj||{}; }
+  for(const [d,m] of Object.entries(o.simDays||{})) if(ok(d)&&!state.simDays.has(d)){ state.simDays.set(d,new Map(Object.entries(m).map(([tm,r])=>[tm,{...r}]))); n++; }
+  for(const k of o.edits||[]) if(ok(k.slice(0,10))) state.edits.add(k);
+  for(const [k,r] of o.cellOrig||[]) if(ok(k.slice(0,10))&&!state.cellOrig.has(k)) state.cellOrig.set(k,{...r});
+  if(onlyAhead&&n){ state.fcCache.clear(); memo.clear(); renderAll(); } }
 function saveState(){
   try{ localStorage.setItem(PERSIST,JSON.stringify({
     settings:state.settings,policy:state.policy,cohorts:state.cohorts,
@@ -11852,7 +12035,7 @@ document.addEventListener("keydown",e=>{ if(e.key==="Escape") document.querySele
 /* 🤖 THE ANALYST'S MODEL CHOICE, AUTOMATIC: after each forecast load every volume / AHT / patience model is backtested on
    this file's own history (the same test and ranking as "🧪 Backtest models") and the most accurate one is used.
    A model you pick by hand stays yours; "🤖 Automatic" in the same list gives the choice back. */
-const MODEL_KINDS=[["volume","modelVolume","setModelVol"],["aht","modelAht","setModelAht"],["mpt","modelMpt","setModelMpt"]];
+const MODEL_KINDS=[["volume","modelVolume","setModelVol"],["aht","modelAht","setModelAht"],["mpt","modelMpt","setModelMpt"],["abs","modelAbs","setModelAbs"]];
 const mUser=key=>!!(state.settings.modelUser||{})[key]; // this list was picked by hand (each list on its own)
 function autoPickModels(){ const S=state.settings; if(!state.series) return; let ch=false; state._modelAuto={};
   for(const [kind,key] of MODEL_KINDS){ const sc=rankModels(kind); if(!sc.length) continue;
@@ -11865,7 +12048,7 @@ function autoPickModels(){ const S=state.settings; if(!state.series) return; let
 function fmAdvSumUpd(){ const el=document.getElementById("fmAdvSum"); if(!el) return;
   const r=state.series?rankModels("volume",0).find(x=>x.mid===modelFor("volume",1)):null; el.textContent=r&&r.r.n>=HZ_MIN?"· "+t("fmAdvSum",{e:r.r.mape.toFixed(1)}):""; }
 function populateModelSelects(){
-  [["setModelVol","volume","modelVolume"],["setModelAht","aht","modelAht"],["setModelMpt","mpt","modelMpt"]].forEach(([id,kind,key])=>{
+  [["setModelVol","volume","modelVolume"],["setModelAht","aht","modelAht"],["setModelMpt","mpt","modelMpt"],["setModelAbs","abs","modelAbs"]].forEach(([id,kind,key])=>{
     const sel=document.getElementById(id);
     sel.innerHTML="";
     { const o=document.createElement("option"); o.value="auto"; const A=(state._modelAuto||{})[kind];
@@ -11881,11 +12064,12 @@ function populateModelSelects(){
   });
   fmAdvSumUpd();
 }
-[["setModelVol","modelVolume"],["setModelAht","modelAht"],["setModelMpt","modelMpt"]].forEach(([id,key])=>{
+[["setModelVol","modelVolume"],["setModelAht","modelAht"],["setModelMpt","modelMpt"],["setModelAbs","modelAbs"]].forEach(([id,key])=>{
   document.getElementById(id).addEventListener("change",e=>{
     const U=state.settings.modelUser=state.settings.modelUser||{};
     if(e.target.value==="auto"){ U[key]=false; autoPickModels(); } // this list back to the test — the others untouched
     else{ state.settings[key]=e.target.value; U[key]=true; } // a hand-picked model stays yours, in this list only
+    if(key==="modelAbs"){ absChanged(); populateModelSelects(); return; } // ⏱ its level reaches Settings' %, the calibration and every page
     state.fcCache.clear(); memo.clear(); saveState(); populateModelSelects(); renderAll();
   });
 });
@@ -12106,6 +12290,141 @@ function openEvents(ds){
   if(r){ r.classList.add("hl"); r.scrollIntoView({block:"nearest"}); } else $ev("evName").focus();
 }
 document.getElementById("evBtn").addEventListener("click",()=>openEvents());
+/* ---- ⏱ "How many don't come, by hour?" — the week on a grid: measured days, forecast days (lighter), your own values (✎).
+   Opens from the matrix ⋯ (the week on screen) and from Settings' no-shows field (the first forecast week); a click on
+   a forecast number types your own for that hour (empty = back to the forecast). The ONE place to see and change it. ---- */
+let absWk=null;
+function absFirstFc(){ return sundayOf(addDays(state.maxDate,1)); }
+function absSyncUI(){ const on=absOn(), inp=document.getElementById("setAbsence"), b=document.getElementById("setAbsBtn"), m=document.getElementById("mxAbs");
+  if(inp) inp.hidden=on; { const row=document.getElementById("absModelRow"); if(row) row.style.display=on?"":"none"; }
+  if(b){ const lv=on?absLevel():null; b.textContent="⏱ "+(on?t("absSetBtn",{p:lv==null?"":(lv*100).toFixed(1)+"%"}):t("absSetOff")); b.title=t(on?"absSetTip":"absSetOffTip"); } // always there: the way in
+  if(absWk&&!absPanel.hidden&&document.getElementById("modalBg").classList.contains("show")) renderAbs(); } // the open window follows a file that just arrived
+/* what the hour-by-hour no-shows still need: ok | hist (no history file) | commit (no committed hours) | login (the history has no login hours) | overlap */
+function absWhy(){ if(absOn()) return "ok"; if(!state.days.size) return "hist"; if(!state.commit||!state.commit.size) return "commit";
+  for(const dm of state.days.values()) for(const r of dm.values()) if(r.login>0) return "overlap"; return "login"; }
+function renderAbs(){ const box=document.getElementById("absGrid"); if(!box||!absWk) return; const why=absWhy();
+  absPanel.querySelector(".absNav").style.display=why==="ok"?"":"none"; document.getElementById("mCore").textContent=why==="ok"?t("absIntro"):"";
+  if(why!=="ok"){ // not measured yet: ONE thing to say — what is missing — and the action right here (DESGIN rule 7)
+    const ck=state.commit&&state.commit.size?[...state.commit.keys()].map(k=>k.slice(0,10)).sort():[], S=state.settings;
+    const msg=t(why==="hist"?"absOffD":why==="commit"?"absOffA":why==="login"?"absOffB":"absOffC",{p:+(S.absence||0),a:ck.length?fmtDs(ck[0]):"",b:ck.length?fmtDs(ck[ck.length-1]):"",c:state.minDate?fmtDs(state.minDate):"",d:state.maxDate?fmtDs(state.maxDate):""});
+    box.innerHTML=`<p class="absOff">${msg}</p><div class="absAct">`+(why==="hist"?"":`<button type="button" class="btn navy" id="absPick">${t("absPick")}</button>`)
+      +(why==="commit"?`<button type="button" class="btn ghost" id="absEx">${t("absEx")}</button>`+(window.showDirectoryPicker?`<button type="button" class="linklike" id="absFd">${t("absFolder")}</button>`:""):"")+"</div>"; return; }
+  const E=state.settings.absEdit||{}, dn=t("days"), hrs=TIMES.filter(tm=>tm.endsWith(":00")), dates=weekDates(absWk).filter(d=>fromISO(d).getDay()<6&&hrs.some(tm=>absAt(d,tm)!=null)); // a day with nothing to show takes no column
+  const V=dates.map(ds=>hrs.map(tm=>absAt(ds,tm))), rows=hrs.map((_,i)=>i).filter(i=>V.some(c=>c[i]!=null)), fc=ds=>ds>state.maxDate, pT=v=>v==null?"":Math.round(v*100)+"%";
+  const bg=(v,light)=>v==null?"":`background:rgba(217,119,6,${(Math.min(0.45,v)/0.45*(light?0.28:0.6)).toFixed(2)})`;
+  // the day in one number: its hours weighted by the committed hours (sums — never a mean of percents)
+  const dayV=j=>{ let a=0,w=0; hrs.forEach((tm,i)=>{ const v=V[j][i]; if(v==null) return; const c=commitAt(dates[j],tm)||1; a+=v*c; w+=c; }); return w?a/w:null; };
+  box.innerHTML=!rows.length?`<p class="mini">${t("absNone")}</p>`:`<table class="absT"><thead><tr><th></th>${dates.map(ds=>`<th>${dn[fromISO(ds).getDay()]} ${fmtDs(ds)}<span class="dtag ${fc(ds)?"fc":"act"}">${t(fc(ds)?"dTagFc":"dTagAct")}</span></th>`).join("")}</tr>`
+    +`<tr class="absDayR"><th>${t("absDayL")}</th>${dates.map((ds,j)=>`<td>${pT(dayV(j))}</td>`).join("")}</tr></thead><tbody>`
+    +rows.map(i=>`<tr><th>${hrs[i]}–${addHalf(addHalf(hrs[i]))}</th>${dates.map((ds,j)=>{ const v=V[j][i], k=ds+"|"+hrs[i], ed=fc(ds)&&E[k]!=null;
+      return `<td class="${fc(ds)?"fc":""}${ed?" ed":""}"${fc(ds)&&(v!=null||ed)?` data-k="${k}" tabindex="0"`:""} style="${bg(v,fc(ds)&&!ed)}">${pT(v)}${ed?" ✎":""}</td>`; }).join("")}</tr>`).join("")+"</tbody></table>";
+  document.getElementById("absWkL").textContent=wkOptTxt(absWk);
+  const H=[...absHist().keys()].sort(), lo=sundayOf(H[0]), hi=addDays(absFirstFc(),28);
+  document.getElementById("absPrev").disabled=absWk<=lo; document.getElementById("absNext").disabled=absWk>=hi;
+  const use=modelFor("abs",1), rk=rankModels("abs",0).find(x=>x.mid===use), nm=t((Models.abs[use]||Models.abs.mix3).label), tip=rk?t("absTest2",{n:rk.r.n,m:nm,e:rk.r.mape.toFixed(1)}):nm;
+  document.getElementById("absLeg").innerHTML=`<span><i class="absKey"></i> ${t("absLegAct")}</span><button type="button" class="linklike" id="absMdl" title="${tip.replace(/"/g,"&quot;")}"><i class="absKey fc"></i> ${t("absLegFc")}</button><span>✎ ${t("absLegEd")}</span>`;
+  document.getElementById("absClear").hidden=!dates.some(ds=>hrs.some(tm=>E[ds+"|"+tm]!=null)); }
+function openAbs(wk){
+  document.getElementById("mTitle").textContent=t("absTitle"); document.getElementById("mMsg").textContent="";
+  const mL=document.getElementById("mList"); mL.innerHTML=""; mL.parentNode.insertBefore(absPanel,mL); absPanel.hidden=false;
+  document.getElementById("mExport").style.display="none"; document.getElementById("modalBg").classList.add("show");
+  absWk=absOn()&&wk?wk:state.maxDate?absFirstFc():sundayOf(iso(new Date())); renderAbs(); }
+const absPanel=document.getElementById("absPanel");
+document.getElementById("absPrev").addEventListener("click",()=>{ absWk=addDays(absWk,-7); renderAbs(); });
+document.getElementById("absNext").addEventListener("click",()=>{ absWk=addDays(absWk,7); renderAbs(); });
+document.getElementById("absClear").addEventListener("click",()=>{ const E=state.settings.absEdit||{}; for(const ds of weekDates(absWk)) for(const k of Object.keys(E)) if(k.startsWith(ds+"|")) delete E[k]; absChanged(); renderAbs(); });
+document.getElementById("absFile").addEventListener("change",e=>{ const fl=e.target.files[0]; e.target.value=""; if(fl) ingestFile(fl); }); // any kind: the app tells them apart
+document.getElementById("absGrid").addEventListener("click",e=>{
+  if(e.target.closest("#absPick")){ document.getElementById("absFile").click(); return; }
+  if(e.target.closest("#absFd")){ document.getElementById("modalBg").classList.remove("show"); document.getElementById("fdPick").click(); return; }
+  if(e.target.closest("#absEx")){ const wk=state.maxDate?absFirstFc():sundayOf(iso(new Date())), rows=[["תאריך","שעה","שעות שיבוץ","קורסים במענה","סה״כ שעות"]]; // the layout the app reads, with next week's dates
+    for(const ds of weekDates(wk).filter(d=>fromISO(d).getDay()<5)) for(let h=8;h<18;h++) rows.push([fmtDx(ds),pad(h)+":00",36,4,40]);
+    downloadFile(t("absExFile")+".csv",rows.map(r=>r.join(",")).join("\n")); return; }
+  const td=e.target.closest("td[data-k]"); if(!td||td.querySelector("input")) return;
+  const k=td.dataset.k, E=state.settings.absEdit=state.settings.absEdit||{}, cur=E[k]!=null?E[k]:parseInt(td.textContent)||0;
+  td.innerHTML=`<input type="number" min="0" max="90" step="1" value="${cur}">`; const inp=td.firstChild; inp.focus(); inp.select(); let done=false;
+  const commit=save=>{ if(done) return; done=true; if(save){ const v=inp.value.trim(); if(v===""||!isFinite(+v)) delete E[k]; else E[k]=Math.max(0,Math.min(90,Math.round(+v)));
+      for(const x of Object.keys(E)) if(x.slice(0,10)<=state.maxDate) delete E[x]; absChanged(); } renderAbs(); }; // a typed value for a day the file now holds has done its job
+  inp.addEventListener("keydown",ev=>{ if(ev.key==="Enter") commit(true); else if(ev.key==="Escape"){ ev.stopPropagation(); commit(false); } });
+  inp.addEventListener("blur",()=>commit(inp.value!==String(cur))); });
+document.getElementById("absGrid").addEventListener("keydown",e=>{ if(e.key==="Enter"&&e.target.matches("td[data-k]")) e.target.click(); });
+document.getElementById("setAbsBtn").addEventListener("click",()=>openAbs());
+document.getElementById("baseChip").addEventListener("click",()=>{ const h=loginHas(); if(h.n&&h.g) setTimeBase(timeBase()==="gross"?"net":"gross"); }); // ⏱ net ⇄ gross, when the file has both
+document.getElementById("absLeg").addEventListener("click",e=>{ if(!e.target.closest("#absMdl")) return; LG.kind="abs"; LG.mid=null; openLogic("fc"); }); // the models, to see and play with
+/* ---- 📁 THE DATA FOLDER — data that comes back every week is READ, not loaded (DESGIN rule 24). The folder is picked once
+   per computer (File System Access; the handle lives in IndexedDB); from then on the app reads what changed in it by
+   itself: on open, when the tab comes back, every 5 minutes. Now: the committed hours — any *התחייבות* / *commit* file,
+   up to two folders deep (the forecast folder or its store). Next: the sidur and the forecast (REALTIME_SPEC.md).
+   If the browser wants the permission again it may only ask after a click → the app asks on the first click anywhere
+   (no button). A file caught mid-write is read on the next look. No API (Firefox / policy) → the row never shows and
+   dropping the file works as always. Nothing leaves the computer. ---- */
+/* How it works: each KIND of file has its own folder — the place it is saved — picked once with its own 📂 ("Where is your
+   sidur saved?"); the folders of different kinds may be anywhere, the same folder may serve several kinds. Its sub-folders
+   are searched too (5 deep: "סידור עבודה/2026/11/22" — a new folder every week needs nothing). The handles live in
+   IndexedDB ("dir:<kind>"); each picker remembers where it was last (id). fdScan loads, per kind, the NEWEST file of that
+   kind in its folder (last modified — a browser cannot read a file's creation date): told apart by its content (fdKindOf,
+   the app's own readers; constraints / courses = anything else in their folder), through the same loader a drop uses.
+   settings.fdSeen {kind: "path|modified"} = already loaded. Kinds, in loading order: fc (history) · commit · sidur · cons · courses. */
+var FD={dirs:{},busy:false,kc:new Map(),last:{},perm:false}; const FD_KINDS=["fc","commit","sidur","cons","courses"], FD_ICON={fc:"📞",commit:"⏱",sidur:"📅",cons:"🔒",courses:"🎓"};
+const FD_RX={cons:/אילוצ|constraint/i,courses:/קורס|גאנט|course|gantt/i};
+function fdDb(){ return new Promise((res,rej)=>{ const r=indexedDB.open("wfmSim",1); r.onupgradeneeded=()=>r.result.createObjectStore("kv"); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }); }
+async function fdGet(k){ const db=await fdDb(); return new Promise(res=>{ const q=db.transaction("kv").objectStore("kv").get(k); q.onsuccess=()=>res(q.result||null); q.onerror=()=>res(null); }); }
+async function fdSet(k,v){ try{ const db=await fdDb(); return await new Promise(res=>{ try{ const tx=db.transaction("kv","readwrite"); if(v==null) tx.objectStore("kv").delete(k); else tx.objectStore("kv").put(v,k); tx.oncomplete=()=>res(); tx.onerror=()=>res(); }catch(e){ res(); } }); }catch(e){} } // a failed save never stops the reading
+const fdOn=()=>FD_KINDS.filter(k=>FD.dirs[k]);
+function fdSync(){ const row=document.getElementById("fdRow"), b=document.getElementById("fdPick"), x=document.getElementById("fdOff"); if(!row) return; const on=fdOn();
+  row.hidden=!window.showDirectoryPicker&&!on.length; b.textContent="📁 "+(on.length?t("fdOn",{k:on.map(k=>FD_ICON[k]).join(" ")}):t("fdPick"));
+  b.title=on.length?on.map(k=>FD_ICON[k]+" "+t("fdK_"+k)+" ← "+FD.dirs[k].name+(FD.last[k]?" · "+FD.last[k].name:"")).join("\n")+"\n"+t("fdChange"):t("fdTip"); x.hidden=!on.length; x.title=t("fdOff"); }
+/* every readable file under a folder, the newest first: {h, name, path, file, lm} */
+async function fdWalk(dir){ const out=[];
+  const walk=async(d,path,depth)=>{ for await(const e of d.values()){ if(out.length>=4000) return;
+    if(e.kind==="file"){ if(/\.(xlsx|xlsm|xls|csv)$/i.test(e.name)&&!/^~\$|backup|גיבוי/i.test(e.name)) out.push({h:e,name:e.name,path:path+e.name}); }
+    else if(depth<5) await walk(e,path+e.name+"/",depth+1); } };
+  await walk(dir,"",0); for(const x of out){ try{ x.file=await x.h.getFile(); x.lm=x.file.lastModified; }catch(e){ x.lm=0; } }
+  return out.filter(x=>x.lm).sort((a,b)=>b.lm-a.lm); }
+/* what a file IS, by its content — the same readers a drop goes through: commit | sidur | fc | other */
+async function fdKindOf(x){ const key=x.path+"|"+x.lm; if(FD.kc.has(key)) return FD.kc.get(key); let k="other";
+  try{ if(x.file.size<4e7){ const res=await bytesToGrid(await x.file.arrayBuffer());
+      const sh=res.grids?res.grids.map(g=>({name:String((g&&g.name)||""),grid:((g&&g.grid)||g||[]).filter(r=>r&&r.length)})):[{name:"",grid:(res.grid||[]).filter(r=>r&&r.length)}];
+      if(sh.some(g=>commitHeader(g.grid))) k="commit"; else if(sh.some(g=>/ברזל|iron|סידור|roster/i.test(g.name))) k="sidur";
+      else for(const g of sh){ const hd=g.grid.length?findHeader(g.grid):null, c=hd?classifyGrid(hd.map,null):null; if(c==="forecast"){ k="fc"; break; } if(c==="roster") k="sidur"; } } }catch(e){}
+  FD.kc.set(key,k); return k; }
+async function fdIs(K,x){ const c=await fdKindOf(x);
+  if(K==="cons"||K==="courses") return c!=="fc"&&c!=="commit"&&!FD_RX[K==="cons"?"courses":"cons"].test(x.name); // in its own folder: anything that isn't another kind
+  return c===K; }
+/* the newest file of kind K in its folder (the 12 newest are looked at) — null = none yet · {perm:true} = not allowed yet */
+async function fdNewest(K){ const d=FD.dirs[K]; if(!d) return null; try{ if((await d.queryPermission({mode:"read"}))!=="granted") return {perm:true};
+  let n=0; for(const x of await fdWalk(d)){ if(++n>12) break; if(await fdIs(K,x)) return x; } }catch(e){} return null; }
+function fdLoad(K,file){ ({fc:()=>ingestFile(file,"forecast"),commit:()=>ingestFile(file),sidur:()=>ingestFile(file,"roster"),cons:()=>ingestConstraintsFile(file),courses:()=>ingestCourseFile(file)})[K]();
+  return new Promise(res=>{ const iv=setInterval(()=>{ if(_busyCount===0){ clearInterval(iv); setTimeout(res,60); } },100); }); } // one file at a time: the history before what leans on it
+async function fdScan(){ if(!fdOn().length) return 0; if(FD.busy){ FD.again=true; return 0; } FD.busy=true; FD.again=false; let n=0; const S=state.settings, seen=S.fdSeen=S.fdSeen||{}; // asked while busy → once more right after
+  try{ for(const K of FD_KINDS){ if(!FD.dirs[K]) continue; const x=await fdNewest(K); if(!x||x.perm) continue; FD.last[K]=x;
+      const key=x.path+"|"+x.lm; if(seen[K]!==key){ await fdLoad(K,x.file); seen[K]=key; n++; } } // the newest of its kind — loaded once
+    if(n) saveState(); }catch(e){}finally{ FD.busy=false; fdSync(); } if(FD.again) n+=await fdScan(); return n; }
+/* "Where are your files saved?" — one line per kind: where it is read from, its newest file, one 📂 to choose / change */
+function fdGuide(){ const esc=v=>String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+  document.getElementById("fdRows").innerHTML=FD_KINDS.map(K=>`<div class="frow fdK" data-k="${K}"><label>${FD_ICON[K]} ${t("fdK_"+K)}<span class="mini fdHint">${t("fdH_"+K)}</span></label>`
+    +`<span class="fdSel"><span class="fdAt">${FD.dirs[K]?"📁 "+esc(FD.dirs[K].name):""}</span><span class="mini" data-new="${K}"></span></span>`
+    +`<span class="fdBtns"><button type="button" class="btn ${FD.dirs[K]?"ghost":"navy"}" data-pick="${K}">📂 ${t(FD.dirs[K]?"fdChange2":"fdChoose")}</button>${FD.dirs[K]?`<button type="button" class="xbtn" data-stop="${K}" title="${t("fdStop")}">✕</button>`:""}</span></div>`).join("");
+  document.getElementById("mTitle").textContent=t("fdTitle"); document.getElementById("mCore").textContent=t("fdIntro"); document.getElementById("mMsg").textContent="";
+  const mL=document.getElementById("mList"); mL.innerHTML=""; mL.parentNode.insertBefore(fdPanel,mL); fdPanel.hidden=false;
+  document.getElementById("mExport").style.display="none"; document.getElementById("modalBg").classList.add("show"); fdGuideUpd(); }
+async function fdGuideUpd(only){ for(const K of FD_KINDS){ if(only&&K!==only) continue; const el=fdPanel.querySelector(`[data-new="${K}"]`); if(!el) continue;
+  if(!FD.dirs[K]){ el.textContent=""; continue; } el.textContent=t("fdLooking"); const x=await fdNewest(K);
+  el.textContent=x&&x.perm?t("fdPerm"):x?t("fdNewest",{f:x.path,d:fmtDs(iso(new Date(x.lm)))}):t("fdNoneIn"); el.title=x&&x.path?x.path:""; } }
+const fdPanel=document.getElementById("fdPanel");
+fdPanel.addEventListener("click",async e=>{ const p=e.target.closest("[data-pick]"), st=e.target.closest("[data-stop]");
+  if(p){ const K=p.dataset.pick; try{ const h=await window.showDirectoryPicker({id:"wfm-"+K,mode:"read"}); FD.dirs[K]=h; await fdSet("dir:"+K,h); delete (state.settings.fdSeen||{})[K]; saveState(); fdGuide(); await fdScan(); fdGuideUpd(K); }catch(err){} } // a cancelled picker = nothing
+  if(st){ const K=st.dataset.stop; delete FD.dirs[K]; delete FD.last[K]; await fdSet("dir:"+K,null); delete (state.settings.fdSeen||{})[K]; saveState(); fdSync(); fdGuide(); } });
+async function fdInit(){ fdSync(); if(!window.showDirectoryPicker||!window.indexedDB) return;
+  for(const K of FD_KINDS){ try{ const h=await fdGet("dir:"+K); if(h) FD.dirs[K]=h; }catch(e){} } fdSync(); if(!fdOn().length) return;
+  let need=false; for(const K of fdOn()){ try{ if((await FD.dirs[K].queryPermission({mode:"read"}))!=="granted") need=true; }catch(e){} }
+  if(!need) fdScan(); // the browser only asks after a click: on the first natural one, for every folder at once
+  else document.addEventListener("click",function ask(){ document.removeEventListener("click",ask,true);
+    Promise.all(fdOn().map(K=>FD.dirs[K].requestPermission({mode:"read"}).catch(()=>"denied"))).then(()=>fdScan()); },true); }
+document.getElementById("fdPick").addEventListener("click",()=>fdGuide());
+document.getElementById("fdOff").addEventListener("click",async()=>{ for(const K of FD_KINDS){ delete FD.dirs[K]; await fdSet("dir:"+K,null); } FD.last={}; state.settings.fdSeen={}; saveState(); fdSync(); });
+document.addEventListener("visibilitychange",()=>{ if(!document.hidden) fdScan(); }); setInterval(fdScan,5*60*1000);
+document.getElementById("mxAbs").addEventListener("click",()=>{ document.querySelectorAll(".splitbtn.open").forEach(w=>w.classList.remove("open")); openAbs(state.week); });
 /* ---- 👥 Who should be on in a half hour (matrix: the reps number in a cell) — to compare with the floor ----
    The sidur of that day, else the iron's weekday (Friday by the rotation, leave out); the 🎧 answering skills, like
    the matrix's capacity. Tick who isn't there → the gap, what it costs the half hour, one message per team. */
@@ -12707,7 +13026,7 @@ function lgInvest(){
   $lg("lgInvWk").textContent=t("lgInvWk",{d:fmtD(sun),h:hU(base)})+(sun>state.maxDate?" · "+t("lgFcW"):"");
   $lg("lgBars").innerHTML=R.map((r,i)=>`<div class="lgBar${i?"":" top"}"><span>${t("lgInv_"+r.k,{p:LG.step})}</span><span><i style="width:${(r.d/mx*100).toFixed(1)}%"></i></span><b>−${hU(r.d)} · −${(r.d/base*100).toFixed(1)}%</b></div>`).join(""); }
 /* ---- the forecast tab ---- */
-const lgFmt=v=>LG.kind==="volume"?Math.round(v).toLocaleString():fmtSec(v);
+const lgFmt=v=>LG.kind==="volume"?Math.round(v).toLocaleString():LG.kind==="abs"?v.toFixed(1)+"%":fmtSec(v);
 const lgPred=(mid,i)=>{ const v=Models[LG.kind][mid].fn(LG.arr.slice(0,i),1,LG.ctx); return isFinite(v)?Math.max(0,v):0; };
 function lgGlyph(mid){ // a tiny picture of the model's logic
   const P=[[4,15],[12,11],[20,13],[28,8],[36,10]], dot=(p,r,o)=>`<circle cx="${p[0]}" cy="${p[1]}" r="${r||1.6}" fill="#0d2a4d" opacity="${o||1}"/>`,
@@ -12718,28 +13037,30 @@ function lgGlyph(mid){ // a tiny picture of the model's logic
     hier:`<path d="M3 18 Q22 -6 41 18" fill="none" stroke="#9fb3c8" stroke-width="1.4"/>`+dot([12,10])+dot([22,6])+dot([32,10])+end(13),
     blend:ln("4,16 30,10",.5)+ln("4,5 30,10",.5)+ln("30,10 43,10")+end(10),
     theta:D+ln("12,11.5 43,8.5")+end(8.5), sqrtses:P.map((p,i)=>dot([p[0],11+(p[1]-11)*.5])).join("")+ln("12,11 43,11")+end(11), comb:D+ln("36,10 43,5",.3)+ln("36,10 43,7.5",.3)+ln("36,10 43,10")+ln("36,10 43,12",.3)+ln("36,10 43,14",.3)+end(10),
+    mix3:P.map((p,i)=>dot(p,i<2?1:[0,0,1.6,2.1,2.8][i],i<2?.3:1)).join("")+ln("20,10.5 43,10.5")+end(10.5),
+    fast:P.map((p,i)=>dot(i===4?[36,5]:p,i<2?1:1.8,i<2?.3:1)).join("")+ln("20,11 36,11",.5)+ln("36,7 43,7")+end(7),
     custom:D+ln("20,13 43,7")+end(7)+`<circle cx="31" cy="10" r="2.6" fill="#fff" stroke="#d9822b" stroke-width="1.4"/>`};
   return `<svg viewBox="0 0 46 22" width="46" height="22" aria-hidden="true">${B[mid==="holt_damped"?"holt":mid]||D}</svg>`; }
 function lgFcSet(){
-  const k=LG.kind, has=di=>state.series&&state.series[di]&&Object.keys(state.series[di]).length;
+  const k=LG.kind, has=di=>k==="abs"?absSeries(di).v.length>0:state.series&&state.series[di]&&Object.keys(state.series[di]).length;
   const days=[0,1,2,3,4,5].filter(has); if(days.length&&!days.includes(LG.di)) LG.di=days[0];
-  const di=LG.di, ser=days.length?state.series[di]:null; let arr=null, tm=null;
+  const di=LG.di, ser=days.length&&k!=="abs"?state.series[di]:null; let arr=k==="abs"&&days.length?[...absSeries(di).v]:null, tm=null; // ⏱ the weekday's day-level no-shows, week by week
   if(ser){ const slots=Object.keys(ser);
     if(k==="volume"){ const nW=Math.max(...slots.map(s=>ser[s].vols.length)); arr=[]; // the weekday's daily totals, as backtestDaily reads them
       for(let w=0;w<nW;w++){ let tot=0,seen=false; for(const s of slots){ const v=ser[s].vols[w]; if(v!=null){ tot+=v; seen=true; } } if(seen) arr.push(tot); } }
     else{ const sum=s=>ser[s].vols.reduce((a,b)=>a+(b||0),0); tm=slots.reduce((a,b)=>sum(b)>sum(a)?b:a); arr=[...(ser[tm][k==="aht"?"ahts":"mpts"]||[])]; } } // the weekday's busiest half hour
   LG.demo=!(arr&&arr.length>=5&&arr.filter(v=>v>0).length>=5);
-  if(LG.demo){ arr=[100,104,97,102,106,99,103,101,105,102].map(v=>k==="volume"?v*10:k==="aht"?v*3:v*1.5); tm=null; }
-  LG.base=arr; LG.arr=[...arr]; LG.tm=tm; LG.days=days; LG.ctx={weekday:di,interval:tm||"day",allSeries:LG.demo?null:state.series};
+  if(LG.demo){ arr=[100,104,97,102,106,99,103,101,105,102].map(v=>k==="volume"?v*10:k==="aht"?v*3:k==="abs"?v*0.15:v*1.5); tm=null; }
+  LG.base=arr; LG.arr=[...arr]; LG.tm=tm; LG.days=days; LG.ctx=k==="abs"?(LG.demo?null:absCtx(di)):{weekday:di,interval:tm||"day",allSeries:LG.demo?null:state.series};
   const key=MODEL_KINDS.find(x=>x[0]===k)[1]; if(!Models[k][LG.mid]) LG.mid=Models[k][state.settings[key]]?state.settings[key]:Object.keys(Models[k])[0];
   lgFcDraw(); }
 function lgFcDraw(){
   const S=state.settings, k=LG.kind, arw=lang==="he"?"←":"→";
   $lg("lgPipe").innerHTML=[["🧹","lgP1",S.autoHolidays!==false||S.autoAnomaly!==false],["📅","lgP2",1],["🤖","lgP3",1],["📈","lgP4",S.fastAdapt!==false],["↩","lgP5",S.cuOn!==false],["📊","lgP6",1]]
     .map(([ic,key,on])=>`<span class="lgStepC${on?"":" off"}" title="${t(key+"T")+(on?"":" "+t("lgPOff"))}">${ic} ${t(key)}</span>`).join(`<i>${arw}</i>`);
-  $lg("lgKind").innerHTML=[["volume","lgKVol"],["aht","lgKAht"]].concat(state._hasMpt?[["mpt","lgKMpt"]]:[]).map(([v,l])=>`<button type="button" data-k="${v}" class="${v===k?"active":""}">${t(l)}</button>`).join("");
+  $lg("lgKind").innerHTML=[["volume","lgKVol"],["aht","lgKAht"]].concat(state._hasMpt?[["mpt","lgKMpt"]]:[]).concat(absOn()?[["abs","lgKAbs"]]:[]).map(([v,l])=>`<button type="button" data-k="${v}" class="${v===k?"active":""}">${t(l)}</button>`).join("");
   $lg("lgDay").innerHTML=LG.days.map(d=>`<button type="button" data-d="${d}" class="${d===LG.di?"active":""}">${t("daysShort")[d]}</button>`).join(""); $lg("lgDay").hidden=!LG.days.length;
-  $lg("lgFcSrc").textContent=LG.demo?t("lgDemo"):LG.tm?t("lgDaySlot",{d:t("days")[LG.di],t:LG.tm+"–"+addHalf(LG.tm)}):t("lgDayTot",{d:t("days")[LG.di]});
+  $lg("lgFcSrc").textContent=LG.demo?t("lgDemo"):LG.tm?t("lgDaySlot",{d:t("days")[LG.di],t:LG.tm+"–"+addHalf(LG.tm)}):t(k==="abs"?"lgDayAbs":"lgDayTot",{d:t("days")[LG.di]});
   $lg("lgFcReset").hidden=LG.arr.every((v,i)=>v===LG.base[i]);
   $lg("lgFcLeg").innerHTML=`<span><i style="background:#0d2a4d;border-radius:50%"></i>${t("lgLgAct")}</span><span><i style="background:#d9822b;border-radius:50%"></i>${t("lgLgPred")}</span><span><i style="background:#9fb3c8;height:3px;width:14px;vertical-align:3px"></i>${t("lgLgOth")}</span>`;
   lgFcChart(); lgCards(); lgTune(); }
@@ -12750,7 +13071,7 @@ function lgTune(){ const k=LG.kind, on=LG.mid==="custom"; $lg("lgTune").hidden=!
   $lg("lgFit").hidden=LG.demo; const r=LG.demo?null:backtestModel(k,"custom");
   $lg("lgTuRes").textContent=r?t("btErr",{e:r.mape.toFixed(1)})+" — "+t("lgTuSeen"):""; }
 function lgMySet(a,tr){ (state.settings.myModel=state.settings.myModel||{})[LG.kind]={a,tr}; }
-function lgMyChanged(){ saveState(); LG.rk={}; state.fcCache.clear(); memo.clear(); autoPickModels(); renderAll(); lgFcDraw(); }
+function lgMyChanged(){ saveState(); LG.rk={}; if(LG.kind==="abs"){ absChanged(); lgFcDraw(); return; } state.fcCache.clear(); memo.clear(); autoPickModels(); renderAll(); lgFcDraw(); }
 function lgFcChart(){
   const A=LG.arr, N=A.length, from=Math.max(0,N-12), cnt=N-from+1, W=600, H=220, L=10, R=10, T=22, B=26, X=i=>L+(i-from+.5)/cnt*(W-L-R), f=v=>v.toFixed(1);
   const pr=[]; for(let i=Math.max(from,N-6,4);i<=N;i++) pr.push([i,lgPred(LG.mid,i)]);
@@ -13627,7 +13948,7 @@ function ingestCourseFile(f){
       }
       // a forecast or a sidur dropped on this page goes where it belongs (the course reader would find "courses" in anything)
       const other=(res.grids||[]).some(s=>/ברזל|iron|סידור|roster/i.test((s&&s.name)||""))
-        ||grids.some(g=>{ const gg=(g||[]).filter(x=>x&&x.length), hd=gg.length?findHeader(gg):null, k=hd?classifyGrid(hd.map,null):null; return k==="forecast"||k==="roster"; });
+        ||grids.some(g=>{ const gg=(g||[]).filter(x=>x&&x.length), hd=gg.length?findHeader(gg):null, k=hd?classifyGrid(hd.map,null):null; return k==="forecast"||k==="roster"||!!commitHeader(gg); }); // ⏱ committed hours too (they have a "courses" column)
       if(other){ setTimeout(()=>ingestFile(f),0); return; }
       let list=[];
       for(const g of grids){ list=parseCoursesGrid((g||[]).filter(x=>x&&x.length),courseDefaults()); if(list.length) break; }
@@ -13748,6 +14069,7 @@ function saveData(){
       week:state.week, wfFilter:state.wfFilter, cons:state.weeklyConstraints,
       schedOut:state._schedOut, schedExt:state.appliedExtensions, schedLocks:[...(state.schedLocks||[])], schedLockTL:[...(state.schedLockTL||[])], schedDeclined:state.schedDeclined||{}, agWhatIf:[...state.agWhatIf], trainees:state.trainees||{}, brkAdj:state.brkAdj||{}, brkPresent:state.brkPresent||{} }));
   }catch(e){} // quota exceeded on huge files → data simply stays transient
+  inputsSave(); // ✎ what the user typed is saved apart — it survives even when the data above doesn't fit
 }
 function loadData(){
   try{
@@ -13756,7 +14078,7 @@ function loadData(){
     const hasDays=s.days&&Object.keys(s.days).length;
     const hasRoster=(s.schedRows&&s.schedRows.length)||s.iron||(s.cap&&Object.keys(s.cap).length)||(s.meta&&Object.keys(s.meta).length);
     if(!hasDays&&!hasRoster) return false; // a sidur-only workspace is still a workspace
-    state.days=new Map(Object.entries(s.days).map(([ds,o])=>[ds,new Map(Object.entries(o))]));
+    state.days=new Map(Object.entries(s.days).map(([ds,o])=>[ds,new Map(Object.entries(o))])); applyTimeBase(); // ⏱ the login in use (a save from before = net)
     state.roster=s.roster||[]; state.rosterNamed=!!s.rosterNamed;
     state.rosterCap=new Map(Object.entries(s.cap||{}));
     state.rosterCapWeekly=new Map(Object.entries(s.capW||{}));
@@ -13785,6 +14107,7 @@ function loadData(){
     state.trainees=s.trainees&&typeof s.trainees==="object"?s.trainees:{};
     state.brkAdj=s.brkAdj&&typeof s.brkAdj==="object"?s.brkAdj:{};
     state.brkPresent=s.brkPresent&&typeof s.brkPresent==="object"?s.brkPresent:{};
+    inputsLoad(false); // ✎ the inputs' own save (always the latest)
     // a persisted optimizer result: the sidur + matrix "Optimized" toggle survive a refresh
     state.appliedExtensions=Array.isArray(s.schedExt)?s.schedExt:[];
     state.schedLocks=new Set(Array.isArray(s.schedLocks)?s.schedLocks:[]); state.schedLockTL=new Set(Array.isArray(s.schedLockTL)?s.schedLockTL:[]); state.schedDeclined=s.schedDeclined||{};
@@ -13807,7 +14130,7 @@ document.getElementById("confirmNo").addEventListener("click",()=>{
   document.getElementById("modalBg2").style.display="none";
 });
 document.getElementById("confirmYes").addEventListener("click",()=>{
-  try{ localStorage.removeItem(PERSIST); localStorage.removeItem(PERSIST_DATA); localStorage.removeItem(PERSIST_NOW); }catch(e){}
+  try{ localStorage.removeItem(PERSIST); localStorage.removeItem(PERSIST_DATA); localStorage.removeItem(PERSIST_NOW); localStorage.removeItem(PERSIST_CM); }catch(e){}
   location.reload();
 });
 
@@ -13850,6 +14173,7 @@ buildDayWins();
 // item 11: cached datasets re-populate the workspace (sidur-only restores without touching forecast state)
 // no auto-demo: a fresh workspace starts EMPTY so real uploads are unmistakable —
 // sample data loads only via the explicit button on the Home page
+fdInit(); // 📁 the data folder, if one was picked on this computer
 try{ setNowSidur(JSON.parse(localStorage.getItem(PERSIST_NOW)||"null")); }catch(e){} // 📅 this week's kept sidur (renderAll drops it once the week is over)
 if(loadData()){ recordFriHist(); if(state.iron&&(!state.iron.wk||!(state.settings.ironHist||[]).length)) recordIronHist(sidurWeek()); // a sidur / iron saved before their memories (or the week) existed joins them once
   if(state.days.size) afterForecastLoad(); else { applyDataWeek(); updatePortalStatus(); renderAll(); } }
