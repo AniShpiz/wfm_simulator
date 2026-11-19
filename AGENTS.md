@@ -46,7 +46,10 @@ Companion docs (read the one matching your task before editing):
   feel broken; a notice only when the user can act, knows how, one click away), root cause over warnings,
   every secondary area folds, **design from where the user stands in the journey and in time** (history in
   the file · the gap to today · the future — every number says which), **words last** (visual first; weigh
-  every word; titles are the user's question).
+  every word; titles are the user's question), **the hours ladder** (rule 23: committed hours → paid → gross login →
+  net login; productivity / no-shows always name their time, the same base on both sides, sums not averages of
+  percents, never a circular base; the ⏱ header chip says the login in use on every page), **recurring data is read,
+  not loaded** (rule 24: a folder per kind), **no dead click** (rule 25).
 - Keep the project single-file and offline-capable. Do not add dependencies.
 - Never send user data to external services. Parsing and analytics remain in-browser.
 - Maintain bilingual behavior. Any new user-facing string must be added to both EN and HE in `I18N` and wired via `data-i18n`/`t()`.
@@ -265,6 +268,44 @@ workforce filter lists legitimately show only "(all)" for this file.
 - Date Trends table: the TSF column = Settings' window (`metricTsfDyn`, the matrix's TSF; `mLab` in the charts);
   TSF 60 stays as a labeled benchmark (hidden when the window is 60). Only the primary metric's column is tinted;
   the last column is the target bar (`goalCell`: 0–100% fill, navy tick at the target, "−x%" or ✓).
+
+## ⏱ No-shows by hour (the hours ladder in the math)
+
+- no-shows = 1 − net login ÷ COMMITTED hours (scheduled + courses that answer), per clock hour, from sums. Login = the
+  history file (`rec.login` net; `rec.loginG` gross when the file has both — `findHeader` keeps them apart; several
+  calls columns → the measured one, not "חיזוי נכנסות"). Committed hours = their own file (`commitHeader` /
+  `ingestCommit`: date · hour · total hours, no calls column; half-hour rows add up; a later file replaces only its
+  hours) → `state.commit` ("ds|HH:00" → hours), own storage key `wfmSimCommit`. Detected before every other kind
+  (also on the Recruitment page — the sheet has a "courses" column).
+- `absOn()` (commit + ≥ 3 measured days) → `absAt(ds,tm)`: history = what happened · forecast = `absDay`: the day's
+  LEVEL = the no-shows model (`Models.abs`, kind "abs": mix3 = 50/30/20 · fast = + `absShift` the last days' change,
+  halved per week ahead · lastweek · ma4 · wavg4 · holt · custom) on `absSeries(di)` (the weekday's day-level %, week by
+  week), picked by `rankModels("abs")` / `backtestModel` like every kind (`settings.modelAbs`, Settings `#setModelAbs`,
+  the play window's "No-shows" tab); each hour = the level + its distance from the day in the last 3 same weekdays.
+  `settings.absEdit` {"ds|HH:00": %} wins. null → Settings' flat %. An hour with login above its committed hours = no value.
+- `absWhy()` = ok | hist | commit | login | overlap: the window always opens (matrix ⋯ `#mxAbs`, Settings `#setAbsBtn`
+  "by hour…") and, without the data, says what is missing + 📂 the file picker (`#absFile`) · ⬇ an example · 📁 the folder.
+- ⏱ THE TIME BASE: a record keeps `loginN` (net) and `loginG` (gross); `rec.login` = the one in use, set only by
+  `applyTimeBase()` (`timeBase()`, `settings.timeBase`; a file with only gross = gross). `TB_GROSS` + `TB_KEYS` make
+  the labels that name the login follow it (`t`). Header chip `#baseChip` (`renderBaseChip`), `setTimeBase(b)`.
+- ONE path into the math: `computeDay` / `trendDayStat` rows (`row.abs`, `row.eff`), `breakPlan` (`h.eff`), and
+  `histEff` for `calibrateModel` + `computeSlotBias`. A history half hour's scheduled base = the committed hours (the
+  file's own "scheduled" may be net of a forecast absence — circular). `settings.shrinkage` is never touched.
+  `absMirror` (in `calibrateModel`): `settings.absence` follows `absLevel()` while on (the typed % waits in
+  `absenceUser`). After a change: `absChanged()`.
+- UI: matrix hover line `mxAbs`; the window `openAbs(wk)` ("How many don't come, by hour?": week grid, measured /
+  forecast lighter / ✎ typed, ↺) from the matrix ⋯ `#mxAbs` and Settings `#setAbsBtn` (replaces the input while on);
+  Home chip `fcX_commit`. Test: `tests/browser/hourly-absence.js`.
+- 📁 A folder PER KIND (`FD.dirs`, `FD_KINDS` fc · commit · sidur · cons · courses; IndexedDB `wfmSim`/`kv`/"dir:<kind>"):
+  Home `#fdRow` → `fdGuide()` "Where are your files saved?" — one line + one 📂 per kind (picker `id` per kind).
+  `fdNewest(K)` = the newest file of that kind in its folder, 5 deep (`fdWalk`; told apart by content, `fdKindOf` /
+  `fdIs`; no backups / lock files), loaded through the drop loaders (`fdLoad`, one at a time); `fdScan` on open · tab
+  back · every 5 min, `settings.fdSeen` {kind: "path|modified"}; asked while busy → runs again. Permission asked on the
+  first click when the browser wants it again.
+- ✎ The user's inputs have their own save `wfmSimInputs` (`inputsSave` in `saveData`, `inputsLoad`): the forecast
+  cells changed (`simDays` / `edits` / `cellOrig` — never saved before), bulk changes, exceptions, trainees, break
+  adjustments. After a new history file only the days it doesn't hold come back (`afterForecastLoad`).
+- 🎧 The answering skills' first default = line 1 + clinics (`/קו\s*1|מרפא|clinic/`), then the user's choice is kept.
 
 ## Forecast-week capacity (matrix + Date Trends)
 

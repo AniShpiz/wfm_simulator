@@ -18,6 +18,11 @@ No server backend is required for core functionality.
   "Locked for editing by <you>" in Excel comes from Excel itself (another open window, a leftover `EXCEL.EXE`, a stale
   `~$` file) or OneDrive syncing — not from the app.
 
+- 📁 Folders (optional): for each kind of file (history, committed hours, sidur, constraints, courses) the user may pick
+  the folder it is saved in; the app only READS the newest file of that kind there (read-only access is requested — the
+  app cannot write there). The folder handles are stored in the browser's IndexedDB on that computer; "✕" forgets them.
+  Nothing read from a folder is sent anywhere.
+
 ## Local Storage
 
 The app stores workspace/data state in browser localStorage to improve continuity across refreshes.
