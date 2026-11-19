@@ -23,6 +23,10 @@ No server backend is required for core functionality.
   app cannot write there). The folder handles are stored in the browser's IndexedDB on that computer; "✕" forgets them.
   Nothing read from a folder is sent anywhere.
 
+- 💾 The team's settings file (`wfm-config.js`) holds settings and courses only — no forecast, no sidur, no rep names
+  from the files (the Friday memory and the iron history inside the settings are rep names, as in the browser's own
+  save). It is written only when the user presses "Save these settings for the team", to the place they choose.
+
 ## Local Storage
 
 The app stores workspace/data state in browser localStorage to improve continuity across refreshes.

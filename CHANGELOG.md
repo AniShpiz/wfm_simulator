@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### 💾 The team's settings next to the app · a launcher that always opens the same browser
+
+- Settings › "💾 Same settings for the whole team?": saves every setting and the courses as `wfm-config.js`, next to
+  index.html. Everyone who opens the app from that folder starts with them — on a new computer, in another browser, or
+  where the browser clears its storage on close; each person's own changes stay theirs until a newer team file.
+- `פתיחת הסימולטור.cmd`: opens the app in Chrome, else Edge, else the default browser. Each browser keeps its own saved
+  settings, so always opening the same one keeps them (a `.url` shortcut opens whatever browser is the default).
+- The app asks the browser to keep what it saved even when space runs low.
+
 ### ⏱ No-shows by the hour · 📁 the data folder · the hours ladder
 
 - No-shows are measured per hour — net login ÷ the committed hours (scheduled + courses that answer) — instead of
