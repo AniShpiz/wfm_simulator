@@ -306,6 +306,13 @@ workforce filter lists legitimately show only "(all)" for this file.
   cells changed (`simDays` / `edits` / `cellOrig` — never saved before), bulk changes, exceptions, trainees, break
   adjustments. After a new history file only the days it doesn't hold come back (`afterForecastLoad`).
 - 🎧 The answering skills' first default = line 1 + clinics (`/קו\s*1|מרפא|clinic/`), then the user's choice is kept.
+- 💾 The team's settings file `wfm-config.js` NEXT TO index.html (`<script src>` before the app script →
+  `window.WFM_TEAM` {app, v, at, settings, policy, cohorts}): `teamApply` in `loadState` — a browser with nothing saved
+  starts from it; a newer `at` is taken once (`localStorage.wfmTeamAt`); afterwards each person's own changes stay.
+  Written by Settings "💾 Save these settings for the team" (`teamSave`: save picker, else a download); never
+  `fdSeen`. `navigator.storage.persist()` on open. The launcher `פתיחת הסימולטור.cmd` (ASCII, CRLF) opens index.html
+  next to it in Chrome → Edge → the default browser — the same browser = the same saved settings (each browser keeps
+  its own; a `.url` shortcut always opens the default one). Test: `tests/browser/team-settings.js`.
 
 ## Forecast-week capacity (matrix + Date Trends)
 
